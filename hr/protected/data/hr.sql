@@ -1,6 +1,6 @@
 ﻿CREATE DATABASE hr CHARACTER SET utf8 COLLATE utf8_general_ci;
 
-GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON operation.* TO 'swuser'@'localhost' IDENTIFIED BY 'swisher168';
+GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON hr.* TO 'swuser'@'localhost' IDENTIFIED BY 'swisher168';
 
 use hr;
 

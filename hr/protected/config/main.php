@@ -160,7 +160,7 @@ return array(
 					),
 				'hr'=>array(
 						'webroot'=>'http://192.168.0.162/hr',
-						'name'=>'HR',
+						'name'=>'Personnel',
 						'icon'=>'fa fa-users',
 					),
 			),

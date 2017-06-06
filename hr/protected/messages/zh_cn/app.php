@@ -9,26 +9,16 @@ return array(
 	'Daily Report'=>'日报表系统',
 	'Accounting'=>'会计系统',
 	'Operation'=>'营运系统',
+	'Personnel'=>'人事系统',
 
 	'Data Entry'=>'数据输入',
 	'Misc'=>'其他',
 
-	'Payment Request'=>'付款申请',
-	'Request Approval'=>'申请审核',
-	'Reimbursement'=>'报销单申请',
-	'Reimbursement Approval'=>'报销单签字',
-
-	'Transaction'=>'交易记录',
-	'Transaction(In)'=>'收款记录',
-	'Transaction(Out)'=>'付款记录',
-	'Transaction Enquiry'=>'交易查询',
-	'Cash Received Audit'=>'现金收款审计',
-	'Approver'=>'审核人员',
-	'Cash In Check'=>'客户现金对账',
-	'Default Account'=>'默认账户',
+	'Staff Info'=>'员工资料',
+	'Employer'=>'雇主资料',
+	'Department'=>'工作部门',
 	
 	'Report'=>'报表',
-	'Reimbursement Form'=>'费用报销单',
 	'Report Manager'=>'报表管理员',
 
 	'System Setting'=>'系统设置',

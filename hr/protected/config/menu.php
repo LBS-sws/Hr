@@ -2,35 +2,34 @@
 
 return array(
 	'Data Entry'=>array(
-		'access'=>'YA',
+		'access'=>'ZA',
 		'items'=>array(
-			'Sales Summary Entry'=>array(
-				'access'=>'YA01',
-				'url'=>'/monthly/index',
+			'Staff Info'=>array(
+				'access'=>'ZA01',
+				'url'=>'/staff/index',
 			),
 		),
 	),
 	'Report'=>array(
-		'access'=>'YB',
+		'access'=>'ZB',
 		'items'=>array(
-			'Sales Summary'=>array(
-				'access'=>'YB02',
-				'url'=>'/report/salessummary',
-			),
 			'Report Manager'=>array(
-				'access'=>'YB01',
+				'access'=>'ZB01',
 				'url'=>'/queue/index',
 			),
 		),
 	),
-//	'System Setting'=>array(
-//		'access'=>'YC',
-//		'items'=>array(
-//			'AAAA'=>array(
-//				'access'=>'YC01',
-//				'url'=>'/accttype/index',
-//				'tag'=>'@',
-//			),
-//		),
-//	),
+	'System Setting'=>array(
+		'access'=>'ZC',
+		'items'=>array(
+			'Employer'=>array(
+				'access'=>'ZC01',
+				'url'=>'/employer/index',
+			),
+			'Department'=>array(
+				'access'=>'ZC02',
+				'url'=>'/dept/index',
+			),
+		),
+	),
 );
