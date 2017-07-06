@@ -4,10 +4,20 @@ return array(
 	'Data Entry'=>array(
 		'access'=>'ZA',
 		'items'=>array(
-			'Staff Info'=>array(
+		    //員工資料
+            'Employee Info'=>array(
+                'access'=>'ZA03',
+                'url'=>'/employee/index',
+            ),
+/* 員工資料（旧版本）
+ * 			'Staff Info'=>array(
 				'access'=>'ZA01',
 				'url'=>'/staff/index',
-			),
+			),*/
+            'Company Info'=>array(
+                'access'=>'ZA02',
+                'url'=>'/company/index',
+            ),
 		),
 	),
 	'Report'=>array(
@@ -17,6 +27,20 @@ return array(
 				'access'=>'ZB01',
 				'url'=>'/queue/index',
 			),
+		),
+	),
+    //合同模塊
+	'Contract'=>array(
+		'access'=>'ZD',
+		'items'=>array(
+			'Contract Word'=>array(
+				'access'=>'ZD01',
+				'url'=>'/word/index',
+			),
+			'Contract List'=>array(
+				'access'=>'ZD02',
+				'url'=>'/contract/index',
+			)
 		),
 	),
 	'System Setting'=>array(

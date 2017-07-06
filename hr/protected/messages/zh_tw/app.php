@@ -63,5 +63,15 @@ return array(
 'Account Type'=>'賬戶類別',
 'Transaction Type'=>'交易類別',
 'Account'=>'賬戶',
+
+    //沈超添加开始
+    'Contract'=>'合同',
+    'Contract Word'=>'合同文档',
+    'Contract List'=>'合同列表',
+
+    'Company Info'=>'公司資料',
+
+    'Employee Info'=>'员工资料',
+    //沈超添加结束
 );
 ?>
