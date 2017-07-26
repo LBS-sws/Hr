@@ -414,7 +414,9 @@ class MyWord{
                     if($span->tagName == "w:rPr"){
                         $arr =array();
                         foreach ($span->childNodes as $fonts){
-                            $arr[$fonts->tagName] = empty($fonts->getAttribute("w:val"))?"aaa":$fonts->getAttribute("w:val");
+							$sb = $fonts->tagName;
+							$sb1 = $fonts->getAttribute("w:val");
+                            $arr[$sb] = empty($sb1)?"aaa":$sb1;
                         }
                         if(!empty($arr["w:color"])){
                             $ret.=" color:".$arr["w:color"].";";
@@ -484,18 +486,20 @@ class MyWord{
                                         //第一個節點
                                         $arr=array();
                                         foreach ($p->childNodes as $shen){
+											$sb = $shen->tagName;
+											$sb1 = $shen->getAttribute("w:val");
                                             switch ($shen->tagName){
                                                 case "w:tcW":
                                                     $arr["width"] = $this->reWidth($shen->getAttribute("w:w"));
                                                     break;
                                                 case "w:vMerge":
-                                                    $arr[$shen->tagName] = empty($shen->getAttribute("w:val"))?"ok":$shen->getAttribute("w:val");
+                                                    $arr[$sb] = empty($sb1)?"ok":$sb1;
                                                     break;
                                                 case "w:vAlign":
-                                                    $arr[$shen->tagName] = $shen->getAttribute("w:val") == "center"?"middle":$shen->getAttribute("w:val");
+                                                    $arr[$sb] = $sb1 == "center"?"middle":$sb1;
                                                     break;
                                                 default:
-                                                    $arr[$shen->tagName] = $shen->getAttribute("w:val");
+                                                    $arr[$sb] = $sb1;
                                             }
                                         }
                                         //var_dump($arr);
