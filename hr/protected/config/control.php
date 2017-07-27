@@ -1,5 +1,5 @@
 <?php
 
 return array(
-//	'Checker Right'=>array('access'=>'CN01',),
+	'Modify Restrict'=>array('access'=>'ZN01',),
 );

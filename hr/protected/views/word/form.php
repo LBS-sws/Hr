@@ -71,7 +71,7 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 				</div>
 			</div>
 
-            <?php if (Yii::app()->user->id =='shenchao'): ?>
+            <?php if (Yii::app()->user->validFunction('ZN01')): ?>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'type',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">

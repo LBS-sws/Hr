@@ -30,6 +30,7 @@ return array(
 	
 	'Checker Right'=>'会计对账权限',
 	'Transaction Adjustment'=>'交易调整权限',
+    'Modify Restrict'=>'修改文档限制',
 	
 	'User'=>'帐户',
 	'Group'=>'群组',
