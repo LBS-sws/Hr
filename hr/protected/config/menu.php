@@ -4,11 +4,6 @@ return array(
 	'Data Entry'=>array(
 		'access'=>'ZA',
 		'items'=>array(
-		    //員工資料
-            'Employee Info'=>array(
-                'access'=>'ZA03',
-                'url'=>'/employee/index',
-            ),
 /* 員工資料（旧版本）
  * 			'Staff Info'=>array(
 				'access'=>'ZA01',
@@ -40,6 +35,27 @@ return array(
 			'Contract List'=>array(
 				'access'=>'ZD02',
 				'url'=>'/contract/index',
+			)
+		),
+	),
+    //員工模塊
+	'Employee'=>array(
+		'access'=>'ZE',
+		'items'=>array(
+            //員工錄入
+            'Employee Info'=>array(
+                'access'=>'ZE01',
+                'url'=>'/employ/index',
+            ),
+            //審核資料
+			'Employee Audit'=>array(
+				'access'=>'ZE02',
+				'url'=>'/audit/index',
+			),
+            //員工列表
+			'Employee List'=>array(
+				'access'=>'ZE03',
+				'url'=>'/employee/index',
 			)
 		),
 	),

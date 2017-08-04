@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Employee';
+$this->pageTitle=Yii::app()->name . ' - Audit';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-    'id'=>'employee-list',
+    'id'=>'audit-list',
     'enableClientValidation'=>true,
     'clientOptions'=>array('validateOnSubmit'=>true,),
     'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee';
 
 <section class="content-header">
     <h1>
-        <strong><?php Yii::t('app','Employee Info'); ?></strong>
+        <strong><?php Yii::t('app','Audit Info'); ?></strong>
     </h1>
     <!--
         <ol class="breadcrumb">
@@ -24,21 +24,19 @@ $this->pageTitle=Yii::app()->name . ' - Employee';
 
 <section class="content">
     <?php
-    $search = array(
-        'code',
-        'name',
-        'phone',
-        'position',
-    );
-    if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
    $this->widget('ext.layout.ListPageWidget', array(
-        'title'=>Yii::t('contract','Employee List'),
+        'title'=>Yii::t('contract','Audit List'),
         'model'=>$model,
-        'viewhdr'=>'//employee/_listhdr',
-        'viewdtl'=>'//employee/_listdtl',
+        'viewhdr'=>'//audit/_listhdr',
+        'viewdtl'=>'//audit/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
-        'search'=>$search,
+        'search'=>array(
+            'code',
+            'name',
+            'phone',
+            'position',
+        ),
     ));
     ?>
 </section>

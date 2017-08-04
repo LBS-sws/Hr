@@ -1,82 +1,88 @@
 <?php
 if (empty($model->id)&&$model->scenario == "edit"){
-    $this->redirect(Yii::app()->createUrl('employee/index'));
+    $this->redirect(Yii::app()->createUrl('audit/index'));
 }
-$this->pageTitle=Yii::app()->name . ' - Employee Form';
+$this->pageTitle=Yii::app()->name . ' - Audit Form';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-    'id'=>'employee-form',
-    'enableClientValidation'=>true,
-    'clientOptions'=>array('validateOnSubmit'=>true),
-    'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL
+'id'=>'audit-form',
+'enableClientValidation'=>true,
+'clientOptions'=>array('validateOnSubmit'=>true),
+'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL
 )); ?>
 
 <section class="content-header">
-    <h1>
-        <strong><?php echo Yii::t('contract','Employee Form'); ?></strong>
-    </h1>
-    <!--
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-            <li><a href="#">Layout</a></li>
-            <li class="active">Top Navigation</li>
-        </ol>
-    -->
+	<h1>
+		<strong><?php echo Yii::t('contract','Audit Form'); ?></strong>
+	</h1>
+<!--
+	<ol class="breadcrumb">
+		<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+		<li><a href="#">Layout</a></li>
+		<li class="active">Top Navigation</li>
+	</ol>
+-->
 </section>
 
 <section class="content">
-    <div class="box"><div class="box-body">
-            <div class="btn-group" role="group">
-                <?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-                    'submit'=>Yii::app()->createUrl('employee/index')));
-                ?>
-                <?php echo TbHtml::button('<span class="fa fa-coffee"></span> '.Yii::t('contract','Staff Changes'), array(
-                    'submit'=>Yii::app()->createUrl('employee/changes',array("index"=>$model->id))));
-                ?>
-                <?php echo TbHtml::button('<span class="fa fa-user-times"></span> '.Yii::t('contract','Staff Departure'), array(
-                    'submit'=>Yii::app()->createUrl('employee/departure',array("index"=>$model->id))));
-                ?>
-            </div>
+	<div class="box"><div class="box-body">
+	<div class="btn-group" role="group">
+		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
+				'submit'=>Yii::app()->createUrl('audit/index')));
+		?>
+        <?php
+            if($model->scenario!='view'){
+                if($model->staff_status == 2){
+                    echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
+                        'submit'=>Yii::app()->createUrl('audit/audit')));
+                }
+                if(($model->city == Yii::app()->user->city() || $model->scenario=='new')&&$model->staff_status == 2){
+                    echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','Rejected'), array(
+                        'submit'=>Yii::app()->createUrl('audit/reject')));
+                }
+            }
+        ?>
+	</div>
 
-            <?php if ($model->scenario!='new'): ?>
-                <div class="btn-group pull-right" role="group">
-                    <?php
-                    if($model->scenario != 'view'){
-                        if($model->word_status == 0){
-                            $btnText = Yii::t('contract','Generate Contract');
-                        }else{
-                            $btnText = Yii::t('contract','Renewal Contract');
-                        }
-                        echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.$btnText, array(
-                            'submit'=>Yii::app()->createUrl('employee/generate?index='.$model->id)));
-                    }else{}
-                    ?>
-                    <?php if ($model->word_status == 1): ?>
-                        <?php echo TbHtml::button('<span class="fa fa-eye"></span> '.Yii::t('contract','Down'),array(
-                            'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
-                        ?>
-                    <?php endif; ?>
-                </div>
-            <?php endif; ?>
-        </div></div>
+<?php if ($model->scenario!='new'): ?>
+	<div class="btn-group pull-right" role="group">
+        <?php
+            if($model->scenario != 'view'){
+                if($model->word_status == 0){
+                    $btnText = Yii::t('contract','Generate Contract');
+                }else{
+                    $btnText = Yii::t('contract','Renewal Contract');
+                }
+                echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.$btnText, array(
+                    'submit'=>Yii::app()->createUrl('audit/generate?index='.$model->id)));
+            }else{}
+        ?>
+    <?php if ($model->word_status == 1): ?>
+            <?php echo TbHtml::button('<span class="fa fa-eye"></span> '.Yii::t('contract','Down'),array(
+                'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
+            ?>
+    <?php endif; ?>
+	</div>
+<?php endif; ?>
+	</div></div>
 
-    <div class="box box-info">
-        <div class="box-body">
-            <?php echo $form->hiddenField($model, 'scenario'); ?>
-            <?php echo $form->hiddenField($model, 'id'); ?>
-            <?php echo $form->hiddenField($model, 'city'); ?>
-            <?php echo $form->hiddenField($model, 'staff_status'); ?>
+	<div class="box box-info">
+		<div class="box-body">
+			<?php echo $form->hiddenField($model, 'scenario'); ?>
+			<?php echo $form->hiddenField($model, 'id'); ?>
+			<?php echo $form->hiddenField($model, 'city'); ?>
+			<?php echo $form->hiddenField($model, 'staff_status'); ?>
 
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'code',
-                        array('size'=>20,'maxlength'=>20,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-                <?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->textField($model, 'code',
+						array('size'=>20,'maxlength'=>20,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+					); ?>
+				</div>
+				<?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
@@ -85,10 +91,10 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                             array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
                         ?>
                     </div>
-                </div>
-            </div>
+				</div>
+			</div>
 
-            <div class="form-group">
+			<div class="form-group">
                 <?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'name',
@@ -102,8 +108,8 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                         array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
-            </div>
-            <div class="form-group">
+			</div>
+			<div class="form-group">
                 <?php echo $form->labelEx($model,'birth_time',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <div class="input-group">
@@ -122,15 +128,15 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                         array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
-            </div>
+			</div>
 
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'company_id',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'company_id',$model->getCompanyToCity(),
-                        array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'company_id',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->dropDownList($model, 'company_id',$model->getCompanyToCity(),
+						array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+					); ?>
+				</div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'contract_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
@@ -138,7 +144,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                         array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
-            </div>
+			</div>
 
 
             <div class="form-group">
@@ -258,9 +264,9 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <?php echo $form->labelEx($model,'test_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'test_type',array(
-                        "1"=>Yii::t("contract","Have probation period"),
-                        "0"=>Yii::t("contract","No probation period")
-                    ),array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+                            "1"=>Yii::t("contract","Have probation period"),
+                            "0"=>Yii::t("contract","No probation period")
+                        ),array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
             </div>
@@ -332,7 +338,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_user."'></div>
-                        <div class='media-body media-bottom'></div></div>";
+                        <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_user',
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
@@ -350,7 +356,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_code."'></div>
-                        <div class='media-body media-bottom'></div></div>";
+                        <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_code',
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
@@ -368,7 +374,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_work."'></div>
-                        <div class='media-body media-bottom'></div></div>";
+                        <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_work',
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
@@ -386,7 +392,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_other."'></div>
-                        <div class='media-body media-bottom'></div></div>";
+                        <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_other',
                             array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
@@ -454,31 +460,15 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
             </div>
 
             <div class="form-group">
-                <?php echo $form->labelEx($model,'ld_card',array('class'=>"col-sm-2 control-label")); ?>
+                <?php echo $form->labelEx($model,'ject_remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'ld_card',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                    <?php echo $form->textArea($model, 'ject_remark',
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'sb_card',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'sb_card',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'jj_card',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'jj_card',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-            </div>
-        </div>
-    </div>
+		</div>
+	</div>
 </section>
 
 <?php
@@ -490,7 +480,7 @@ $this->renderPartial('//site/removedialog');
 
 $js = "
 var staffStatus = '".$model->staff_status."';
-$('#EmployeeForm_test_type').on('change',function(){
+$('#AuditForm_test_type').on('change',function(){
     if($(this).val() == 1){
         $(this).parents('.form-group').next('div.test-div').slideDown(100);
     }else{
@@ -513,7 +503,7 @@ Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_
 /*
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/jquery-form.js", CClientScript::POS_END);
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/ajaxFile.js", CClientScript::POS_END);
- */
+*/
 
 ?>
 

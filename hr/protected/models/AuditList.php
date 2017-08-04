@@ -1,6 +1,6 @@
 <?php
 
-class EmployeeList extends CListPageModel
+class AuditList extends CListPageModel
 {
 	/**
 	 * Declares customized attribute labels.
@@ -17,7 +17,7 @@ class EmployeeList extends CListPageModel
 			'position'=>Yii::t('contract','Position'),
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
-			'status'=>Yii::t('contract','Status'),
+			'staff_status'=>Yii::t('contract','Status'),
 		);
 	}
 
@@ -26,11 +26,11 @@ class EmployeeList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_employee
-                where city=$city AND staff_status = 0
+                where city=$city AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
 			";
 		$sql2 = "select count(id)
 				from hr_employee 
-				where city=$city AND staff_status = 0
+				where city=$city AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -71,7 +71,7 @@ class EmployeeList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-			    $arr = $this->returnStaffStatus($record["test_type"],$record["test_start_time"],$record["test_end_time"],$record["staff_status"]);
+                $arr = $this->translateEmploy($record['staff_status']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
@@ -80,8 +80,8 @@ class EmployeeList extends CListPageModel
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
 					'phone'=>$record['phone'],
-					'status'=>$arr["status"],
-					'style'=>$arr["style"],
+                    'staff_status'=>$arr["status"],
+                    'style'=>$arr["style"],
 				);
 			}
 		}
@@ -90,36 +90,28 @@ class EmployeeList extends CListPageModel
 		return true;
 	}
 
-	public function returnStaffStatus($testType,$start_time,$end_time,$staff_status=0){
-	    $date = date("Y-m-d");
-	    if($staff_status == -1){
-            return array(
-                "status"=>Yii::t("contract","departure"),
-                "style"=>"text-danger"
-            );//離職
+
+	public function translateEmploy($status){
+	    switch ($status){
+            case 2:
+                return array(
+                    "status"=>Yii::t("contract","pending approval"),//等待審核
+                    "style"=>" text-primary"
+                );
+            case 3:
+                return array(
+                    "status"=>Yii::t("contract","Rejected"),//拒絕
+                    "style"=>" text-danger"
+                );
+            case 4:
+                return array(
+                    "status"=>Yii::t("contract","Finish approval"),//審核通過
+                    "style"=>" text-yellow"
+                );
         }
-	    if($testType == 0){
-	        return array(
-	            "status"=>Yii::t("contract","formal staff"),
-                "style"=>"text-primary"
-            );//正式員工
-        }else{
-	        if(strtotime($date) >= strtotime($end_time)){
-                return array(
-                    "status"=>Yii::t("contract","formal staff"),
-                    "style"=>"text-primary"
-                );//正式員工
-            }elseif(strtotime($date) >= strtotime($start_time)){
-                return array(
-                    "status"=>Yii::t("contract","probation period"),
-                    "style"=>"text-yellow"
-                );//試用期
-            }else{
-                return array(
-                    "status"=>Yii::t("contract","No entry"),
-                    "style"=>"text-success"
-                );//未入职
-            }
-        }
+        return array(
+            "status"=>"",
+            "style"=>""
+        );
     }
 }

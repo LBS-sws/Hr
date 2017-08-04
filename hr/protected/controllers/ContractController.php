@@ -15,8 +15,8 @@ class ContractController extends Controller
             $model->attributes = $_POST['ContractList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['criteria_a07']) && !empty($session['criteria_a07'])) {
-                $criteria = $session['criteria_a07'];
+            if (isset($session['contract_01']) && !empty($session['contract_01'])) {
+                $criteria = $session['contract_01'];
                 $model->setCriteria($criteria);
             }
         }

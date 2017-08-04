@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Employee';
+$this->pageTitle=Yii::app()->name . ' - Employ';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-    'id'=>'employee-list',
+    'id'=>'employ-list',
     'enableClientValidation'=>true,
     'clientOptions'=>array('validateOnSubmit'=>true,),
     'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee';
 
 <section class="content-header">
     <h1>
-        <strong><?php Yii::t('app','Employee Info'); ?></strong>
+        <strong><?php Yii::t('app','Employ Info'); ?></strong>
     </h1>
     <!--
         <ol class="breadcrumb">
@@ -23,6 +23,17 @@ $this->pageTitle=Yii::app()->name . ' - Employee';
 </section>
 
 <section class="content">
+    <div class="box"><div class="box-body">
+            <div class="btn-group" role="group">
+                <?php
+                //var_dump(Yii::app()->session['rw_func']);
+                if (Yii::app()->user->validRWFunction('ZE01'))
+                    echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('contract','Add Employee'), array(
+                        'submit'=>Yii::app()->createUrl('employ/new'),
+                    ));
+                ?>
+            </div>
+        </div></div>
     <?php
     $search = array(
         'code',
@@ -32,10 +43,10 @@ $this->pageTitle=Yii::app()->name . ' - Employee';
     );
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
    $this->widget('ext.layout.ListPageWidget', array(
-        'title'=>Yii::t('contract','Employee List'),
+        'title'=>Yii::t('contract','Employ List'),
         'model'=>$model,
-        'viewhdr'=>'//employee/_listhdr',
-        'viewdtl'=>'//employee/_listdtl',
+        'viewhdr'=>'//employ/_listhdr',
+        'viewdtl'=>'//employ/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,

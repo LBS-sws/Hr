@@ -15,8 +15,8 @@ class WordController extends Controller
             $model->attributes = $_POST['WordList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['criteria_a07']) && !empty($session['criteria_a07'])) {
-                $criteria = $session['criteria_a07'];
+            if (isset($session['word_01']) && !empty($session['word_01'])) {
+                $criteria = $session['word_01'];
                 $model->setCriteria($criteria);
             }
         }

@@ -15,8 +15,8 @@ class EmployeeController extends Controller
             $model->attributes = $_POST['EmployeeList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['criteria_a07']) && !empty($session['criteria_a07'])) {
-                $criteria = $session['criteria_a07'];
+            if (isset($session['employee_01']) && !empty($session['employee_01'])) {
+                $criteria = $session['employee_01'];
                 $model->setCriteria($criteria);
             }
         }
@@ -74,14 +74,6 @@ class EmployeeController extends Controller
         }
     }
 
-    //生成合同
-    public function actionTest(){
-        $aaa = date("Y",strtotime("2017-7-6 11:59:46"));
-        var_dump($aaa);
-        //$this->_objZip->addFromString('word/document.xml', $this->_documentXML);
-        //file_put_contents(Yii::app()->basePath."/../upload/staff/shen.docx",$wordXml);
-    }
-
     //下載合同
 
     public function actionDownfile($index)
@@ -99,7 +91,18 @@ class EmployeeController extends Controller
 
     }
 
-    //刪除員工
+    //變更合同
+    public function actionChanges($index){
+        echo "沒有變更合同的功能文檔，無法開發";
+    }
+
+    //員工離職
+    public function actionDeparture($index){
+        echo "沒有員工離職的功能文檔，無法開發";
+    }
+
+
+/*    //刪除員工
     public function actionDelete(){
         $model = new EmployeeForm('delete');
         if (isset($_POST['EmployeeForm'])) {
@@ -108,5 +111,5 @@ class EmployeeController extends Controller
             Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
         }
         $this->redirect(Yii::app()->createUrl('employee/index'));
-    }
+    }*/
 }

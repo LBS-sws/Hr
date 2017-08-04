@@ -71,7 +71,10 @@ return array(
 
     'Company Info'=>'公司資料',
 
-    'Employee Info'=>'员工资料',
+    'Employee'=>'員工',
+    'Employee Info'=>'員工錄入',
+    'Employee List'=>'員工列表',
+    'Employee Audit'=>'審核員工資料',
     //沈超添加结束
 );
 ?>

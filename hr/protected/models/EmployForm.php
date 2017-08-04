@@ -5,7 +5,7 @@
  * UserForm is the data structure for keeping
  * user form data. It is used by the 'user' action of 'SiteController'.
  */
-class EmployeeForm extends CFormModel
+class EmployForm extends CFormModel
 {
 	/* User Fields */
 	public $id;
@@ -14,12 +14,12 @@ class EmployeeForm extends CFormModel
 	public $code;
     public $sex;
 	public $company_id;
-    public $address;
-    public $address_code;
-    public $contact_address;
-    public $contact_address_code;
+	public $address;
+	public $address_code;
+	public $contact_address;
+	public $contact_address_code;
 	public $phone;
-    public $phone2;//緊急電話
+	public $phone2;//緊急電話
 	public $contract_id;
 	public $user_card;
 	public $department;
@@ -34,29 +34,30 @@ class EmployeeForm extends CFormModel
 	public $word_status=1;
 	public $test_type=1;
 	public $word_html="";
-    public $staff_status = 1;
-    public $entry_time;//入職時間
-    public $birth_time;//出生日期
-    public $age;//年齡
-    public $health;//身體狀況
-    public $education;//學歷
-    public $experience;//工作經驗
-    public $english;//外語水平
-    public $technology;//技術水平
-    public $other;//其它說明
-    public $year_day;//年假
-    public $email;//員工郵箱
-    public $remark;//備註
-    public $price1;//每月工資
-    public $price2;//加班工資
-    public $price3;//每月補貼
-    public $image_user;//員工照片
-    public $image_code;//身份證照片
-    public $image_work;//工作證明照片
-    public $image_other;//其它照片
-    public $ld_card;//勞動保障卡號
-    public $sb_card;//社保卡號
-    public $jj_card;//公積金卡號
+	public $staff_status = 1;
+	public $entry_time;//入職時間
+	public $birth_time;//出生日期
+	public $age;//年齡
+	public $health;//身體狀況
+	public $education;//學歷
+	public $experience;//工作經驗
+	public $english;//外語水平
+	public $technology;//技術水平
+	public $other;//其它說明
+	public $year_day;//年假
+	public $email;//員工郵箱
+	public $remark;//備註
+	public $price1;//每月工資
+	public $price2;//加班工資
+	public $price3;//每月補貼
+	public $image_user;//員工照片
+	public $image_code;//身份證照片
+	public $image_work;//工作證明照片
+	public $image_other;//其它照片
+	public $ject_remark;//拒絕原因
+	public $ld_card;//勞動保障卡號
+	public $sb_card;//社保卡號
+	public $jj_card;//公積金卡號
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -65,16 +66,16 @@ class EmployeeForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-            'id'=>Yii::t('staff','Record ID'),
-            'code'=>Yii::t('contract','Employee Code'),
-            'sex'=>Yii::t('contract','Sex'),
-            'age'=>Yii::t('contract','Age'),
-            'birth_time'=>Yii::t('contract','Birth Date'),
-            'name'=>Yii::t('contract','Employee Name'),
-            'company_id'=>Yii::t('contract','Employee Belong'),
-            'contract_id'=>Yii::t('contract','Employee Contract'),
-            'address'=>Yii::t('contract','Address'),
-            'contact_address'=>Yii::t('contract','Contact Address'),
+			'id'=>Yii::t('staff','Record ID'),
+			'code'=>Yii::t('contract','Employee Code'),
+			'sex'=>Yii::t('contract','Sex'),
+			'age'=>Yii::t('contract','Age'),
+			'birth_time'=>Yii::t('contract','Birth Date'),
+			'name'=>Yii::t('contract','Employee Name'),
+			'company_id'=>Yii::t('contract','Employee Belong'),
+			'contract_id'=>Yii::t('contract','Employee Contract'),
+			'address'=>Yii::t('contract','Address'),
+			'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
             'user_card'=>Yii::t('contract','ID Card'),
@@ -106,6 +107,7 @@ class EmployeeForm extends CFormModel
             'image_code'=>Yii::t('contract','Id photo'),
             'image_work'=>Yii::t('contract','Work photo'),
             'image_other'=>Yii::t('contract','Other photo'),
+            'ject_remark'=>Yii::t('contract','Rejected Remark'),
             'ld_card'=>Yii::t('contract','Labor security card'),
             'sb_card'=>Yii::t('contract','Social security card'),
             'jj_card'=>Yii::t('contract','Accumulation fund card'),
@@ -113,6 +115,7 @@ class EmployeeForm extends CFormModel
 	}
 
 	/**
+     *
 	 * Declares the validation rules.
 	 */
 	public function rules()
@@ -120,10 +123,10 @@ class EmployeeForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
-             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
-             ld_card, sb_card, jj_card,
+             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
+			array('entry_time','required'),
 			array('code','required'),
 			array('name','required'),
 			array('code','validateCode'),
@@ -213,11 +216,7 @@ class EmployeeForm extends CFormModel
             return false;
         }else{
             try{
-                $bool = true;
-                if ($staff["staff"]["test_type"] != 1){
-                    $bool = false;//無試用期
-                }
-                $word = new Template($staff["word"],$bool);
+                $word = new Template($staff["word"]);
 
                 $word->setValue("city",$staff["company"]["city"]);
                 $word->setValue("companyname",$staff["company"]["name"]);
@@ -306,11 +305,11 @@ class EmployeeForm extends CFormModel
 		{
 			foreach ($rows as $row)
 			{
-                $this->id = $row['id'];
-                $this->code = $row['code'];
-                $this->name = $row['name'];
-                $this->sex = $row['sex'];
-                $this->company_id = $row['company_id'];
+				$this->id = $row['id'];
+				$this->code = $row['code'];
+				$this->name = $row['name'];
+				$this->sex = $row['sex'];
+				$this->company_id = $row['company_id'];
                 $this->contract_id = $row['contract_id'];
                 $this->address = $row['address'];
                 $this->contact_address = $row['contact_address'];
@@ -350,9 +349,7 @@ class EmployeeForm extends CFormModel
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
                 $this->image_other = $row['image_other'];
-                $this->ld_card = $row['ld_card'];
-                $this->sb_card = $row['sb_card'];
-                $this->jj_card = $row['jj_card'];
+                $this->ject_remark = $row['ject_remark'];
 				break;
 			}
 		}
@@ -367,26 +364,39 @@ class EmployeeForm extends CFormModel
 			$this->saveStaff($connection);
 			$transaction->commit();
 		}catch(Exception $e) {
-		    var_dump($e->getMessage());
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
 		}
 	}
 
+
 	protected function saveStaff(&$connection)
 	{
 		$sql = '';
+		$audit= false;
         $city = Yii::app()->user->city();
         $uid = Yii::app()->user->id;
+        if($this->scenario == "audit"){
+            if(empty($this->id)){
+                $this->scenario = "new";
+            }else{
+                $this->scenario = "edit";
+            }
+            $audit = true;
+        }
 		switch ($this->scenario) {
 			case 'delete':
                 $sql = "delete from hr_employee where id = :id and city = :city";
 				break;
 			case 'new':
 				$sql = "insert into hr_employee(
-							name, code, sex, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time, test_wage, lcu, lcd
+							name, code, sex, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
+							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,
+							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,lcu, lcd
 						) values (
-							:name, :code, :sex, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time, :test_wage, :lcu, :lcd
+							:name, :code, :sex, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
+							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,
+							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:lcu, :lcd
 						)";
 				break;
 			case 'edit':
@@ -409,6 +419,27 @@ class EmployeeForm extends CFormModel
 							test_end_time = :test_end_time,
 							test_start_time = :test_start_time,
 							test_wage = :test_wage,
+							entry_time = :entry_time,
+							birth_time = :birth_time,
+							phone2 = :phone2,
+							address_code = :address_code,
+							contact_address_code = :contact_address_code,
+							age = :age,
+							health = :health,
+							education = :education,
+							experience = :experience,
+							english = :english,
+							technology = :technology,
+							other = :other,
+							email = :email,
+							remark = :remark,
+							price1 = :price1,
+							price2 = :price2,
+							price3 = :price3,
+							image_user = :image_user,
+							image_code = :image_code,
+							image_work = :image_work,
+							image_other = :image_other,
 							lud = :lud,
 							luu = :luu 
 						where id = :id
@@ -461,6 +492,51 @@ class EmployeeForm extends CFormModel
 		if (strpos($sql,':test_wage')!==false)
 			$command->bindParam(':test_wage',$this->test_wage,PDO::PARAM_INT);
 
+		if (strpos($sql,':phone2')!==false)
+			$command->bindParam(':phone2',$this->phone2,PDO::PARAM_STR);
+		if (strpos($sql,':address_code')!==false)
+			$command->bindParam(':address_code',$this->address_code,PDO::PARAM_STR);
+		if (strpos($sql,':contact_address_code')!==false)
+			$command->bindParam(':contact_address_code',$this->contact_address_code,PDO::PARAM_STR);
+		if (strpos($sql,':entry_time')!==false)
+			$command->bindParam(':entry_time',$this->entry_time,PDO::PARAM_STR);
+		if (strpos($sql,':birth_time')!==false)
+			$command->bindParam(':birth_time',$this->birth_time,PDO::PARAM_STR);
+		if (strpos($sql,':age')!==false)
+			$command->bindParam(':age',$this->age,PDO::PARAM_STR);
+		if (strpos($sql,':health')!==false)
+			$command->bindParam(':health',$this->health,PDO::PARAM_STR);
+		if (strpos($sql,':education')!==false)
+			$command->bindParam(':education',$this->education,PDO::PARAM_STR);
+		if (strpos($sql,':experience')!==false)
+			$command->bindParam(':experience',$this->experience,PDO::PARAM_STR);
+		if (strpos($sql,':english')!==false)
+			$command->bindParam(':english',$this->english,PDO::PARAM_STR);
+		if (strpos($sql,':technology')!==false)
+			$command->bindParam(':technology',$this->technology,PDO::PARAM_STR);
+		if (strpos($sql,':other')!==false)
+			$command->bindParam(':other',$this->other,PDO::PARAM_STR);
+		if (strpos($sql,':year_day')!==false)
+			$command->bindParam(':year_day',$this->year_day,PDO::PARAM_STR);
+		if (strpos($sql,':email')!==false)
+			$command->bindParam(':email',$this->email,PDO::PARAM_STR);
+		if (strpos($sql,':remark')!==false)
+			$command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
+		if (strpos($sql,':price1')!==false)
+			$command->bindParam(':price1',$this->price1,PDO::PARAM_STR);
+		if (strpos($sql,':price2')!==false)
+			$command->bindParam(':price2',$this->price2,PDO::PARAM_STR);
+		if (strpos($sql,':price3')!==false)
+			$command->bindParam(':price3',$this->price3,PDO::PARAM_STR);
+		if (strpos($sql,':image_user')!==false)
+			$command->bindParam(':image_user',$this->image_user,PDO::PARAM_STR);
+		if (strpos($sql,':image_code')!==false)
+			$command->bindParam(':image_code',$this->image_code,PDO::PARAM_STR);
+		if (strpos($sql,':image_other')!==false)
+			$command->bindParam(':image_other',$this->image_other,PDO::PARAM_STR);
+		if (strpos($sql,':image_work')!==false)
+			$command->bindParam(':image_work',$this->image_work,PDO::PARAM_STR);
+
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
@@ -472,13 +548,18 @@ class EmployeeForm extends CFormModel
 		if (strpos($sql,':lud')!==false)
 			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
 
-        var_dump($this->user_card);
         //die();
 		$command->execute();
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
             $this->scenario = "edit";
+        }
+        //審核
+        if($audit){
+            Yii::app()->db->createCommand()->update('hr_employee', array(
+                'staff_status'=>2
+            ), 'id=:id', array(':id'=>$this->id));
         }
         return true;
 	}

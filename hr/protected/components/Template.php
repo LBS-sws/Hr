@@ -63,7 +63,7 @@ class Template {
      * 
      * @param string $strFilename
      */
-    public function __construct($arr) {
+    public function __construct($arr,$strike_bool=true) {
         $path = Yii::app()->basePath."/../upload/staff/";
         if (!file_exists($path)){
             mkdir ($path);
@@ -84,16 +84,41 @@ class Template {
         $this->_documentXML = explode('<w:body>',$this->_documentXML,2)[0];
         $this->_documentXML.="<w:body>";
         foreach ($arr as $key => $value){
+            $bool = false;
             $objZip = new ZipArchive();
             $xml = new DomDocument();
             $url = Yii::app()->basePath."/../".$value;
 
             $objZip->open($url);
             $documentXML = $objZip->getFromName('word/document.xml');
-
-            $xml->loadXML($documentXML);
+//（以上二删一）
+            $xmlObj = $xml->loadXML($documentXML);
             $timedom = $xml->getElementsByTagName("body");
             $timedom = $timedom->item(0);
+            if (strpos($documentXML,'（以上二删一）')!==false){
+                $tdList = $timedom->getElementsByTagName("tc");
+                for($i = 0;$i<$tdList->length;$i++){
+                    $td = $tdList->item($i);
+                    if(strpos($td->textContent,'无试用期。')!==false){
+                        $pList = $td->getElementsByTagName("p");
+                        for($j= 0;$j<$pList->length;$j++){
+                            $pObj = $pList->item($j);
+                            if(strpos($pObj->textContent,'无试用期。')!==false){
+                                /*添加下滑線*/
+                                if(!$strike_bool){
+                                    $pObj = $pList->item($j-1);
+                                }
+                                foreach ($pObj->childNodes as $rList){
+                                    if($rList->tagName == "w:r"){
+                                        $newel=$xml->createElement('w:strike');
+                                        $rList->firstChild->appendChild($newel);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             if($key != 0){
                 $this->_documentXML.='<w:br w:type="page"></w:br>';
             }
@@ -107,7 +132,8 @@ class Template {
         $this->_documentXML.="</w:body></w:document>";
         //rsidRDefault
     }
-    
+
+
     /**
      * Set a Template value
      * 

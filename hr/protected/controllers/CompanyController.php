@@ -15,8 +15,8 @@ class CompanyController extends Controller
             $model->attributes = $_POST['CompanyList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['criteria_a07']) && !empty($session['criteria_a07'])) {
-                $criteria = $session['criteria_a07'];
+            if (isset($session['company_01']) && !empty($session['company_01'])) {
+                $criteria = $session['company_01'];
                 $model->setCriteria($criteria);
             }
         }
