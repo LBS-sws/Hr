@@ -110,7 +110,16 @@ class EmployController extends Controller
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
             $model = new UploadImgForm();
             $img = CUploadedFile::getInstance($model,'file');
-            $url = "upload/".date("YmdHsi").".".$img->getExtensionName();
+            $city = Yii::app()->user->city();
+            $path =Yii::app()->basePath."/../upload/images/";
+            if (!file_exists($path)){
+                mkdir($path);
+            }
+            $path.=$city."/";
+            if (!file_exists($path)){
+                mkdir($path);
+            }
+            $url = "upload/images/".$city."/".date("YmdHsi").".".$img->getExtensionName();
             $model->file = $img->getName();
             if ($model->file && $model->validate()) {
                 $img->saveAs($url);
