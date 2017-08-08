@@ -253,12 +253,16 @@ class EmployeeForm extends CFormModel
                 $word->setValue("stafftestwage",$staff["staff"]["test_wage"]);
                 $word->save($staff["staff"]["code"]);
                 //合同的地址格式：upload/staff/所在地區/員工編號.docx
+                $wordUrl = "upload/staff/".$staff["staff"]["city"]."/".$staff["staff"]["code"].".docx";
                 Yii::app()->db->createCommand()->update('hr_employee', array(
                     'word_status'=>1,
-                    'word_url'=>"upload/staff/".$staff["staff"]["city"]."/".$staff["staff"]["code"].".docx"
+                    'word_url'=>$wordUrl
                 ), 'id=:id', array(':id'=>$employee_id));
 
-                return true;
+                return array(
+                    "word_url"=>$wordUrl,
+                    "name"=>$staff["staff"]["name"]
+                );
             }catch (Exception $e){
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Error:Word Error , Not Font Word'));
                 return false;

@@ -78,7 +78,7 @@ class EmployeeController extends Controller
 
     public function actionDownfile($index)
     {
-        $url = EmployeeForm::getEmployeeOneToId($index);
+        $url = EmployeeForm::updateEmployeeWord($index);
         if($url){
             $file = Yii::app()->basePath."/../".$url["word_url"];
             header("Content-type: application/octet-stream");

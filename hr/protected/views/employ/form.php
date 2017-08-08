@@ -33,7 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 		?>
         <?php
             if($model->scenario!='view'){
-                if($model->staff_status == 1){
+                if($model->staff_status == 1 || $model->staff_status == 3){
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                         'submit'=>Yii::app()->createUrl('employ/audit')));
                 }
@@ -56,18 +56,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 
 <?php if ($model->scenario!='new'): ?>
 	<div class="btn-group pull-right" role="group">
-        <?php
-            if($model->scenario != 'view'){
-                if($model->word_status == 0){
-                    $btnText = Yii::t('contract','Generate Contract');
-                }else{
-                    $btnText = Yii::t('contract','Renewal Contract');
-                }
-                echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.$btnText, array(
-                    'submit'=>Yii::app()->createUrl('employ/generate?index='.$model->id)));
-            }else{}
-        ?>
-    <?php if ($model->word_status == 1): ?>
+    <?php if ($model->staff_status == 4): ?>
             <?php echo TbHtml::button('<span class="fa fa-eye"></span> '.Yii::t('contract','Down'),array(
                 'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
             ?>
@@ -123,7 +112,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 				<?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'code',
-						array('size'=>20,'maxlength'=>20,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+						array('size'=>20,'maxlength'=>20,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
 					); ?>
 				</div>
 				<?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label")); ?>
@@ -133,7 +122,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'entry_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
                         ?>
                     </div>
 				</div>
@@ -143,14 +132,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'name',
-                        array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'sex',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'sex',
-                        array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
 			</div>
@@ -162,7 +151,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'birth_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
                         ?>
                     </div>
                 </div>
@@ -170,7 +159,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'age',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->numberField($model, 'age',
-                        array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
 			</div>
@@ -179,14 +168,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 				<?php echo $form->labelEx($model,'company_id',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->dropDownList($model, 'company_id',$model->getCompanyToCity(),
-						array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+						array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
 					); ?>
 				</div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'contract_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'contract_id',$model->getContractToCity(),
-                        array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
 			</div>
@@ -196,13 +185,13 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textField($model, 'address',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <label class="pull-left control-label"><?php echo Yii::t("contract","postcode");?></label>
                 <div class="col-sm-2">
                     <?php echo $form->textField($model, 'address_code',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -210,13 +199,13 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'contact_address',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textField($model, 'contact_address',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <label class="pull-left control-label"><?php echo Yii::t("contract","postcode");?></label>
                 <div class="col-sm-2">
                     <?php echo $form->textField($model, 'contact_address_code',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -224,14 +213,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'phone',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'phone',
-                        array('size'=>18,'maxlength'=>18,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('size'=>18,'maxlength'=>18,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'phone2',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'phone2',
-                        array('size'=>18,'maxlength'=>18,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('size'=>18,'maxlength'=>18,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -239,14 +228,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'user_card',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'user_card',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'health',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'health',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -254,14 +243,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'department',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'position',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'position',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -269,14 +258,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->numberField($model, 'wage',
-                        array('min'=>0,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('min'=>0,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'year_day',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'year_day',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -288,7 +277,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'start_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
                         ?>
                     </div>
                 </div>
@@ -299,7 +288,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'end_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
                         ?>
                     </div>
                 </div>
@@ -311,7 +300,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     <?php echo $form->dropDownList($model, 'test_type',array(
                             "1"=>Yii::t("contract","Have probation period"),
                             "0"=>Yii::t("contract","No probation period")
-                        ),array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+                        ),array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -324,7 +313,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                                 <i class="fa fa-calendar"></i>
                             </div>
                             <?php echo $form->textField($model, 'test_start_time',
-                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
                             ?>
                         </div>
                     </div>
@@ -335,7 +324,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                                 <i class="fa fa-calendar"></i>
                             </div>
                             <?php echo $form->textField($model, 'test_end_time',
-                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
                             ?>
                         </div>
                     </div>
@@ -344,7 +333,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     <?php echo $form->labelEx($model,'test_wage',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
                         <?php echo $form->numberField($model, 'test_wage',
-                            array('min'=>0,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                            array('min'=>0,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                         ); ?>
                     </div>
                 </div>
@@ -355,14 +344,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'education',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'education',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'experience',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'experience',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -370,7 +359,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'email',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -380,13 +369,13 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     <?php
                     if(!empty($model->image_user)){
                         echo $form->fileField($model, 'image_user',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_user."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_user',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control")
                         );
                     }
                     ?>
@@ -398,13 +387,13 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     <?php
                     if(!empty($model->image_code)){
                         echo $form->fileField($model, 'image_code',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_code."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_code',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control")
                         );
                     }
                     ?>
@@ -416,13 +405,13 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     <?php
                     if(!empty($model->image_work)){
                         echo $form->fileField($model, 'image_work',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_work."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_work',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control")
                         );
                     }
                     ?>
@@ -434,13 +423,13 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     <?php
                     if(!empty($model->image_other)){
                         echo $form->fileField($model, 'image_other',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control hide")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control hide")
                         );
                         echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_other."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
                     }else{
                         echo $form->fileField($model, 'image_other',
-                            array('readonly'=>($model->scenario=='view'||$model->staff_status != 1),"class"=>"file-update form-control")
+                            array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"file-update form-control")
                         );
                     }
                     ?>
@@ -450,7 +439,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'english',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'english',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -458,7 +447,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'technology',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'technology',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -466,7 +455,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'other',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'other',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -475,14 +464,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'price1',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'price1',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'price2',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'price2',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -490,7 +479,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'price3',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'price3',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
@@ -499,7 +488,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'remark',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>

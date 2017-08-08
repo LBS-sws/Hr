@@ -47,22 +47,11 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 
 <?php if ($model->scenario!='new'): ?>
 	<div class="btn-group pull-right" role="group">
-        <?php
-            if($model->scenario != 'view'){
-                if($model->word_status == 0){
-                    $btnText = Yii::t('contract','Generate Contract');
-                }else{
-                    $btnText = Yii::t('contract','Renewal Contract');
-                }
-                echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.$btnText, array(
-                    'submit'=>Yii::app()->createUrl('audit/generate?index='.$model->id)));
-            }else{}
-        ?>
-    <?php if ($model->word_status == 1): ?>
+        <?php if ($model->staff_status == 4): ?>
             <?php echo TbHtml::button('<span class="fa fa-eye"></span> '.Yii::t('contract','Down'),array(
                 'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
             ?>
-    <?php endif; ?>
+        <?php endif; ?>
 	</div>
 <?php endif; ?>
 	</div></div>
