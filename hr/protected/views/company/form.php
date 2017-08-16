@@ -45,6 +45,13 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
             <?php endif; ?>
         <?php endif ?>
 	</div>
+            <?php if ($model->scenario!='view' && $model->tacitly == 0): ?>
+            <div class="btn-group pull-right">
+                <?php echo TbHtml::button('<span class="fa fa-fire"></span> '.Yii::t('contract','Set Tacitly'), array(
+                    'submit'=>Yii::app()->createUrl('company/tacitly',array("index"=>$model->id))));
+                ?>
+            </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -52,6 +59,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
+			<?php echo $form->hiddenField($model, 'tacitly'); ?>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
@@ -63,19 +71,19 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 			</div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'head',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<?php echo $form->textField($model, 'head',
-						array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'))
-					); ?>
-				</div>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'head',$model->getUserList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
 			</div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'agent',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<?php echo $form->textField($model, 'agent',
-						array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'))
-					); ?>
-				</div>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'agent',$model->getUserList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
 			</div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>

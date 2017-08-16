@@ -15,6 +15,7 @@ class CompanyList extends CListPageModel
 			'name'=>Yii::t('contract','Company Name'),
 			'head'=>Yii::t('contract','Head'),
 			'agent'=>Yii::t('contract','Agent'),
+			'tacitly'=>Yii::t('contract','Status'),
 		);
 	}
 
@@ -60,13 +61,15 @@ class CompanyList extends CListPageModel
 		
 		$list = array();
 		$this->attr = array();
+		$userList = CompanyForm::getUserList();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
-					'head'=>$record['head'],
-					'agent'=>$record['agent']
+					'head'=>empty($userList[$record['head']])?"":$userList[$record['head']],
+					'tacitly'=>$record['tacitly'],
+					'agent'=>empty($userList[$record['agent']])?"":$userList[$record['agent']]
 				);
 			}
 		}

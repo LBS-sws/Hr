@@ -15,6 +15,7 @@ class CompanyForm extends CFormModel
 	public $agent;
 	public $address;
 	public $phone;
+	public $tacitly;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -39,7 +40,7 @@ class CompanyForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, head, agent, address, phone','safe'),
+            array('id, name, head, agent, address, phone, tacitly','safe'),
 			array('name','required'),
 			array('name','validateName'),
 			array('head','required'),
@@ -49,13 +50,27 @@ class CompanyForm extends CFormModel
 	}
 
 	public function validateName($attribute, $params){
+        $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
-            ->where('id!=:id and name=:name ', array(':id'=>$this->id,':name'=>$this->name))->queryAll();
+            ->where('id!=:id and name=:name and city=:city ', array(':id'=>$this->id,':name'=>$this->name,':city'=>$city))->queryAll();
         if (count($rows) > 0){
             $message = Yii::t('contract','Company Name'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
         }
     }
+    //獲取用戶表的所有用戶(相同城市)
+	public function getUserList(){
+        $city = Yii::app()->user->city();
+        $suffix = Yii::app()->params['envSuffix'];
+        $from = "security".$suffix.".sec_user";
+        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city=:city",array(":city"=>$city))->queryAll();
+        $arr = array(""=>"");
+        foreach ($rows as $row){
+            $arr[$row["username"]] = $row["disp_name"];
+        }
+        return $arr;
+    }
+
     //根據公司id獲取公司信息
 	public function getCompanyToId($company_id){
 	    $arr=array("name"=>"");
@@ -93,6 +108,7 @@ class CompanyForm extends CFormModel
                 $this->address = $row['address'];
                 $this->phone = $row['phone'];
                 $this->city = $row['city'];
+                $this->tacitly = $row['tacitly'];
 				break;
 			}
 		}

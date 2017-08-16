@@ -124,5 +124,9 @@ return array(
     'departure'=>'离职',
     'Staff Changes'=>'合同变更',
     'Staff Departure'=>'离职',
+
+    //後期修改
+    'Set Tacitly'=>'设为默认公司',
+    'Tacitly Company'=>'默认公司',
 );
 ?>

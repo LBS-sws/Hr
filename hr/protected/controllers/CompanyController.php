@@ -60,6 +60,21 @@ class CompanyController extends Controller
         }
     }
 
+    //設置默認公司
+    public function actionTacitly($index)
+    {
+        $model = new CompanyForm('edit');
+        if (!$model->retrieveData($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            Yii::app()->db->createCommand()->update('hr_company', array('tacitly'=>0));
+            $rs = Yii::app()->db->createCommand()->update('hr_company', array(
+                'tacitly'=>1
+            ), 'id=:id', array(':id'=>$index));
+            $this->redirect(Yii::app()->createUrl('company/index'));
+        }
+    }
+
     //刪除公司
     public function actionDelete(){
         $model = new CompanyForm('delete');

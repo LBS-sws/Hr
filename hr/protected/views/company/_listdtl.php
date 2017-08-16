@@ -8,4 +8,13 @@
     <td><?php echo $this->record['name']; ?></td>
     <td><?php echo $this->record['head']; ?></td>
 	<td><?php echo $this->record['agent']; ?></td>
+	<td>
+        <?php
+        if ($this->record['tacitly'] == 1){
+            echo Yii::t("contract","Tacitly Company");
+        }else{
+            echo "&nbsp;";
+        }
+        ?>
+    </td>
 </tr>

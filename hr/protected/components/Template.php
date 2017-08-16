@@ -123,7 +123,7 @@ class Template {
                 $this->_documentXML.='<w:br w:type="page"></w:br>';
             }
             foreach ($timedom->childNodes as $dom){
-                if($dom->tagName!="w:sectPr" || $key == count($arr)-1){
+                if($dom->tagName!="w:sectPr"){
                     $this->_documentXML.=$dom->ownerDocument->saveXML($dom);
                 }
             }
