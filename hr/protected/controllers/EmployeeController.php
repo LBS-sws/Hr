@@ -81,6 +81,10 @@ class EmployeeController extends Controller
         $url = EmployeeForm::updateEmployeeWord($index);
         if($url){
             $file = Yii::app()->basePath."/../".$url["word_url"];
+			// To prevent corrupted zip - Percy
+			ob_clean();
+			ob_end_flush();
+			//
             header("Content-type: application/octet-stream");
             header('Content-Disposition: attachment; filename='.$url["name"].'.docx');
             header("Content-Length: ". filesize($file));

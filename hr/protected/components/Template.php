@@ -83,6 +83,7 @@ class Template {
         $this->_documentXML = $this->_objZip->getFromName('word/document.xml');
         $this->_documentXML = explode('<w:body>',$this->_documentXML,2)[0];
         $this->_documentXML.="<w:body>";
+		$section = '';
         foreach ($arr as $key => $value){
             $bool = false;
             $objZip = new ZipArchive();
@@ -120,16 +121,19 @@ class Template {
                 }
             }
             if($key != 0){
-                $this->_documentXML.='<w:br w:type="page"></w:br>';
-            }
+                $this->_documentXML.='<w:p><w:r><w:br w:type="page" /></w:r></w:p>';
+            } 
             foreach ($timedom->childNodes as $dom){
                 if($dom->tagName!="w:sectPr"){
                     $this->_documentXML.=$dom->ownerDocument->saveXML($dom);
-                }
+                } else {
+					if ($key==0) $section=$dom->ownerDocument->saveXML($dom);
+				}
             }
+			
             $objZip->close();
         }
-        $this->_documentXML.="</w:body></w:document>";
+        $this->_documentXML.=$section."</w:body></w:document>";
         //rsidRDefault
     }
 
