@@ -1,7 +1,7 @@
-<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('ZE02', 'audit/edit', 'audit/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('ZG01', 'audit/edit', 'audit/view', array('index'=>$this->record['id']));?>'>
 
 
-	<td><?php echo $this->needHrefButton('ZE02', 'audit/edit', 'edit', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->needHrefButton('ZG01', 'audit/edit', 'edit', array('index'=>$this->record['id'])); ?></td>
 
 
 

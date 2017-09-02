@@ -14,7 +14,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
 
 <section class="content-header">
     <h1>
-        <strong><?php echo Yii::t('contract','Employee Form'); ?></strong>
+        <strong><?php echo Yii::t('contract','Employee Info'); ?></strong>
     </h1>
     <!--
         <ol class="breadcrumb">
@@ -31,34 +31,33 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
                     'submit'=>Yii::app()->createUrl('employee/index')));
                 ?>
+                <?php echo TbHtml::button('<span class="fa fa-pencil"></span> '.Yii::t('contract','Update'), array(
+                    'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"update"))));
+                ?>
                 <?php echo TbHtml::button('<span class="fa fa-coffee"></span> '.Yii::t('contract','Staff Changes'), array(
-                    'submit'=>Yii::app()->createUrl('employee/changes',array("index"=>$model->id))));
+                    'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"change"))));
                 ?>
                 <?php echo TbHtml::button('<span class="fa fa-user-times"></span> '.Yii::t('contract','Staff Departure'), array(
-                    'submit'=>Yii::app()->createUrl('employee/departure',array("index"=>$model->id))));
+                    'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"departure"))));
                 ?>
             </div>
 
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
-                    <?php
-                    if($model->scenario != 'view'){
-                        if($model->word_status == 0){
-                            $btnText = Yii::t('contract','Generate Contract');
-                        }else{
-                            $btnText = Yii::t('contract','Renewal Contract');
-                        }
-                        echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.$btnText, array(
-                            'submit'=>Yii::app()->createUrl('employee/generate?index='.$model->id)));
-                    }else{}
-                    ?>
                     <?php if ($model->word_status == 1): ?>
-                        <?php echo TbHtml::button('<span class="fa fa-eye"></span> '.Yii::t('contract','Down'),array(
+                        <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Down'),array(
                             'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
                         ?>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
+            <div class="btn-group pull-right" role="group">
+                <?php if ($model->scenario!='new'){
+                    //流程
+                    echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
+                        'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
+                } ?>
+            </div>
         </div></div>
 
     <div class="box box-info">
@@ -482,7 +481,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
 </section>
 
 <?php
-$this->renderPartial('//site/removedialog');
+$this->renderPartial('//site/historylist',array('model'=>$model));
 ?>
 <?php
 /*if ($model->scenario!='new')

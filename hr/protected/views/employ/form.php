@@ -57,7 +57,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 <?php if ($model->scenario!='new'): ?>
 	<div class="btn-group pull-right" role="group">
     <?php if ($model->staff_status == 4): ?>
-            <?php echo TbHtml::button('<span class="fa fa-eye"></span> '.Yii::t('contract','Down'),array(
+            <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Down'),array(
                 'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
             ?>
     <?php endif; ?>
@@ -109,12 +109,15 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 </div>
             <?php endif; ?>
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<?php echo $form->textField($model, 'code',
-						array('size'=>20,'maxlength'=>20,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
-					); ?>
-				</div>
+                <?php if ($model->scenario!='new'): ?>
+                    <?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->textField($model, 'code',
+                            array('size'=>20,'maxlength'=>20,'readonly'=>true)
+                        ); ?>
+                    </div>
+                <?php endif; ?>
+
 				<?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
                     <div class="input-group">

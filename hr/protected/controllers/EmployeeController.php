@@ -53,6 +53,7 @@ class EmployeeController extends Controller
                 $this->redirect(Yii::app()->createUrl('employee/edit',array('index'=>$model->id)));
             } else {
                 $message = CHtml::errorSummary($model);
+                $model->historyList = AuditHistoryForm::getStaffHistoryList($model->id);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }
@@ -81,10 +82,10 @@ class EmployeeController extends Controller
         $url = EmployeeForm::updateEmployeeWord($index);
         if($url){
             $file = Yii::app()->basePath."/../".$url["word_url"];
-			// To prevent corrupted zip - Percy
-			ob_clean();
-			ob_end_flush();
-			//
+            // To prevent corrupted zip - Percy
+            ob_clean();
+            ob_end_flush();
+            //
             header("Content-type: application/octet-stream");
             header('Content-Disposition: attachment; filename='.$url["name"].'.docx');
             header("Content-Length: ". filesize($file));

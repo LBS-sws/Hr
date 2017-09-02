@@ -47,16 +47,37 @@ return array(
                 'access'=>'ZE01',
                 'url'=>'/employ/index',
             ),
-            //審核資料
-			'Employee Audit'=>array(
-				'access'=>'ZE02',
-				'url'=>'/audit/index',
-			),
-            //員工列表
-			'Employee List'=>array(
+            //在職員工列表
+			'Job Employee List'=>array(
 				'access'=>'ZE03',
 				'url'=>'/employee/index',
+			),
+            //離職員工列表
+            'Departure Employee List'=>array(
+                'access'=>'ZE02',
+                'url'=>'/departure/index',
+            ),
+            //員工變更列表
+			'Employee Update List'=>array(
+				'access'=>'ZE04',
+				'url'=>'/history/index',
 			)
+		),
+	),
+    //審核模塊
+	'Audit'=>array(
+		'access'=>'ZG',
+		'items'=>array(
+            //入職審核
+            'Employee Audit'=>array(
+                'access'=>'ZG01',
+                'url'=>'/audit/index',
+            ),
+            //變更審核
+			'Employee Update Audit'=>array(
+				'access'=>'ZG02',
+				'url'=>'/auditHistory/index',
+			),
 		),
 	),
 	'System Setting'=>array(

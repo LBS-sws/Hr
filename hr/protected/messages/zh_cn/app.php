@@ -73,7 +73,14 @@ return array(
     'Employee'=>'员工',
     'Employee Info'=>'员工录入',
     'Employee List'=>'员工列表',
-    'Employee Audit'=>'审核員工資料',
+    'Job Employee List'=>'在职员工列表',
+    'Departure Employee List'=>'离职员工列表',
+    'Employee Update List'=>'员工变更列表',
+
+    'Audit'=>'审核',
+    'History'=>'历史',
+    'Employee Audit'=>'员工入职审核',
+    'Employee Update Audit'=>'员工变更审核',
     //沈超添加结束
 );
 ?>

@@ -5,21 +5,22 @@
  * UserForm is the data structure for keeping
  * user form data. It is used by the 'user' action of 'SiteController'.
  */
-class AuditForm extends CFormModel
+class AuditHistoryForm extends CFormModel
 {
 	/* User Fields */
+	public $employee_id;
 	public $id;
 	public $name;
 	public $city;
 	public $code;
     public $sex;
 	public $company_id;
-	public $address;
-	public $address_code;
-	public $contact_address;
-	public $contact_address_code;
+    public $address;
+    public $address_code;
+    public $contact_address;
+    public $contact_address_code;
 	public $phone;
-	public $phone2;//緊急電話
+    public $phone2;//緊急電話
 	public $contract_id;
 	public $user_card;
 	public $department;
@@ -34,27 +35,33 @@ class AuditForm extends CFormModel
 	public $word_status=1;
 	public $test_type=1;
 	public $word_html="";
-	public $staff_status = 1;
-	public $entry_time;//入職時間
-	public $birth_time;//出生日期
-	public $age;//年齡
-	public $health;//身體狀況
-	public $education;//學歷
-	public $experience;//工作經驗
-	public $english;//外語水平
-	public $technology;//技術水平
-	public $other;//其它說明
-	public $year_day;//年假
-	public $email;//員工郵箱
-	public $remark;//備註
-	public $price1;//每月工資
-	public $price2;//加班工資
-	public $price3;//每月補貼
-	public $image_user;//員工照片
-	public $image_code;//身份證照片
-	public $image_work;//工作證明照片
-	public $image_other;//其它照片
-	public $ject_remark;//拒絕原因
+    public $staff_status = 1;
+    public $entry_time;//入職時間
+    public $birth_time;//出生日期
+    public $age;//年齡
+    public $health;//身體狀況
+    public $education;//學歷
+    public $experience;//工作經驗
+    public $english;//外語水平
+    public $technology;//技術水平
+    public $other;//其它說明
+    public $year_day;//年假
+    public $email;//員工郵箱
+    public $ject_remark;//拒絕備註
+    public $remark;//備註
+    public $price1;//每月工資
+    public $price2;//加班工資
+    public $price3;//每月補貼
+    public $image_user;//員工照片
+    public $image_code;//身份證照片
+    public $image_work;//工作證明照片
+    public $image_other;//其它照片
+    public $ld_card;//勞動保障卡號
+    public $sb_card;//社保卡號
+    public $jj_card;//公積金卡號
+    public $update_remark;//員工修改備註
+    public $operation;//員工修改備註
+    public $historyList;//員工歷史
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -63,16 +70,16 @@ class AuditForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-			'id'=>Yii::t('staff','Record ID'),
-			'code'=>Yii::t('contract','Employee Code'),
-			'sex'=>Yii::t('contract','Sex'),
-			'age'=>Yii::t('contract','Age'),
-			'birth_time'=>Yii::t('contract','Birth Date'),
-			'name'=>Yii::t('contract','Employee Name'),
-			'company_id'=>Yii::t('contract','Employee Belong'),
-			'contract_id'=>Yii::t('contract','Employee Contract'),
-			'address'=>Yii::t('contract','Address'),
-			'contact_address'=>Yii::t('contract','Contact Address'),
+            'id'=>Yii::t('staff','Record ID'),
+            'code'=>Yii::t('contract','Employee Code'),
+            'sex'=>Yii::t('contract','Sex'),
+            'age'=>Yii::t('contract','Age'),
+            'birth_time'=>Yii::t('contract','Birth Date'),
+            'name'=>Yii::t('contract','Employee Name'),
+            'company_id'=>Yii::t('contract','Employee Belong'),
+            'contract_id'=>Yii::t('contract','Employee Contract'),
+            'address'=>Yii::t('contract','Address'),
+            'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
             'user_card'=>Yii::t('contract','ID Card'),
@@ -104,20 +111,24 @@ class AuditForm extends CFormModel
             'image_code'=>Yii::t('contract','Id photo'),
             'image_work'=>Yii::t('contract','Work photo'),
             'image_other'=>Yii::t('contract','Other photo'),
+            'ld_card'=>Yii::t('contract','Labor security card'),
+            'sb_card'=>Yii::t('contract','Social security card'),
+            'jj_card'=>Yii::t('contract','Accumulation fund card'),
             'ject_remark'=>Yii::t('contract','Rejected Remark'),
+            'update_remark'=>Yii::t('contract',"Operation")."".Yii::t('contract','Remark'),
 		);
 	}
 
 	/**
-     *
 	 * Declares the validation rules.
 	 */
 	public function rules()
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
-             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,ject_remark,staff_status,
+            array('id,employee_id,ject_remark,operation,update_remark, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
+             ld_card, sb_card, jj_card,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('ject_remark','required',"on"=>"reject"),
@@ -137,6 +148,10 @@ class AuditForm extends CFormModel
         }
         return $arr;
     }
+    //自動變化表頭
+    public function setFormTitle(){
+        return Yii::t("app","Employee Update Audit");
+    }
     //獲取可用合同
     public function getContractToCity(){
 	    $arr = array(""=>"");
@@ -151,20 +166,44 @@ class AuditForm extends CFormModel
         return $arr;
     }
 
+    //獲取員工歷史
+    public function getStaffHistoryList($staff_id){
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_history")
+            ->where('employee_id=:id', array(':id'=>$staff_id))->order('id desc')->queryAll();
+        $staff = Yii::app()->db->createCommand()->select("code,name")->from("hr_employee")
+            ->where('id=:id', array(':id'=>$staff_id))->queryAll();
+        if ($rows){
+            foreach ($rows as $key => $row){
+                if($staff){
+                    $rows[$key]["code"] = $staff[0]["code"];
+                    $rows[$key]["name"] = $staff[0]["name"];
+                }else{
+                    $rows[$key]["code"] = "";
+                    $rows[$key]["name"] = "";
+                }
+            }
+        }else{
+            return "";
+        }
+        return $rows;
+    }
+
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
+            ->where('id=:id and finish != 1', array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
-				$this->id = $row['id'];
-				$this->code = $row['code'];
-				$this->name = $row['name'];
-				$this->sex = $row['sex'];
-				$this->company_id = $row['company_id'];
+                $this->id = $row['id'];
+                $this->employee_id = $row['employee_id'];
+                $this->update_remark = $row['update_remark'];
+                $this->code = $row['code'];
+                $this->name = $row['name'];
+                $this->sex = $row['sex'];
+                $this->company_id = $row['company_id'];
                 $this->contract_id = $row['contract_id'];
                 $this->address = $row['address'];
                 $this->contact_address = $row['contact_address'];
@@ -197,6 +236,7 @@ class AuditForm extends CFormModel
                 $this->year_day = $row['year_day'];
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
+                $this->ject_remark = $row['ject_remark'];
                 $this->price1 = $row['price1'];
                 $this->price2 = $row['price2'];
                 $this->price3 = $row['price3'];
@@ -204,7 +244,11 @@ class AuditForm extends CFormModel
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
                 $this->image_other = $row['image_other'];
-                $this->ject_remark = $row['ject_remark'];
+                $this->ld_card = $row['ld_card'];
+                $this->sb_card = $row['sb_card'];
+                $this->jj_card = $row['jj_card'];
+                $this->operation = $row['operation'];
+                $this->historyList = AuditHistoryForm::getStaffHistoryList($row["employee_id"]);
 				break;
 			}
 		}
@@ -213,63 +257,34 @@ class AuditForm extends CFormModel
 	
 	public function saveData()
 	{
-		$connection = Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->saveStaff($connection);
-			$transaction->commit();
-		}catch(Exception $e) {
-			$transaction->rollback();
-			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
-		}
-	}
-
-
-	protected function saveStaff(&$connection)
-	{
-		$sql = '';
-        $city = Yii::app()->user->city();
         $uid = Yii::app()->user->id;
-		switch ($this->scenario) {
-			case 'reject':
-				$sql = "update hr_employee set
-							staff_status = 3,
-							ject_remark = :ject_remark,
-							lud = :lud,
-							luu = :luu 
-						where id = :id
-						";
-				break;
-			case 'audit':
-				$sql = "update hr_employee set
-							staff_status = 4,
-							lud = :lud,
-							luu = :luu 
-						where id = :id
-						";
-				break;
-		}
-
-		$command=$connection->createCommand($sql);
-        if (strpos($sql,':id')!==false)
-            $command->bindParam(':id',$this->id,PDO::PARAM_INT);
-		if (strpos($sql,':ject_remark')!==false)
-			$command->bindParam(':ject_remark',$this->ject_remark,PDO::PARAM_STR);
-		if (strpos($sql,':luu')!==false)
-			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lud')!==false)
-			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
-
-        //die();
-		$command->execute();
+        $lud = date("Y-m-d H:i:s");
+        switch ($this->scenario){
+            case "audit"://通過
+                Yii::app()->db->createCommand()->update('hr_employee_operate', array(
+                    'staff_status'=>4,
+                    'luu'=>$uid,
+                    'lud'=>$lud,
+                ), 'id=:id', array(':id'=>$this->id));
+                break;
+            case "reject"://拒絕
+                Yii::app()->db->createCommand()->update('hr_employee_operate', array(
+                    'staff_status'=>3,
+                    'ject_remark'=>$this->ject_remark,
+                    'luu'=>$uid,
+                    'lud'=>$lud,
+                ), 'id=:id', array(':id'=>$this->id));
+                break;
+        }
 
         //記錄
         Yii::app()->db->createCommand()->insert('hr_employee_history', array(
-            "employee_id"=>$this->id,
+            "employee_id"=>$this->employee_id,
             "status"=>$this->scenario,
+            "remark"=>$this->ject_remark,
             "lcu"=>$uid,
-            "lcd"=>date('Y-m-d H:i:s'),
+            "lcd"=>$lud,
         ));
-        return true;
 	}
+
 }

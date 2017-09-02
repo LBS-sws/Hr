@@ -128,5 +128,30 @@ return array(
     //後期修改
     'Set Tacitly'=>'設為默認公司',
     'Tacitly Company'=>'默認公司',
+
+
+    //8-29
+    'The employee has changed the information, please complete the change first'=>'該員工已有變更信息，請先完成變更',
+    'Operation'=>'操作',
+    'Operation Status'=>'操作原因',
+    'Employee Info'=>'員工信息',
+    'Update'=>'修改',
+    'For Audit'=>'要求審核',
+    'Staff Update'=>'修改員工信息',
+    'Staff Change'=>'合同變更',
+    'Staff Departure'=>'員工離職',
+    'Staff View'=>'員工信息',
+    'update'=>'修改',
+    'Again Audit'=>'再次審核',
+    'change'=>'合同變更',
+    'departure'=>'離職',
+    'audit'=>'審核通過',
+    'finish'=>'操作完成',
+    'inset'=>'員工錄入',
+    'reject'=>'審核被拒絕',
+    'Reviewed and awaiting confirmation'=>'已審核，等待確認',
+    'Operator User'=>'操作人員',
+    'Operator Time'=>'操作時間',
+    'Departure Employee'=>'離職員工',
 );
 ?>
