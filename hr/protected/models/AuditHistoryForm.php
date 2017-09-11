@@ -62,6 +62,9 @@ class AuditHistoryForm extends CFormModel
     public $update_remark;//員工修改備註
     public $operation;//員工修改備註
     public $historyList;//員工歷史
+    public $staff_type;//员工类别
+    public $staff_leader;//队长/组长
+    public $test_length;//
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -78,7 +81,7 @@ class AuditHistoryForm extends CFormModel
             'name'=>Yii::t('contract','Employee Name'),
             'company_id'=>Yii::t('contract','Employee Belong'),
             'contract_id'=>Yii::t('contract','Employee Contract'),
-            'address'=>Yii::t('contract','Address'),
+            'address'=>Yii::t('contract','Old Address'),
             'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
@@ -104,9 +107,8 @@ class AuditHistoryForm extends CFormModel
             'year_day'=>Yii::t('contract','Annual leave'),
             'email'=>Yii::t('contract','Email'),
             'remark'=>Yii::t('contract','Remark'),
-            'price1'=>Yii::t('contract','Basic salary'),
-            'price2'=>Yii::t('contract','Overtime pay'),
-            'price3'=>Yii::t('contract','Subsidies'),
+            'price1'=>Yii::t('contract','Wages Name'),
+            'price3'=>Yii::t('contract','Wages Type'),
             'image_user'=>Yii::t('contract','Staff photo'),
             'image_code'=>Yii::t('contract','Id photo'),
             'image_work'=>Yii::t('contract','Work photo'),
@@ -116,6 +118,9 @@ class AuditHistoryForm extends CFormModel
             'jj_card'=>Yii::t('contract','Accumulation fund card'),
             'ject_remark'=>Yii::t('contract','Rejected Remark'),
             'update_remark'=>Yii::t('contract',"Operation")."".Yii::t('contract','Remark'),
+            'staff_type'=>Yii::t('staff','Staff Type'),
+            'staff_leader'=>Yii::t('staff','Team/Group Leader'),
+            'test_length'=>Yii::t('contract','Probation Time Longer'),
 		);
 	}
 
@@ -238,8 +243,7 @@ class AuditHistoryForm extends CFormModel
                 $this->remark = $row['remark'];
                 $this->ject_remark = $row['ject_remark'];
                 $this->price1 = $row['price1'];
-                $this->price2 = $row['price2'];
-                $this->price3 = $row['price3'];
+                $this->price3 = explode(",",$row['price3']);
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
@@ -249,6 +253,9 @@ class AuditHistoryForm extends CFormModel
                 $this->jj_card = $row['jj_card'];
                 $this->operation = $row['operation'];
                 $this->historyList = AuditHistoryForm::getStaffHistoryList($row["employee_id"]);
+                $this->test_length = $row['test_length'];
+                $this->staff_type = $row['staff_type'];
+                $this->staff_leader = $row['staff_leader'];
 				break;
 			}
 		}

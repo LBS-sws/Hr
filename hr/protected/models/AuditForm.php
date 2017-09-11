@@ -55,6 +55,9 @@ class AuditForm extends CFormModel
 	public $image_work;//工作證明照片
 	public $image_other;//其它照片
 	public $ject_remark;//拒絕原因
+    public $staff_type;//员工类别
+    public $staff_leader;//队长/组长
+    public $test_length;//
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -71,7 +74,7 @@ class AuditForm extends CFormModel
 			'name'=>Yii::t('contract','Employee Name'),
 			'company_id'=>Yii::t('contract','Employee Belong'),
 			'contract_id'=>Yii::t('contract','Employee Contract'),
-			'address'=>Yii::t('contract','Address'),
+			'address'=>Yii::t('contract','Old Address'),
 			'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
@@ -97,14 +100,16 @@ class AuditForm extends CFormModel
             'year_day'=>Yii::t('contract','Annual leave'),
             'email'=>Yii::t('contract','Email'),
             'remark'=>Yii::t('contract','Remark'),
-            'price1'=>Yii::t('contract','Basic salary'),
-            'price2'=>Yii::t('contract','Overtime pay'),
-            'price3'=>Yii::t('contract','Subsidies'),
+            'price1'=>Yii::t('contract','Wages Name'),
+            'price3'=>Yii::t('contract','Wages Type'),
             'image_user'=>Yii::t('contract','Staff photo'),
             'image_code'=>Yii::t('contract','Id photo'),
             'image_work'=>Yii::t('contract','Work photo'),
             'image_other'=>Yii::t('contract','Other photo'),
             'ject_remark'=>Yii::t('contract','Rejected Remark'),
+            'staff_type'=>Yii::t('staff','Staff Type'),
+            'staff_leader'=>Yii::t('staff','Team/Group Leader'),
+            'test_length'=>Yii::t('contract','Probation Time Longer'),
 		);
 	}
 
@@ -118,7 +123,8 @@ class AuditForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,ject_remark,staff_status,
-              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
+              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other,
+               test_length,staff_type,staff_leader',
                 'safe'),
 			array('ject_remark','required',"on"=>"reject"),
 		);
@@ -198,13 +204,15 @@ class AuditForm extends CFormModel
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
                 $this->price1 = $row['price1'];
-                $this->price2 = $row['price2'];
-                $this->price3 = $row['price3'];
+                $this->price3 = explode(",",$row['price3']);
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
                 $this->image_other = $row['image_other'];
                 $this->ject_remark = $row['ject_remark'];
+                $this->test_length = $row['test_length'];
+                $this->staff_type = $row['staff_type'];
+                $this->staff_leader = $row['staff_leader'];
 				break;
 			}
 		}

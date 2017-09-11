@@ -20,13 +20,13 @@ class WordList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city_allow();
+		$city = Yii::app()->user->city();
 		$sql1 = "select id,city,name,type from hr_docx 
-                where type='default' OR city=$city 
+                where type='default' OR city='$city' 
 			";
 		$sql2 = "select count(id)
 				from hr_docx 
-				where type='default' OR city=$city
+				where type='default' OR city='$city'
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

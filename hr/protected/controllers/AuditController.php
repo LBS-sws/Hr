@@ -34,6 +34,15 @@ class AuditController extends Controller
             $this->render('form',array('model'=>$model,));
         }
     }
+    public function actionView($index)
+    {
+        $model = new AuditForm('view');
+        if (!$model->retrieveData($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $this->render('form',array('model'=>$model,));
+        }
+    }
 
     public function actionReject()
     {

@@ -24,13 +24,13 @@ class AuditList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city_allow();
+		$city = Yii::app()->user->city();
 		$sql1 = "select * from hr_employee
-                where city=$city AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
+                where city='$city' AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
 			";
 		$sql2 = "select count(id)
 				from hr_employee 
-				where city=$city AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
+				where city='$city' AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -76,7 +76,7 @@ class AuditList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'code'=>$record['code'],
-					'position'=>$record['position'],
+					'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
 					'phone'=>$record['phone'],

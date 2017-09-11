@@ -16,6 +16,11 @@ class CompanyForm extends CFormModel
 	public $address;
 	public $phone;
 	public $tacitly;
+	public $security_code;
+	public $organization_code;
+	public $organization_time;
+	public $license_code;
+	public $license_time;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -30,6 +35,11 @@ class CompanyForm extends CFormModel
 			'agent'=>Yii::t('contract','Company Agent'),
 			'address'=>Yii::t('contract','Company Address'),
 			'phone'=>Yii::t('contract','Company Phone'),
+			'security_code'=>Yii::t('contract','Security Code'),
+			'organization_code'=>Yii::t('contract','Organization Code'),
+			'organization_time'=>Yii::t('contract','Organization Time'),
+			'license_code'=>Yii::t('contract','License Code'),
+			'license_time'=>Yii::t('contract','License Time'),
 		);
 	}
 
@@ -40,12 +50,15 @@ class CompanyForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, head, agent, address, phone, tacitly','safe'),
+            array('id, name, head, agent, address, phone, tacitly, security_code, organization_code, organization_time, license_code, license_time','safe'),
 			array('name','required'),
 			array('name','validateName'),
 			array('head','required'),
 			array('agent','required'),
 			array('address','required'),
+            array('license_time, organization_time','date','allowEmpty'=>true,
+                'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d'),
+            ),
 		);
 	}
 
@@ -109,6 +122,11 @@ class CompanyForm extends CFormModel
                 $this->phone = $row['phone'];
                 $this->city = $row['city'];
                 $this->tacitly = $row['tacitly'];
+                $this->security_code = $row['security_code'];
+                $this->organization_code = $row['organization_code'];
+                $this->organization_time = $row['organization_time'];
+                $this->license_code = $row['license_code'];
+                $this->license_time = $row['license_time'];
 				break;
 			}
 		}
@@ -140,9 +158,9 @@ class CompanyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_company(
-							name, agent, head, city, address, phone, lcu, lcd
+							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, lcu, lcd
 						) values (
-							:name, :agent, :head, :city, :address, :phone, :lcu, :lcd
+							:name, :agent, :head, :city, :address, :security_code, :organization_code, :organization_time, :license_code, :license_time, :phone, :lcu, :lcd
 						)";
 				break;
 			case 'edit':
@@ -152,6 +170,11 @@ class CompanyForm extends CFormModel
 							head = :head,
 							address = :address,
 							phone = :phone,
+							security_code = :security_code,
+							organization_code = :organization_code,
+							organization_time = :organization_time,
+							license_code = :license_code,
+							license_time = :license_time,
 							lud = :lud,
 							luu = :luu 
 						where id = :id
@@ -172,6 +195,16 @@ class CompanyForm extends CFormModel
 			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
 		if (strpos($sql,':phone')!==false)
 			$command->bindParam(':phone',$this->phone,PDO::PARAM_STR);
+		if (strpos($sql,':organization_code')!==false)
+			$command->bindParam(':organization_code',$this->organization_code,PDO::PARAM_STR);
+		if (strpos($sql,':organization_time')!==false)
+			$command->bindParam(':organization_time',$this->organization_time,PDO::PARAM_STR);
+		if (strpos($sql,':security_code')!==false)
+			$command->bindParam(':security_code',$this->security_code,PDO::PARAM_STR);
+		if (strpos($sql,':license_code')!==false)
+			$command->bindParam(':license_code',$this->license_code,PDO::PARAM_STR);
+		if (strpos($sql,':license_time')!==false)
+			$command->bindParam(':license_time',$this->license_time,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);

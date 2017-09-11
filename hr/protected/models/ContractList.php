@@ -19,13 +19,13 @@ class ContractList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city_allow();
+		$city = Yii::app()->user->city();
 		$sql1 = "select * from hr_contract 
-                where city=$city 
+                where city='$city' 
 			";
 		$sql2 = "select count(id)
 				from hr_docx 
-				where city=$city
+				where city='$city'
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

@@ -58,6 +58,9 @@ class EmployeeForm extends CFormModel
     public $sb_card;//社保卡號
     public $jj_card;//公積金卡號
     public $historyList;//員工歷史
+    public $staff_type;//员工类别
+    public $staff_leader;//队长/组长
+    public $test_length;//
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -74,7 +77,7 @@ class EmployeeForm extends CFormModel
             'name'=>Yii::t('contract','Employee Name'),
             'company_id'=>Yii::t('contract','Employee Belong'),
             'contract_id'=>Yii::t('contract','Employee Contract'),
-            'address'=>Yii::t('contract','Address'),
+            'address'=>Yii::t('contract','Old Address'),
             'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
@@ -100,9 +103,8 @@ class EmployeeForm extends CFormModel
             'year_day'=>Yii::t('contract','Annual leave'),
             'email'=>Yii::t('contract','Email'),
             'remark'=>Yii::t('contract','Remark'),
-            'price1'=>Yii::t('contract','Basic salary'),
-            'price2'=>Yii::t('contract','Overtime pay'),
-            'price3'=>Yii::t('contract','Subsidies'),
+            'price1'=>Yii::t('contract','Wages Name'),
+            'price3'=>Yii::t('contract','Wages Type'),
             'image_user'=>Yii::t('contract','Staff photo'),
             'image_code'=>Yii::t('contract','Id photo'),
             'image_work'=>Yii::t('contract','Work photo'),
@@ -110,6 +112,9 @@ class EmployeeForm extends CFormModel
             'ld_card'=>Yii::t('contract','Labor security card'),
             'sb_card'=>Yii::t('contract','Social security card'),
             'jj_card'=>Yii::t('contract','Accumulation fund card'),
+            'staff_type'=>Yii::t('staff','Staff Type'),
+            'staff_leader'=>Yii::t('staff','Team/Group Leader'),
+            'test_length'=>Yii::t('contract','Probation Time Longer'),
 		);
 	}
 
@@ -349,8 +354,7 @@ class EmployeeForm extends CFormModel
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
                 $this->price1 = $row['price1'];
-                $this->price2 = $row['price2'];
-                $this->price3 = $row['price3'];
+                $this->price3 = explode(",",$row['price3']);
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
@@ -359,6 +363,9 @@ class EmployeeForm extends CFormModel
                 $this->sb_card = $row['sb_card'];
                 $this->jj_card = $row['jj_card'];
                 $this->historyList = AuditHistoryForm::getStaffHistoryList($this->id);
+                $this->test_length = $row['test_length'];
+                $this->staff_type = $row['staff_type'];
+                $this->staff_leader = $row['staff_leader'];
 				break;
 			}
 		}

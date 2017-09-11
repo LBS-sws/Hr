@@ -13,6 +13,14 @@ return array(
                 'access'=>'ZA02',
                 'url'=>'/company/index',
             ),
+            'Wages Config'=>array(
+                'access'=>'ZA03',
+                'url'=>'/wages/index',
+            ),
+            'Wages Make'=>array(
+                'access'=>'ZA04',
+                'url'=>'/makeWages/index',
+            ),
 		),
 	),
 	'Report'=>array(
@@ -78,18 +86,24 @@ return array(
 				'access'=>'ZG02',
 				'url'=>'/auditHistory/index',
 			),
+            //工資單審核
+			'Wages Audit'=>array(
+				'access'=>'ZG03',
+				'url'=>'/auditWages/index',
+			),
 		),
 	),
 	'System Setting'=>array(
 		'access'=>'ZC',
 		'items'=>array(
-			'Employer'=>array(
-				'access'=>'ZC01',
-				'url'=>'/employer/index',
-			),
 			'Department'=>array(
-				'access'=>'ZC02',
+				'access'=>'ZC01',
+				//'url'=>'/employer/index',
 				'url'=>'/dept/index',
+			),
+			'Leader'=>array(
+				'access'=>'ZC02',
+				'url'=>'/dept/index?type=1',
 			),
 		),
 	),

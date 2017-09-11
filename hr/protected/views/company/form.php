@@ -101,6 +101,56 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 					); ?>
 				</div>
 			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'security_code',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->textField($model, 'security_code',
+						array('readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'organization_code',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->textField($model, 'organization_code',
+						array('readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+			<div class="form-group">
+                <?php echo $form->labelEx($model,'organization_time',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'organization_time',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                        ?>
+                    </div>
+                </div>
+			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'license_code',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->textField($model, 'license_code',
+						array('readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+			<div class="form-group">
+                <?php echo $form->labelEx($model,'license_time',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'license_time',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                        ?>
+                    </div>
+                </div>
+			</div>
 
 		</div>
 	</div>
@@ -110,6 +160,14 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
+
+if ($model->scenario!='view') {
+    $js = Script::genDatePicker(array(
+        'CompanyForm_organization_time',
+        'CompanyForm_license_time',
+    ));
+    Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
+}
 $js = Script::genDeleteData(Yii::app()->createUrl('company/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 

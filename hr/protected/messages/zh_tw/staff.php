@@ -48,5 +48,18 @@ return array(
     'Leave'=>'離職',
     'transfer'=>'調職',
     'Renew'=>'續簽',
+
+    'poor'=>'差',
+    'general'=>'一般',
+    'good'=>'良好',
+    "Primary school"=>"小學",
+    "Junior school"=>"中學",
+    "High school"=>"高中",
+    "Technical school"=>"中專",
+    "College school"=>"大專",
+    "Undergraduate"=>"本科",
+    "Graduate"=>"研究生",
+    "Doctorate"=>"博士",
+    " months"=>"個月",
 );
 ?>

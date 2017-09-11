@@ -49,7 +49,7 @@ class EmployForm extends CFormModel
 	public $remark;//備註
 	public $price1;//每月工資
 	public $price2;//加班工資
-	public $price3;//每月補貼
+	public $price3=array();//每月補貼
 	public $image_user;//員工照片
 	public $image_code;//身份證照片
 	public $image_work;//工作證明照片
@@ -58,6 +58,9 @@ class EmployForm extends CFormModel
 	public $ld_card;//勞動保障卡號
 	public $sb_card;//社保卡號
 	public $jj_card;//公積金卡號
+	public $staff_type;//员工类别
+	public $staff_leader;//队长/组长
+	public $test_length;//
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -74,7 +77,7 @@ class EmployForm extends CFormModel
 			'name'=>Yii::t('contract','Employee Name'),
 			'company_id'=>Yii::t('contract','Employee Belong'),
 			'contract_id'=>Yii::t('contract','Employee Contract'),
-			'address'=>Yii::t('contract','Address'),
+			'address'=>Yii::t('contract','Old Address'),
 			'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
@@ -100,9 +103,8 @@ class EmployForm extends CFormModel
             'year_day'=>Yii::t('contract','Annual leave'),
             'email'=>Yii::t('contract','Email'),
             'remark'=>Yii::t('contract','Remark'),
-            'price1'=>Yii::t('contract','Basic salary'),
-            'price2'=>Yii::t('contract','Overtime pay'),
-            'price3'=>Yii::t('contract','Subsidies'),
+            'price1'=>Yii::t('contract','Wages Name'),
+            'price3'=>Yii::t('contract','Wages Type'),
             'image_user'=>Yii::t('contract','Staff photo'),
             'image_code'=>Yii::t('contract','Id photo'),
             'image_work'=>Yii::t('contract','Work photo'),
@@ -111,6 +113,9 @@ class EmployForm extends CFormModel
             'ld_card'=>Yii::t('contract','Labor security card'),
             'sb_card'=>Yii::t('contract','Social security card'),
             'jj_card'=>Yii::t('contract','Accumulation fund card'),
+            'staff_type'=>Yii::t('staff','Staff Type'),
+            'staff_leader'=>Yii::t('staff','Team/Group Leader'),
+            'test_length'=>Yii::t('contract','Probation Time Longer'),
 		);
 	}
 
@@ -124,7 +129,8 @@ class EmployForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
-              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
+              education, experience, english, technology, other, year_day, email, remark, price1, price3, image_user, image_code, image_work, image_other,
+               test_length,staff_type,staff_leader',
                 'safe'),
 			array('entry_time','required'),
 			array('name','required'),
@@ -332,18 +338,30 @@ class EmployForm extends CFormModel
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
                 $this->price1 = $row['price1'];
-                $this->price2 = $row['price2'];
-                $this->price3 = $row['price3'];
+                $this->price3 = explode(",",$row['price3']);
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
                 $this->image_other = $row['image_other'];
                 $this->ject_remark = $row['ject_remark'];
+                $this->test_length = $row['test_length'];
+                $this->staff_type = $row['staff_type'];
+                $this->staff_leader = $row['staff_leader'];
 				break;
 			}
 		}
 		return true;
 	}
+
+	public function parseWagesToArr($str){
+        $arr = explode(",",$str);
+        for($i=0;$i<count($arr);$i++){
+            if(empty($arr[$i])){
+                $arr[$i] = 0;
+            }
+        }
+        return $arr;
+    }
 	
 	public function saveData()
 	{
@@ -381,17 +399,20 @@ class EmployForm extends CFormModel
 				$sql = "insert into hr_employee(
 							name, sex, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
 							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,
-							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,lcu, lcd
+							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, lcd
 						) values (
 							:name, :sex, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
 							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,
-							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:lcu, :lcd
+							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :lcd
 						)";
 				break;
 			case 'edit':
 				$sql = "update hr_employee set
 							name = :name, 
 							sex = :sex, 
+							staff_type = :staff_type, 
+							test_length = :test_length, 
+							staff_leader = :staff_leader, 
 							company_id = :company_id,
 							contract_id = :contract_id,
 							address = :address,
@@ -438,6 +459,11 @@ class EmployForm extends CFormModel
 		    $this->test_wage = null;
 		    $this->test_start_time = null;
 		    $this->test_end_time = null;
+        }
+        if(is_array($this->price3)&&!empty($this->price1)){
+            $this->price3 = implode(",",$this->price3);
+        }else{
+            $this->price3 = "";
         }
 
 		$command=$connection->createCommand($sql);
@@ -524,6 +550,12 @@ class EmployForm extends CFormModel
 			$command->bindParam(':image_other',$this->image_other,PDO::PARAM_STR);
 		if (strpos($sql,':image_work')!==false)
 			$command->bindParam(':image_work',$this->image_work,PDO::PARAM_STR);
+		if (strpos($sql,':staff_type')!==false)
+			$command->bindParam(':staff_type',$this->staff_type,PDO::PARAM_STR);
+		if (strpos($sql,':test_length')!==false)
+			$command->bindParam(':test_length',$this->test_length,PDO::PARAM_STR);
+		if (strpos($sql,':staff_leader')!==false)
+			$command->bindParam(':staff_leader',$this->staff_leader,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);

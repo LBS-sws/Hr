@@ -21,16 +21,63 @@ class EmployList extends CListPageModel
 		);
 	}
 
+    //獲取性別列表
+    public function getSexList(){
+        return array("man"=>Yii::t("contract","man"),"woman"=>Yii::t("contract","woman"));
+    }
+    //獲取年齡列表
+    public function getAgeList(){
+        $list = array(""=>"");
+        for ($num = 18;$num<70;$num++){
+            $list[$num] = $num;
+        }
+        return $list;
+    }
+    //獲取健康列表
+    public function getHealthList(){
+        return array(""=>"","poor"=>Yii::t("staff","poor"),"general"=>Yii::t("staff","general"),"good"=>Yii::t("staff","good"));
+    }
+    //獲取健康列表
+    public function getMonthList(){
+        $list = array(""=>"");
+        for ($num = 1;$num<=12;$num++){
+            $list[$num]=$num.Yii::t("staff"," months");
+        }
+        return $list;
+    }
+    //獲取學歷列表
+    public function getEducationList(){
+        return array(
+            ""=>"",
+            "Primary school"=>Yii::t("staff","Primary school"),
+            "Junior school"=>Yii::t("staff","Junior school"),
+            "High school"=>Yii::t("staff","High school"),
+            "Technical school"=>Yii::t("staff","Technical school"),
+            "College school"=>Yii::t("staff","College school"),
+            "Undergraduate"=>Yii::t("staff","Undergraduate"),
+            "Graduate"=>Yii::t("staff","Graduate"),
+            "Doctorate"=>Yii::t("staff","Doctorate")
+        );
+    }
+    //獲取員工職能列表
+    public function getStaffLeaderList(){
+        return array("Nil"=>Yii::t("staff","Nil"),"Group Leader"=>Yii::t("staff","Group Leader"),"Team Leader"=>Yii::t("staff","Team Leader"));
+    }
+    //獲取員工類別列表
+    public function getStaffTypeList(){
+        return array("Office"=>Yii::t("staff","Office"),"Sales"=>Yii::t("staff","Sales"),"Technician"=>Yii::t("staff","Technician"),"Others"=>Yii::t("staff","Others"));
+    }
+
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city_allow();
+		$city = Yii::app()->user->city();
 		$sql1 = "select * from hr_employee
-                where city=$city AND staff_status != 0 AND staff_status != -1
+                where city='$city' AND staff_status != 0 AND staff_status != -1
 			";
 		$sql2 = "select count(id)
 				from hr_employee 
-				where city=$city AND staff_status != 0 AND staff_status != -1
+				where city='$city' AND staff_status != 0 AND staff_status != -1
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -76,7 +123,7 @@ class EmployList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'code'=>$record['code'],
-					'position'=>$record['position'],
+					'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
 					'phone'=>$record['phone'],

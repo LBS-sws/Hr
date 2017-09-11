@@ -61,6 +61,9 @@ class HistoryForm extends CFormModel
     public $update_remark;//員工修改備註
     public $historyList;//員工修改備註
     public $ject_remark;//員工修改備註
+    public $staff_type;//员工类别
+    public $staff_leader;//队长/组长
+    public $test_length;//
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -77,7 +80,7 @@ class HistoryForm extends CFormModel
             'name'=>Yii::t('contract','Employee Name'),
             'company_id'=>Yii::t('contract','Employee Belong'),
             'contract_id'=>Yii::t('contract','Employee Contract'),
-            'address'=>Yii::t('contract','Address'),
+            'address'=>Yii::t('contract','Old Address'),
             'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
@@ -103,9 +106,8 @@ class HistoryForm extends CFormModel
             'year_day'=>Yii::t('contract','Annual leave'),
             'email'=>Yii::t('contract','Email'),
             'remark'=>Yii::t('contract','Remark'),
-            'price1'=>Yii::t('contract','Basic salary'),
-            'price2'=>Yii::t('contract','Overtime pay'),
-            'price3'=>Yii::t('contract','Subsidies'),
+            'price1'=>Yii::t('contract','Wages Name'),
+            'price3'=>Yii::t('contract','Wages Type'),
             'image_user'=>Yii::t('contract','Staff photo'),
             'image_code'=>Yii::t('contract','Id photo'),
             'image_work'=>Yii::t('contract','Work photo'),
@@ -115,6 +117,9 @@ class HistoryForm extends CFormModel
             'jj_card'=>Yii::t('contract','Accumulation fund card'),
             'update_remark'=>Yii::t('contract',"Operation")."".Yii::t('contract','Remark'),
             'ject_remark'=>Yii::t('contract',"Rejected Remark"),
+            'staff_type'=>Yii::t('staff','Staff Type'),
+            'staff_leader'=>Yii::t('staff','Team/Group Leader'),
+            'test_length'=>Yii::t('contract','Probation Time Longer'),
 		);
 	}
 
@@ -127,7 +132,7 @@ class HistoryForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,employee_id,update_remark, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
-             ld_card, sb_card, jj_card,
+             ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('update_remark','required'),
@@ -307,8 +312,7 @@ class HistoryForm extends CFormModel
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
                 $this->price1 = $row['price1'];
-                $this->price2 = $row['price2'];
-                $this->price3 = $row['price3'];
+                $this->price3 = explode(",",$row['price3']);
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
@@ -316,6 +320,9 @@ class HistoryForm extends CFormModel
                 $this->ld_card = $row['ld_card'];
                 $this->sb_card = $row['sb_card'];
                 $this->jj_card = $row['jj_card'];
+                $this->test_length = $row['test_length'];
+                $this->staff_type = $row['staff_type'];
+                $this->staff_leader = $row['staff_leader'];
 				break;
 			}
 		}
@@ -324,6 +331,13 @@ class HistoryForm extends CFormModel
 	
 	public function saveData()
 	{
+        //工資單數組轉字符串(Start)
+        if(is_array($this->price3)&&!empty($this->price1)){
+            $this->price3 = implode(",",$this->price3);
+        }else{
+            $this->price3 = "";
+        }
+        //工資單數組轉字符串(END)
         $uid = Yii::app()->user->id;
 	    $staffList = $this->attributes;
         $row = Yii::app()->db->createCommand()->select()->from("hr_employee")

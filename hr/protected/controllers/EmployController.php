@@ -42,6 +42,16 @@ class EmployController extends Controller
         }
     }
 
+    public function actionView($index)
+    {
+        $model = new EmployForm('view');
+        if (!$model->retrieveData($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $this->render('form',array('model'=>$model,));
+        }
+    }
+
     public function actionSave()
     {
         if (isset($_POST['EmployForm'])) {
@@ -137,6 +147,18 @@ class EmployController extends Controller
             }else{
                 echo CJSON::encode(array('status'=>0,'error'=>$model->getErrors()));
             }
+        }else{
+            $this->redirect(Yii::app()->createUrl('employ/index'));
+        }
+    }
+
+    //時間運算
+    public function actionAddDate(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $date = $_POST['dateTime'];
+            $month = $_POST['month'];
+            $lastDate = date('Y-m-d', strtotime("$date +$month month"));
+            echo CJSON::encode($lastDate);
         }else{
             $this->redirect(Yii::app()->createUrl('employ/index'));
         }

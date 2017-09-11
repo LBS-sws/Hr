@@ -38,7 +38,7 @@ $this->pageTitle=Yii::app()->name . ' - Word';
     $search = array(
         'name',
     );
-    if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
+    if (!Yii::app()->user->isSingleCity()) $search[] = 'word_name';
    $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('contract','Word List'),
         'model'=>$model,

@@ -11,6 +11,8 @@ return array(
 
 'Data Entry'=>'數據輸入',
 
+    'Department'=>'工作部門',
+    'Leader'=>'工作職位',
 'Payment Request'=>'付款申請',
 'Request Approval'=>'申請審核',
 'Payment Realization'=>'付款清賬',
@@ -67,7 +69,7 @@ return array(
     //沈超添加开始
     'Contract'=>'合同',
     'Contract Word'=>'合同文档',
-    'Contract List'=>'合同列表',
+    'Contract List'=>'合同模板列表',
 
     'Company Info'=>'公司資料',
 
@@ -82,6 +84,10 @@ return array(
     'History'=>'歷史',
     'Employee Audit'=>'員工入職審核',
     'Employee Update Audit'=>'員工變更審核',
+
+    'Wages Config'=>'配置工資單',
+    'Wages Make'=>'製作工資單',
+    'Wages Audit'=>'工資單審核',
     //沈超添加结束
 );
 ?>

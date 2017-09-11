@@ -17,7 +17,8 @@ return array(
 	'Staff Info'=>'员工资料',
 	'Employer'=>'雇主资料',
 	'Department'=>'工作部门',
-	
+	'Leader'=>'工作职位',
+
 	'Report'=>'报表',
 	'Report Manager'=>'报表管理员',
 
@@ -66,7 +67,7 @@ return array(
     //沈超添加开始
     'Contract'=>'合同',
     'Contract Word'=>'合同文档',
-    'Contract List'=>'合同列表',
+    'Contract List'=>'合同模板列表',
 
     'Company Info'=>'公司资料',
 
@@ -81,6 +82,10 @@ return array(
     'History'=>'历史',
     'Employee Audit'=>'员工入职审核',
     'Employee Update Audit'=>'员工变更审核',
+
+    'Wages Config'=>'配置工资单',
+    'Wages Make'=>'制作工资单',
+    'Wages Audit'=>'工资单审核',
     //沈超添加结束
 );
 ?>

@@ -42,6 +42,16 @@ class CompanyController extends Controller
         }
     }
 
+    public function actionView($index)
+    {
+        $model = new CompanyForm('view');
+        if (!$model->retrieveData($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $this->render('form',array('model'=>$model,));
+        }
+    }
+
 
     public function actionSave()
     {

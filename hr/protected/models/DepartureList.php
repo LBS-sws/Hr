@@ -24,13 +24,13 @@ class DepartureList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city_allow();
+		$city = Yii::app()->user->city();
 		$sql1 = "select * from hr_employee
-                where city=$city AND staff_status = -1
+                where city='$city' AND staff_status = -1
 			";
 		$sql2 = "select count(id)
 				from hr_employee 
-				where city=$city AND staff_status = -1
+				where city='$city' AND staff_status = -1
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

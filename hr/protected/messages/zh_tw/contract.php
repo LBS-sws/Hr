@@ -21,12 +21,12 @@ return array(
     ' can not be empty'=>'不能是空的',
     ' Must be Numbers'=>'必須是數字',
 
-    'Contract List'=>'合同列表',
+    'Contract List'=>'合同模板列表',
     'Add Contract'=>'添加合同',
     'Contract Name'=>'合同名字',
     'Contract Word'=>'合同文檔',
-    'Contract Form'=>'合同表單',
-    'Level'=>'層級',
+    'Contract Form'=>'合同模板表單',
+    'Level'=>'顯示次序',
 
     //公司模塊
     'Head'=>'負責人',
@@ -42,6 +42,7 @@ return array(
     'The company has employees, please delete employees first'=>'該公司下有員工，請先刪除員工',
     'The contract has staff being used, please delete the staff first'=>'該合同有員工正在使用，請先刪除員工',
     'This word is under contract. Please delete the contract first'=>'該文檔有合同正在使用，請先删除合同',
+    'The dept has staff being used, please delete the staff first'=>'該職位有員工正在使用，請先刪除員工',
 
     //員工模塊
     'Employee List'=>'員工列表',
@@ -66,6 +67,7 @@ return array(
     'Contract End Time'=>'合同結束時間',
     'Probation Type'=>'試用期類型',
     'Probation Time'=>'試用期時間',
+    'Probation Time Longer'=>'試用期時期',
     'Probation Start Time'=>'試用期開始時間',
     'Probation End Time'=>'試用期結束時間',
     'Probation Wage'=>'試用期工資',
@@ -153,5 +155,55 @@ return array(
     'Operator User'=>'操作人員',
     'Operator Time'=>'操作時間',
     'Departure Employee'=>'離職員工',
+
+    //9-4
+    'Security Code'=>'勞動保障代碼',
+    'Organization Code'=>'組織機構代碼',
+    'Organization Time'=>'住址機構代碼發出時間',
+    'License Code'=>'證照編號',
+    'License Time'=>'證照編號發出時間',
+    'man'=>'男',
+    'woman'=>'女',
+
+    'Add Wages Type'=>'添加工資單組合',
+    'Wages Type List'=>'工資單組合列表',
+    'Wages Type Form'=>'工資單組合表單',
+    'Wages Name'=>'工資單組合名稱',
+    'Wages Type'=>'工資類別',
+    'Wages Hour'=>'時間（小時）',
+    'Wages Sum'=>'提成（RMB）',
+    'Wages Time'=>'工資月份',
+    'Wages Type max number is five'=>'工資類別最大數量為5',
+    'Wages Type Name'=>'工資類別名稱',
+    'Wages Type Index'=>'工資類別層級',
+    'Select the employee'=>'選擇員工',
+
+    'No modification is allowed'=>'不允許修改',
+    'Compute Mode'=>'計算方式',
+    'Fixed wages'=>'固定工資',
+    'Hour wages'=>'每小時工資',
+    'Commission wages'=>'提成計算',
+
+    'Wages Status'=>'工資單狀態',
+    'Wages Detail'=>'工資單詳情',
+    'To be made'=>'待製作',
+    'audited'=>'已審核',
+    'Wages Group'=>'工資組合',
+    'Wages History'=>'工资历史',
+    'Produced, pending submission'=>'已製作，待提交',
+    'Produced, pending audit'=>'已製作，待審核',
+    'audited, pending finish'=>'已審核，待確認',
+
+    'Dept'=>'部門',
+    ' Name'=>'名字',
+    ' List'=>'列表',
+    ' Form'=>'表單',
+    'Dept Name'=>'部門名字',
+    'Dept List'=>'部門列表',
+    'Dept Form'=>'部門表單',
+    'Leader'=>'職位',
+    'Leader Name'=>'職位名字',
+    'Leader List'=>'職位列表',
+    'Leader Form'=>'職位表單',
 );
 ?>
