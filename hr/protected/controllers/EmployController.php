@@ -163,4 +163,61 @@ class EmployController extends Controller
             $this->redirect(Yii::app()->createUrl('employ/index'));
         }
     }
+
+    //上傳附件
+    public function actionAttachmentUp(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new UploadFileForm();
+            $file = CUploadedFile::getInstance($model,'file');
+            $city = Yii::app()->user->city();
+            $path =Yii::app()->basePath."/../upload/";
+            if (!file_exists($path)){
+                mkdir($path);
+            }
+            $path =Yii::app()->basePath."/../upload/attachment/";
+            if (!file_exists($path)){
+                mkdir($path);
+            }
+            $path.=$city."/";
+            if (!file_exists($path)){
+                mkdir($path);
+            }
+            if ($model->validate()) {
+                $url = "upload/attachment/".$city."/".date("YmdHis").".".$file->getExtensionName();
+                $model->path_url = $url;
+                $model->type = $_POST["type"];
+                $model->file_name = $file->getName();
+                $file->saveAs($url);
+                $model->saveData();
+                echo CJSON::encode(array('status'=>1,'data'=>$model->getFileList()));
+            }else{
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                echo CJSON::encode(array('status'=>0));
+            }
+        }else{
+            $this->redirect(Yii::app()->createUrl('employ/index'));
+        }
+    }
+    //下載附件
+    public function actionAttachmentDown($index){
+        $model = new UploadFileForm();
+        if(!$model->getAttachmentList($index)){
+            throw new CHttpException(404,'The requested page does not exist.');
+        }else{
+            $file = Yii::app()->basePath."/../".$model->path_url;
+            // To prevent corrupted zip - Percy
+            ob_clean();
+            ob_end_flush();
+            //
+            header("Content-type: application/octet-stream");
+            header('Content-Disposition: attachment; filename='.$model->file_name);
+            header("Content-Length: ". filesize($file));
+            readfile($file);
+        }
+    }
+    //刪除附件
+    public function actionAttachmentDelete(){
+        $model = new UploadFileForm();
+    }
 }

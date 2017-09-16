@@ -100,13 +100,13 @@ class WagesController extends Controller
             }
         }
     }
-
+/*
     //下載工資單列表
     public function actionDown(){
         $model = new EmployeeDown();
         $model->getEmployeeAll();
         $this->render('down',array('model'=>$model));
-    }
+    }*/
 
     //下載工資單列表(下載)
     public function actionDownFinish(){

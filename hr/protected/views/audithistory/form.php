@@ -53,6 +53,14 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
+                <?php
+                echo $form->hiddenField($model, 'attachment',array("class"=>"changeAttachment"));
+                $counter = $model->setAttachment();
+                $counter = (count($counter) > 0) ? ' <span id="docpayreq" class="label label-info">'.count($counter).'</span>' : ' <span id="docpayreq"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadpayreq',)
+                );
+                ?>
             </div>
         </div></div>
 
@@ -546,5 +554,14 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ?>
 
 <?php $this->endWidget(); ?>
+
+<?php $this->renderPartial('//site/attachmentload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'PAYREQ',
+    'type'=>1,
+    'header'=>Yii::t('dialog','File Attachment'),
+    'ronly'=>($model->scenario=='view'),
+));
+?>
 </div><!-- form -->
 

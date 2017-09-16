@@ -205,5 +205,7 @@ return array(
     'Leader Name'=>'职位名字',
     'Leader List'=>'职位列表',
     'Leader Form'=>'职位表单',
+    'Attachment'=>'附件',
+    'Attachment Name'=>'附件名称',
 );
 ?>

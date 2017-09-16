@@ -61,6 +61,7 @@ class EmployForm extends CFormModel
 	public $staff_type;//员工类别
 	public $staff_leader;//队长/组长
 	public $test_length;//
+	public $attachment="";//附件
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -116,6 +117,7 @@ class EmployForm extends CFormModel
             'staff_type'=>Yii::t('staff','Staff Type'),
             'staff_leader'=>Yii::t('staff','Team/Group Leader'),
             'test_length'=>Yii::t('contract','Probation Time Longer'),
+            'attachment'=>Yii::t('contract','Attachment'),
 		);
 	}
 
@@ -130,7 +132,7 @@ class EmployForm extends CFormModel
             array('id, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
               education, experience, english, technology, other, year_day, email, remark, price1, price3, image_user, image_code, image_work, image_other,
-               test_length,staff_type,staff_leader',
+               test_length,staff_type,staff_leader,attachment',
                 'safe'),
 			array('entry_time','required'),
 			array('name','required'),
@@ -347,6 +349,7 @@ class EmployForm extends CFormModel
                 $this->test_length = $row['test_length'];
                 $this->staff_type = $row['staff_type'];
                 $this->staff_leader = $row['staff_leader'];
+                $this->attachment = $row['attachment'];
 				break;
 			}
 		}
@@ -397,11 +400,11 @@ class EmployForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_employee(
-							name, sex, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
+							name, sex, attachment, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
 							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,
 							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, lcd
 						) values (
-							:name, :sex, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
+							:name, :sex, :attachment, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
 							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,
 							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :lcd
 						)";
@@ -410,6 +413,7 @@ class EmployForm extends CFormModel
 				$sql = "update hr_employee set
 							name = :name, 
 							sex = :sex, 
+							attachment = :attachment, 
 							staff_type = :staff_type, 
 							test_length = :test_length, 
 							staff_leader = :staff_leader, 
@@ -556,6 +560,8 @@ class EmployForm extends CFormModel
 			$command->bindParam(':test_length',$this->test_length,PDO::PARAM_STR);
 		if (strpos($sql,':staff_leader')!==false)
 			$command->bindParam(':staff_leader',$this->staff_leader,PDO::PARAM_STR);
+		if (strpos($sql,':attachment')!==false)
+			$command->bindParam(':attachment',$this->attachment,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);
@@ -603,5 +609,25 @@ class EmployForm extends CFormModel
             $this->code.="0";
         }
         $this->code .= $code;
+    }
+
+	public function setAttachment(){
+        $str = $this->attachment;
+	    if(empty($str)){
+            $arr = array();
+        }else{
+	        $arr = explode(",",$str);
+	        for($i = 0;$i<count($arr);$i++){
+                $rows = Yii::app()->db->createCommand()->select()->from("hr_attachment")
+                    ->where('id=:id', array(':id'=>$arr[$i]))->queryRow();
+                if($rows){
+                    $arr[$i] = $rows;
+                }else{
+                    unset($arr[$i]);
+                }
+            }
+        }
+        $this->attachment = $arr;
+        return $arr;
     }
 }

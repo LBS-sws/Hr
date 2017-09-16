@@ -57,6 +57,14 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
+                <?php
+                echo $form->hiddenField($model, 'attachment',array("class"=>"changeAttachment"));
+                $counter = $model->setAttachment();
+                $counter = (count($counter) > 0) ? ' <span id="docpayreq" class="label label-info">'.count($counter).'</span>' : ' <span id="docpayreq"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadpayreq',)
+                );
+                ?>
             </div>
         </div></div>
 
@@ -272,7 +280,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptAllList(1),
+                    <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptAllList(0),
                         array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
                     ); ?>
                 </div>
@@ -558,6 +566,54 @@ $('#HistoryForm_test_type').on('change',function(){
             }
         });
     }).trigger('change');
+    
+    
+    //附件上傳
+    $('#importUp').on('click',function(){
+        $('#UploadFileForm').ajaxSubmit({
+            'type':'POST',
+            'dataType':'JSON',
+            'success':function(data){
+                if(data.status == 1){
+                    var file = data.data;
+                    var html = '<tr>';
+                    html+='<td>';
+                    html+=file['down_url'];
+                    html+='&nbsp;&nbsp;';
+                    html+=file['delete_url'];
+                    html+='</td>';
+                    html+='<td>'+file['file_name']+'</td>';
+                    html+='<td>'+file['lcd']+'</td>';
+                    html+='</tr>';
+                    $('#attachmentList>tbody').append(html);
+                    $('#file_fasd').val('');
+                    if($('.changeAttachment:first').val() == ''){
+                        $('.changeAttachment:first').val(file['id']);
+                    }else{
+                        var value = $('.changeAttachment:first').val()+','+file['id'];
+                        $('.changeAttachment:first').val(value);
+                    }
+                }else{
+                    location.reload();
+                }
+            },
+        });
+    });
+    //附件刪除
+    $('#attachmentList').delegate('.attachmentDelete','click',function(){
+        var value = $('.changeAttachment:first').val();
+        var deleteId=$(this).data('id');
+        if(value != ''){
+            var list = value.split(',');
+            for(var i= 0;i<list.length;i++){
+                if(list[i] == deleteId){
+                    list.splice(i,1);
+                }
+            }
+            $('.changeAttachment:first').val(list.join(','))
+        }
+        $(this).parents('tr:first').remove();
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
@@ -583,5 +639,14 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ?>
 
 <?php $this->endWidget(); ?>
+
+<?php $this->renderPartial('//site/attachmentload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'PAYREQ',
+    'type'=>1,
+    'header'=>Yii::t('dialog','File Attachment'),
+    'ronly'=>($model->scenario=='view'&&$model->staff_status!=3),
+));
+?>
 </div><!-- form -->
 

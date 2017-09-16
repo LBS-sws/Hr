@@ -54,15 +54,23 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
         ?>
 	</div>
 
-<?php if ($model->scenario!='new'): ?>
 	<div class="btn-group pull-right" role="group">
+        <?php if ($model->scenario!='new'): ?>
     <?php if ($model->staff_status == 4): ?>
             <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Down'),array(
                 'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
             ?>
     <?php endif; ?>
+    <?php endif; ?>
+    <?php
+        echo $form->hiddenField($model, 'attachment',array("class"=>"changeAttachment"));
+    $counter = $model->setAttachment();
+    $counter = (count($counter) > 0) ? ' <span id="docpayreq" class="label label-info">'.count($counter).'</span>' : ' <span id="docpayreq"></span>';
+    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+            'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadpayreq',)
+    );
+    ?>
 	</div>
-<?php endif; ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -553,6 +561,53 @@ $('#EmployForm_test_type').on('change',function(){
             }
         });
     }).trigger('change');
+    
+    //附件上傳
+    $('#importUp').on('click',function(){
+        $('#UploadFileForm').ajaxSubmit({
+            'type':'POST',
+            'dataType':'JSON',
+            'success':function(data){
+                if(data.status == 1){
+                    var file = data.data;
+                    var html = '<tr>';
+                    html+='<td>';
+                    html+=file['down_url'];
+                    html+='&nbsp;&nbsp;';
+                    html+=file['delete_url'];
+                    html+='</td>';
+                    html+='<td>'+file['file_name']+'</td>';
+                    html+='<td>'+file['lcd']+'</td>';
+                    html+='</tr>';
+                    $('#attachmentList>tbody').append(html);
+                    $('#file_fasd').val('');
+                    if($('.changeAttachment:first').val() == ''){
+                        $('.changeAttachment:first').val(file['id']);
+                    }else{
+                        var value = $('.changeAttachment:first').val()+','+file['id'];
+                        $('.changeAttachment:first').val(value);
+                    }
+                }else{
+                    location.reload();
+                }
+            },
+        });
+    });
+    //附件刪除
+    $('#attachmentList').delegate('.attachmentDelete','click',function(){
+        var value = $('.changeAttachment:first').val();
+        var deleteId=$(this).data('id');
+        if(value != ''){
+            var list = value.split(',');
+            for(var i= 0;i<list.length;i++){
+                if(list[i] == deleteId){
+                    list.splice(i,1);
+                }
+            }
+            $('.changeAttachment:first').val(list.join(','))
+        }
+        $(this).parents('tr:first').remove();
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 if ($model->scenario!='view') {
@@ -578,5 +633,14 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ?>
 
 <?php $this->endWidget(); ?>
+
+<?php $this->renderPartial('//site/attachmentload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'PAYREQ',
+    'type'=>1,
+    'header'=>Yii::t('dialog','File Attachment'),
+    'ronly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),
+));
+?>
 </div><!-- form -->
 
