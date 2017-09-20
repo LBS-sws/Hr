@@ -207,5 +207,8 @@ return array(
     'Leader Form'=>'職位表單',
     'Attachment'=>'附件',
     'Attachment Name'=>'附件名稱',
+
+    //9-18
+    'in department'=>'所在部門'
 );
 ?>

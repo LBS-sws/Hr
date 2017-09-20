@@ -12,6 +12,7 @@ class DeptForm extends CFormModel
 	public $name;
 	public $city;
 	public $z_index;
+	public $dept_id=1;
 	public $type;
 	/**
 	 * Declares customized attribute labels.
@@ -24,6 +25,7 @@ class DeptForm extends CFormModel
 			'id'=>Yii::t('staff','Record ID'),
 			'name'=>Yii::t('contract',' Name'),
 			'z_index'=>Yii::t('contract','Level'),
+            'dept_id'=>Yii::t('contract','in department'),
 		);
 	}
 
@@ -34,19 +36,33 @@ class DeptForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, type','safe'),
+            array('id, name, z_index, dept_id, type','safe'),
 			array('name','required'),
 			array('name','validateName'),
+			array('dept_id','validateDeptId'),
 		);
 	}
 
 	public function validateName($attribute, $params){
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
-            ->where('id!=:id and name=:name and city=:city and type=:type ', array(':id'=>$this->id,':name'=>$this->name,':city'=>$city,':type'=>$this->type))->queryAll();
+            ->where('id!=:id and name=:name and city=:city and type=:type and dept_id=:dept_id ',
+                array(':id'=>$this->id,':name'=>$this->name,':city'=>$city,':type'=>$this->type,':dept_id'=>$this->dept_id))->queryAll();
         if (count($rows) > 0){
             $message = Yii::t('contract',' Name'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
+        }
+    }
+
+	public function validateDeptId($attribute, $params){
+	    if($this->type == 1){
+            $city = Yii::app()->user->city();
+            $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+                ->where('id!=:id and city=:city and type=0 ', array(':id'=>$this->dept_id,':city'=>$city))->queryRow();
+            if (!$rows){
+                $message = Yii::t('contract','in department'). Yii::t('contract',' can not be empty');
+                $this->addError($attribute,$message);
+            }
         }
     }
 
@@ -73,6 +89,19 @@ class DeptForm extends CFormModel
         if ($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+    //獲取職位列表(僅職位)
+    public function getDeptOneAllList(){
+        $city = Yii::app()->user->city();
+        $arr=array(""=>array("name"=>"","type"=>""));
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+            ->where('type=:type and city=:city', array(':type'=>1,':city'=>$city))->order("z_index desc")->queryAll();
+        if ($rows){
+            foreach ($rows as $row){
+                $arr[$row["id"]] = array("name"=>$row["name"],"type"=>$row["dept_id"]);
             }
         }
         return $arr;
@@ -115,6 +144,7 @@ class DeptForm extends CFormModel
 				$this->name = $row['name'];
 				$this->z_index = $row['z_index'];
                 $this->type = $row['type'];
+                $this->dept_id = $row['dept_id'];
 				break;
 			}
 		}
@@ -146,9 +176,9 @@ class DeptForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
-							name, type, z_index, city, lcu
+							name, type, z_index, dept_id, city, lcu
 						) values (
-							:name, :type, :z_index, :city, :lcu
+							:name, :type, :z_index, :dept_id, :city, :lcu
 						)";
 				break;
 			case 'edit':
@@ -156,6 +186,7 @@ class DeptForm extends CFormModel
 							name = :name, 
 							type = :type, 
 							z_index = :z_index,
+							dept_id = :dept_id,
 							luu = :luu 
 						where id = :id
 						";
@@ -167,6 +198,8 @@ class DeptForm extends CFormModel
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
 		if (strpos($sql,':name')!==false)
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
+		if (strpos($sql,':dept_id')!==false)
+			$command->bindParam(':dept_id',$this->dept_id,PDO::PARAM_STR);
 		if (strpos($sql,':z_index')!==false)
 			$command->bindParam(':z_index',$this->z_index,PDO::PARAM_INT);
 		if (strpos($sql,':type')!==false)

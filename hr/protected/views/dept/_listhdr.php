@@ -1,10 +1,18 @@
 <tr>
 	<th></th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('name').$this->drawOrderArrow('name'),'#',$this->createOrderLink('dept-list','name'))
+		<?php
+        echo TbHtml::link($this->model->getTypeName().$this->getLabelName('name').$this->drawOrderArrow('name'),'#',$this->createOrderLink('dept-list','name'))
 			;
 		?>
 	</th>
+    <?php
+        if($this->model->type == 1){
+            echo "<th>";
+            echo TbHtml::link($this->getLabelName('dept_id').$this->drawOrderArrow('dept_id'),'#',$this->createOrderLink('dept-list','dept_id'));
+            echo "</th>";
+        }
+    ?>
 	<th>
 		<?php echo TbHtml::link($this->getLabelName('z_index').$this->drawOrderArrow('z_index'),'#',$this->createOrderLink('dept-list','z_index'))
 			;

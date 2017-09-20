@@ -241,8 +241,8 @@ class EmployeeForm extends CFormModel
                 $word->setValue("staffprov",$staff["staff"]["address"]);
                 $word->setValue("staffaddress",$staff["staff"]["contact_address"]);
                 $word->setValue("stafftelno",$staff["staff"]["phone"]);
-                $word->setValue("staffdept",$staff["staff"]["department"]);
-                $word->setValue("staffpost",$staff["staff"]["position"]);
+                $word->setValue("staffdept",DeptForm::getDeptToId($staff["staff"]["department"]));
+                $word->setValue("staffpost",DeptForm::getDeptToId($staff["staff"]["position"]));
                 $word->setValue("staffsalary",$staff["staff"]["wage"]);
                 $word->setValue("staffyears1",date("Y",strtotime($staff["staff"]["start_time"])));
                 $word->setValue("staffmonth1",date("m",strtotime($staff["staff"]["start_time"])));

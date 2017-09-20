@@ -7,5 +7,12 @@
 
 
     <td><?php echo $this->record['name']; ?></td>
+    <?php
+    if($this->model->type == 1){
+        echo "<td>";
+        echo DeptForm::getDeptToId($this->record['dept_id']);
+        echo "</td>";
+    }
+    ?>
     <td><?php echo $this->record['z_index']; ?></td>
 </tr>

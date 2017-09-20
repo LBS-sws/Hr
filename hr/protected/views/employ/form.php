@@ -303,15 +303,29 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptAllList(0),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),"class"=>"depart")
                     ); ?>
                 </div>
                 <!--分割-->
                 <?php echo $form->labelEx($model,'position',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'position',DeptForm::getDeptAllList(1),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
-                    ); ?>
+                    <?php
+                    $model_class = get_class($model);
+                    $departmentList = DeptForm::getDeptOneAllList();
+                    if($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)){
+                        echo "<select class='depart form-control' name='".$model_class."[position]' disabled>";
+                    }else{
+                        echo "<select class='depart form-control' name='".$model_class."[position]'>";
+                    }
+                     foreach ($departmentList as $key =>$value){
+                         if($model->position == $key){
+                             echo "<option value='$key' data-type='".$value["type"]."' selected>".$value["name"]."</option>";
+                         }else{
+                             echo "<option value='$key' data-type='".$value["type"]."'>".$value["name"]."</option>";
+                         }
+                     }
+                     echo "</select>";
+                    ?>
                 </div>
             </div>
 
@@ -561,6 +575,37 @@ $('#EmployForm_test_type').on('change',function(){
             }
         });
     }).trigger('change');
+    //部門變化
+    if($('.depart').length == 2){
+        DEPARTLIST = new Array();
+        $('.depart:last>option').each(function(){
+            var key = $(this).data('type');
+            var text = $(this).text();
+            var value = $(this).attr('value');
+            if(typeof DEPARTLIST[key] == 'undefined'){
+                DEPARTLIST[key] = new Array();
+            }
+            DEPARTLIST[key].push({'text':text,'value':value});
+        });
+        $('.depart:first').on('change',function(){
+            var key = $(this).val();
+            var oldValue = $('.depart:last').val();
+            $('.depart:last').html('');
+            for (var x in DEPARTLIST){
+                if(x == key){
+                    for(var i= 0;i<DEPARTLIST[key].length;i++){
+                        var html = '';
+                        if(oldValue == DEPARTLIST[x][i]['value']){
+                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\" selected>'+DEPARTLIST[x][i]['text']+'</option>';
+                        }else{
+                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\">'+DEPARTLIST[x][i]['text']+'</option>';
+                        }
+                        $('.depart:last').append(html);
+                    }
+                }
+            }
+        }).trigger('change');
+    }
     
     //附件上傳
     $('#importUp').on('click',function(){

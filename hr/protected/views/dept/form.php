@@ -58,6 +58,16 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'type'); ?>
 
+            <?php if ($model->type==1): ?>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label required"><?php echo Yii::t("contract","in department");?><span class="required">*</span></label>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'dept_id',$model->getDeptAllList(),
+                            array('readonly'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 			<div class="form-group">
                 <label class="col-sm-2 control-label required"><?php echo $model->getTypeName().Yii::t("contract"," Name");?><span class="required">*</span></label>
 				<div class="col-sm-3">

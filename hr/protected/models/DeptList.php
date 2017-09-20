@@ -14,6 +14,9 @@ class DeptList extends CListPageModel
 			'id'=>Yii::t('contract','ID'),
 			'z_index'=>Yii::t('contract','Level'),
 			'name'=>Yii::t('contract',' Name'),
+            'name_0'=>Yii::t('contract','Dept Name'),
+			'name_1'=>Yii::t('contract','Leader Name'),
+			'dept_id'=>Yii::t('contract','in department'),
 		);
 	}
 	public function getTypeName(){
@@ -75,6 +78,7 @@ class DeptList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'z_index'=>$record['z_index'],
+					'dept_id'=>$record['dept_id'],
                     'acc'=>$this->getTypeAcc()
 				);
 			}
