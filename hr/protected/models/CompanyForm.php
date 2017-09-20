@@ -15,7 +15,7 @@ class CompanyForm extends CFormModel
 	public $agent;
 	public $address;
 	public $phone;
-	public $tacitly;
+	public $tacitly=0;
 	public $security_code;
 	public $organization_code;
 	public $organization_time;
@@ -50,7 +50,7 @@ class CompanyForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, head, agent, address, phone, tacitly, security_code, organization_code, organization_time, license_code, license_time','safe'),
+            array('id, name, head, agent, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time','safe'),
 			array('name','required'),
 			array('name','validateName'),
 			array('head','required'),
@@ -158,9 +158,9 @@ class CompanyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_company(
-							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, lcu, lcd
+							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, lcu
 						) values (
-							:name, :agent, :head, :city, :address, :security_code, :organization_code, :organization_time, :license_code, :license_time, :phone, :lcu, :lcd
+							:name, :agent, :head, :city, :address, :phone, :security_code, :organization_code, :organization_time, :license_code, :license_time, :lcu
 						)";
 				break;
 			case 'edit':
@@ -175,7 +175,6 @@ class CompanyForm extends CFormModel
 							organization_time = :organization_time,
 							license_code = :license_code,
 							license_time = :license_time,
-							lud = :lud,
 							luu = :luu 
 						where id = :id
 						";
@@ -212,10 +211,6 @@ class CompanyForm extends CFormModel
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lcd')!==false)
-			$command->bindParam(':lcd',date('Y-m-d H:i:s'),PDO::PARAM_STR);
-		if (strpos($sql,':lud')!==false)
-			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
 
 		$command->execute();
 
