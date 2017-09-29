@@ -166,7 +166,7 @@ class MakeWagesForm extends CFormModel
 	{
 		$sql = '';
         $city = Yii::app()->user->city();
-        $uid = Yii::app()->user->id;
+        $uid = Yii::app()->user->user_display_name();
 		switch ($this->scenario) {
 			case 'delete':
                 $sql = "delete from hr_company where id = :id and city = :city";

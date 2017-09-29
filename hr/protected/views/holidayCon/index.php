@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Dept';
+$this->pageTitle=Yii::app()->name . ' - Holiday';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-    'id'=>'dept-list',
+    'id'=>'holidayCon-list',
     'enableClientValidation'=>true,
     'clientOptions'=>array('validateOnSubmit'=>true,),
     'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -14,9 +14,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
         <strong>
             <?php
             if($model->type == 1){
-                echo Yii::t('app','Leader');
+                echo Yii::t('app','Work Config');
             }else{
-                echo Yii::t('app','Department');
+                echo Yii::t('app','Holiday Config');
             }
             ?>
         </strong>
@@ -37,7 +37,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
                 //var_dump(Yii::app()->session['rw_func']);
                 if (Yii::app()->user->validRWFunction($model->getTypeAcc()))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
-                        'submit'=>Yii::app()->createUrl('dept/new',array("type"=>$model->type)),
+                        'submit'=>Yii::app()->createUrl('holidayCon/new',array("type"=>$model->type)),
                     ));
                 ?>
             </div>
@@ -50,8 +50,8 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
    $this->widget('ext.layout.ListPageWidget', array(
         'title'=>$model->getTypeName().Yii::t('contract',' List'),
         'model'=>$model,
-        'viewhdr'=>'//dept/_listhdr',
-        'viewdtl'=>'//dept/_listdtl',
+        'viewhdr'=>'//holidayCon/_listhdr',
+        'viewdtl'=>'//holidayCon/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,

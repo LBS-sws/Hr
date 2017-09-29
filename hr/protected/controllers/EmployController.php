@@ -29,6 +29,7 @@ class EmployController extends Controller
     public function actionNew()
     {
         $model = new EmployForm('new');
+        $model->entry_time = $model->test_start_time = date("Y/m/d");
         $this->render('form',array('model'=>$model,));
     }
 

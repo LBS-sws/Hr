@@ -86,6 +86,15 @@ return array(
     'Wages Config'=>'配置工资单',
     'Wages Make'=>'制作工资单',
     'Wages Audit'=>'工资单审核',
+    'Only Holiday List'=>'个人请假列表',
+    'All Holiday List'=>'所有请假列表',
+    'Holiday Config'=>'假期配置',
+    'Holiday Audit'=>'假期审核',
+    'Only Work List'=>'个人加班列表',
+    'All Work List'=>'所有加班列表',
+    'Work Config'=>'加班配置',
+    'Work Audit'=>'加班审核',
+    'employee binding account'=>'员工绑定账号',
     //沈超添加结束
 );
 ?>

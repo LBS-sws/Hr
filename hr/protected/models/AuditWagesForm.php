@@ -100,7 +100,7 @@ class AuditWagesForm extends CFormModel
 	{
 		$sql = '';
         $city = Yii::app()->user->city();
-        $uid = Yii::app()->user->id;
+        $uid = Yii::app()->user->user_display_name();
 		switch ($this->scenario) {
 			case 'audit':
                 $sql = "update hr_employee_wages set

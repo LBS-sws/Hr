@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Dept';
+$this->pageTitle=Yii::app()->name . ' - Holiday';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-    'id'=>'dept-list',
+    'id'=>'holiday-list',
     'enableClientValidation'=>true,
     'clientOptions'=>array('validateOnSubmit'=>true,),
     'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -13,11 +13,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
     <h1>
         <strong>
             <?php
-            if($model->type == 1){
-                echo Yii::t('app','Leader');
-            }else{
-                echo Yii::t('app','Department');
-            }
+            echo $model->getTitleAppText();
             ?>
         </strong>
     </h1>
@@ -37,21 +33,22 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
                 //var_dump(Yii::app()->session['rw_func']);
                 if (Yii::app()->user->validRWFunction($model->getTypeAcc()))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
-                        'submit'=>Yii::app()->createUrl('dept/new',array("type"=>$model->type)),
+                        'submit'=>Yii::app()->createUrl('holiday/new',array("type"=>$model->type)),
                     ));
                 ?>
             </div>
         </div></div>
     <?php
     $search = array(
-        'name',
+        'employee_name',
+        'holiday_name',
     );
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
    $this->widget('ext.layout.ListPageWidget', array(
         'title'=>$model->getTypeName().Yii::t('contract',' List'),
         'model'=>$model,
-        'viewhdr'=>'//dept/_listhdr',
-        'viewdtl'=>'//dept/_listdtl',
+        'viewhdr'=>'//holiday/_listhdr',
+        'viewdtl'=>'//holiday/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,

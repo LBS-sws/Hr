@@ -14,7 +14,7 @@ return array(
     'Preview'=>'預覽',
 
     'local'=>'本地可見',
-    'default'=>'無限制',
+    'default'=>'各地可見',
 
     'Are you sure you want to delete this data?'=>'你確定要刪除這條數據嗎?',
     ' can not repeat'=>'不能重複',
@@ -209,6 +209,26 @@ return array(
     'Attachment Name'=>'附件名稱',
 
     //9-18
-    'in department'=>'所在部門'
+    'in department'=>'所在部門',
+    'Holiday'=>'假期',
+    'Holiday Name'=>'假期名字',
+    'Work Name'=>'加班名字',
+    'holiday'=>'請假',
+    'add holiday'=>'申請請假',
+    'overtime'=>'加班',
+    'Work'=>'加班',
+    'Hour'=>'小時',
+    'Time'=>'時間',
+    'Start Time'=>'開始時間',
+    'End Time'=>'結束時間',
+    ' Cause'=>'原因',
+    'Binding'=>'綁定',
+    'Binding List'=>'綁定列表',
+    'Binding Form'=>'綁定表單',
+    'Add overtime'=>'申請加班',
+    'Add Binding'=>'添加綁定',
+    'Account number'=>'賬號',
+    ' Did not find'=>'沒找到',
+    'The account has no binding staff, please contact the administrator'=>'該賬號沒有綁定員工，請與管理員聯繫',
 );
 ?>

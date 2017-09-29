@@ -396,8 +396,13 @@ class HistoryForm extends CFormModel
         unset($staff["lcu"]);
         $keyList =array_keys($staff);
         $operation = $staffNew['operation'];
+        $dateKey = array("test_start_time","test_end_time","entry_time","birth_time");
         foreach ($staffNew as $key =>$value){
             if (!in_array($key,$keyList)){
+                unset($staffNew[$key]);
+                continue;
+            }
+            if(empty($value)&&in_array($key,$dateKey)){
                 unset($staffNew[$key]);
             }
         }

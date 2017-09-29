@@ -659,6 +659,14 @@ $('#HistoryForm_test_type').on('change',function(){
         }
         $(this).parents('tr:first').remove();
     });
+    //年齡計算
+    $('#HistoryForm_birth_time').on('change',function(){
+        var birth_time = $(this).val();
+        if(birth_time != ''){
+            var age = jsGetAge(birth_time);
+            $('#HistoryForm_age').val(age);
+        }
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
@@ -679,7 +687,7 @@ Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_
 
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/jquery-form.js", CClientScript::POS_END);
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/ajaxFile.js", CClientScript::POS_END);
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js", CClientScript::POS_END);
+Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js?2", CClientScript::POS_END);
 
 ?>
 

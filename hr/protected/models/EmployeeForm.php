@@ -383,7 +383,6 @@ class EmployeeForm extends CFormModel
 			$this->saveStaff($connection);
 			$transaction->commit();
 		}catch(Exception $e) {
-		    var_dump($e->getMessage());
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
 		}
@@ -488,7 +487,6 @@ class EmployeeForm extends CFormModel
 		if (strpos($sql,':lud')!==false)
 			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
 
-        var_dump($this->user_card);
         //die();
 		$command->execute();
 

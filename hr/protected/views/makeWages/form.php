@@ -56,11 +56,11 @@ $this->pageTitle=Yii::app()->name . ' - MakeWages Form';
             </div>
 
             <div class="btn-group pull-right" role="group">
-                <?php if ($model->scenario!='new'){
+                <?php
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('contract','Wages History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
-                } ?>
+                 ?>
             </div>
         </div></div>
 
