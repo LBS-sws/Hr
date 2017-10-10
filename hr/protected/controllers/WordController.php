@@ -38,7 +38,7 @@ class WordController extends Controller
         if($url){
             $file = Yii::app()->basePath."/../".$url["docx_url"];
             header("Content-type: application/octet-stream");
-            header('Content-Disposition: attachment; filename='.$url["name"].'.docx');
+            header('Content-Disposition: attachment; filename="'.$url["name"].'.docx"');
             header("Content-Length: ". filesize($file));
             readfile($file);
         }else{

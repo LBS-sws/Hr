@@ -143,7 +143,8 @@ class EmployController extends Controller
             $model->file = $img->getName();
             if ($model->file && $model->validate()) {
                 $img->saveAs($url);
-                $url = "/".Yii::app()->params['systemId']."/".$url;
+                //$url = "/".Yii::app()->params['systemId']."/".$url;
+                $url = "../../".$url;
                 echo CJSON::encode(array('status'=>1,'data'=>$url));
             }else{
                 echo CJSON::encode(array('status'=>0,'error'=>$model->getErrors()));
