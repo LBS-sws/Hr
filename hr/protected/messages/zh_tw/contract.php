@@ -23,7 +23,7 @@ return array(
 
     'Contract List'=>'合同模板列表',
     'Add Contract'=>'添加合同',
-    'Contract Name'=>'合同名字',
+    'Contract Name'=>'合同组合名字',
     'Contract Word'=>'合同文檔',
     'Contract Form'=>'合同模板表單',
     'Level'=>'顯示次序',

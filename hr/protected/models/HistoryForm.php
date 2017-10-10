@@ -187,12 +187,12 @@ class HistoryForm extends CFormModel
         }
     }
 	public function validateName($attribute, $params){
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
+/*        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
             ->where('id!=:id and name=:name ', array(':id'=>$this->employee_id,':name'=>$this->name))->queryAll();
         if (count($rows) > 0){
             $message = Yii::t('contract','Employee Name'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
-        }
+        }*/
     }
 
     //獲取可用公司

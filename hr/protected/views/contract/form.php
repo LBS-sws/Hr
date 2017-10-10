@@ -55,7 +55,7 @@ $this->pageTitle=Yii::app()->name . ' - Contract Form';
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'name',
-						array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'))
+						array('size'=>50,'maxlength'=>50,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
 			</div>
