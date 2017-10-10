@@ -220,8 +220,8 @@ class AuditHistoryForm extends CFormModel
                 $this->phone = $row['phone'];
                 $this->city = $row['city'];
                 $this->user_card = $row['user_card'];
-                $this->department = $row['department'];
-                $this->position = $row['position'];
+                $this->department = DeptForm::getDeptToid($row['department']);
+                $this->position = DeptForm::getDeptToid($row['position']);
                 $this->wage = $row['wage'];
                 $this->start_time = $row['start_time'];
                 $this->end_time = $row['end_time'];

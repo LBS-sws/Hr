@@ -76,7 +76,7 @@ class DepartureList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'code'=>$record['code'],
-					'position'=>$record['position'],
+                    'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
 					'phone'=>$record['phone'],

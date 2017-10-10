@@ -13,6 +13,7 @@ class DepartureForm extends CFormModel
 	public $city;
 	public $code;
     public $sex;
+    public $staff_id;
 	public $company_id;
     public $address;
     public $address_code;
@@ -58,6 +59,10 @@ class DepartureForm extends CFormModel
     public $sb_card;//社保卡號
     public $jj_card;//公積金卡號
     public $historyList;//員工歷史
+    public $staff_type;//员工类别
+    public $staff_leader;//队长/组长
+    public $test_length;//
+    public $attachment="";//附件
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -72,7 +77,8 @@ class DepartureForm extends CFormModel
             'age'=>Yii::t('contract','Age'),
             'birth_time'=>Yii::t('contract','Birth Date'),
             'name'=>Yii::t('contract','Employee Name'),
-            'company_id'=>Yii::t('contract','Employee Belong'),
+            'staff_id'=>Yii::t('contract','Employee Belong'),
+            'company_id'=>Yii::t('contract','Employee Contract Belong'),
             'contract_id'=>Yii::t('contract','Employee Contract'),
             'address'=>Yii::t('contract','Address'),
             'contact_address'=>Yii::t('contract','Contact Address'),
@@ -110,6 +116,10 @@ class DepartureForm extends CFormModel
             'ld_card'=>Yii::t('contract','Labor security card'),
             'sb_card'=>Yii::t('contract','Social security card'),
             'jj_card'=>Yii::t('contract','Accumulation fund card'),
+            'staff_type'=>Yii::t('staff','Staff Type'),
+            'staff_leader'=>Yii::t('staff','Team/Group Leader'),
+            'test_length'=>Yii::t('contract','Probation Time Longer'),
+            'attachment'=>Yii::t('contract','Attachment'),
 		);
 	}
 
@@ -120,16 +130,14 @@ class DepartureForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+            array('id, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
              ld_card, sb_card, jj_card,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('code','required'),
 			array('name','required'),
-			array('code','validateCode'),
 			array('sex','required'),
-			array('name','validateName'),
 			array('company_id','required'),
 			array('contract_id','required'),
 			array('address','required'),
@@ -143,42 +151,9 @@ class DepartureForm extends CFormModel
 			array('start_time','required'),
 			array('end_time','required'),
 			array('test_type','required'),
-			array('test_type','validateTestType'),
 		);
 	}
 
-	public function validateTestType($attribute, $params){
-	    if(!empty($this->test_type)){
-	        if(empty($this->test_end_time)||empty($this->test_end_time)){
-                $message = Yii::t('contract','Probation Time'). Yii::t('contract',' can not be empty');
-                $this->addError($attribute,$message);
-            }
-            if(empty($this->test_wage)){
-                $message = Yii::t('contract','Probation Wage'). Yii::t('contract',' can not be empty');
-                $this->addError($attribute,$message);
-            }elseif (!is_numeric($this->test_wage)){
-                $message = Yii::t('contract','Probation Wage'). Yii::t('contract',' Must be Numbers');
-                $this->addError($attribute,$message);
-            }
-        }
-    }
-
-	public function validateCode($attribute, $params){
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id!=:id and code=:code ', array(':id'=>$this->id,':code'=>$this->code))->queryAll();
-        if (count($rows) > 0){
-            $message = Yii::t('contract','Employee Code'). Yii::t('contract',' can not repeat');
-            $this->addError($attribute,$message);
-        }
-    }
-	public function validateName($attribute, $params){
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id!=:id and name=:name ', array(':id'=>$this->id,':name'=>$this->name))->queryAll();
-        if (count($rows) > 0){
-            $message = Yii::t('contract','Employee Name'). Yii::t('contract',' can not repeat');
-            $this->addError($attribute,$message);
-        }
-    }
 
     //獲取可用公司
     public function getCompanyToCity(){
@@ -205,70 +180,6 @@ class DepartureForm extends CFormModel
             }
         }
         return $arr;
-    }
-    //生成合同文件
-    public function updateEmployeeWord($employee_id){
-
-        $staff = EmployeeForm::getEmployeeToId($employee_id);
-        if (!$staff){
-            return false;
-        }else{
-            try{
-                $bool = true;
-                if ($staff["staff"]["test_type"] != 1){
-                    $bool = false;//無試用期
-                }
-                $word = new Template($staff["word"],$bool);
-
-                $word->setValue("city",$staff["company"]["city"]);
-                $word->setValue("companyname",$staff["company"]["name"]);
-                $word->setValue("companyaddress",$staff["company"]["address"]);
-                $word->setValue("companyhead",$staff["company"]["head"]);
-                $word->setValue("companyagent",$staff["company"]["agent"]);
-                $word->setValue("companyphone",$staff["company"]["phone"]);
-
-                $word->setValue("staffname",$staff["staff"]["name"]);
-                $word->setValue("staffcode",$staff["staff"]["code"]);
-                $word->setValue("staffgender",$staff["staff"]["sex"]);
-                $word->setValue("staffidno",$staff["staff"]["user_card"]);
-                $word->setValue("staffprov",$staff["staff"]["address"]);
-                $word->setValue("staffaddress",$staff["staff"]["contact_address"]);
-                $word->setValue("stafftelno",$staff["staff"]["phone"]);
-                $word->setValue("staffdept",$staff["staff"]["department"]);
-                $word->setValue("staffpost",$staff["staff"]["position"]);
-                $word->setValue("staffsalary",$staff["staff"]["wage"]);
-                $word->setValue("staffyears1",date("Y",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffmonth1",date("m",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffday1",date("d",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffyears2",date("Y",strtotime($staff["staff"]["end_time"])));
-                $word->setValue("staffmonth2",date("m",strtotime($staff["staff"]["end_time"])));
-                $word->setValue("staffday2",date("d",strtotime($staff["staff"]["end_time"])));
-                $word->setValue("stafftestyears1",date("Y",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftestmonth1",date("m",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftestday1",date("d",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftestyears2",date("Y",strtotime($staff["staff"]["test_end_time"])));
-                $word->setValue("stafftestmonth2",date("m",strtotime($staff["staff"]["test_end_time"])));
-                $word->setValue("stafftestday2",date("d",strtotime($staff["staff"]["test_end_time"])));
-                $testNum = intval(date("m",strtotime($staff["staff"]["test_end_time"])))-intval(date("m",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftest",$testNum);
-                $word->setValue("stafftestwage",$staff["staff"]["test_wage"]);
-                $word->save($staff["staff"]["code"]);
-                //合同的地址格式：upload/staff/所在地區/員工編號.docx
-                $wordUrl = "upload/staff/".$staff["staff"]["city"]."/".$staff["staff"]["code"].".docx";
-                Yii::app()->db->createCommand()->update('hr_employee', array(
-                    'word_status'=>1,
-                    'word_url'=>$wordUrl
-                ), 'id=:id', array(':id'=>$employee_id));
-
-                return array(
-                    "word_url"=>$wordUrl,
-                    "name"=>$staff["staff"]["name"]
-                );
-            }catch (Exception $e){
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Error:Word Error , Not Font Word'));
-                return false;
-            }
-        }
     }
 
     //根據id獲取公司員工合同信息
@@ -315,6 +226,7 @@ class DepartureForm extends CFormModel
                 $this->code = $row['code'];
                 $this->name = $row['name'];
                 $this->sex = $row['sex'];
+                $this->staff_id = $row['staff_id'];
                 $this->company_id = $row['company_id'];
                 $this->contract_id = $row['contract_id'];
                 $this->address = $row['address'];
@@ -322,8 +234,8 @@ class DepartureForm extends CFormModel
                 $this->phone = $row['phone'];
                 $this->city = $row['city'];
                 $this->user_card = $row['user_card'];
-                $this->department = $row['department'];
-                $this->position = $row['position'];
+                $this->department = DeptForm::getDeptToid($row['department']);
+                $this->position = DeptForm::getDeptToid($row['position']);
                 $this->wage = $row['wage'];
                 $this->start_time = $row['start_time'];
                 $this->end_time = $row['end_time'];
@@ -359,133 +271,15 @@ class DepartureForm extends CFormModel
                 $this->sb_card = $row['sb_card'];
                 $this->jj_card = $row['jj_card'];
                 $this->historyList = AuditHistoryForm::getStaffHistoryList($this->id);
+                $this->test_length = $row['test_length'];
+                $this->staff_type = $row['staff_type'];
+                $this->staff_leader = $row['staff_leader'];
+                $this->attachment = $row['attachment'];
 				break;
 			}
 		}
+        $this->scenario = "view";
 		return true;
 	}
-	
-	public function saveData()
-	{
-		$connection = Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-			$this->saveStaff($connection);
-			$transaction->commit();
-		}catch(Exception $e) {
-		    var_dump($e->getMessage());
-			$transaction->rollback();
-			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
-		}
-	}
 
-	protected function saveStaff(&$connection)
-	{
-		$sql = '';
-        $city = Yii::app()->user->city();
-        $uid = Yii::app()->user->id;
-		switch ($this->scenario) {
-			case 'delete':
-                $sql = "delete from hr_employee where id = :id and city = :city";
-				break;
-			case 'new':
-				$sql = "insert into hr_employee(
-							name, code, sex, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time, test_wage, lcu, lcd
-						) values (
-							:name, :code, :sex, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time, :test_wage, :lcu, :lcd
-						)";
-				break;
-			case 'edit':
-				$sql = "update hr_employee set
-							name = :name, 
-							code = :code, 
-							sex = :sex, 
-							company_id = :company_id,
-							contract_id = :contract_id,
-							address = :address,
-							contact_address = :contact_address,
-							phone = :phone,
-							user_card = :user_card,
-							department = :department,
-							position = :position,
-							wage = :wage,
-							start_time = :start_time,
-							end_time = :end_time,
-							test_type = :test_type,
-							test_end_time = :test_end_time,
-							test_start_time = :test_start_time,
-							test_wage = :test_wage,
-							lud = :lud,
-							luu = :luu 
-						where id = :id
-						";
-				break;
-		}
-		if(intval($this->test_type) != 1){
-		    $this->test_wage = null;
-		    $this->test_start_time = null;
-		    $this->test_end_time = null;
-        }
-
-		$command=$connection->createCommand($sql);
-		if (strpos($sql,':id')!==false)
-			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
-		if (strpos($sql,':code')!==false)
-			$command->bindParam(':code',$this->code,PDO::PARAM_STR);
-		if (strpos($sql,':sex')!==false)
-			$command->bindParam(':sex',$this->sex,PDO::PARAM_STR);
-		if (strpos($sql,':name')!==false)
-			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
-		if (strpos($sql,':company_id')!==false)
-			$command->bindParam(':company_id',$this->company_id,PDO::PARAM_INT);
-		if (strpos($sql,':contract_id')!==false)
-			$command->bindParam(':contract_id',$this->contract_id,PDO::PARAM_INT);
-		if (strpos($sql,':address')!==false)
-			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
-		if (strpos($sql,':contact_address')!==false)
-			$command->bindParam(':contact_address',$this->contact_address,PDO::PARAM_STR);
-		if (strpos($sql,':phone')!==false)
-			$command->bindParam(':phone',$this->phone,PDO::PARAM_STR);
-		if (strpos($sql,':user_card')!==false)
-			$command->bindParam(':user_card',$this->user_card,PDO::PARAM_STR);
-		if (strpos($sql,':department')!==false)
-			$command->bindParam(':department',$this->department,PDO::PARAM_STR);
-		if (strpos($sql,':position')!==false)
-			$command->bindParam(':position',$this->position,PDO::PARAM_STR);
-		if (strpos($sql,':wage')!==false)
-			$command->bindParam(':wage',$this->wage,PDO::PARAM_INT);
-		if (strpos($sql,':start_time')!==false)
-			$command->bindParam(':start_time',$this->start_time,PDO::PARAM_STR);
-		if (strpos($sql,':end_time')!==false)
-			$command->bindParam(':end_time',$this->end_time,PDO::PARAM_STR);
-		if (strpos($sql,':test_type')!==false)
-			$command->bindParam(':test_type',$this->test_type,PDO::PARAM_INT);
-		if (strpos($sql,':test_end_time')!==false)
-			$command->bindParam(':test_end_time',$this->test_end_time,PDO::PARAM_STR);
-		if (strpos($sql,':test_start_time')!==false)
-			$command->bindParam(':test_start_time',$this->test_start_time,PDO::PARAM_STR);
-		if (strpos($sql,':test_wage')!==false)
-			$command->bindParam(':test_wage',$this->test_wage,PDO::PARAM_INT);
-
-        if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
-		if (strpos($sql,':luu')!==false)
-			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lcu')!==false)
-			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lcd')!==false)
-			$command->bindParam(':lcd',date('Y-m-d H:i:s'),PDO::PARAM_STR);
-		if (strpos($sql,':lud')!==false)
-			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
-
-        var_dump($this->user_card);
-        //die();
-		$command->execute();
-
-        if ($this->scenario=='new'){
-            $this->id = Yii::app()->db->getLastInsertID();
-            $this->scenario = "edit";
-        }
-        return true;
-	}
 }
