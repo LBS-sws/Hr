@@ -125,6 +125,22 @@ class EmployController extends Controller
         }
     }
 
+    //刪除草稿
+    public function actionDelete(){
+        $model = new EmployForm('delete');
+        if (isset($_POST['EmployForm'])) {
+            $model->attributes = $_POST['EmployForm'];
+            if($model->validateDelete()){
+                $model->saveData();
+                $this->redirect(Yii::app()->createUrl('employ/index'));
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+            }else{
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','The dept has staff being used, please delete the staff first'));
+                $this->redirect(Yii::app()->createUrl('employ/edit',array('index'=>$model->id)));
+            }
+        }
+    }
+
     //上傳圖片
     public function actionUploadImg(){
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求

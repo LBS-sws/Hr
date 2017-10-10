@@ -368,7 +368,17 @@ class EmployForm extends CFormModel
         }
         return $arr;
     }
-	
+
+    //員工刪除時必須是草稿
+    public function validateDelete(){
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
+            ->where('id=:id and staff_status=1', array(':id'=>$this->id))->queryRow();
+        if ($rows){
+            return true;
+        }
+        return false;
+    }
+
 	public function saveData()
 	{
 		$connection = Yii::app()->db;
@@ -448,6 +458,7 @@ class EmployForm extends CFormModel
 							english = :english,
 							technology = :technology,
 							other = :other,
+							year_day = :year_day,
 							email = :email,
 							remark = :remark,
 							price1 = :price1,
