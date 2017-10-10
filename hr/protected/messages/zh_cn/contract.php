@@ -230,5 +230,14 @@ return array(
     'Account number'=>'账号',
     ' Did not find'=>'沒找到',
     'The account has no binding staff, please contact the administrator'=>'该账号没有绑定员工，请与管理员联系',
+
+    //10-9
+    'Staff Contract'=>'劳务合同生成',
+    'personal data'=>'个人资料',
+    'position data'=>'职位资料',
+    'contract data'=>'合同资料',
+    'additional information'=>'补充资料',
+    'archives'=>'档案',
+    'Employee Contract Belong'=>'员工合同归属',
 );
 ?>

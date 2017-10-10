@@ -40,6 +40,7 @@ class CompanyForm extends CFormModel
 			'organization_time'=>Yii::t('contract','Organization Time'),
 			'license_code'=>Yii::t('contract','License Code'),
 			'license_time'=>Yii::t('contract','License Time'),
+			'tacitly'=>Yii::t('contract','Tacitly Company'),
 		);
 	}
 
@@ -140,6 +141,9 @@ class CompanyForm extends CFormModel
 		try {
 			$this->saveStaff($connection);
 			$transaction->commit();
+
+			//默認公司自動化
+            $this->setTacitly();
 		}
 		catch(Exception $e) {
 			$transaction->rollback();
@@ -158,9 +162,9 @@ class CompanyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_company(
-							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, lcu
+							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, tacitly, lcu
 						) values (
-							:name, :agent, :head, :city, :address, :phone, :security_code, :organization_code, :organization_time, :license_code, :license_time, :lcu
+							:name, :agent, :head, :city, :address, :phone, :security_code, :organization_code, :organization_time, :license_code, :license_time, :tacitly, :lcu
 						)";
 				break;
 			case 'edit':
@@ -175,6 +179,7 @@ class CompanyForm extends CFormModel
 							organization_time = :organization_time,
 							license_code = :license_code,
 							license_time = :license_time,
+							tacitly = :tacitly,
 							luu = :luu 
 						where id = :id
 						";
@@ -204,6 +209,8 @@ class CompanyForm extends CFormModel
 			$command->bindParam(':license_code',$this->license_code,PDO::PARAM_STR);
 		if (strpos($sql,':license_time')!==false)
 			$command->bindParam(':license_time',$this->license_time,PDO::PARAM_STR);
+		if (strpos($sql,':tacitly')!==false)
+			$command->bindParam(':tacitly',$this->tacitly,PDO::PARAM_INT);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);
@@ -220,4 +227,12 @@ class CompanyForm extends CFormModel
         }
         return true;
 	}
+
+	protected function setTacitly(){
+	    if($this->tacitly == 1){
+            Yii::app()->db->createCommand()->update('hr_company', array(
+                'tacitly'=>0
+            ), 'id!=:id', array(':id'=>$this->id));
+        }
+    }
 }

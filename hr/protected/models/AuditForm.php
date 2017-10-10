@@ -13,6 +13,7 @@ class AuditForm extends CFormModel
 	public $city;
 	public $code;
     public $sex;
+	public $staff_id;
 	public $company_id;
 	public $address;
 	public $address_code;
@@ -73,7 +74,8 @@ class AuditForm extends CFormModel
 			'age'=>Yii::t('contract','Age'),
 			'birth_time'=>Yii::t('contract','Birth Date'),
 			'name'=>Yii::t('contract','Employee Name'),
-			'company_id'=>Yii::t('contract','Employee Belong'),
+			'staff_id'=>Yii::t('contract','Employee Belong'),
+			'company_id'=>Yii::t('contract','Employee Contract Belong'),
 			'contract_id'=>Yii::t('contract','Employee Contract'),
 			'address'=>Yii::t('contract','Old Address'),
 			'contact_address'=>Yii::t('contract','Contact Address'),
@@ -123,7 +125,7 @@ class AuditForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+            array('id, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,ject_remark,staff_status,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other,
                test_length,staff_type,staff_leader,attachment',
@@ -172,6 +174,7 @@ class AuditForm extends CFormModel
 				$this->code = $row['code'];
 				$this->name = $row['name'];
 				$this->sex = $row['sex'];
+				$this->staff_id = $row['staff_id'];
 				$this->company_id = $row['company_id'];
                 $this->contract_id = $row['contract_id'];
                 $this->address = $row['address'];
@@ -179,8 +182,8 @@ class AuditForm extends CFormModel
                 $this->phone = $row['phone'];
                 $this->city = $row['city'];
                 $this->user_card = $row['user_card'];
-                $this->department = $row['department'];
-                $this->position = $row['position'];
+                $this->department = DeptForm::getDeptToId($row['department']);
+                $this->position = DeptForm::getDeptToId($row['position']);
                 $this->wage = $row['wage'];
                 $this->start_time = $row['start_time'];
                 $this->end_time = $row['end_time'];

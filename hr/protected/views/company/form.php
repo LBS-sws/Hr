@@ -45,13 +45,6 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
             <?php endif; ?>
         <?php endif ?>
 	</div>
-            <?php if ($model->scenario!='view' && $model->tacitly == 0): ?>
-            <div class="btn-group pull-right">
-                <?php echo TbHtml::button('<span class="fa fa-fire"></span> '.Yii::t('contract','Set Tacitly'), array(
-                    'submit'=>Yii::app()->createUrl('company/tacitly',array("index"=>$model->id))));
-                ?>
-            </div>
-            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -59,7 +52,6 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
-			<?php echo $form->hiddenField($model, 'tacitly'); ?>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
@@ -151,6 +143,14 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                     </div>
                 </div>
 			</div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'tacitly',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->inlineRadioButtonList($model, 'tacitly',array(Yii::t("misc","No"),Yii::t("misc","Yes")),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 
 		</div>
 	</div>
@@ -160,7 +160,6 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
-
 if ($model->scenario!='view') {
     $js = Script::genDatePicker(array(
         'CompanyForm_organization_time',

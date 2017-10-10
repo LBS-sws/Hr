@@ -34,8 +34,8 @@ $this->pageTitle=Yii::app()->name . ' - History';
    $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('app','Employee Update List'),
         'model'=>$model,
-        'viewhdr'=>'//auditHistory/_listhdr',
-        'viewdtl'=>'//auditHistory/_listdtl',
+        'viewhdr'=>'//audithistory/_listhdr',
+        'viewdtl'=>'//audithistory/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,

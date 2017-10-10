@@ -14,6 +14,7 @@ class AuditHistoryForm extends CFormModel
 	public $city;
 	public $code;
     public $sex;
+	public $staff_id;
 	public $company_id;
     public $address;
     public $address_code;
@@ -80,7 +81,8 @@ class AuditHistoryForm extends CFormModel
             'age'=>Yii::t('contract','Age'),
             'birth_time'=>Yii::t('contract','Birth Date'),
             'name'=>Yii::t('contract','Employee Name'),
-            'company_id'=>Yii::t('contract','Employee Belong'),
+            'staff_id'=>Yii::t('contract','Employee Belong'),
+            'company_id'=>Yii::t('contract','Employee Contract Belong'),
             'contract_id'=>Yii::t('contract','Employee Contract'),
             'address'=>Yii::t('contract','Old Address'),
             'contact_address'=>Yii::t('contract','Contact Address'),
@@ -133,7 +135,7 @@ class AuditHistoryForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id,employee_id,ject_remark,operation,update_remark, code, name, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+            array('id,employee_id,ject_remark,operation,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
              ld_card, sb_card, jj_card,attachment,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
@@ -210,6 +212,7 @@ class AuditHistoryForm extends CFormModel
                 $this->code = $row['code'];
                 $this->name = $row['name'];
                 $this->sex = $row['sex'];
+                $this->staff_id = $row['staff_id'];
                 $this->company_id = $row['company_id'];
                 $this->contract_id = $row['contract_id'];
                 $this->address = $row['address'];
@@ -295,6 +298,9 @@ class AuditHistoryForm extends CFormModel
             "lcu"=>$uid,
             "lcd"=>$lud,
         ));
+        if($this->scenario == "audit"){
+            $this->finish();
+        }
 	}
 
 
@@ -316,5 +322,48 @@ class AuditHistoryForm extends CFormModel
         }
         $this->attachment = $arr;
         return $arr;
+    }
+
+    //變更完成
+    public function finish(){
+        $uid = Yii::app()->user->id;
+        $date = date("Y-m-d H:i:s");
+        $staff = Yii::app()->db->createCommand()->select()->from("hr_employee")
+            ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
+        $staffNew = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
+            ->where('id=:id', array(':id'=>$this->id))->queryRow();
+        unset($staff["id"]);
+        unset($staff["lcd"]);
+        unset($staff["lud"]);
+        unset($staff["luu"]);
+        unset($staff["lcu"]);
+        $keyList =array_keys($staff);
+        $operation = $staffNew['operation'];
+        $dateKey = array("test_start_time","test_end_time","entry_time","birth_time");
+        foreach ($staffNew as $key =>$value){
+            if (!in_array($key,$keyList)){
+                unset($staffNew[$key]);
+                continue;
+            }
+            if(empty($value)&&in_array($key,$dateKey)){
+                unset($staffNew[$key]);
+            }
+        }
+        if($operation === "departure"){
+            $staffNew["staff_status"] = -1;//離職
+        }else{
+            $staffNew["staff_status"] = 0;
+        }
+        $staff["finish"] = 1;
+        Yii::app()->db->createCommand()->update('hr_employee', $staffNew, 'id=:id', array(':id'=>$this->employee_id));
+        Yii::app()->db->createCommand()->update('hr_employee_operate', $staff, 'id=:id', array(':id'=>$this->id));
+
+        //記錄
+        Yii::app()->db->createCommand()->insert('hr_employee_history', array(
+            "employee_id"=>$this->employee_id,
+            "status"=>"finish",
+            "lcu"=>$uid,
+            "lcd"=>$date,
+        ));
     }
 }

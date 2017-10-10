@@ -5,6 +5,9 @@ if (empty($model->id)&&$model->scenario == "edit"){
 $this->pageTitle=Yii::app()->name . ' - Audit Form';
 ?>
 
+<style>
+    input[readonly="readonly"]{pointer-events: none;}
+</style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'audit-form',
 'enableClientValidation'=>true,
@@ -48,7 +51,7 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 <?php if ($model->scenario!='new'): ?>
 	<div class="btn-group pull-right" role="group">
         <?php if ($model->staff_status == 4): ?>
-            <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Down'),array(
+            <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
                 'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
             ?>
         <?php endif; ?>
@@ -71,27 +74,9 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'staff_status'); ?>
 
-			<div class="form-group">
-				<?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<?php echo $form->textField($model, 'code',
-						array('size'=>20,'maxlength'=>20,'readonly'=>true)
-					); ?>
-				</div>
-				<?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-                    <div class="input-group">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'entry_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
-                        ?>
-                    </div>
-				</div>
-			</div>
 
-			<div class="form-group">
+            <legend><?php echo Yii::t("contract","personal data");?></legend>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'name',
@@ -102,22 +87,6 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                 <?php echo $form->labelEx($model,'sex',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'sex',EmployList::getSexList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
-                    ); ?>
-                </div>
-			</div>
-
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
-                    ); ?>
-                </div>
-                <!--分割-->
-                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
                         array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
                     ); ?>
                 </div>
@@ -137,62 +106,11 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                 <!--分割-->
                 <?php echo $form->labelEx($model,'age',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'age',EmployList::getAgeList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    <?php echo $form->textField($model, 'age',
+                        array('readonly'=>true)
                     ); ?>
                 </div>
             </div>
-
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'time',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <div class="input-group">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'start_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
-                        ?>
-                    </div>
-                </div>
-                <div class="pull-left control-label">至</div>
-                <div class="col-sm-3">
-                    <div class="input-group">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'end_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
-                        ?>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'wage',
-                        array('min'=>0,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-            </div>
-
-			<div class="form-group">
-				<?php echo $form->labelEx($model,'company_id',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<?php echo $form->dropDownList($model, 'company_id',$model->getCompanyToCity(),
-						array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
-					); ?>
-				</div>
-                <!--分割-->
-                <?php echo $form->labelEx($model,'contract_id',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'contract_id',$model->getContractToCity(),
-                        array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-			</div>
-
-
             <div class="form-group">
                 <?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
@@ -252,6 +170,58 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'email',
+                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+            </div>
+
+            <legend><?php echo Yii::t("contract","position data");?></legend>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'code',
+                        array('size'=>20,'maxlength'=>20,'readonly'=>true)
+                    ); ?>
+                </div>
+                <?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'entry_time',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'staff_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_id',$model->getCompanyToCity(),
+                        array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'department',
@@ -266,14 +236,77 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                     ); ?>
                 </div>
             </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'price1',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'price1',WagesForm::getWagesList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+            </div>
 
+            <legend><?php echo Yii::t("contract","contract data");?></legend>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'time',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'start_time',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                        ?>
+                    </div>
+                </div>
+                <div class="pull-left control-label">至</div>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'end_time',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->numberField($model, 'wage',
+                        array('min'=>0,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'year_day',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'year_day',
+                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'company_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'company_id',$model->getCompanyToCity(),
+                        array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'contract_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'contract_id',$model->getContractToCity(),
+                        array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+            </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'test_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'test_type',array(
-                            "1"=>Yii::t("contract","Have probation period"),
-                            "0"=>Yii::t("contract","No probation period")
-                        ),array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
+                        "1"=>Yii::t("contract","Have probation period"),
+                        "0"=>Yii::t("contract","No probation period")
+                    ),array('disabled'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
             </div>
@@ -320,7 +353,7 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                 </div>
             </div>
 
-
+            <legend><?php echo Yii::t("contract","additional information");?></legend>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'education',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
@@ -337,20 +370,31 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'email',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-                <!--分割-->
-                <?php echo $form->labelEx($model,'year_day',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'year_day',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                <?php echo $form->labelEx($model,'english',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->textArea($model, 'english',
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
             </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'technology',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->textArea($model, 'technology',
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'other',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->textArea($model, 'other',
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
+                    ); ?>
+                </div>
+            </div>
+
+            <legend><?php echo Yii::t("contract","archives");?></legend>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'image_user',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
@@ -423,40 +467,8 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                     ?>
                 </div>
             </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'english',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textArea($model, 'english',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'technology',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textArea($model, 'technology',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'other',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textArea($model, 'other',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-            </div>
 
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'price1',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'price1',WagesForm::getWagesList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
-                    ); ?>
-                </div>
-            </div>
-
+            <legend></legend>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">

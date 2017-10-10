@@ -80,7 +80,7 @@ class DeptController extends Controller
             $model->attributes = $_POST['DeptForm'];
             if($model->validateDelete()){
                 $model->saveData();
-                $this->redirect(Yii::app()->createUrl('dept/index'),array("type",$model->type));
+                $this->redirect(Yii::app()->createUrl('dept/index',array("type"=>$model->type)));
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
             }else{
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','The dept has staff being used, please delete the staff first'));

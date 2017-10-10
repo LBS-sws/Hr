@@ -26,15 +26,6 @@ return array(
             ),
 		),
 	),
-	'Report'=>array(
-		'access'=>'ZB',
-		'items'=>array(
-			'Report Manager'=>array(
-				'access'=>'ZB01',
-				'url'=>'/queue/index',
-			),
-		),
-	),
     //合同模塊
 	'Contract'=>array(
 		'access'=>'ZD',

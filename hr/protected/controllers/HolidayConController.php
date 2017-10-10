@@ -80,7 +80,7 @@ class HolidayConController extends Controller
             $model->attributes = $_POST['HolidayConForm'];
             if($model->validateDelete()){
                 $model->saveData();
-                $this->redirect(Yii::app()->createUrl('holidayCon/index'),array("type",$model->type));
+                $this->redirect(Yii::app()->createUrl('holidayCon/index',array("type"=>$model->type)));
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
             }else{
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','The holidayCon has staff being used, please delete the staff first'));

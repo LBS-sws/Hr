@@ -258,7 +258,7 @@ class MyWord{
         if ($ret === true) {
             $this->_document = $this->docx->getFromName('word/document.xml');
         } else {
-            exit('failed');
+            throw new CHttpException(404,'文檔文件不存在，請與開發人員聯繫');
         }
     }
 

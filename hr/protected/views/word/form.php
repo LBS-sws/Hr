@@ -50,9 +50,11 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 	</div>
 
 	<div class="btn-group pull-right" role="group">
-		<?php echo TbHtml::button('<span class="fa fa-cloud-download"></span> '.Yii::t('contract','Down'), array(
-				'submit'=>Yii::app()->createUrl('word/downfile?index='.$model->id)));
-		?>
+        <?php if ($model->scenario=='edit'): ?>
+            <?php echo TbHtml::button('<span class="fa fa-cloud-download"></span> '.Yii::t('contract','Down'), array(
+                'submit'=>Yii::app()->createUrl('word/downfile?index='.$model->id)));
+            ?>
+        <?php endif; ?>
 	</div>
 	</div></div>
 
@@ -66,7 +68,7 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'name',
-						array('size'=>10,'maxlength'=>10,'readonly'=>($model->scenario=='view'))
+						array('size'=>50,'maxlength'=>50,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
 			</div>
