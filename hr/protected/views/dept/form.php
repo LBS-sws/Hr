@@ -84,6 +84,16 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                     ); ?>
                 </div>
 			</div>
+            <?php if ($model->type==1): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'dept_class',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'dept_class',EmployList::getStaffTypeList(),
+                            array('disabled'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 
 		</div>
 	</div>

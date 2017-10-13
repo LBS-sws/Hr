@@ -18,4 +18,11 @@
 			;
 		?>
 	</th>
+    <?php
+    if($this->model->type == 1){
+        echo "<th>";
+        echo TbHtml::link($this->getLabelName('dept_class').$this->drawOrderArrow('dept_class'),'#',$this->createOrderLink('dept-list','dept_class'));
+        echo "</th>";
+    }
+    ?>
 </tr>

@@ -283,15 +283,15 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     $model_class = get_class($model);
                     $departmentList = DeptForm::getDeptOneAllList();
                     if($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)){
-                        echo "<select class='depart form-control' name='".$model_class."[position]' disabled>";
+                        echo "<select class='depart form-control changeButton' name='".$model_class."[position]' disabled>";
                     }else{
-                        echo "<select class='depart form-control' name='".$model_class."[position]'>";
+                        echo "<select class='depart form-control changeButton' name='".$model_class."[position]'>";
                     }
                     foreach ($departmentList as $key =>$value){
                         if($model->position == $key){
-                            echo "<option value='$key' data-type='".$value["type"]."' selected>".$value["name"]."</option>";
+                            echo "<option value='$key' data-type='".$value["type"]."' data-dept='".$value["dept_class"]."' selected>".$value["name"]."</option>";
                         }else{
-                            echo "<option value='$key' data-type='".$value["type"]."'>".$value["name"]."</option>";
+                            echo "<option value='$key' data-type='".$value["type"]."' data-dept='".$value["dept_class"]."'>".$value["name"]."</option>";
                         }
                     }
                     echo "</select>";
@@ -593,12 +593,13 @@ $('#EmployForm_test_type').on('change',function(){
         DEPARTLIST = new Array();
         $('.depart:last>option').each(function(){
             var key = $(this).data('type');
+            var dept_class = $(this).data('dept');
             var text = $(this).text();
             var value = $(this).attr('value');
             if(typeof DEPARTLIST[key] == 'undefined'){
                 DEPARTLIST[key] = new Array();
             }
-            DEPARTLIST[key].push({'text':text,'value':value});
+            DEPARTLIST[key].push({'text':text,'value':value,'dept_class':dept_class});
         });
         $('.depart:first').on('change',function(){
             var key = $(this).val();
@@ -609,14 +610,15 @@ $('#EmployForm_test_type').on('change',function(){
                     for(var i= 0;i<DEPARTLIST[key].length;i++){
                         var html = '';
                         if(oldValue == DEPARTLIST[x][i]['value']){
-                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\" selected>'+DEPARTLIST[x][i]['text']+'</option>';
+                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\" data-dept=\"'+DEPARTLIST[x][i]['dept_class']+'\" selected>'+DEPARTLIST[x][i]['text']+'</option>';
                         }else{
-                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\">'+DEPARTLIST[x][i]['text']+'</option>';
+                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\" data-dept=\"'+DEPARTLIST[x][i]['dept_class']+'\">'+DEPARTLIST[x][i]['text']+'</option>';
                         }
                         $('.depart:last').append(html);
                     }
                 }
             }
+            $('.depart:last').trigger('change');
         }).trigger('change');
     }
     
@@ -676,10 +678,13 @@ $('#EmployForm_test_type').on('change',function(){
     });
     
     $('#EmployForm_staff_id').on('change',function(){
-        console.log(1);
-        if($('#EmployForm_company_id').val() != ''){
-            console.log($(this).val());
+        if($('#EmployForm_company_id').val() == ''){
             $('#EmployForm_company_id').val($(this).val());
+        }
+    });
+    $('.changeButton').on('change',function(){
+        if($('#EmployForm_staff_type').val() == ''){
+            $('#EmployForm_staff_type').val($(this).find('option:selected').data('dept'));
         }
     });
 ";

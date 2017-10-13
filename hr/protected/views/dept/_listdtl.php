@@ -15,4 +15,11 @@
     }
     ?>
     <td><?php echo $this->record['z_index']; ?></td>
+    <?php
+    if($this->model->type == 1){
+        echo "<td>";
+        echo DeptForm::getDeptToId($this->record['dept_class']);
+        echo "</td>";
+    }
+    ?>
 </tr>

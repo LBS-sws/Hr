@@ -65,7 +65,7 @@ class EmployList extends CListPageModel
     }
     //獲取員工類別列表
     public function getStaffTypeList(){
-        return array("Office"=>Yii::t("staff","Office"),"Sales"=>Yii::t("staff","Sales"),"Technician"=>Yii::t("staff","Technician"),"Others"=>Yii::t("staff","Others"));
+        return array(""=>"","Office"=>Yii::t("staff","Office"),"Sales"=>Yii::t("staff","Sales"),"Technician"=>Yii::t("staff","Technician"),"Others"=>Yii::t("staff","Others"));
     }
 
 	public function retrieveDataByPage($pageNum=1)

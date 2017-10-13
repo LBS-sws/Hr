@@ -14,6 +14,7 @@ class DeptForm extends CFormModel
 	public $z_index;
 	public $dept_id=1;
 	public $type;
+	public $dept_class;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -26,6 +27,7 @@ class DeptForm extends CFormModel
 			'name'=>Yii::t('contract',' Name'),
 			'z_index'=>Yii::t('contract','Level'),
             'dept_id'=>Yii::t('contract','in department'),
+            'dept_class'=>Yii::t('contract','Job category'),
 		);
 	}
 
@@ -36,7 +38,7 @@ class DeptForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, dept_id, type','safe'),
+            array('id, name, z_index, dept_id, type, dept_class','safe'),
 			array('name','required'),
 			array('name','validateName'),
 			array('dept_id','validateDeptId'),
@@ -101,12 +103,12 @@ class DeptForm extends CFormModel
     //獲取職位列表(僅職位)
     public function getDeptOneAllList(){
         $city = Yii::app()->user->city();
-        $arr=array(""=>array("name"=>"","type"=>""));
+        $arr=array(""=>array("name"=>"","type"=>"","dept_class"=>""));
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
             ->where('type=:type and city=:city', array(':type'=>1,':city'=>$city))->order("z_index desc")->queryAll();
         if ($rows){
             foreach ($rows as $row){
-                $arr[$row["id"]] = array("name"=>$row["name"],"type"=>$row["dept_id"]);
+                $arr[$row["id"]] = array("name"=>$row["name"],"type"=>$row["dept_id"],"dept_class"=>$row["dept_class"]);
             }
         }
         return $arr;
@@ -150,6 +152,7 @@ class DeptForm extends CFormModel
 				$this->z_index = $row['z_index'];
                 $this->type = $row['type'];
                 $this->dept_id = $row['dept_id'];
+                $this->dept_class = $row['dept_class'];
 				break;
 			}
 		}
@@ -181,9 +184,9 @@ class DeptForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
-							name, type, z_index, dept_id, city, lcu
+							name, type, z_index, dept_id, city, dept_class, lcu
 						) values (
-							:name, :type, :z_index, :dept_id, :city, :lcu
+							:name, :type, :z_index, :dept_id, :city, :dept_class, :lcu
 						)";
 				break;
 			case 'edit':
@@ -192,6 +195,7 @@ class DeptForm extends CFormModel
 							type = :type, 
 							z_index = :z_index,
 							dept_id = :dept_id,
+							dept_class = :dept_class,
 							luu = :luu 
 						where id = :id
 						";
@@ -209,6 +213,8 @@ class DeptForm extends CFormModel
 			$command->bindParam(':z_index',$this->z_index,PDO::PARAM_INT);
 		if (strpos($sql,':type')!==false)
 			$command->bindParam(':type',$this->type,PDO::PARAM_INT);
+		if (strpos($sql,':dept_class')!==false)
+			$command->bindParam(':dept_class',$this->dept_class,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);

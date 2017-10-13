@@ -239,5 +239,8 @@ return array(
     'additional information'=>'补充资料',
     'archives'=>'档案',
     'Employee Contract Belong'=>'员工合同归属',
+
+    //10-13
+    'Job category'=>'职位类别',
 );
 ?>
