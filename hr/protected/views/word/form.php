@@ -36,7 +36,7 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 				'submit'=>Yii::app()->createUrl('word/index')));
 		?>
 
-        <?php if ($model->scenario!='view' && ($model->city == Yii::app()->user->city() || $model->scenario=='new')): ?>
+        <?php if ($model->scenario!='view'): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('word/save')));
             ?>
@@ -63,6 +63,7 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
+			<?php echo $form->hiddenField($model, 'type'); ?>
 
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
@@ -72,20 +73,6 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 					); ?>
 				</div>
 			</div>
-            <?php if (Yii::app()->user->validFunction('ZN01')): ?>
-                <div class="form-group">
-                    <?php echo $form->labelEx($model,'type',array('class'=>"col-sm-2 control-label")); ?>
-                    <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'type',
-                            array(
-                                'local'=>Yii::t('contract','local'),
-                                'default'=>Yii::t('contract','default'),
-                            ),
-                            array('disabled'=>($model->scenario=='view'))
-                        ); ?>
-                    </div>
-                </div>
-            <?php endif ?>
 
 
             <div class="form-group">
@@ -103,7 +90,7 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
                         array('name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                     ?>
 
-                    <?php if ($model->scenario!='view' && ($model->city == Yii::app()->user->city() || $model->scenario=='new')): ?>
+                    <?php if ($model->scenario!='view'): ?>
                         <?php echo TbHtml::button('<span class="glyphicon glyphicon-pencil"></span> '.Yii::t('contract','update'), array("id"=>"updateWord"));
                         ?>
                     <?php endif ?>

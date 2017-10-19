@@ -68,8 +68,12 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 	</div></div>
 
 	<div class="box box-info">
-		<div class="box-body">
-			<?php echo $form->hiddenField($model, 'scenario'); ?>
+        <div class="box-body" style="position: relative">
+            <?php if (!empty($model->image_user)): ?>
+                <img src="<?php echo $model->image_user;?>" width="150px" style="position: absolute;right: 5px;top: 5px;z-index: 2;">
+            <?php endif; ?>
+
+            <?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'staff_status'); ?>

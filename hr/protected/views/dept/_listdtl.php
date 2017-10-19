@@ -14,6 +14,7 @@
         echo "</td>";
     }
     ?>
+    <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['z_index']; ?></td>
     <?php
     if($this->model->type == 1){

@@ -31,10 +31,11 @@ $this->pageTitle=Yii::app()->name . ' - Holiday';
             <div class="btn-group" role="group">
                 <?php
                 //var_dump(Yii::app()->session['rw_func']);
-                if (Yii::app()->user->validRWFunction($model->getTypeAcc()))
+                if (Yii::app()->user->validRWFunction($model->getTypeAcc()) && $model->only != 1){
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
                         'submit'=>Yii::app()->createUrl('holiday/new',array("type"=>$model->type)),
                     ));
+                }
                 ?>
             </div>
         </div></div>

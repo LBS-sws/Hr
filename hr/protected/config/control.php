@@ -1,5 +1,5 @@
 <?php
 
 return array(
-	'Modify Restrict'=>array('access'=>'ZN01',),
+	//'Modify Restrict'=>array('access'=>'ZN01',),
 );

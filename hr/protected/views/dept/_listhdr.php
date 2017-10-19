@@ -14,6 +14,11 @@
         }
     ?>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('city'),'#',$this->createOrderLink('dept-list','city'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('z_index').$this->drawOrderArrow('z_index'),'#',$this->createOrderLink('dept-list','z_index'))
 			;
 		?>

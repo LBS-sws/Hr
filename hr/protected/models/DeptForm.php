@@ -25,6 +25,7 @@ class DeptForm extends CFormModel
 		return array(
 			'id'=>Yii::t('staff','Record ID'),
 			'name'=>Yii::t('contract',' Name'),
+			'city'=>Yii::t('misc','City'),
 			'z_index'=>Yii::t('contract','Level'),
             'dept_id'=>Yii::t('contract','in department'),
             'dept_class'=>Yii::t('contract','Job category'),
@@ -40,6 +41,7 @@ class DeptForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, z_index, dept_id, type, dept_class','safe'),
 			array('name','required'),
+			array('city','required'),
 			array('name','validateName'),
 			array('dept_id','validateDeptId'),
 		);
@@ -86,6 +88,30 @@ class DeptForm extends CFormModel
         }else{
             return "ZC01";
         }
+    }
+    public function setCityToDept(){
+        if ($this->type == 1){
+            $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+                ->where('id=:id', array(':id'=>$this->dept_id))->queryRow();
+            if($rows){
+                $this->city = $rows["city"];
+            }else{
+                throw new CHttpException(404,'Cannot update.');
+            }
+        }
+    }
+    //獲取職位列表
+	public function getDeptAllListNoCity($type=0){
+        $city = Yii::app()->user->city();
+	    $arr=array(""=>"");
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+            ->where('type=:type', array(':type'=>$type))->order("z_index desc")->queryAll();
+        if ($rows){
+            foreach ($rows as $row){
+                $arr[$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
     }
     //獲取職位列表
 	public function getDeptAllList($type=0){
@@ -142,7 +168,7 @@ class DeptForm extends CFormModel
 	{
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where('id=:id ', array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -150,6 +176,7 @@ class DeptForm extends CFormModel
 				$this->id = $row['id'];
 				$this->name = $row['name'];
 				$this->z_index = $row['z_index'];
+				$this->city = $row['city'];
                 $this->type = $row['type'];
                 $this->dept_id = $row['dept_id'];
                 $this->dept_class = $row['dept_class'];
@@ -164,6 +191,7 @@ class DeptForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
+		    $this->setCityToDept();//自動完成職位的城市歸屬
 			$this->saveStaff($connection);
 			$transaction->commit();
 		}
@@ -180,7 +208,7 @@ class DeptForm extends CFormModel
         $uid = Yii::app()->user->id;
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_dept where id = :id and city = :city";
+                $sql = "delete from hr_dept where id = :id";
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
@@ -192,6 +220,7 @@ class DeptForm extends CFormModel
 			case 'edit':
 				$sql = "update hr_dept set
 							name = :name, 
+							city = :city, 
 							type = :type, 
 							z_index = :z_index,
 							dept_id = :dept_id,
@@ -217,7 +246,7 @@ class DeptForm extends CFormModel
 			$command->bindParam(':dept_class',$this->dept_class,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)

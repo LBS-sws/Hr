@@ -13,6 +13,7 @@ class DeptList extends CListPageModel
 		return array(	
 			'id'=>Yii::t('contract','ID'),
 			'z_index'=>Yii::t('contract','Level'),
+			'city'=>Yii::t('misc','City'),
 			'name'=>Yii::t('contract',' Name'),
             'name_0'=>Yii::t('contract','Dept Name'),
 			'name_1'=>Yii::t('contract','Leader Name'),
@@ -41,11 +42,11 @@ class DeptList extends CListPageModel
 		$city = Yii::app()->user->city();
 		$type = $this->type;
 		$sql1 = "select * from hr_dept 
-                where city='$city' AND type=$type 
+                where type=$type 
 			";
 		$sql2 = "select count(id)
 				from hr_dept 
-				where city='$city'AND type=$type 
+				where type=$type 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -78,6 +79,7 @@ class DeptList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+					'city'=>WordForm::getCityNameToCode($record['city']),
 					'z_index'=>$record['z_index'],
 					'dept_id'=>$record['dept_id'],
 					'dept_class'=>Yii::t("staff",$record['dept_class']),

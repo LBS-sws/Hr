@@ -62,7 +62,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                 <div class="form-group">
                     <label class="col-sm-2 control-label required"><?php echo Yii::t("contract","in department");?><span class="required">*</span></label>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'dept_id',$model->getDeptAllList(),
+                        <?php echo $form->dropDownList($model, 'dept_id',$model->getDeptAllListNoCity(),
                             array('readonly'=>($model->scenario=='view'))
                         ); ?>
                     </div>
@@ -76,6 +76,21 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
 					); ?>
 				</div>
 			</div>
+
+
+            <?php if ($model->type==1): ?>
+                <?php echo $form->hiddenField($model, 'city'); ?>
+            <?php else: ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'city',WordForm::getCityListAll(),
+                            array('disabled'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'z_index',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">

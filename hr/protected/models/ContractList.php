@@ -21,11 +21,11 @@ class ContractList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
 		$sql1 = "select * from hr_contract 
-                where city='$city' 
+                where id!=0  
 			";
 		$sql2 = "select count(id)
 				from hr_docx 
-				where city='$city'
+				where id!=0  
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -60,7 +60,7 @@ class ContractList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
-					'city'=>$record['city'],
+					'city'=>WordForm::getCityNameToCode($record['city']),
 				);
 			}
 		}

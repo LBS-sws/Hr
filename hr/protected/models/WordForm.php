@@ -9,7 +9,7 @@ class WordForm extends CFormModel
 {
 	/* User Fields */
 	public $id;
-	public $type='local';
+	public $type='default';
 	public $name;
 	public $city;
 	public $docx_url;
@@ -27,6 +27,7 @@ class WordForm extends CFormModel
 			'name'=>Yii::t('contract','Word Name'),
 			'type'=>Yii::t('contract','Restrict'),
 			'file'=>Yii::t('contract','Word File'),
+			'city'=>Yii::t('misc','City'),
 		);
 	}
 
@@ -77,6 +78,31 @@ class WordForm extends CFormModel
 		return false;
 	}
 
+//获取地区列表
+	public function getCityListAll()
+	{
+        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
+	    $arr = array(""=>"");
+        $rows = Yii::app()->db->createCommand()->select("code,name")->from($from)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["code"]] = $row["name"];
+            }
+        }
+		return $arr;
+	}
+
+//获取地区名字
+	public function getCityNameToCode($code)
+	{
+        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
+        $rows = Yii::app()->db->createCommand()->select("name")->from($from)->where("code=:code",array(":code"=>$code))->queryRow();
+        if($rows){
+            return $rows["name"];
+        }
+		return $code;
+	}
+
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
@@ -124,11 +150,7 @@ class WordForm extends CFormModel
         $adminBool = $uid=="shenchao";
 		switch ($this->scenario) {
 			case 'delete':
-			    if($adminBool){
-                    $sql = "delete from hr_docx where id = :id";
-                }else{
-                    $sql = "delete from hr_docx where id = :id and city = :city";
-                }
+                $sql = "delete from hr_docx where id = :id";
 				break;
 			case 'new':
 				$sql = "insert into hr_docx(

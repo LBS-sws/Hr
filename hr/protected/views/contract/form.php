@@ -32,7 +32,7 @@ $this->pageTitle=Yii::app()->name . ' - Contract Form';
 				'submit'=>Yii::app()->createUrl('contract/index')));
 		?>
 
-        <?php if ($model->scenario!='view' && ($model->city == Yii::app()->user->city() || $model->scenario=='new')): ?>
+        <?php if ($model->scenario!='view'): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('contract/save')));
             ?>
@@ -58,6 +58,15 @@ $this->pageTitle=Yii::app()->name . ' - Contract Form';
 						array('size'=>50,'maxlength'=>50,'readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
+			</div>
+
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'city',WordForm::getCityListAll(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
 			</div>
 
 			<div class="form-group">

@@ -42,7 +42,7 @@ class HolidayConForm extends CFormModel
 
 	public function validateName($attribute, $params){
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_Holiday")
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_holiday")
             ->where('id!=:id and name=:name and city=:city and type=:type',
                 array(':id'=>$this->id,':name'=>$this->name,':city'=>$city,':type'=>$this->type))->queryAll();
         if (count($rows) > 0){
@@ -69,7 +69,7 @@ class HolidayConForm extends CFormModel
 	public function getHolidayAllList($type=0){
         $city = Yii::app()->user->city();
 	    $arr=array(""=>"");
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_Holiday")
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_holiday")
             ->where('type=:type and city=:city', array(':type'=>$type,':city'=>$city))->order("z_index desc")->queryAll();
         if ($rows){
             foreach ($rows as $row){

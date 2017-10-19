@@ -22,6 +22,7 @@ class ContractForm extends CFormModel
 		return array(
 			'id'=>Yii::t('staff','Record ID'),
 			'name'=>Yii::t('contract','Contract Name'),
+			'city'=>Yii::t('misc','City'),
 			'word_arr'=>Yii::t('contract','Contract Word'),
 		);
 	}
@@ -35,6 +36,7 @@ class ContractForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, word_arr, city','safe'),
 			array('name','required'),
+			array('city','required'),
 			array('word_arr','required'),
 			array('word_arr','validateWordArr'),
 			array('name','validateName'),
@@ -80,8 +82,7 @@ class ContractForm extends CFormModel
     public function getWordList(){
 	    $arr = array();
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_docx")
-            ->where(' type="default" OR city=:city', array(':city'=>$city))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_docx")->queryAll();
         if($rows){
             foreach ($rows as $word){
                 $arr[$word["id"]] = $word["name"];
@@ -140,7 +141,7 @@ class ContractForm extends CFormModel
 	{
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
-            ->where('id=:id and city=:city', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where('id=:id', array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -176,21 +177,21 @@ class ContractForm extends CFormModel
         $uid = Yii::app()->user->id;
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_contract where id = :id and city = :city";
+                $sql = "delete from hr_contract where id = :id";
 				break;
 			case 'new':
 				$sql = "insert into hr_contract(
-							name, city, lcu, lcd
+							name, city, lcu
 						) values (
-							:name, :city, :lcu, :lcd
+							:name, :city, :lcu
 						)";
 				break;
 			case 'edit':
 				$sql = "update hr_contract set
 							name = :name, 
-							lud = :lud,
+							city = :city, 
 							luu = :luu 
-						where id = :id and city = :city
+						where id = :id
 						";
 				break;
 		}
@@ -202,15 +203,11 @@ class ContractForm extends CFormModel
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lcd')!==false)
-			$command->bindParam(':lcd',date('Y-m-d H:i:s'),PDO::PARAM_STR);
-		if (strpos($sql,':lud')!==false)
-			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
 
 		$command->execute();
 
