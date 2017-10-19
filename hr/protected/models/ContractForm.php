@@ -61,7 +61,7 @@ class ContractForm extends CFormModel
     }
 	public function validateName($attribute, $params){
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
-            ->where('id!=:id and name=:name ', array(':id'=>$this->id,':name'=>$this->name))->queryAll();
+            ->where('id!=:id and name=:name  and city!=:city ', array(':id'=>$this->id,':name'=>$this->name,':city'=>$this->city))->queryAll();
         if (count($rows) > 0){
             $message = Yii::t('contract','Contract Name'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
