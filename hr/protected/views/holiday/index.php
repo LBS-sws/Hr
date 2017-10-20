@@ -52,6 +52,7 @@ $this->pageTitle=Yii::app()->name . ' - Holiday';
         'viewdtl'=>'//holiday/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
+       'searchlinkparam'=>array('type'=>$model->type,'only'=>$model->only),
         'search'=>$search,
     ));
     ?>

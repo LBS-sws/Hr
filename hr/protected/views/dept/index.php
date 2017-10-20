@@ -54,6 +54,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
         'viewdtl'=>'//dept/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
+        'searchlinkparam'=>array('type'=>$model->type),
         'search'=>$search,
     ));
     ?>
