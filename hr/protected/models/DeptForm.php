@@ -114,10 +114,10 @@ class DeptForm extends CFormModel
         $city = Yii::app()->user->city();
 	    $arr=array(""=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
-            ->where('type=:type', array(':type'=>$type))->order("z_index desc")->queryAll();
+            ->where('type=:type', array(':type'=>$type))->order("city,z_index desc")->queryAll();
         if ($rows){
             foreach ($rows as $row){
-                $arr[$row["id"]] = $row["name"];
+                $arr[$row["id"]] = $row["name"]." - ".WordForm::getCityNameToCode($row["city"]);
             }
         }
         return $arr;
