@@ -96,6 +96,7 @@ class Template {
             $xmlObj = $xml->loadXML($documentXML);
             $timedom = $xml->getElementsByTagName("body");
             $timedom = $timedom->item(0);
+            /*  有無試用期的下劃線
             if (strpos($documentXML,'（以上二删一）')!==false){
                 $tdList = $timedom->getElementsByTagName("tc");
                 for($i = 0;$i<$tdList->length;$i++){
@@ -105,7 +106,7 @@ class Template {
                         for($j= 0;$j<$pList->length;$j++){
                             $pObj = $pList->item($j);
                             if(strpos($pObj->textContent,'无试用期。')!==false){
-                                /*添加下滑線*/
+                                //添加下滑線
                                 if(!$strike_bool){
                                     $pObj = $pList->item($j-1);
                                 }
@@ -120,6 +121,7 @@ class Template {
                     }
                 }
             }
+            */
             if($key != 0){
                 $this->_documentXML.='<w:p><w:r><w:br w:type="page" /></w:r></w:p>';
             } 
@@ -145,7 +147,7 @@ class Template {
      * @param mixed $replace
      */
     public function setValue($search, $replace) {
-        $search = '${'.$search.'}';
+        //$search = '${'.$search.'}';
 
         $this->_documentXML = str_replace($search, $replace, $this->_documentXML);
     }
