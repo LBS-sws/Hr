@@ -48,10 +48,10 @@ class DeptForm extends CFormModel
 	}
 
 	public function validateName($attribute, $params){
-        $city = Yii::app()->user->city();
+	    $this->setCityToDept();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
             ->where('id!=:id and name=:name and city=:city and type=:type and dept_id=:dept_id ',
-                array(':id'=>$this->id,':name'=>$this->name,':city'=>$city,':type'=>$this->type,':dept_id'=>$this->dept_id))->queryAll();
+                array(':id'=>$this->id,':name'=>$this->name,':city'=>$this->city,':type'=>$this->type,':dept_id'=>$this->dept_id))->queryAll();
         if (count($rows) > 0){
             $message = Yii::t('contract',' Name'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
@@ -200,7 +200,7 @@ class DeptForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-		    $this->setCityToDept();//自動完成職位的城市歸屬
+		    //$this->setCityToDept();//自動完成職位的城市歸屬
 			$this->saveStaff($connection);
 			$transaction->commit();
 		}
