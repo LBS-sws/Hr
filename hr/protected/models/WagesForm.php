@@ -67,9 +67,6 @@ class WagesForm extends CFormModel
             if (!is_array($this->wages_list)){
                 $message = Yii::t('contract','Wages Type'). Yii::t('contract',' can not be empty');
                 $this->addError($attribute,$message);
-            }else if(count($this->wages_list)>5){
-                $message = Yii::t('contract','Wages Type max number is five');
-                $this->addError($attribute,$message);
             }else{
                 foreach ($this->wages_list as $list){
                     if(empty($list["type_name"])){
