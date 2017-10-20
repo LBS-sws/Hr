@@ -41,7 +41,7 @@ class DeptForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, z_index, dept_id, type, dept_class','safe'),
 			array('name','required'),
-			array('city','required'),
+			array('city','validateCity'),
 			array('name','validateName'),
 			array('dept_id','validateDeptId'),
 		);
@@ -71,6 +71,15 @@ class DeptForm extends CFormModel
                     $message = Yii::t('contract','in department'). Yii::t('contract',' can not be empty');
                     $this->addError($attribute,$message);
                 }
+            }
+        }
+    }
+
+	public function validateCity($attribute, $params){
+	    if($this->type != 1){
+	        if(empty($this->city)){
+                $message = Yii::t('misc','City'). Yii::t('contract',' can not be empty');
+                $this->addError($attribute,$message);
             }
         }
     }
