@@ -24,6 +24,10 @@ return array(
                 'access'=>'ZA06',
                 'url'=>'/holiday/index?type=1',
             ),
+            'Reward Apply'=>array(
+                'access'=>'ZA07',
+                'url'=>'/reward/index',
+            ),
 		),
 	),
     //合同模塊
@@ -102,6 +106,10 @@ return array(
                 'access'=>'ZG05',
                 'url'=>'/auditHoliday/index?type=1',
             ),
+            'Reward Audit'=>array(
+                'access'=>'ZG06',
+                'url'=>'/auditReward/index',
+            ),
 		),
 	),
 	'System Setting'=>array(
@@ -128,6 +136,10 @@ return array(
 			'employee binding account'=>array(
 				'access'=>'ZC05',
 				'url'=>'/binding/index',
+			),
+			'Reward Config'=>array(
+				'access'=>'ZC06',
+				'url'=>'/rewardCon/index',
 			),
 		),
 	),

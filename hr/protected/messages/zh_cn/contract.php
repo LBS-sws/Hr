@@ -43,6 +43,8 @@ return array(
     'The contract has staff being used, please delete the staff first'=>'该合同有员工正在使用，请先删除员工',
     'This word is under contract. Please delete the contract first'=>'该文档有合同正在使用，请先删除合同',
     'The dept has staff being used, please delete the staff first'=>'该职位有员工正在使用，请先删除员工',
+    'The reward has staff being used, please delete the staff first'=>'该奖励有员工正在使用，请先删除员工',
+    'The reward amount and the item cannot be empty at the same time'=>'奖励金额和物品不能同时为空',
 
     //員工模塊
     'Employee List'=>'员工列表',
@@ -242,5 +244,16 @@ return array(
 
     //10-13
     'Job category'=>'职位类别',
+
+    //10-17(獎勵模塊)
+    'Reward List'=>'奖励列表',
+    'Reward Name'=>'奖励名字',
+    'Reward Money'=>'奖励金额',
+    'Reward Goods'=>'奖励物品',
+    'Employee'=>'员工',
+    'Reward'=>'奖励',
+    'Select employee'=>'选择员工',
+    'Select reward'=>'选择奖励',
+    ' not exist'=>'不存在',
 );
 ?>

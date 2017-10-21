@@ -97,6 +97,9 @@ return array(
     'Work Config'=>'加班配置',
     'Work Audit'=>'加班審核',
     'employee binding account'=>'員工綁定賬號',
+    'Reward Config'=>'配置獎金',
+    'Reward Apply'=>'獎金申請',
+    'Reward Audit'=>'獎金審核',
     //沈超添加结束
 );
 ?>
