@@ -45,6 +45,14 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
             <?php endif; ?>
         <?php endif ?>
 	</div>
+            <div class="btn-group pull-right" role="group">
+                <?php
+                $counter = ($model->no_of_attm['company'] > 0) ? ' <span id="doccompany" class="label label-info">'.$model->no_of_attm['company'].'</span>' : ' <span id="doccompany"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadcompany',)
+                );
+                ?>
+            </div>
 	</div></div>
 
 	<div class="box box-info">
@@ -64,16 +72,50 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'head',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'head',$model->getUserList(),
-                        array('disabled'=>($model->scenario=='view'))
+                    <?php echo $form->textField($model, 'head',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+				<?php echo $form->labelEx($model,'head_email',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'head_email',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
 			</div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'legal',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'legal',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+                <?php echo $form->labelEx($model,'legal_email',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'legal_email',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'legal_city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'legal_city',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'agent',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'agent',$model->getUserList(),
-                        array('disabled'=>($model->scenario=='view'))
+                    <?php echo $form->textField($model, 'agent',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+				<?php echo $form->labelEx($model,'agent_email',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'agent_email',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
 			</div>
@@ -81,6 +123,30 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-8">
 					<?php echo $form->textField($model, 'address',
+						array('readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'postal',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->textField($model, 'postal',
+						array('readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'address2',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-8">
+					<?php echo $form->textField($model, 'address2',
+						array('readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'postal2',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->textField($model, 'postal2',
 						array('readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>
@@ -156,10 +222,19 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 	</div>
 </section>
 
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'COMPANY',
+    'header'=>Yii::t('dialog','File Attachment'),
+    'ronly'=>($model->scenario=='view'),
+));
+?>
 <?php
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
+Script::genFileUpload($model,$form->id,'COMPANY');
+
 if ($model->scenario!='view') {
     $js = Script::genDatePicker(array(
         'CompanyForm_organization_time',

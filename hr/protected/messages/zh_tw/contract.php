@@ -250,5 +250,16 @@ return array(
     'Reward Name'=>'獎勵名字',
     'Reward Money'=>'獎勵金額',
     'Reward Goods'=>'獎勵物品',
+
+    //10-21
+    'Legal representative'=>'法定代表人',
+    'Legal representative email'=>'法定代表人郵箱',
+    'Legal representative city'=>'法人章所在城市',
+    'Responsible email'=>'負責人郵箱',
+    'Agent email'=>'代理人郵箱',
+    'Postal code'=>'郵政編碼',
+    'Postal code 2'=>'郵政編碼2',
+    'Company Address 2'=>'公司地址2',
+    'Level of pest control'=>'滅蟲執照級別',
 );
 ?>

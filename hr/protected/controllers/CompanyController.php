@@ -100,4 +100,73 @@ class CompanyController extends Controller
         }
         $this->redirect(Yii::app()->createUrl('company/index'));
     }
+
+
+
+    public function actionFileupload($doctype) {
+        $model = new CompanyForm();
+        if (isset($_POST['CompanyForm'])) {
+            $model->attributes = $_POST['CompanyForm'];
+
+            $id = ($_POST['CompanyForm']['scenario']=='new') ? 0 : $model->id;
+            $docman = new DocMan($model->docType,$id,get_class($model));
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+            $docman->fileUpload();
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
+        }
+    }
+
+    public function actionFileRemove($doctype) {
+        $model = new CompanyForm();
+        if (isset($_POST['CompanyForm'])) {
+            $model->attributes = $_POST['CompanyForm'];
+
+            $docman = new DocMan($model->docType,$model->id,'CompanyForm');
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
+        }
+    }
+
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        $sql = "select city from hr_company where id = $docId";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $citylist = Yii::app()->user->city_allow();
+            if (strpos($citylist, $row['city']) !== false) {
+                $docman = new DocMan($doctype,$docId,'CompanyForm');
+                $docman->masterId = $mastId;
+                $docman->fileDownload($fileId);
+            } else {
+                throw new CHttpException(404,'Access right not match.');
+            }
+        } else {
+            throw new CHttpException(404,'Record not found.');
+        }
+    }
+    /**
+     * Performs the AJAX validation.
+     * @param CModel the model to be validated
+     */
+    protected function performAjaxValidation($model)
+    {
+        if(isset($_POST['ajax']) && $_POST['ajax']==='company-form')
+        {
+            echo CActiveForm::validate($model);
+            Yii::app()->end();
+        }
+    }
+
+    public static function allowReadWrite() {
+        return Yii::app()->user->validRWFunction('ZA02');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZA02');
+    }
 }

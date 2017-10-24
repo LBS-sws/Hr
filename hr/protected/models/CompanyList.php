@@ -61,15 +61,15 @@ class CompanyList extends CListPageModel
 		
 		$list = array();
 		$this->attr = array();
-		$userList = CompanyForm::getUserList();
+		//$userList = CompanyForm::getUserList();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
-					'head'=>empty($userList[$record['head']])?"":$userList[$record['head']],
-					'tacitly'=>$record['tacitly'],
-					'agent'=>empty($userList[$record['agent']])?"":$userList[$record['agent']]
+					'head'=>$record['head'],
+					'agent'=>$record['agent'],
+					'tacitly'=>$record['tacitly']
 				);
 			}
 		}

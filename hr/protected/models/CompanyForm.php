@@ -11,9 +11,18 @@ class CompanyForm extends CFormModel
 	public $id;
 	public $name;
 	public $city;
+	public $legal;//法定代表人
+	public $legal_email;//法定代表人郵箱
+	public $legal_city;//法人章所在城市
 	public $head;
+	public $head_email;//負責人郵箱
 	public $agent;
+	public $agent_email;//代理人郵箱
 	public $address;
+	public $postal;//郵政編碼
+	public $address2;//地址2
+	public $postal2;//郵政編碼2
+	public $mie;//滅蟲執照級別
 	public $phone;
 	public $tacitly=0;
 	public $security_code;
@@ -21,6 +30,17 @@ class CompanyForm extends CFormModel
 	public $organization_time;
 	public $license_code;
 	public $license_time;
+
+
+
+
+    public $no_of_attm = array(
+        'company'=>0
+    );
+    public $docType = 'COMPANY';
+    public $docMasterId = 0;
+    public $files;
+    public $removeFileId = 0;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -41,6 +61,16 @@ class CompanyForm extends CFormModel
 			'license_code'=>Yii::t('contract','License Code'),
 			'license_time'=>Yii::t('contract','License Time'),
 			'tacitly'=>Yii::t('contract','Tacitly Company'),
+
+            'legal'=>Yii::t('contract','Legal representative'),
+            'legal_email'=>Yii::t('contract','Legal representative email'),
+            'legal_city'=>Yii::t('contract','Legal representative city'),
+            'head_email'=>Yii::t('contract','Responsible email'),
+            'agent_email'=>Yii::t('contract','Agent email'),
+            'postal'=>Yii::t('contract','Postal code'),
+            'postal2'=>Yii::t('contract','Postal code 2'),
+            'address2'=>Yii::t('contract','Company Address 2'),
+            'mie'=>Yii::t('contract','Level of pest control'),
 		);
 	}
 
@@ -51,16 +81,19 @@ class CompanyForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, head, agent, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time','safe'),
+            array('id, name, head, agent, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time,
+            legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
+            ','safe'),
 			array('name','required'),
 			array('name','validateName'),
 			array('head','required'),
-			array('agent','required'),
+			array('head_email','required'),
 			array('address','required'),
             array('license_time, organization_time','date','allowEmpty'=>true,
                 'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d'),
             ),
-		);
+            array('files, removeFileId, docMasterId','safe'),
+        );
 	}
 
 	public function validateName($attribute, $params){
@@ -109,8 +142,12 @@ class CompanyForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+        $suffix = Yii::app()->params['envSuffix'];
+        $sql = "select a.* ,
+				docman$suffix.countdoc('COMPANY',id) as companydoc
+				from hr_company a
+				where a.id=$index AND a.city='$city'";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -128,6 +165,17 @@ class CompanyForm extends CFormModel
                 $this->organization_time = $row['organization_time'];
                 $this->license_code = $row['license_code'];
                 $this->license_time = $row['license_time'];
+                //legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
+                $this->legal = $row['legal'];
+                $this->legal_email = $row['legal_email'];
+                $this->legal_city = $row['legal_city'];
+                $this->head_email = $row['head_email'];
+                $this->agent_email = $row['agent_email'];
+                $this->postal = $row['postal'];
+                $this->postal2 = $row['postal2'];
+                $this->address2 = $row['address2'];
+                $this->mie = $row['mie'];
+                $this->no_of_attm['company'] = $row['companydoc'];
 				break;
 			}
 		}
@@ -140,6 +188,7 @@ class CompanyForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveStaff($connection);
+            $this->updateDocman($connection,'COMPANY');
 			$transaction->commit();
 
 			//默認公司自動化
@@ -150,6 +199,19 @@ class CompanyForm extends CFormModel
 			throw new CHttpException(404,'Cannot update.');
 		}
 	}
+
+
+    protected function updateDocman(&$connection, $doctype) {
+        if ($this->scenario=='new') {
+            $docidx = strtolower($doctype);
+            if ($this->docMasterId[$docidx] > 0) {
+                $docman = new DocMan($doctype,$this->id,get_class($this));
+                $docman->masterId = $this->docMasterId[$docidx];
+                $docman->updateDocId($connection, $this->docMasterId[$docidx]);
+            }
+            $this->scenario = "edit";
+        }
+    }
 
 	protected function saveStaff(&$connection)
 	{
@@ -163,8 +225,10 @@ class CompanyForm extends CFormModel
 			case 'new':
 				$sql = "insert into hr_company(
 							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, tacitly, lcu
+							, legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
 						) values (
 							:name, :agent, :head, :city, :address, :phone, :security_code, :organization_code, :organization_time, :license_code, :license_time, :tacitly, :lcu
+							, :legal, :legal_email, :legal_city, :head_email, :agent_email, :postal, :postal2, :address2, :mie
 						)";
 				break;
 			case 'edit':
@@ -180,6 +244,15 @@ class CompanyForm extends CFormModel
 							license_code = :license_code,
 							license_time = :license_time,
 							tacitly = :tacitly,
+							mie = :mie,
+							address2 = :address2,
+							postal2 = :postal2,
+							postal = :postal,
+							agent_email = :agent_email,
+							head_email = :head_email,
+							legal_city = :legal_city,
+							legal_email = :legal_email,
+							legal = :legal,
 							luu = :luu 
 						where id = :id
 						";
@@ -211,7 +284,25 @@ class CompanyForm extends CFormModel
 			$command->bindParam(':license_time',$this->license_time,PDO::PARAM_STR);
 		if (strpos($sql,':tacitly')!==false)
 			$command->bindParam(':tacitly',$this->tacitly,PDO::PARAM_INT);
-
+        if (strpos($sql,':legal')!==false)
+            $command->bindParam(':legal',$this->legal,PDO::PARAM_STR);
+        if (strpos($sql,':legal_email')!==false)
+            $command->bindParam(':legal_email',$this->legal_email,PDO::PARAM_STR);
+        if (strpos($sql,':legal_city')!==false)
+            $command->bindParam(':legal_city',$this->legal_city,PDO::PARAM_STR);
+        if (strpos($sql,':head_email')!==false)
+            $command->bindParam(':head_email',$this->head_email,PDO::PARAM_STR);
+        if (strpos($sql,':agent_email')!==false)
+            $command->bindParam(':agent_email',$this->agent_email,PDO::PARAM_STR);
+        if (strpos($sql,':postal')!==false)
+            $command->bindParam(':postal',$this->postal,PDO::PARAM_STR);
+        if (strpos($sql,':postal2')!==false)
+            $command->bindParam(':postal2',$this->postal2,PDO::PARAM_STR);
+        if (strpos($sql,':address2')!==false)
+            $command->bindParam(':address2',$this->address2,PDO::PARAM_STR);
+        if (strpos($sql,':mie')!==false)
+            $command->bindParam(':mie',$this->mie,PDO::PARAM_STR);
+        //legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
@@ -223,7 +314,7 @@ class CompanyForm extends CFormModel
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
-            $this->scenario = "edit";
+            //$this->scenario = "edit";
         }
         return true;
 	}
@@ -235,4 +326,6 @@ class CompanyForm extends CFormModel
             ), 'id!=:id', array(':id'=>$this->id));
         }
     }
+
+
 }

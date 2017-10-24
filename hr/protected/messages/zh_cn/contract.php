@@ -255,5 +255,16 @@ return array(
     'Select employee'=>'选择员工',
     'Select reward'=>'选择奖励',
     ' not exist'=>'不存在',
+
+    //10-21
+    'Legal representative'=>'法定代表人',
+    'Legal representative email'=>'法定代表人邮箱',
+    'Legal representative city'=>'法人章所在城市',
+    'Responsible email'=>'负责人邮箱',
+    'Agent email'=>'代理人邮箱',
+    'Postal code'=>'邮政编码',
+    'Postal code 2'=>'邮政编码2',
+    'Company Address 2'=>'公司地址2',
+    'Level of pest control'=>'灭虫执照级别',
 );
 ?>
