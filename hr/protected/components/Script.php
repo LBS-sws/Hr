@@ -221,8 +221,9 @@ EOF;
 
     public static function genDatePicker($fields) {
         $str = "";
+        $language = Yii::app()->language;
         foreach ($fields as $field) {
-            $str .= "$('#$field').datepicker({autoclose: true, format: 'yyyy/mm/dd'});";
+            $str .= "$('#$field').datepicker({autoclose: true,language: '$language', format: 'yyyy/mm/dd'});";
         }
         return $str;
     }

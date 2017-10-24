@@ -174,6 +174,36 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'social_code',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'social_code',
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'empoyment_code',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'empoyment_code',
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'nation',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'nation',
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'household',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'household',EmployList::getNationList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'email',
@@ -251,6 +281,14 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 
             <legend><?php echo Yii::t("contract","contract data");?></legend>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'fix_time',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->inlineRadioButtonList($model, 'fix_time',EmployList::getFixTimeList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)),'class'=>"fixTime")
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'time',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <div class="input-group">
@@ -268,8 +306,15 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </div>
-                        <?php echo $form->textField($model, 'end_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                        <?php
+                        if($model->fix_time == "nofixed"){
+                            $model->end_time = "";
+                            echo $form->textField($model, 'end_time',
+                                array('class'=>'form-control pull-right','readonly'=>(true),));
+                        }else{
+                            echo $form->textField($model, 'end_time',
+                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||$model->staff_status != 1),));
+                        }
                         ?>
                     </div>
                 </div>

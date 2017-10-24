@@ -37,6 +37,21 @@ class EmployList extends CListPageModel
     public function getHealthList(){
         return array(""=>"","poor"=>Yii::t("staff","poor"),"general"=>Yii::t("staff","general"),"good"=>Yii::t("staff","good"));
     }
+    //獲取戶籍列表
+    public function getNationList(){
+        return array(
+            ""=>"",
+            "Non-agricultural"=>Yii::t("contract","Non-agricultural"),
+            "Agricultural"=>Yii::t("contract","Agricultural")
+        );
+    }
+    //獲取合同期限列表
+    public function getFixTimeList(){
+        return array(
+            "fixation"=>Yii::t("contract","fixation"),
+            "nofixed"=>Yii::t("contract","nofixed")
+        );
+    }
     //獲取健康列表
     public function getMonthList(){
         $list = array(""=>"");

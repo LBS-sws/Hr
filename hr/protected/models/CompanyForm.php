@@ -38,9 +38,13 @@ class CompanyForm extends CFormModel
         'company'=>0
     );
     public $docType = 'COMPANY';
-    public $docMasterId = 0;
+    public $docMasterId = array(
+        'company'=>0
+    );
     public $files;
-    public $removeFileId = 0;
+    public $removeFileId = array(
+        'company'=>0
+    );
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -181,7 +185,7 @@ class CompanyForm extends CFormModel
 		}
 		return true;
 	}
-	
+
 	public function saveData()
 	{
 		$connection = Yii::app()->db;

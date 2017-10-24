@@ -67,6 +67,11 @@ class AuditHistoryForm extends CFormModel
     public $staff_leader;//队长/组长
     public $test_length;//
     public $attachment="";//附件
+    public $nation;//民族
+    public $household;//户籍类型
+    public $empoyment_code;//就业登记证号
+    public $social_code;//社会保障卡号
+    public $fix_time=0;//合同類型
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -125,6 +130,11 @@ class AuditHistoryForm extends CFormModel
             'staff_leader'=>Yii::t('staff','Team/Group Leader'),
             'test_length'=>Yii::t('contract','Probation Time Longer'),
             'attachment'=>Yii::t('contract','Attachment'),
+            'nation'=>Yii::t('contract','nation'),
+            'household'=>Yii::t('contract','Household type'),
+            'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
+            'social_code'=>Yii::t('contract','Social security card number'),
+            'fix_time'=>Yii::t('contract','contract deadline'),
 		);
 	}
 
@@ -137,7 +147,7 @@ class AuditHistoryForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,employee_id,ject_remark,operation,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
-             ld_card, sb_card, jj_card,attachment,
+             ld_card, sb_card, jj_card,attachment,nation, household, empoyment_code, social_code, fix_time,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('ject_remark','required',"on"=>"reject"),
@@ -262,6 +272,11 @@ class AuditHistoryForm extends CFormModel
                 $this->staff_type = $row['staff_type'];
                 $this->staff_leader = $row['staff_leader'];
                 $this->attachment = $row['attachment'];
+                $this->nation = $row['nation'];
+                $this->household = $row['household'];
+                $this->empoyment_code = $row['empoyment_code'];
+                $this->social_code = $row['social_code'];
+                $this->fix_time = $row['fix_time'];
 				break;
 			}
 		}

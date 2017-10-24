@@ -90,7 +90,7 @@ return array(
     'Age'=>'年齡',
     'Birth Date'=>'出生日期',
     'Physical condition'=>'身體狀況',
-    'Degree level'=>'學歷',
+    'Degree level'=>'學歷或文化程度',
     'Work experience'=>'工作經驗',
     'Foreign language level'=>'外語水平',
     'Technical level'=>'技術水平',
@@ -261,5 +261,15 @@ return array(
     'Postal code 2'=>'郵政編碼2',
     'Company Address 2'=>'公司地址2',
     'Level of pest control'=>'滅蟲執照級別',
+
+    'Social security card number'=>'社會保障卡號',
+    'Employment registration certificate'=>'就業登記證號',
+    'Household type'=>'戶籍類型',
+    'Non-agricultural'=>'非農戶口',
+    'Agricultural'=>'農業戶口',
+    'nation'=>'民族',
+    'contract deadline'=>'合同期限',
+    'fixation'=>'有固定期限',
+    'nofixed'=>'無固定期限',
 );
 ?>

@@ -160,6 +160,14 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				</div>
 			</div>
 			<div class="form-group">
+				<?php echo $form->labelEx($model,'mie',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'mie',array(""=>"","A"=>"A","B"=>"B","C"=>"C"),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+				</div>
+			</div>
+			<div class="form-group">
 				<?php echo $form->labelEx($model,'security_code',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'security_code',

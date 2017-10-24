@@ -91,7 +91,7 @@ return array(
     'Age'=>'年龄',
     'Birth Date'=>'出生日期',
     'Physical condition'=>'身体状况',
-    'Degree level'=>'学历',
+    'Degree level'=>'学历或文化程度',
     'Work experience'=>'工作经验',
     'Foreign language level'=>'外语水平',
     'Technical level'=>'技术水平',
@@ -266,5 +266,15 @@ return array(
     'Postal code 2'=>'邮政编码2',
     'Company Address 2'=>'公司地址2',
     'Level of pest control'=>'灭虫执照级别',
+
+    'Social security card number'=>'社会保障卡号',
+    'Employment registration certificate'=>'就业登记证号',
+    'Household type'=>'户籍类型',
+    'Non-agricultural'=>'非农户口',
+    'Agricultural'=>'农业户口',
+    'nation'=>'民族',
+    'contract deadline'=>'合同期限',
+    'fixation'=>'有固定期限',
+    'nofixed'=>'无固定期限',
 );
 ?>

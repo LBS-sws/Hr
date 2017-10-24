@@ -63,6 +63,11 @@ class EmployForm extends CFormModel
 	public $staff_leader;//队长/组长
 	public $test_length;//
 	public $attachment="";//附件
+    public $nation;//民族
+    public $household;//户籍类型
+    public $empoyment_code;//就业登记证号
+    public $social_code;//社会保障卡号
+    public $fix_time=0;//合同類型
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -120,6 +125,11 @@ class EmployForm extends CFormModel
             'staff_leader'=>Yii::t('staff','Team/Group Leader'),
             'test_length'=>Yii::t('contract','Probation Time Longer'),
             'attachment'=>Yii::t('contract','Attachment'),
+            'nation'=>Yii::t('contract','nation'),
+            'household'=>Yii::t('contract','Household type'),
+            'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
+            'social_code'=>Yii::t('contract','Social security card number'),
+            'fix_time'=>Yii::t('contract','contract deadline'),
 		);
 	}
 
@@ -133,11 +143,12 @@ class EmployForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
-              education, experience, english, technology, other, year_day, email, remark, price1, price3, image_user, image_code, image_work, image_other,
-               test_length,staff_type,staff_leader,attachment',
+              education, experience, english, technology, other, year_day, email, remark, price1, price3, image_user, image_code, image_work, image_other, fix_time,
+               test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code',
                 'safe'),
 			array('entry_time','required'),
 			array('name','required'),
+			array('staff_id','required'),
 			array('sex','required'),
 			array('name','validateName'),
 			array('company_id','required'),
@@ -150,12 +161,22 @@ class EmployForm extends CFormModel
 			array('position','required'),
 			array('wage','required'),
 			array('time','required'),
+            array('fix_time','required'),
 			array('start_time','required'),
-			array('end_time','required'),
+			array('end_time','validateEndTime'),
 			array('test_type','required'),
 			array('test_type','validateTestType'),
 		);
 	}
+
+	public function validateEndTime($attribute, $params){
+	    if($this->fix_time == "fixation"){
+	        if(empty($this->end_time)){
+                $message = Yii::t('contract','Contract End Time'). Yii::t('contract',' can not be empty');
+                $this->addError($attribute,$message);
+            }
+        }
+    }
 
 	public function validateTestType($attribute, $params){
 	    if(!empty($this->test_type)){
@@ -206,62 +227,6 @@ class EmployForm extends CFormModel
             }
         }
         return $arr;
-    }
-    //生成合同文件
-    public function updateEmployeeWord($employee_id){
-
-        $staff = EmployeeForm::getEmployeeToId($employee_id);
-        if (!$staff){
-            return false;
-        }else{
-            try{
-                $word = new Template($staff["word"]);
-
-                $word->setValue("city",$staff["company"]["city"]);
-                $word->setValue("companyname",$staff["company"]["name"]);
-                $word->setValue("companyaddress",$staff["company"]["address"]);
-                $word->setValue("companyhead",$staff["company"]["head"]);
-                $word->setValue("companyagent",$staff["company"]["agent"]);
-                $word->setValue("companyphone",$staff["company"]["phone"]);
-
-                $word->setValue("staffname",$staff["staff"]["name"]);
-                $word->setValue("staffcode",$staff["staff"]["code"]);
-                $word->setValue("staffgender",$staff["staff"]["sex"]);
-                $word->setValue("staffidno",$staff["staff"]["user_card"]);
-                $word->setValue("staffprov",$staff["staff"]["address"]);
-                $word->setValue("staffaddress",$staff["staff"]["contact_address"]);
-                $word->setValue("stafftelno",$staff["staff"]["phone"]);
-                $word->setValue("staffdept",$staff["staff"]["department"]);
-                $word->setValue("staffpost",$staff["staff"]["position"]);
-                $word->setValue("staffsalary",$staff["staff"]["wage"]);
-                $word->setValue("staffyears1",date("Y",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffmonth1",date("m",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffday1",date("d",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffyears2",date("Y",strtotime($staff["staff"]["end_time"])));
-                $word->setValue("staffmonth2",date("m",strtotime($staff["staff"]["end_time"])));
-                $word->setValue("staffday2",date("d",strtotime($staff["staff"]["end_time"])));
-                $word->setValue("stafftestyears1",date("Y",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftestmonth1",date("m",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftestday1",date("d",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftestyears2",date("Y",strtotime($staff["staff"]["test_end_time"])));
-                $word->setValue("stafftestmonth2",date("m",strtotime($staff["staff"]["test_end_time"])));
-                $word->setValue("stafftestday2",date("d",strtotime($staff["staff"]["test_end_time"])));
-                $testNum = intval(date("m",strtotime($staff["staff"]["test_end_time"])))-intval(date("m",strtotime($staff["staff"]["test_start_time"])));
-                $word->setValue("stafftest",$testNum);
-                $word->setValue("stafftestwage",$staff["staff"]["test_wage"]);
-                $word->save($staff["staff"]["code"]);
-                //合同的地址格式：upload/staff/所在地區/員工編號.docx
-                Yii::app()->db->createCommand()->update('hr_employee', array(
-                    'word_status'=>1,
-                    'word_url'=>"upload/staff/".$staff["staff"]["city"]."/".$staff["staff"]["code"].".docx"
-                ), 'id=:id', array(':id'=>$employee_id));
-
-                return true;
-            }catch (Exception $e){
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Error:Word Error , Not Font Word'));
-                return false;
-            }
-        }
     }
 
     //根據id獲取公司員工合同信息
@@ -353,6 +318,11 @@ class EmployForm extends CFormModel
                 $this->staff_type = $row['staff_type'];
                 $this->staff_leader = $row['staff_leader'];
                 $this->attachment = $row['attachment'];
+                $this->nation = $row['nation'];
+                $this->household = $row['household'];
+                $this->empoyment_code = $row['empoyment_code'];
+                $this->social_code = $row['social_code'];
+                $this->fix_time = $row['fix_time'];
 				break;
 			}
 		}
@@ -414,12 +384,12 @@ class EmployForm extends CFormModel
 			case 'new':
 				$sql = "insert into hr_employee(
 							name, sex, attachment, staff_id, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
-							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,
-							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, lcd
+							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,fix_time,
+							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
 						) values (
 							:name, :sex, :attachment, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
-							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,
-							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :lcd
+							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,
+							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
 						)";
 				break;
 			case 'edit':
@@ -468,7 +438,11 @@ class EmployForm extends CFormModel
 							image_code = :image_code,
 							image_work = :image_work,
 							image_other = :image_other,
-							lud = :lud,
+							nation = :nation,
+							household = :household,
+							empoyment_code = :empoyment_code,
+							social_code = :social_code,
+							fix_time = :fix_time,
 							luu = :luu 
 						where id = :id
 						";
@@ -579,6 +553,16 @@ class EmployForm extends CFormModel
 			$command->bindParam(':staff_leader',$this->staff_leader,PDO::PARAM_STR);
 		if (strpos($sql,':attachment')!==false)
 			$command->bindParam(':attachment',$this->attachment,PDO::PARAM_STR);
+        if (strpos($sql,':nation')!==false)
+            $command->bindParam(':nation',$this->nation,PDO::PARAM_STR);
+        if (strpos($sql,':household')!==false)
+            $command->bindParam(':household',$this->household,PDO::PARAM_STR);
+        if (strpos($sql,':empoyment_code')!==false)
+            $command->bindParam(':empoyment_code',$this->empoyment_code,PDO::PARAM_STR);
+        if (strpos($sql,':social_code')!==false)
+            $command->bindParam(':social_code',$this->social_code,PDO::PARAM_STR);
+        if (strpos($sql,':fix_time')!==false)
+            $command->bindParam(':fix_time',$this->fix_time,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);
@@ -586,10 +570,6 @@ class EmployForm extends CFormModel
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lcd')!==false)
-			$command->bindParam(':lcd',date('Y-m-d H:i:s'),PDO::PARAM_STR);
-		if (strpos($sql,':lud')!==false)
-			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
 
         //die();
 		$command->execute();

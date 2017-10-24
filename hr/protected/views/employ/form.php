@@ -6,7 +6,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 ?>
 
 <style>
-    input[readonly="readonly"]{pointer-events: none;}
+    input[readonly]{pointer-events: none;}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'employ-form',
@@ -219,6 +219,36 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'social_code',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'social_code',
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'empoyment_code',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'empoyment_code',
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'nation',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'nation',
+                        array('readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'household',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'household',EmployList::getNationList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'email',
@@ -313,6 +343,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 
             <legend><?php echo Yii::t("contract","contract data");?></legend>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'fix_time',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->inlineRadioButtonList($model, 'fix_time',EmployList::getFixTimeList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),'class'=>"fixTime")
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'time',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <div class="input-group">
@@ -330,8 +368,15 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                         </div>
-                        <?php echo $form->textField($model, 'end_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
+                        <?php
+                        if($model->fix_time == "nofixed"){
+                            $model->end_time = "";
+                            echo $form->textField($model, 'end_time',
+                                array('class'=>'form-control pull-right','readonly'=>(true),));
+                        }else{
+                            echo $form->textField($model, 'end_time',
+                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),));
+                        }
                         ?>
                     </div>
                 </div>
@@ -691,6 +736,15 @@ $('#EmployForm_test_type').on('change',function(){
             $('#EmployForm_staff_type').val($(this).find('option:selected').data('dept'));
         }
     });
+    //合同期限變化
+    $('.fixTime').on('change',function(){
+        var netDom = $(this).parents('.form-group:first').next('.form-group');
+        if($(this).val() == 'nofixed'){
+            netDom.find('input').eq(1).val('').prop('readonly',true).addClass('readonly');
+        }else{
+            netDom.find('input').eq(1).prop('readonly',false).removeClass('readonly');
+        }
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 if ($model->scenario!='view') {
@@ -716,7 +770,6 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ?>
 
 <?php $this->endWidget(); ?>
-
 <?php $this->renderPartial('//site/attachmentload',array('model'=>$model,
     'form'=>$form,
     'doctype'=>'PAYREQ',
