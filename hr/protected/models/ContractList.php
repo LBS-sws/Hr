@@ -24,7 +24,7 @@ class ContractList extends CListPageModel
                 where id!=0  
 			";
 		$sql2 = "select count(id)
-				from hr_docx 
+				from hr_contract 
 				where id!=0  
 			";
 		$clause = "";
@@ -65,7 +65,7 @@ class ContractList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+        $session['contract_01'] = $this->getCriteria();
 		return true;
 	}
 
