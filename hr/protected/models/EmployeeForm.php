@@ -275,9 +275,6 @@ class EmployeeForm extends CFormModel
                 $word->setValue("staffregno",$staff["staff"]["empoyment_code"]);//就业登记证号
                 $word->setValue("staffprovtype",Yii::t("contract",$staff["staff"]["household"]));//戶籍類型
 
-                $word->setValue("staffyears3",date("Y",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffmonth3",date("m",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffday3",date("d",strtotime($staff["staff"]["start_time"])));
                 $word->setValue("staffname",$staff["staff"]["name"]);
                 $word->setValue("staffcode",$staff["staff"]["code"]);
                 $word->setValue("staffgender",Yii::t("contract",$staff["staff"]["sex"]));
@@ -288,18 +285,27 @@ class EmployeeForm extends CFormModel
                 $word->setValue("staffdept",DeptForm::getDeptToId($staff["staff"]["department"]));
                 $word->setValue("staffpost",DeptForm::getDeptToId($staff["staff"]["position"]));
                 $word->setValue("staffsalary",$staff["staff"]["wage"]);//stafftestwage
-                $word->setValue("staffyears1",date("Y",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffmonth1",date("m",strtotime($staff["staff"]["start_time"])));
-                $word->setValue("staffday1",date("d",strtotime($staff["staff"]["start_time"])));
 
-                if($staff["staff"]["end_time"] == "fixation"){
+                if($staff["staff"]["fix_time"] == "fixation"){
+                    $word->setValue("staffyears1",date("Y",strtotime($staff["staff"]["start_time"])));
+                    $word->setValue("staffmonth1",date("m",strtotime($staff["staff"]["start_time"])));
+                    $word->setValue("staffday1",date("d",strtotime($staff["staff"]["start_time"])));
                     $word->setValue("staffyears2",date("Y",strtotime($staff["staff"]["end_time"])));
                     $word->setValue("staffmonth2",date("m",strtotime($staff["staff"]["end_time"])));
                     $word->setValue("staffday2",date("d",strtotime($staff["staff"]["end_time"])));
+                    $word->setValue("staffyears3","　　");
+                    $word->setValue("staffmonth3","　");
+                    $word->setValue("staffday3","　");
                 }else{
-                    $word->setValue("staffyears2","    ");
-                    $word->setValue("staffmonth2","  ");
-                    $word->setValue("staffday2","  ");
+                    $word->setValue("staffyears1","　　");
+                    $word->setValue("staffmonth1","　");
+                    $word->setValue("staffday1","　");
+                    $word->setValue("staffyears2","　　");
+                    $word->setValue("staffmonth2","　");
+                    $word->setValue("staffday2","　");
+                    $word->setValue("staffyears3",date("Y",strtotime($staff["staff"]["start_time"])));
+                    $word->setValue("staffmonth3",date("m",strtotime($staff["staff"]["start_time"])));
+                    $word->setValue("staffday3",date("d",strtotime($staff["staff"]["start_time"])));
                 }
                 if("test_type"==1){
                     $word->setValue("stafftestyears1",date("Y",strtotime($staff["staff"]["test_start_time"])));
@@ -310,13 +316,13 @@ class EmployeeForm extends CFormModel
                     $word->setValue("stafftestday2",date("d",strtotime($staff["staff"]["test_end_time"])));
                     $testNum = intval(date("m",strtotime($staff["staff"]["test_end_time"])))-intval(date("m",strtotime($staff["staff"]["test_start_time"])));
                 }else{
-                    $word->setValue("stafftestyears1","    ");
-                    $word->setValue("stafftestmonth1","  ");
-                    $word->setValue("stafftestday1","  ");
-                    $word->setValue("stafftestyears2","    ");
-                    $word->setValue("stafftestmonth2","  ");
-                    $word->setValue("stafftestday2","  ");
-                    $testNum = "  ";
+                    $word->setValue("stafftestyears1","　　");
+                    $word->setValue("stafftestmonth1","　");
+                    $word->setValue("stafftestday1","　");
+                    $word->setValue("stafftestyears2","　　");
+                    $word->setValue("stafftestmonth2","　");
+                    $word->setValue("stafftestday2","　");
+                    $testNum = "　";
                 }
                 $word->setValue("stafftestwage",$staff["staff"]["test_wage"]);
                 $word->setValue("stafftest",$testNum);
