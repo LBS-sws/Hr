@@ -1,4 +1,4 @@
-<tr class='clickable-row' data-href='<?php echo $this->getLink('ZD02', 'contract/edit', 'word/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row' data-href='<?php echo $this->getLink('ZD02', 'contract/edit', 'contract/view', array('index'=>$this->record['id']));?>'>
 
 
 	<td><?php echo $this->needHrefButton('ZD02', 'contract/edit', 'edit', array('index'=>$this->record['id'])); ?></td>

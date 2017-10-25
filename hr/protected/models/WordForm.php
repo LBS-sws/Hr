@@ -124,7 +124,7 @@ class WordForm extends CFormModel
 	{
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_docx")
-            ->where('id=:id and (type="default" OR city=:city) ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where('id=:id', array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
