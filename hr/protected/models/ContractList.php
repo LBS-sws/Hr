@@ -35,7 +35,7 @@ class ContractList extends CListPageModel
 					$clause .= General::getSqlConditionClause('name',$svalue);
 					break;
 				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
+				    $clause .= " and city in ".WordForm::getCityCodeSqlLikeName($svalue);
 					break;
 			}
 		}
