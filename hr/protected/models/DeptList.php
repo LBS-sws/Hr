@@ -49,6 +49,12 @@ class DeptList extends CListPageModel
 				where type=$type 
 			";
 		$clause = "";
+        $rw = Yii::app()->user->validRWFunction($this->getTypeAcc());
+        if(!$rw){
+            $sql1.=" and city='$city' ";
+            $sql2.=" and city='$city' ";
+        }
+        
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
