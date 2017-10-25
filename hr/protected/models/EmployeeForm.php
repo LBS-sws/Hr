@@ -307,14 +307,16 @@ class EmployeeForm extends CFormModel
                     $word->setValue("staffmonth3",date("m",strtotime($staff["staff"]["start_time"])));
                     $word->setValue("staffday3",date("d",strtotime($staff["staff"]["start_time"])));
                 }
-                if("test_type"==1){
+                if($staff["staff"]["test_type"]==1){
                     $word->setValue("stafftestyears1",date("Y",strtotime($staff["staff"]["test_start_time"])));
                     $word->setValue("stafftestmonth1",date("m",strtotime($staff["staff"]["test_start_time"])));
                     $word->setValue("stafftestday1",date("d",strtotime($staff["staff"]["test_start_time"])));
                     $word->setValue("stafftestyears2",date("Y",strtotime($staff["staff"]["test_end_time"])));
                     $word->setValue("stafftestmonth2",date("m",strtotime($staff["staff"]["test_end_time"])));
                     $word->setValue("stafftestday2",date("d",strtotime($staff["staff"]["test_end_time"])));
-                    $testNum = intval(date("m",strtotime($staff["staff"]["test_end_time"])))-intval(date("m",strtotime($staff["staff"]["test_start_time"])));
+                    $yearNum = intval(date("Y",strtotime($staff["staff"]["test_end_time"])))-intval(date("Y",strtotime($staff["staff"]["test_start_time"])));
+                    $monthNum = intval(date("m",strtotime($staff["staff"]["test_end_time"])))-intval(date("m",strtotime($staff["staff"]["test_start_time"])));
+                    $testNum = $yearNum*12 + $monthNum;
                 }else{
                     $word->setValue("stafftestyears1","　　");
                     $word->setValue("stafftestmonth1","　");
