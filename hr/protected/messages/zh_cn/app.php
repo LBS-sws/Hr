@@ -98,6 +98,7 @@ return array(
     'Reward Config'=>'配置奖金',
     'Reward Apply'=>'奖金申请',
     'Reward Audit'=>'奖金审核',
+    'Supplemental Agreement'=>'补充协议',
     //沈超添加结束
 );
 ?>

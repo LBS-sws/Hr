@@ -131,6 +131,12 @@ $js = '
 $("#addWord").on("click",{btnStr:"'.Yii::t("misc","Delete").'",wordList:'.$wordList.'},addWord);
 $("body").delegate(".delWord","click","'.Yii::t("contract","Are you sure you want to delete this data?").'",delWordTable);
 ';
+if($model->scenario=='view'){
+    $js.='
+        $("#wordArrTable>tfoot,#wordArrTable>tbody>tr>td:last,#wordArrTable>thead>tr>th:last").remove();
+        $(".delWord,#addWord").css("pointer-events","none");
+    ';
+}
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('contract/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);

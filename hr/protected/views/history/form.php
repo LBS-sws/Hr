@@ -84,6 +84,16 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
             </div>
             <legend></legend>
             <?php endif; ?>
+            <?php if ($model->scenario=='change'||!empty($model->opr_type)): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'opr_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'opr_type',EmployList::getOperationTypeList(),
+                            array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">

@@ -71,6 +71,7 @@ class HistoryForm extends CFormModel
     public $empoyment_code;//就业登记证号
     public $social_code;//社会保障卡号
     public $fix_time=0;//合同類型
+    public $opr_type;//合同變更類型
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -134,6 +135,7 @@ class HistoryForm extends CFormModel
             'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
             'social_code'=>Yii::t('contract','Social security card number'),
             'fix_time'=>Yii::t('contract','contract deadline'),
+            'opr_type'=>Yii::t('contract','Operation Type'),
 		);
 	}
 
@@ -146,11 +148,12 @@ class HistoryForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,employee_id,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
-             ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time,
+             ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('update_remark','required'),
 			array('code','required'),
+			array('opr_type','required',"on"=>"change"),
             array('staff_id','required'),
 			array('name','required'),
 			array('code','validateCode'),
@@ -355,6 +358,7 @@ class HistoryForm extends CFormModel
                 $this->empoyment_code = $row['empoyment_code'];
                 $this->social_code = $row['social_code'];
                 $this->fix_time = $row['fix_time'];
+                $this->opr_type = key_exists('opr_type',$row)?$row['opr_type']:"";
 				break;
 			}
 		}
@@ -387,6 +391,7 @@ class HistoryForm extends CFormModel
         $row['staff_status'] = 2;
         $row['ject_remark'] = "";
         $row['operation'] = $this->scenario;
+        $row['opr_type'] = $this->opr_type;
         $row['employee_id'] = $this->employee_id;
         $row['update_remark'] = $this->update_remark;
         if($this->scenario == "view" && $this->staff_status == 3){
@@ -399,15 +404,26 @@ class HistoryForm extends CFormModel
             $id = Yii::app()->db->getLastInsertID();
             $this->id = $id;
         }
-        //記錄
-        Yii::app()->db->createCommand()->insert('hr_employee_history', array(
+        $his_arr =  array(
             "employee_id"=>$this->employee_id,
             "history_id"=>$id,
-            "status"=>$row['operation'],
             "remark"=>"",
             "lcu"=>$row['lcu'],
             "lcd"=>$row['lcd'],
-        ));
+        );
+        if($row['operation'] =="change"){
+            $his_arr["status"] = $row['opr_type'];
+            $num = Yii::app()->db->createCommand()->select("count('id')")->from("hr_employee_history")
+                ->where('employee_id=:employee_id and status="contract"',array(":employee_id"=>$this->employee_id))->queryScalar();
+            if($num > 0 && $row['opr_type'] == "contract"){
+                $num++;
+                $his_arr["num"] = " - ".$num;
+            }
+        }else{
+            $his_arr["status"] = $row['operation'];
+        }
+        //記錄
+        Yii::app()->db->createCommand()->insert('hr_employee_history',$his_arr);
 	}
 
     public function setAttachment(){
@@ -428,5 +444,16 @@ class HistoryForm extends CFormModel
         }
         $this->attachment = $arr;
         return $arr;
+    }
+
+    //根據歷史記錄的id獲取員工歷史信息
+    public function getStaffToHistoryId($index){
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
+            ->where('id=:id', array(':id'=>$index))->queryRow();
+        if($rows){
+            return $rows;
+        }else{
+            return array();
+        }
     }
 }

@@ -22,11 +22,11 @@ class WordList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
 		$sql1 = "select id,city,name,type from hr_docx 
-                where type='default' OR city='$city' 
+                where id > 0 
 			";
 		$sql2 = "select count(id)
 				from hr_docx 
-				where type='default' OR city='$city'
+				where id > 0 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -67,7 +67,7 @@ class WordList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+		$session['word_01'] = $this->getCriteria();
 		return true;
 	}
 

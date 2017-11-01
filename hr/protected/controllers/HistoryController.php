@@ -97,7 +97,7 @@ class HistoryController extends Controller
             $model->finish();
 
             Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-            $this->redirect(Yii::app()->createUrl('employee/edit',array('index'=>$model->id)));
+            $this->redirect(Yii::app()->createUrl('auditHistory/index'));
         }
     }
 

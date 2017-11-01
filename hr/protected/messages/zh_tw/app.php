@@ -100,6 +100,7 @@ return array(
     'Reward Config'=>'配置獎金',
     'Reward Apply'=>'獎金申請',
     'Reward Audit'=>'獎金審核',
+    'Supplemental Agreement'=>'補充協議',
     //沈超添加结束
 );
 ?>

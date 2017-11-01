@@ -83,6 +83,16 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                     <input class="input-10 form-control readonly" readonly type="text" value="<?php echo Yii::t("contract",$model->operation);?>">
                 </div>
             </div>
+            <?php if ($model->operation=="change"): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'opr_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'opr_type',EmployList::getOperationTypeList(),
+                            array('disabled'=>(true))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">

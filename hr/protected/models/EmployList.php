@@ -52,6 +52,15 @@ class EmployList extends CListPageModel
             "nofixed"=>Yii::t("contract","nofixed")
         );
     }
+    //獲取合同期限列表
+    public function getOperationTypeList(){
+        return array(
+            ""=>"",
+            "promotion"=>Yii::t("contract","promotion"),
+            "transfer"=>Yii::t("contract","transfer"),
+            "contract"=>Yii::t("contract","contract")
+        );
+    }
     //獲取健康列表
     public function getMonthList(){
         $list = array(""=>"");

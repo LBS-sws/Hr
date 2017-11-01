@@ -296,6 +296,14 @@ class EmployeeForm extends CFormModel
                     $word->setValue("staffyears3","　　");
                     $word->setValue("staffmonth3","　");
                     $word->setValue("staffday3","　");
+
+                    $date1 = strtotime($staff["staff"]["end_time"]);
+                    $date2 = strtotime($staff["staff"]["start_time"]);
+                    $time_difference = $date1 - $date2;
+                    $seconds_per_year = 60*60*24*365;
+                    $yrs = round($time_difference / $seconds_per_year);
+                    $duration = strval($yrs);
+                    $word->setValue("staffduration",$duration);
                 }else{
                     $word->setValue("staffyears1","　　");
                     $word->setValue("staffmonth1","　");
@@ -306,6 +314,7 @@ class EmployeeForm extends CFormModel
                     $word->setValue("staffyears3",date("Y",strtotime($staff["staff"]["start_time"])));
                     $word->setValue("staffmonth3",date("m",strtotime($staff["staff"]["start_time"])));
                     $word->setValue("staffday3",date("d",strtotime($staff["staff"]["start_time"])));
+                    $word->setValue("staffduration","　");
                 }
                 if($staff["staff"]["test_type"]==1){
                     $word->setValue("stafftestyears1",date("Y",strtotime($staff["staff"]["test_start_time"])));
@@ -612,5 +621,62 @@ class EmployeeForm extends CFormModel
         }
         $this->attachment = $arr;
         return $arr;
+    }
+
+    //檢查是否有補充協議
+    public function staffHasAgreement(){
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_history")
+            ->where('employee_id=:employee_id and status in ("transfer","promotion")', array(':employee_id'=>$this->id))->order('lcd desc')->queryAll();
+        if($rows){
+            return $rows;
+        }else{
+            return array();
+        }
+    }
+
+    //檢查是否有補充協議
+    public function downAgreement($history_id){
+        $word_url = AgreementForm::getAgreementUrl();
+        if(empty($word_url)){
+            throw new CHttpException(404,'協議文檔沒有配置，請與管理員聯繫');
+        }else{
+            $arr = $this->staffHasAgreement();
+            if (empty($arr)){
+                throw new CHttpException(404,'Not Find Agreement');
+            }else{
+                foreach ($arr as $key => $list){
+                    if ($list["id"] == $history_id){
+                        $staff["old"] = HistoryForm::getStaffToHistoryId($list["history_id"]);
+                        if($key === 0){
+                            $staff["now"] = $this->attributes;
+                        }else{
+                            $staff["now"] = HistoryForm::getStaffToHistoryId($arr[$key-1]["history_id"]);
+                        }
+                        $companyName = CompanyForm::getCompanyToId($staff["now"]["company_id"]);
+                        $word = new Agreement($word_url,$this->city);
+
+                        $word->setValue("oldDepartment",DeptForm::getDeptToId($staff["old"]["department"]));//崗位
+                        $word->setValue("oldPosition",DeptForm::getDeptToId($staff["old"]["position"]));//職位
+                        $word->setValue("oldWage",$staff["old"]["wage"]);//工資
+
+                        $word->setValue("nowDepartment",DeptForm::getDeptToId($staff["now"]["department"]));//崗位
+                        $word->setValue("nowPosition",DeptForm::getDeptToId($staff["now"]["position"]));//職位
+                        $word->setValue("nowWage",$staff["now"]["wage"]);//工資
+
+                        $word->setValue("companyname",$companyName["name"]);//公司名字
+                        $word->setValue("staffname",$staff["now"]["name"]);//員工名字
+                        $word->setValue("agreementyears",date("Y",strtotime($list["lcd"])));
+                        $word->setValue("agreementmonth",date("m",strtotime($list["lcd"])));
+                        $word->setValue("agreementday",date("d",strtotime($list["lcd"])));
+                        $fileName = date("YmdHis",strtotime($list["lcd"]));
+                        $word->save($fileName);
+                        //協議的地址格式：upload/agreement/所在地區/協議時間.docx
+                        $wordUrl = "upload/agreement/".$this->city."/".$fileName.".docx";
+                        return $wordUrl;
+                    }
+                }
+                throw new CHttpException(404,'Not Find Agreement');
+            }
+        }
     }
 }

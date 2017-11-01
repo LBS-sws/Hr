@@ -271,5 +271,17 @@ return array(
     'contract deadline'=>'合同期限',
     'fixation'=>'有固定期限',
     'nofixed'=>'無固定期限',
+
+    //10-31
+    'Operation Type'=>'合同變更類型',
+    'promotion'=>'升職',
+    'transfer'=>'調職',
+    'contract'=>'續約',
+    'Agreement List'=>'協議列表',
+    'Add Agreement'=>'添加協議',
+    'Agreement Form'=>'協議表單',
+    'Agreement Name'=>'協議名稱',
+    'Agreement File'=>'協議文件',
+    'Supplemental Agreement'=>'補充協議',
 );
 ?>

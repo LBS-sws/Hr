@@ -5,11 +5,11 @@
  * UserForm is the data structure for keeping
  * user form data. It is used by the 'user' action of 'SiteController'.
  */
-class WordForm extends CFormModel
+class AgreementForm extends CFormModel
 {
 	/* User Fields */
 	public $id;
-	public $type='default';
+	public $type=0;
 	public $name;
 	public $city;
 	public $docx_url;
@@ -24,9 +24,9 @@ class WordForm extends CFormModel
 	{
 		return array(
 			'id'=>Yii::t('staff','Record ID'),
-			'name'=>Yii::t('contract','Word Name'),
-			'type'=>Yii::t('contract','Restrict'),
-			'file'=>Yii::t('contract','Word File'),
+			'name'=>Yii::t('contract','Agreement Name'),
+			'type'=>Yii::t('contract','Status'),
+			'file'=>Yii::t('contract','Agreement File'),
 			'city'=>Yii::t('misc','City'),
 		);
 	}
@@ -48,29 +48,32 @@ class WordForm extends CFormModel
 	}
 
 	public function validateName($attribute, $params){
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_docx")
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")
             ->where('id!=:id and name=:name ', array(':id'=>$this->id,':name'=>$this->name))->queryAll();
         if (count($rows) > 0){
-            $message = Yii::t('contract','Word Name'). Yii::t('contract',' can not repeat');
+            $message = Yii::t('contract','Agreement Name'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
         }
     }
 
-    //文檔刪除時必須沒有合同正在使用
-    public function validateDelete(){
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_contract_docx")
-            ->where('docx=:docx', array(':docx'=>$this->id))->queryAll();
-        if ($rows){
-            return false;
+    public function getAgreementUrl(){
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")->order('type desc')->queryRow();
+        if($rows){
+            return $rows["docx_url"];
+        }else{
+            return "";
         }
+    }
+
+    //協議刪除時驗證
+    public function validateDelete(){
         return true;
     }
 
 //根據id獲取文檔地址
 	public function getDocxUrlToId($index)
 	{
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_docx")
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")
             ->where('id=:id', array(':id'=>$index))->queryAll();
 		if (count($rows) > 0){
 		    return $rows[0];
@@ -78,52 +81,10 @@ class WordForm extends CFormModel
 		return false;
 	}
 
-//获取地区列表
-	public function getCityListAll()
-	{
-        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
-	    $arr = array(""=>"");
-        $rows = Yii::app()->db->createCommand()->select("code,name")->from($from)->queryAll();
-        if($rows){
-            foreach ($rows as $row){
-                $arr[$row["code"]] = $row["name"];
-            }
-        }
-		return $arr;
-	}
-
-//获取地区名字
-	public function getCityNameToCode($code)
-	{
-        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
-        $rows = Yii::app()->db->createCommand()->select("name")->from($from)->where("code=:code",array(":code"=>$code))->queryRow();
-        if($rows){
-            return $rows["name"];
-        }
-		return $code;
-	}
-
-//获取地区編號（模糊查詢）
-	public function getCityCodeSqlLikeName($code)
-	{
-        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
-        $rows = Yii::app()->db->createCommand()->select("code")->from($from)->where(array('like', 'name', "%$code%"))->queryAll();
-        $arr = array();
-        foreach ($rows as $row){
-            array_push($arr,"'".$row["code"]."'");
-        }
-        if(empty($arr)){
-            return "()";
-        }else{
-            $arr = implode(",",$arr);
-            return "($arr)";
-        }
-	}
-
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_docx")
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")
             ->where('id=:id', array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
@@ -152,6 +113,7 @@ class WordForm extends CFormModel
 		try {
 			$this->saveStaff($connection);
 			$transaction->commit();
+			$this->resetType();//重置啟用狀態
 		}
 		catch(Exception $e) {
 			$transaction->rollback();
@@ -164,20 +126,19 @@ class WordForm extends CFormModel
 		$sql = '';
         $city = Yii::app()->user->city();
         $uid = Yii::app()->user->id;
-        $adminBool = $uid=="shenchao";
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_docx where id = :id";
+                $sql = "delete from hr_agreement where id = :id";
 				break;
 			case 'new':
-				$sql = "insert into hr_docx(
+				$sql = "insert into hr_agreement(
 							name, type, docx_url, city, lcu, lcd
 						) values (
 							:name, :type, :docx_url, :city, :lcu, :lcd
 						)";
 				break;
 			case 'edit':
-				$sql = "update hr_docx set
+				$sql = "update hr_agreement set
 							name = :name, 
 							type = :type, 
 							docx_url = :docx_url,
@@ -217,4 +178,13 @@ class WordForm extends CFormModel
         }
         return true;
 	}
+
+	//自動完成啟用狀態的變更
+	private function resetType(){
+        if($this->type == 1){
+            Yii::app()->db->createCommand()->update('hr_agreement', array(
+                'type'=>0,
+            ), 'id!=:id', array(':id'=>$this->id));
+        }
+    }
 }

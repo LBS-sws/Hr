@@ -45,6 +45,15 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 ?>
             </div>
 
+            <?php if (!empty($model->staffHasAgreement())): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php if ($model->word_status == 1): ?>
+                        <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Supplemental Agreement'),array(
+                            'name'=>'btnAgreement','id'=>'btnAgreement','data-toggle'=>'modal','data-target'=>'#agreementdialog'));
+                        ?>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php if ($model->word_status == 1): ?>
@@ -560,6 +569,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
 
 <?php
 $this->renderPartial('//site/historylist',array('model'=>$model));
+$this->renderPartial('//site/agreementlist',array('model'=>$model));
 ?>
 <?php
 /*if ($model->scenario!='new')

@@ -1,8 +1,7 @@
 <?php
 
-class DeptList extends CListPageModel
+class AgreementList extends CListPageModel
 {
-    public $type = 0;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -12,54 +11,32 @@ class DeptList extends CListPageModel
 	{
 		return array(	
 			'id'=>Yii::t('contract','ID'),
-			'z_index'=>Yii::t('contract','Level'),
-			'city'=>Yii::t('misc','City'),
-			'name'=>Yii::t('contract',' Name'),
-            'name_0'=>Yii::t('contract','Dept Name'),
-			'name_1'=>Yii::t('contract','Leader Name'),
-			'dept_id'=>Yii::t('contract','in department'),
-			'dept_class'=>Yii::t('contract','Job category'),
+			'city'=>Yii::t('contract','City'),
+			'name'=>Yii::t('contract','Agreement Name'),
+			'type'=>Yii::t('contract','Status'),
 		);
 	}
-	public function getTypeName(){
-	    if ($this->type == 1){
-            return Yii::t("contract","Leader");
-        }else{
-            return Yii::t("contract","Dept");
-        }
-    }
-	public function getTypeAcc(){
-	    if ($this->type == 1){
-            return "ZC02";
-        }else{
-            return "ZC01";
-        }
-    }
 
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
-		$type = $this->type;
-		$sql1 = "select * from hr_dept 
-                where type=$type 
+		$sql1 = "select * from hr_agreement 
+                where id > 0 
 			";
 		$sql2 = "select count(id)
-				from hr_dept 
-				where type=$type 
+				from hr_agreement 
+				where id > 0 
 			";
 		$clause = "";
-        $rw = Yii::app()->user->validRWFunction($this->getTypeAcc());
-        if(!$rw){
-            $sql1.=" and city='$city' ";
-            $sql2.=" and city='$city' ";
-        }
-
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
 				case 'name':
 					$clause .= General::getSqlConditionClause('name',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
 					break;
 			}
 		}
@@ -79,22 +56,17 @@ class DeptList extends CListPageModel
 		
 		$list = array();
 		$this->attr = array();
-		$userList = CompanyForm::getUserList();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
-					'city'=>WordForm::getCityNameToCode($record['city']),
-					'z_index'=>$record['z_index'],
-					'dept_id'=>$record['dept_id'],
-					'dept_class'=>Yii::t("staff",$record['dept_class']),
-                    'acc'=>$this->getTypeAcc()
+					'type'=>empty($record['type'])?Yii::t("misc","Inactive"):Yii::t("misc","Active")
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['dept_01'] = $this->getCriteria();
+		$session['agreement_01'] = $this->getCriteria();
 		return true;
 	}
 

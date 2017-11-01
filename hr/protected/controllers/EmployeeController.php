@@ -106,16 +106,25 @@ class EmployeeController extends Controller
 
     }
 
-    //變更合同
-    public function actionChanges($index){
-        echo "沒有變更合同的功能文檔，無法開發";
-    }
 
-    //員工離職
-    public function actionDeparture($index){
-        echo "沒有員工離職的功能文檔，無法開發";
+    //下載補充協議
+    public function actionDownAgreement($index,$staff){
+        $model = new EmployeeForm();
+        if (!$model->retrieveData($staff)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $url = $model->downAgreement($index);
+            // To prevent corrupted zip - Percy
+            $file = Yii::app()->basePath."/../".$url;
+            ob_clean();
+            ob_end_flush();
+            //
+            header("Content-type: application/octet-stream");
+            header('Content-Disposition: attachment; filename="补充协议('.$model->name.').docx"');
+            header("Content-Length: ". filesize($file));
+            readfile($file);
+        }
     }
-
 
 /*    //刪除員工
     public function actionDelete(){

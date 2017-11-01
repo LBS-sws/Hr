@@ -72,6 +72,7 @@ class AuditHistoryForm extends CFormModel
     public $empoyment_code;//就业登记证号
     public $social_code;//社会保障卡号
     public $fix_time=0;//合同類型
+    public $opr_type;//合同類型
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -135,6 +136,7 @@ class AuditHistoryForm extends CFormModel
             'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
             'social_code'=>Yii::t('contract','Social security card number'),
             'fix_time'=>Yii::t('contract','contract deadline'),
+            'opr_type'=>Yii::t('contract','Operation Type'),
 		);
 	}
 
@@ -277,6 +279,7 @@ class AuditHistoryForm extends CFormModel
                 $this->empoyment_code = $row['empoyment_code'];
                 $this->social_code = $row['social_code'];
                 $this->fix_time = $row['fix_time'];
+                $this->opr_type = $row['opr_type'];
 				break;
 			}
 		}

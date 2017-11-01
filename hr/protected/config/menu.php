@@ -34,6 +34,10 @@ return array(
 	'Contract'=>array(
 		'access'=>'ZD',
 		'items'=>array(
+			'Supplemental Agreement'=>array(
+				'access'=>'ZD03',
+				'url'=>'/agreement/index',
+			),
 			'Contract Word'=>array(
 				'access'=>'ZD01',
 				'url'=>'/word/index',
