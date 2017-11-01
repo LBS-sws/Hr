@@ -296,6 +296,14 @@ class EmployeeForm extends CFormModel
                     $word->setValue("staffyears3","　　");
                     $word->setValue("staffmonth3","　");
                     $word->setValue("staffday3","　");
+					
+					$date1 = strtotime($staff["staff"]["end_time"]);
+					$date2 = strtotime($staff["staff"]["start_time"]);
+					$time_difference = $date1 - $date2;
+					$seconds_per_year = 60*60*24*365;
+					$yrs = round($time_difference / $seconds_per_year);
+					$duration = strval($yrs);
+                    $word->setValue("staffduration",$duration);
                 }else{
                     $word->setValue("staffyears1","　　");
                     $word->setValue("staffmonth1","　");
@@ -306,6 +314,7 @@ class EmployeeForm extends CFormModel
                     $word->setValue("staffyears3",date("Y",strtotime($staff["staff"]["start_time"])));
                     $word->setValue("staffmonth3",date("m",strtotime($staff["staff"]["start_time"])));
                     $word->setValue("staffday3",date("d",strtotime($staff["staff"]["start_time"])));
+                    $word->setValue("staffduration","　");
                 }
                 if($staff["staff"]["test_type"]==1){
                     $word->setValue("stafftestyears1",date("Y",strtotime($staff["staff"]["test_start_time"])));
