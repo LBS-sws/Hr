@@ -17,6 +17,7 @@ class MenuWidget extends CWidget
 					$rtn .= $this->printMenuHtml($item['items']);
 					$rtn .= "</ul></li>";
 				} else {
+					$tag = isset($item['text']) ? 'title="'.$item['text'].'"' : '';
 					$rtn .= "<li><a href=\"$url\">$itemname</a></li>";
 				}
 			}
