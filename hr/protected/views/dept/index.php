@@ -45,6 +45,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
     <?php
     $search = array(
         'name',
+        'city',
     );
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
    $this->widget('ext.layout.ListPageWidget', array(

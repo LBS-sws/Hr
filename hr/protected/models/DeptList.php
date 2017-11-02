@@ -61,6 +61,9 @@ class DeptList extends CListPageModel
 				case 'name':
 					$clause .= General::getSqlConditionClause('name',$svalue);
 					break;
+				case 'city':
+					$clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
+					break;
 			}
 		}
 		
