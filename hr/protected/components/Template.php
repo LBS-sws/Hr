@@ -116,8 +116,18 @@ class Template {
     }
 
     public function resetContractWord($testBool,$contractBool){
-        $str ='</w:t></w:r><w:r><w:rPr><w:rFonts w:ascii="DFKai-SB" w:hAnsi="DFKai-SB" w:cs="Arial" w:hint="eastAsia"/><w:kern w:val="0"/><w:szCs w:val="18"/><w:u w:val="single"/><w:lang w:eastAsia="zh-CN"/></w:rPr><w:t>';
-        $str2 ='</w:t></w:r><w:r><w:rPr><w:rFonts w:ascii="DFKai-SB" w:hAnsi="DFKai-SB" w:cs="Arial" w:hint="eastAsia"/><w:kern w:val="0"/><w:szCs w:val="18"/><w:lang w:eastAsia="zh-CN"/></w:rPr><w:t>';
+        if (strpos($this->_documentXML,'contractdeadline')!==false){
+            $rprXml = explode('contractdeadline',$this->_documentXML,2)[0];
+            $index = strripos($rprXml,"<w:rPr>");
+            $count = $index-strlen($rprXml);
+            $rprXml = substr($rprXml,$count);
+        }else{
+            $rprXml = '<w:rPr><w:rFonts w:ascii="DFKai-SB" w:hAnsi="DFKai-SB" w:cs="Arial" w:hint="eastAsia"/><w:kern w:val="0"/><w:szCs w:val="18"/><w:lang w:eastAsia="zh-CN"/></w:rPr><w:t>';
+        }
+        $num = strlen($rprXml)-strlen('</w:rPr><w:t>');
+        $rprXmlSingle = substr($rprXml,0,$num).'<w:u w:val="single"/></w:rPr><w:t>';
+        $str ='</w:t></w:r><w:r>'.$rprXmlSingle;
+        $str2 ='</w:t></w:r><w:r>'.$rprXml;
         //合同期限
         if($contractBool){
             $this->setValue("contractdeadline","有固定期限：从".$str."staffyears1".$str2."年".$str."staffmonth1".$str2."月".$str."staffday1".$str2."日起至".$str."staffyears2".$str2."年".$str."staffmonth2".$str2."月".$str."staffday2".$str2."日止。");
