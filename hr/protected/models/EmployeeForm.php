@@ -248,7 +248,8 @@ class EmployeeForm extends CFormModel
                 if ($staff["staff"]["test_type"] != 1){
                     $bool = false;//無試用期
                 }
-                $word = new Template($staff["word"],$bool);
+                $contractBool = $staff["staff"]["fix_time"] == "fixation";
+                $word = new Template($staff["word"],$bool,$contractBool);
 
                 $word->setValue("city",$staff["company"]["city"]);
                 $word->setValue("companyname",$staff["company"]["name"]);

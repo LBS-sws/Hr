@@ -63,7 +63,7 @@ class Template {
      * 
      * @param string $strFilename
      */
-    public function __construct($arr,$strike_bool=true) {
+    public function __construct($arr,$testBool=true,$contractBool=true) {
         $path = Yii::app()->basePath."/../upload/staff/";
         if (!file_exists($path)){
             mkdir ($path);
@@ -96,32 +96,6 @@ class Template {
             $xmlObj = $xml->loadXML($documentXML);
             $timedom = $xml->getElementsByTagName("body");
             $timedom = $timedom->item(0);
-            /*  有無試用期的下劃線
-            if (strpos($documentXML,'（以上二删一）')!==false){
-                $tdList = $timedom->getElementsByTagName("tc");
-                for($i = 0;$i<$tdList->length;$i++){
-                    $td = $tdList->item($i);
-                    if(strpos($td->textContent,'无试用期。')!==false){
-                        $pList = $td->getElementsByTagName("p");
-                        for($j= 0;$j<$pList->length;$j++){
-                            $pObj = $pList->item($j);
-                            if(strpos($pObj->textContent,'无试用期。')!==false){
-                                //添加下滑線
-                                if(!$strike_bool){
-                                    $pObj = $pList->item($j-1);
-                                }
-                                foreach ($pObj->childNodes as $rList){
-                                    if($rList->tagName == "w:r"){
-                                        $newel=$xml->createElement('w:strike');
-                                        $rList->firstChild->appendChild($newel);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            */
             if($key != 0){
                 $this->_documentXML.='<w:p><w:r><w:br w:type="page" /></w:r></w:p>';
             } 
@@ -136,7 +110,26 @@ class Template {
             $objZip->close();
         }
         $this->_documentXML.=$section."</w:body></w:document>";
+        $this->resetContractWord($testBool,$contractBool);
+        //var_dump($this->_documentXML);die();
         //rsidRDefault
+    }
+
+    public function resetContractWord($testBool,$contractBool){
+        $str ='</w:t></w:r><w:r><w:rPr><w:rFonts w:ascii="DFKai-SB" w:hAnsi="DFKai-SB" w:cs="Arial" w:hint="eastAsia"/><w:kern w:val="0"/><w:szCs w:val="18"/><w:u w:val="single"/><w:lang w:eastAsia="zh-CN"/></w:rPr><w:t>';
+        $str2 ='</w:t></w:r><w:r><w:rPr><w:rFonts w:ascii="DFKai-SB" w:hAnsi="DFKai-SB" w:cs="Arial" w:hint="eastAsia"/><w:kern w:val="0"/><w:szCs w:val="18"/><w:lang w:eastAsia="zh-CN"/></w:rPr><w:t>';
+        //合同期限
+        if($contractBool){
+            $this->setValue("contractdeadline","有固定期限：从".$str."staffyears1".$str2."年".$str."staffmonth1".$str2."月".$str."staffday1".$str2."日起至".$str."staffyears2".$str2."年".$str."staffmonth2".$str2."月".$str."staffday2".$str2."日止。");
+        }else{
+            $this->setValue("contractdeadline","无固定期限：从".$str."staffyears3".$str2."年".$str."staffmonth3".$str2."月".$str."staffday3".$str2."日起至法定的终止条件出现时止。");
+        }
+        //試用期
+        if($testBool){
+            $this->setValue("testdeadline","试用期为".$str."stafftest".$str2."个月，从".$str."stafftestyears1".$str2."年".$str."stafftestmonth1".$str2."月".$str."stafftestday1".$str2."日起至".$str."stafftestyears2".$str2."年".$str."stafftestmonth2".$str2."月".$str."stafftestday2".$str2."日止，试用期工资为RMB ".$str."stafftestwage".$str2." 元/月。");
+        }else{
+            $this->setValue("testdeadline","无试用期。");
+        }
     }
 
 
