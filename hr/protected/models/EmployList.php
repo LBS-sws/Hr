@@ -92,6 +92,17 @@ class EmployList extends CListPageModel
         return array(""=>"","Office"=>Yii::t("staff","Office"),"Sales"=>Yii::t("staff","Sales"),"Technician"=>Yii::t("staff","Technician"),"Others"=>Yii::t("staff","Others"));
     }
 
+    //獲取員工續約的次數
+    public function getContractNumber($staff_id){
+        $num = Yii::app()->db->createCommand()->select("count('id')")->from("hr_employee_history")
+            ->where('employee_id=:employee_id and status="contract"',array(":employee_id"=>$staff_id))->queryScalar();
+        if($num){
+            return $num;
+        }else{
+            return 0;
+        }
+    }
+
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];

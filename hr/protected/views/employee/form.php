@@ -292,6 +292,17 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
             </div>
 
             <legend><?php echo Yii::t("contract","contract data");?></legend>
+            <?php
+            $contractNum = EmployList::getContractNumber($model->id);
+            if (!empty($contractNum)){
+                echo '<div class="form-group">';
+                echo TbHtml::label(Yii::t("contract","Contract Number"),'',array('class'=>"col-sm-2 control-label"));
+                echo '<div class="col-sm-3">';
+                echo TbHtml::textField('contractNum', $contractNum,array('class'=>'form-control pull-right','readonly'=>(true),));
+                echo '</div>';
+                echo '</div>';
+            }
+            ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'fix_time',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">

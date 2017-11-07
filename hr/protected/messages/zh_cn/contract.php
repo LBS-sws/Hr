@@ -292,5 +292,6 @@ return array(
     //11-07
     'Leave Reason'=>'离职原因',
     'Leave Time'=>'离职时间',
+    'Contract Number'=>'续约次数',
 );
 ?>
