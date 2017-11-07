@@ -72,6 +72,8 @@ class HistoryForm extends CFormModel
     public $social_code;//社会保障卡号
     public $fix_time=0;//合同類型
     public $opr_type;//合同變更類型
+    public $leave_time;//離職時間
+    public $leave_reason;//離職原因
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -136,6 +138,8 @@ class HistoryForm extends CFormModel
             'social_code'=>Yii::t('contract','Social security card number'),
             'fix_time'=>Yii::t('contract','contract deadline'),
             'opr_type'=>Yii::t('contract','Operation Type'),
+            'leave_reason'=>Yii::t('contract','Leave Reason'),
+            'leave_time'=>Yii::t('contract','Leave Time'),
 		);
 	}
 
@@ -148,12 +152,14 @@ class HistoryForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,employee_id,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
-             ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type,
+             ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type, leave_reason, leave_time,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('update_remark','required'),
 			array('code','required'),
 			array('opr_type','required',"on"=>"change"),
+			array('leave_time','required',"on"=>"departure"),
+			array('leave_reason','required',"on"=>"departure"),
             array('staff_id','required'),
 			array('name','required'),
 			array('code','validateCode'),
@@ -359,6 +365,8 @@ class HistoryForm extends CFormModel
                 $this->social_code = $row['social_code'];
                 $this->fix_time = $row['fix_time'];
                 $this->opr_type = key_exists('opr_type',$row)?$row['opr_type']:"";
+                $this->leave_reason = $row['leave_reason'];
+                $this->leave_time = $row['leave_time'];
 				break;
 			}
 		}

@@ -26,7 +26,12 @@
         <?php
         if(!empty($model->historyList)){
             foreach ($model->historyList as $staff){
-                echo "<tr><td>".$staff['code']."</td><td>".$staff['name']."</td><td>".$staff['lcu']."</td><td>".$staff['lcd']."</td><td>".Yii::t("contract",$staff['status'])."</td>";
+                echo "<tr><td>".$staff['code']."</td><td>".$staff['name']."</td><td>".$staff['lcu']."</td><td>".$staff['lcd']."</td>";
+                echo "<td>".Yii::t("contract",$staff['status']);
+                if(!empty($staff['num'])){
+                    echo $staff['num'];
+                }
+                echo "</td>";
                 echo "<td>";
                 if(!empty($staff['history_id'])){
                     echo "<a target='_blank' href='".Yii::app()->createUrl('history/detail',array('index'=>$staff['history_id'],'type'=>'view'))."'><span class='glyphicon glyphicon-eye-open'></span></a>";

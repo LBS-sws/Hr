@@ -63,6 +63,8 @@ class DepartureForm extends CFormModel
     public $staff_leader;//队长/组长
     public $test_length;//
     public $attachment="";//附件
+    public $leave_time;//離職時間
+    public $leave_reason;//離職原因
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -120,6 +122,8 @@ class DepartureForm extends CFormModel
             'staff_leader'=>Yii::t('staff','Team/Group Leader'),
             'test_length'=>Yii::t('contract','Probation Time Longer'),
             'attachment'=>Yii::t('contract','Attachment'),
+            'leave_reason'=>Yii::t('contract','Leave Reason'),
+            'leave_time'=>Yii::t('contract','Leave Time'),
 		);
 	}
 
@@ -275,6 +279,8 @@ class DepartureForm extends CFormModel
                 $this->staff_type = $row['staff_type'];
                 $this->staff_leader = $row['staff_leader'];
                 $this->attachment = $row['attachment'];
+                $this->leave_reason = $row['leave_reason'];
+                $this->leave_time = $row['leave_time'];
 				break;
 			}
 		}

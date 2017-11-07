@@ -17,6 +17,7 @@ class DepartureList extends CListPageModel
 			'position'=>Yii::t('contract','Position'),
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
+			'leave_time'=>Yii::t('contract','Leave Time'),
 			'status'=>Yii::t('contract','Status'),
 		);
 	}
@@ -80,6 +81,7 @@ class DepartureList extends CListPageModel
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
 					'phone'=>$record['phone'],
+					'leave_time'=>$record['leave_time'],
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],
 				);

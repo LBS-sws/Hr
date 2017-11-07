@@ -50,6 +50,28 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
             <?php echo $form->hiddenField($model, 'staff_status'); ?>
 
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'leave_time',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'leave_time',
+                            array('class'=>'form-control pull-right','readonly'=>(true),));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'leave_reason',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-7">
+                    <?php echo $form->textArea($model, 'leave_reason',
+                        array('rows'=>3,'readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
+            <legend></legend>
 
             <legend><?php echo Yii::t("contract","personal data");?></legend>
             <div class="form-group">

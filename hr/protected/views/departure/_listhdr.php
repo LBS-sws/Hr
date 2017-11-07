@@ -26,6 +26,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('leave_time').$this->drawOrderArrow('leave_time'),'#',$this->createOrderLink('departure-list','leave_time'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('status').$this->drawOrderArrow('test_end_time'),'#',$this->createOrderLink('departure-list','test_end_time'))
 			;
 		?>

@@ -288,5 +288,9 @@ return array(
     'Agreement Name'=>'协议名称',
     'Agreement File'=>'协议文件',
     'Supplemental Agreement'=>'补充协议',
+
+    //11-07
+    'Leave Reason'=>'离职原因',
+    'Leave Time'=>'离职时间',
 );
 ?>

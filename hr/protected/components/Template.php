@@ -122,7 +122,7 @@ class Template {
             $count = $index-strlen($rprXml);
             $rprXml = substr($rprXml,$count);
         }else{
-            $rprXml = '<w:rPr><w:rFonts w:ascii="DFKai-SB" w:hAnsi="DFKai-SB" w:cs="Arial" w:hint="eastAsia"/><w:kern w:val="0"/><w:szCs w:val="18"/><w:lang w:eastAsia="zh-CN"/></w:rPr><w:t>';
+            return false;
         }
         $num = strlen($rprXml)-strlen('</w:rPr><w:t>');
         $rprXmlSingle = substr($rprXml,0,$num).'<w:u w:val="single"/></w:rPr><w:t>';

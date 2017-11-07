@@ -9,5 +9,6 @@
     <td><?php echo $this->record['phone']; ?></td>
 	<td><?php echo $this->record['position']; ?></td>
 	<td><?php echo $this->record['company_id']; ?></td>
+	<td><?php echo $this->record['leave_time']; ?></td>
 	<td><?php echo $this->record['status']; ?></td>
 </tr>

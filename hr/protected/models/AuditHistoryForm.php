@@ -73,6 +73,8 @@ class AuditHistoryForm extends CFormModel
     public $social_code;//社会保障卡号
     public $fix_time=0;//合同類型
     public $opr_type;//合同類型
+    public $leave_time;//離職時間
+    public $leave_reason;//離職原因
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -137,6 +139,8 @@ class AuditHistoryForm extends CFormModel
             'social_code'=>Yii::t('contract','Social security card number'),
             'fix_time'=>Yii::t('contract','contract deadline'),
             'opr_type'=>Yii::t('contract','Operation Type'),
+            'leave_reason'=>Yii::t('contract','Leave Reason'),
+            'leave_time'=>Yii::t('contract','Leave Time'),
 		);
 	}
 
@@ -280,12 +284,14 @@ class AuditHistoryForm extends CFormModel
                 $this->social_code = $row['social_code'];
                 $this->fix_time = $row['fix_time'];
                 $this->opr_type = $row['opr_type'];
+                $this->leave_reason = $row['leave_reason'];
+                $this->leave_time = $row['leave_time'];
 				break;
 			}
 		}
 		return true;
 	}
-	
+
 	public function saveData()
 	{
         $uid = Yii::app()->user->id;
