@@ -253,21 +253,6 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
-                    ); ?>
-                </div>
-                <!--分割-->
-                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
                 <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptAllList(0),
@@ -278,6 +263,21 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <?php echo $form->labelEx($model,'position',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'position',DeptForm::getDeptAllList(1),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
                         array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
                     ); ?>
                 </div>

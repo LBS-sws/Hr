@@ -5,7 +5,8 @@ if (empty($model->employee_id)){
 $this->pageTitle=Yii::app()->name . ' - History Form';
 ?>
 <style>
-    input[readonly="readonly"]{pointer-events: none;}
+    input[readonly]{pointer-events: none;}
+    select[readonly]{pointer-events: none;}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
     'id'=>'history-form',
@@ -289,21 +290,6 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
-                        array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
-                    ); ?>
-                </div>
-                <!--分割-->
-                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
-                        array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
                 <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptAllList(0),
@@ -317,19 +303,34 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     $model_class = get_class($model);
                     $departmentList = DeptForm::getDeptOneAllList();
                     if($model->scenario=='view'&&$model->staff_status!=3){
-                        echo "<select class='depart form-control' name='".$model_class."[position]' disabled>";
+                        echo "<select class='depart form-control changeButton' name='".$model_class."[position]' disabled>";
                     }else{
-                        echo "<select class='depart form-control' name='".$model_class."[position]'>";
+                        echo "<select class='depart form-control changeButton' name='".$model_class."[position]'>";
                     }
                     foreach ($departmentList as $key =>$value){
                         if($model->position == $key){
-                            echo "<option value='$key' data-type='".$value["type"]."' selected>".$value["name"]."</option>";
+                            echo "<option value='$key' data-type='".$value["type"]."' data-dept='".$value["dept_class"]."' selected>".$value["name"]."</option>";
                         }else{
-                            echo "<option value='$key' data-type='".$value["type"]."'>".$value["name"]."</option>";
+                            echo "<option value='$key' data-type='".$value["type"]."' data-dept='".$value["dept_class"]."'>".$value["name"]."</option>";
                         }
                     }
                     echo "</select>";
                     ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
+                        array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
+                    ); ?>
                 </div>
             </div>
             <div class="form-group">
@@ -680,12 +681,13 @@ $('#HistoryForm_test_type').on('change',function(){
         DEPARTLIST = new Array();
         $('.depart:last>option').each(function(){
             var key = $(this).data('type');
+            var dept_class = $(this).data('dept');
             var text = $(this).text();
             var value = $(this).attr('value');
             if(typeof DEPARTLIST[key] == 'undefined'){
                 DEPARTLIST[key] = new Array();
             }
-            DEPARTLIST[key].push({'text':text,'value':value});
+            DEPARTLIST[key].push({'text':text,'value':value,'dept_class':dept_class});
         });
         $('.depart:first').on('change',function(){
             var key = $(this).val();
@@ -696,9 +698,9 @@ $('#HistoryForm_test_type').on('change',function(){
                     for(var i= 0;i<DEPARTLIST[key].length;i++){
                         var html = '';
                         if(oldValue == DEPARTLIST[x][i]['value']){
-                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\" selected>'+DEPARTLIST[x][i]['text']+'</option>';
+                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\" data-dept=\"'+DEPARTLIST[x][i]['dept_class']+'\" selected>'+DEPARTLIST[x][i]['text']+'</option>';
                         }else{
-                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\">'+DEPARTLIST[x][i]['text']+'</option>';
+                            html = '<option value=\"'+DEPARTLIST[x][i]['value']+'\" data-dept=\"'+DEPARTLIST[x][i]['dept_class']+'\">'+DEPARTLIST[x][i]['text']+'</option>';
                         }
                         $('.depart:last').append(html);
                     }
@@ -760,6 +762,9 @@ $('#HistoryForm_test_type').on('change',function(){
             var age = jsGetAge(birth_time);
             $('#HistoryForm_age').val(age);
         }
+    });
+    $('.changeButton').on('change',function(){
+        $('#HistoryForm_staff_type').val($(this).find('option:selected').data('dept'));
     });
     //合同期限變化
     $('.fixTime').on('change',function(){

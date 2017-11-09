@@ -7,6 +7,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 
 <style>
     input[readonly]{pointer-events: none;}
+    select[readonly]{pointer-events: none;}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'employ-form',
@@ -289,21 +290,6 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
-                    ); ?>
-                </div>
-                <!--分割-->
-                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
-                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
                 <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptAllList(0),
@@ -330,6 +316,21 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     }
                     echo "</select>";
                     ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'staff_leader',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_leader',EmployList::getStaffLeaderList(),
+                        array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                    ); ?>
                 </div>
             </div>
             <div class="form-group">
@@ -732,9 +733,7 @@ $('#EmployForm_test_type').on('change',function(){
         }
     });
     $('.changeButton').on('change',function(){
-        if($('#EmployForm_staff_type').val() == ''){
-            $('#EmployForm_staff_type').val($(this).find('option:selected').data('dept'));
-        }
+        $('#EmployForm_staff_type').val($(this).find('option:selected').data('dept'));
     });
     //合同期限變化
     $('.fixTime').on('change',function(){
