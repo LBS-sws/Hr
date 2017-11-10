@@ -89,7 +89,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'opr_type',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'opr_type',EmployList::getOperationTypeList(),
+                        <?php echo $form->dropDownList($model, 'opr_type',EmployList::getOperationTypeList($model->employee_id),
                             array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
                         ); ?>
                     </div>

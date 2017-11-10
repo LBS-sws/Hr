@@ -53,12 +53,18 @@ class EmployList extends CListPageModel
         );
     }
     //獲取合同期限列表
-    public function getOperationTypeList(){
+    public function getOperationTypeList($staff_id = 0){
+        if(empty($staff_id)){
+            $num = "";
+        }else{
+            $num = EmployList::getContractNumber($staff_id);
+            $num = " - ".($num+1);
+        }
         return array(
             ""=>"",
             "promotion"=>Yii::t("contract","promotion"),
             "transfer"=>Yii::t("contract","transfer"),
-            "contract"=>Yii::t("contract","contract")
+            "contract"=>Yii::t("contract","contract").$num
         );
     }
     //獲取健康列表

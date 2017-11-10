@@ -288,6 +288,8 @@ class EmployeeForm extends CFormModel
                 $word->setValue("staffprotectno",$staff["staff"]["social_code"]);//社会保障卡号
                 $word->setValue("staffregno",$staff["staff"]["empoyment_code"]);//就业登记证号
                 $word->setValue("staffprovtype",Yii::t("contract",$staff["staff"]["household"]));//戶籍類型
+                $word->setValue("staffhealth",Yii::t("staff",$staff["staff"]["health"]));//身体状况
+                $word->setValue("staffworkexp",$staff["staff"]["experience"]);//工作经验
 
                 $word->setValue("staffname",$staff["staff"]["name"]);
                 $word->setValue("staffcode",$staff["staff"]["code"]);
