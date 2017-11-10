@@ -53,12 +53,15 @@ class EmployList extends CListPageModel
         );
     }
     //獲取合同期限列表
-    public function getOperationTypeList($staff_id = 0){
+    public function getOperationTypeList($staff_id = 0,$type=""){
         if(empty($staff_id)){
             $num = "";
         }else{
             $num = EmployList::getContractNumber($staff_id);
-            $num = " - ".($num+1);
+            if($type == "change"){
+                $num++;
+            }
+            $num = " - ".$num;
         }
         return array(
             ""=>"",
