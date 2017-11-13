@@ -24,7 +24,7 @@ return array(
 	
 	'Office'=>'办公室',
 	'Sales'=>'销售',
-	'Technician'=>'技术员',
+	'Technician'=>'服务',
 	'Others'=>'其他',
 	
 	'Nil'=>'不适用',

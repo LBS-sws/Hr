@@ -24,7 +24,7 @@ return array(
 
 'Office'=>'辦公室',
 'Sales'=>'銷售',
-'Technician'=>'技術員',
+'Technician'=>'服務',
 'Others'=>'其他',
 
 'Nil'=>'不適用',
