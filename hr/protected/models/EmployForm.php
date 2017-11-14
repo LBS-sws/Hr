@@ -68,6 +68,9 @@ class EmployForm extends CFormModel
     public $empoyment_code;//就业登记证号
     public $social_code;//社会保障卡号
     public $fix_time=0;//合同類型
+    public $user_card_date;//身份证有效期
+    public $emergency_user;//紧急联络人姓名
+    public $emergency_phone;//紧急联络人手机号
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -130,9 +133,11 @@ class EmployForm extends CFormModel
             'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
             'social_code'=>Yii::t('contract','Social security card number'),
             'fix_time'=>Yii::t('contract','contract deadline'),
+            'user_card_date'=>Yii::t('contract','ID Card Date'),
+            'emergency_user'=>Yii::t('contract','Emergency User'),
+            'emergency_phone'=>Yii::t('contract','Emergency Phone'),
 		);
 	}
-
 	/**
      *
 	 * Declares the validation rules.
@@ -144,7 +149,7 @@ class EmployForm extends CFormModel
             array('id, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
               education, experience, english, technology, other, year_day, email, remark, price1, price3, image_user, image_code, image_work, image_other, fix_time,
-               test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code',
+               test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, user_card_date, emergency_user, emergency_phone',
                 'safe'),
 			array('entry_time','required'),
 			array('name','required'),
@@ -323,6 +328,9 @@ class EmployForm extends CFormModel
                 $this->empoyment_code = $row['empoyment_code'];
                 $this->social_code = $row['social_code'];
                 $this->fix_time = $row['fix_time'];
+                $this->user_card_date = $row['user_card_date'];
+                $this->emergency_user = $row['emergency_user'];
+                $this->emergency_phone = $row['emergency_phone'];
 				break;
 			}
 		}
@@ -384,11 +392,11 @@ class EmployForm extends CFormModel
 			case 'new':
 				$sql = "insert into hr_employee(
 							name, sex, attachment, staff_id, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
-							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,fix_time,
+							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,fix_time,user_card_date,emergency_user,emergency_phone,
 							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
 						) values (
 							:name, :sex, :attachment, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
-							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,
+							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,:user_card_date,:emergency_user,:emergency_phone,
 							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
 						)";
 				break;
@@ -443,6 +451,9 @@ class EmployForm extends CFormModel
 							empoyment_code = :empoyment_code,
 							social_code = :social_code,
 							fix_time = :fix_time,
+							user_card_date = :user_card_date,
+							emergency_user = :emergency_user,
+							emergency_phone = :emergency_phone,
 							luu = :luu 
 						where id = :id
 						";
@@ -563,6 +574,12 @@ class EmployForm extends CFormModel
             $command->bindParam(':social_code',$this->social_code,PDO::PARAM_STR);
         if (strpos($sql,':fix_time')!==false)
             $command->bindParam(':fix_time',$this->fix_time,PDO::PARAM_STR);
+        if (strpos($sql,':user_card_date')!==false)
+            $command->bindParam(':user_card_date',$this->user_card_date,PDO::PARAM_STR);
+        if (strpos($sql,':emergency_user')!==false)
+            $command->bindParam(':emergency_user',$this->emergency_user,PDO::PARAM_STR);
+        if (strpos($sql,':emergency_phone')!==false)
+            $command->bindParam(':emergency_phone',$this->emergency_phone,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);

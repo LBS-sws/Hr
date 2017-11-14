@@ -153,9 +153,43 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'emergency_user',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'emergency_user',
+                        array('size'=>18,'maxlength'=>18,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'emergency_phone',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'emergency_phone',
+                        array('size'=>18,'maxlength'=>18,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'user_card',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'user_card',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+                <?php echo $form->labelEx($model,'user_card_date',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <div class="input-group">
+                        <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </div>
+                        <?php echo $form->textField($model, 'user_card_date',
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                        ?>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'email',
                         array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
@@ -164,14 +198,6 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'health',EmployList::getHealthList(),
                         array('disabled'=>($model->scenario=='view'))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'email',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'email',
-                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>

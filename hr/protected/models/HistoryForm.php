@@ -74,6 +74,9 @@ class HistoryForm extends CFormModel
     public $opr_type;//合同變更類型
     public $leave_time;//離職時間
     public $leave_reason;//離職原因
+    public $user_card_date;//身份证有效期
+    public $emergency_user;//紧急联络人姓名
+    public $emergency_phone;//紧急联络人手机号
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -140,6 +143,9 @@ class HistoryForm extends CFormModel
             'opr_type'=>Yii::t('contract','Operation Type'),
             'leave_reason'=>Yii::t('contract','Leave Reason'),
             'leave_time'=>Yii::t('contract','Leave Time'),
+            'user_card_date'=>Yii::t('contract','ID Card Date'),
+            'emergency_user'=>Yii::t('contract','Emergency User'),
+            'emergency_phone'=>Yii::t('contract','Emergency Phone'),
 		);
 	}
 
@@ -151,7 +157,7 @@ class HistoryForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,employee_id,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
-             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
+             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,user_card_date,emergency_user,emergency_phone,
              ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type, leave_reason, leave_time,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
@@ -367,6 +373,9 @@ class HistoryForm extends CFormModel
                 $this->opr_type = key_exists('opr_type',$row)?$row['opr_type']:"";
                 $this->leave_reason = $row['leave_reason'];
                 $this->leave_time = $row['leave_time'];
+                $this->user_card_date = $row['user_card_date'];
+                $this->emergency_user = $row['emergency_user'];
+                $this->emergency_phone = $row['emergency_phone'];
 				break;
 			}
 		}

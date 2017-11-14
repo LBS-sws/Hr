@@ -65,6 +65,9 @@ class AuditForm extends CFormModel
     public $empoyment_code;//就业登记证号
     public $social_code;//社会保障卡号
     public $fix_time=0;//合同類型
+    public $user_card_date;//身份证有效期
+    public $emergency_user;//紧急联络人姓名
+    public $emergency_phone;//紧急联络人手机号
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -124,6 +127,9 @@ class AuditForm extends CFormModel
             'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
             'social_code'=>Yii::t('contract','Social security card number'),
             'fix_time'=>Yii::t('contract','contract deadline'),
+            'user_card_date'=>Yii::t('contract','ID Card Date'),
+            'emergency_user'=>Yii::t('contract','Emergency User'),
+            'emergency_phone'=>Yii::t('contract','Emergency Phone'),
 		);
 	}
 
@@ -234,6 +240,9 @@ class AuditForm extends CFormModel
                 $this->empoyment_code = $row['empoyment_code'];
                 $this->social_code = $row['social_code'];
                 $this->fix_time = $row['fix_time'];
+                $this->user_card_date = $row['user_card_date'];
+                $this->emergency_user = $row['emergency_user'];
+                $this->emergency_phone = $row['emergency_phone'];
 				break;
 			}
 		}

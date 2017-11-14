@@ -68,6 +68,9 @@ class EmployeeForm extends CFormModel
     public $empoyment_code;//就业登记证号
     public $social_code;//社会保障卡号
     public $fix_time=0;//合同類型
+    public $user_card_date;//身份证有效期
+    public $emergency_user;//紧急联络人姓名
+    public $emergency_phone;//紧急联络人手机号
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -129,6 +132,9 @@ class EmployeeForm extends CFormModel
             'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
             'social_code'=>Yii::t('contract','Social security card number'),
             'fix_time'=>Yii::t('contract','contract deadline'),
+            'user_card_date'=>Yii::t('contract','ID Card Date'),
+            'emergency_user'=>Yii::t('contract','Emergency User'),
+            'emergency_phone'=>Yii::t('contract','Emergency Phone'),
 		);
 	}
 
@@ -280,6 +286,7 @@ class EmployeeForm extends CFormModel
                 $word->setValue("staffprovpostcode",$staff["staff"]["address_code"]);//原住地址 邮编
                 $word->setValue("staffaddrpostcode",$staff["staff"]["contact_address_code"]);//通讯地址 邮编
                 $word->setValue("staffdob",$staff["staff"]["birth_time"]);//出生日期
+                $word->setValue("staffage",$staff["staff"]["age"]);//員工年齡
                 $word->setValue("staffeducation",Yii::t("contract",$staff["staff"]["education"]));//学历
                 $word->setValue("staffjoindate",date("Y-m-d",strtotime($staff["staff"]["entry_time"])));//入职时间
                 $word->setValue("stafflanglevel",$staff["staff"]["english"]);//外语水平
@@ -471,6 +478,9 @@ class EmployeeForm extends CFormModel
                 $this->empoyment_code = $row['empoyment_code'];
                 $this->social_code = $row['social_code'];
                 $this->fix_time = $row['fix_time'];
+                $this->user_card_date = $row['user_card_date'];
+                $this->emergency_user = $row['emergency_user'];
+                $this->emergency_phone = $row['emergency_phone'];
 				break;
 			}
 		}

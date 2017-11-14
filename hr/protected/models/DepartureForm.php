@@ -65,6 +65,9 @@ class DepartureForm extends CFormModel
     public $attachment="";//附件
     public $leave_time;//離職時間
     public $leave_reason;//離職原因
+    public $user_card_date;//身份证有效期
+    public $emergency_user;//紧急联络人姓名
+    public $emergency_phone;//紧急联络人手机号
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -124,6 +127,9 @@ class DepartureForm extends CFormModel
             'attachment'=>Yii::t('contract','Attachment'),
             'leave_reason'=>Yii::t('contract','Leave Reason'),
             'leave_time'=>Yii::t('contract','Leave Time'),
+            'user_card_date'=>Yii::t('contract','ID Card Date'),
+            'emergency_user'=>Yii::t('contract','Emergency User'),
+            'emergency_phone'=>Yii::t('contract','Emergency Phone'),
 		);
 	}
 
@@ -281,6 +287,9 @@ class DepartureForm extends CFormModel
                 $this->attachment = $row['attachment'];
                 $this->leave_reason = $row['leave_reason'];
                 $this->leave_time = $row['leave_time'];
+                $this->user_card_date = $row['user_card_date'];
+                $this->emergency_user = $row['emergency_user'];
+                $this->emergency_phone = $row['emergency_phone'];
 				break;
 			}
 		}
