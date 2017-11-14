@@ -56,11 +56,9 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
             <?php endif; ?>
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
-                    <?php if ($model->word_status == 1): ?>
-                        <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
-                            'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
-                        ?>
-                    <?php endif; ?>
+                    <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
+                        'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
+                    ?>
                 </div>
             <?php endif; ?>
             <div class="btn-group pull-right" role="group">
