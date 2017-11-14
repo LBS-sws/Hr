@@ -288,5 +288,10 @@ return array(
     'Leave Reason'=>'離職原因',
     'Leave Time'=>'離職時間',
     'Contract Number'=>'續約次數',
+
+    //11-14
+    'ID Card Date'=>'身份證有效期限',
+    'Emergency User'=>'緊急聯絡人姓名',
+    'Emergency Phone'=>'緊急聯絡人號碼',
 );
 ?>
