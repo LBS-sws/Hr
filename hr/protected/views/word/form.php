@@ -62,7 +62,6 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
-			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'type'); ?>
 
 			<div class="form-group">
@@ -74,6 +73,14 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
 				</div>
 			</div>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'city',WordForm::getCityListAll(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 
             <div class="form-group">
                 <?php echo $form->labelEx($model,'file',array('class'=>"col-sm-2 control-label")); ?>

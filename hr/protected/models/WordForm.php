@@ -40,6 +40,7 @@ class WordForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, type, docx_url, file, city','safe'),
 			array('name','required'),
+			array('city','required'),
 			array('name','validateName'),
 			array('type','required'),
             array('file', 'file', 'types'=>'docx', 'allowEmpty'=>false, 'maxFiles'=>1,'on'=>"new"),
@@ -180,6 +181,7 @@ class WordForm extends CFormModel
 				$sql = "update hr_docx set
 							name = :name, 
 							type = :type, 
+							city = :city, 
 							docx_url = :docx_url,
 							lud = :lud,
 							luu = :luu 
@@ -199,7 +201,7 @@ class WordForm extends CFormModel
 			$command->bindParam(':docx_url',$this->docx_url,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)
