@@ -8,12 +8,10 @@ class ScheduleCommand extends CConsoleCommand {
 	protected $multiuser = false;
 	protected $users = array();
 
-/* SAMPLE CODE	
-// ===========
-	public function actionRptAccountStatus() {
+	public function actionRptStaffList() {
 		$tdate = date("Y/m/d");
-		$this->rptId = 'RptAccountStatus';
-		$this->rptName = Yii::t('report','Customer Cash In Daily Report');
+		$this->rptId = 'RptStaffList';
+		$this->rptName = Yii::t('report','Staff List');
 		$this->reqUser = 'admin';
 		$this->format = 'EMAIL';
 	
@@ -30,7 +28,6 @@ class ScheduleCommand extends CConsoleCommand {
 			$this->addQueueItem();
 		}
 	}
-*/
 
 	protected function addQueueItem() {
 		$connection = Yii::app()->db;
