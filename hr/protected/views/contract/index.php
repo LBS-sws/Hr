@@ -27,7 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - Contract';
             <div class="btn-group" role="group">
                 <?php
                 //var_dump(Yii::app()->session['rw_func']);
-                if (Yii::app()->user->validRWFunction('ZD01'))
+                if (Yii::app()->user->validRWFunction('ZD02'))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('contract','Add Contract'), array(
                         'submit'=>Yii::app()->createUrl('contract/new'),
                     ));
