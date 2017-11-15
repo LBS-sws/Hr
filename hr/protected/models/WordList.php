@@ -30,8 +30,8 @@ class WordList extends CListPageModel
 			";
         $rw = Yii::app()->user->validRWFunction("ZD01");
         if(!$rw){
-            $sql1.=" and city='$city' ";
-            $sql2.=" and city='$city' ";
+            $sql1.=" and (city='$city' or type='default') ";
+            $sql2.=" and (city='$city' or type='default') ";
         }
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

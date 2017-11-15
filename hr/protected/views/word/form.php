@@ -104,6 +104,15 @@ $this->pageTitle=Yii::app()->name . ' - Word Form';
                 </div>
                 <?php endif; ?>
             </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->inlineRadioButtonList($model, 'type',array(Yii::t("contract","local"),Yii::t("contract","default")),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>
