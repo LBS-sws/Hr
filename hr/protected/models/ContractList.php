@@ -27,6 +27,11 @@ class ContractList extends CListPageModel
 				from hr_contract 
 				where id!=0  
 			";
+        $rw = Yii::app()->user->validRWFunction("ZD01");
+        if(!$rw){
+            $sql1.=" and city='$city' ";
+            $sql2.=" and city='$city' ";
+        }
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
