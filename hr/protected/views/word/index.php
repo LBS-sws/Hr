@@ -37,6 +37,7 @@ $this->pageTitle=Yii::app()->name . ' - Word';
     <?php
     $search = array(
         'name',
+        'city',
     );
     if (!Yii::app()->user->isSingleCity()) $search[] = 'word_name';
    $this->widget('ext.layout.ListPageWidget', array(

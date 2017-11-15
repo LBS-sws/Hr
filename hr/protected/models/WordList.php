@@ -40,9 +40,9 @@ class WordList extends CListPageModel
 				case 'name':
 					$clause .= General::getSqlConditionClause('name',$svalue);
 					break;
-				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
-					break;
+                case 'city':
+                    $clause .= " and city in ".WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
 			}
 		}
 		
