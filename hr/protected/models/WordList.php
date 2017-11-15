@@ -66,7 +66,7 @@ class WordList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
-					'city'=>$record['city'],
+                    'city'=>WordForm::getCityNameToCode($record['city']),
 					'type'=>Yii::t("contract",$record['type'])
 				);
 			}
