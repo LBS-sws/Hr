@@ -78,6 +78,7 @@ class AuditHistoryForm extends CFormModel
     public $user_card_date;//身份证有效期
     public $emergency_user;//紧急联络人姓名
     public $emergency_phone;//紧急联络人手机号
+    public $change_city;//調職城市
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -147,6 +148,8 @@ class AuditHistoryForm extends CFormModel
             'user_card_date'=>Yii::t('contract','ID Card Date'),
             'emergency_user'=>Yii::t('contract','Emergency User'),
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
+            'change_city'=>Yii::t('contract','Change City'),
+            'change_city_old'=>Yii::t('contract','Staff City'),
 		);
 	}
 
@@ -159,7 +162,7 @@ class AuditHistoryForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,employee_id,ject_remark,operation,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
-             ld_card, sb_card, jj_card,attachment,nation, household, empoyment_code, social_code, fix_time,
+             ld_card, sb_card, jj_card,attachment,nation, household, empoyment_code, social_code, fix_time,change_city,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('ject_remark','required',"on"=>"reject"),
@@ -295,6 +298,7 @@ class AuditHistoryForm extends CFormModel
                 $this->user_card_date = $row['user_card_date'];
                 $this->emergency_user = $row['emergency_user'];
                 $this->emergency_phone = $row['emergency_phone'];
+                $this->change_city = $row['change_city'];
 				break;
 			}
 		}
@@ -305,10 +309,12 @@ class AuditHistoryForm extends CFormModel
 	{
         $uid = Yii::app()->user->id;
         $lud = date("Y-m-d H:i:s");
+        $city = Yii::app()->user->city();
         switch ($this->scenario){
             case "audit"://通過
                 Yii::app()->db->createCommand()->update('hr_employee_operate', array(
                     'staff_status'=>4,
+                    'city'=>$this->change_city,
                     'luu'=>$uid,
                     'lud'=>$lud,
                 ), 'id=:id', array(':id'=>$this->id));

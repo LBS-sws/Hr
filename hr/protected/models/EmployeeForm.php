@@ -653,11 +653,24 @@ class EmployeeForm extends CFormModel
     public function staffHasAgreement(){
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_history")
             ->where('employee_id=:employee_id and status in ("transfer","promotion")', array(':employee_id'=>$this->id))->order('lcd desc')->queryAll();
+        $arr = array();
         if($rows){
-            return $rows;
-        }else{
-            return array();
+            foreach ($rows as $row){
+                $staff_old =Yii::app()->db->createCommand()->select("city,change_city,finish")->from("hr_employee_operate")
+                    ->where('id=:id', array(':id'=>$row['history_id']))->queryRow();
+                if($staff_old["finish"] != 1){
+                    continue;
+                }
+                if($row["status"] == "transfer"){
+                    if($staff_old["city"] == $staff_old["change_city"]){
+                        array_push($arr,$row);
+                    }
+                }else{
+                    array_push($arr,$row);
+                }
+            }
         }
+        return $arr;
     }
 
     //檢查是否有補充協議

@@ -64,9 +64,8 @@ class DeptForm extends CFormModel
                 $message = Yii::t('contract','in department'). Yii::t('contract',' can not be empty');
                 $this->addError($attribute,$message);
             }else{
-                $city = Yii::app()->user->city();
                 $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
-                    ->where('id!=:id and city=:city and type=0 ', array(':id'=>$this->dept_id,':city'=>$city))->queryRow();
+                    ->where('id!=:id and type=0 ', array(':id'=>$this->dept_id))->queryRow();
                 if (!$rows){
                     $message = Yii::t('contract','in department'). Yii::t('contract',' can not be empty');
                     $this->addError($attribute,$message);

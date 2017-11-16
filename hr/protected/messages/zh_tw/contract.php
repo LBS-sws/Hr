@@ -293,5 +293,7 @@ return array(
     'ID Card Date'=>'身份證有效期限',
     'Emergency User'=>'緊急聯絡人姓名',
     'Emergency Phone'=>'緊急聯絡人號碼',
+    'Change City'=>'調職后城市',
+    'Staff City'=>'調職前城市',
 );
 ?>

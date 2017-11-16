@@ -72,6 +72,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
 
             <?php echo $form->hiddenField($model, 'scenario'); ?>
             <?php echo $form->hiddenField($model, 'city'); ?>
+            <?php echo $form->hiddenField($model, 'change_city'); ?>
             <?php echo $form->hiddenField($model, 'staff_status'); ?>
             <?php echo $form->hiddenField($model, 'operation'); ?>
             <?php echo $form->hiddenField($model, 'id'); ?>
@@ -92,6 +93,24 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                         ); ?>
                     </div>
                 </div>
+                <?php if ($model->opr_type=="transfer"): ?>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'change_city_old',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="col-sm-3">
+                            <?php echo $form->dropDownList($model, 'city',WordForm::getCityListAll(),
+                                array('disabled'=>(true))
+                            ); ?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'change_city',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="col-sm-3">
+                            <?php echo $form->dropDownList($model, 'change_city',WordForm::getCityListAll(),
+                                array('disabled'=>(true))
+                            ); ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>

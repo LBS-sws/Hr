@@ -77,6 +77,7 @@ class HistoryForm extends CFormModel
     public $user_card_date;//身份证有效期
     public $emergency_user;//紧急联络人姓名
     public $emergency_phone;//紧急联络人手机号
+    public $change_city;//調職城市
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -146,6 +147,8 @@ class HistoryForm extends CFormModel
             'user_card_date'=>Yii::t('contract','ID Card Date'),
             'emergency_user'=>Yii::t('contract','Emergency User'),
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
+            'change_city'=>Yii::t('contract','Change City'),
+            'change_city_old'=>Yii::t('contract','Staff City'),
 		);
 	}
 
@@ -159,7 +162,7 @@ class HistoryForm extends CFormModel
             array('id,employee_id,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,user_card_date,emergency_user,emergency_phone,
              ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type, leave_reason, leave_time,
-              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
+              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other, change_city',
                 'safe'),
 			array('update_remark','required'),
 			array('code','required'),
@@ -376,6 +379,7 @@ class HistoryForm extends CFormModel
                 $this->user_card_date = $row['user_card_date'];
                 $this->emergency_user = $row['emergency_user'];
                 $this->emergency_phone = $row['emergency_phone'];
+                $this->change_city = empty($row['change_city'])?$row['city']:$row['change_city'];
 				break;
 			}
 		}
@@ -411,6 +415,7 @@ class HistoryForm extends CFormModel
         $row['opr_type'] = $this->opr_type;
         $row['employee_id'] = $this->employee_id;
         $row['update_remark'] = $this->update_remark;
+        $row['change_city'] = $this->change_city;
         if($this->scenario == "view" && $this->staff_status == 3){
             unset($row['operation']);
             Yii::app()->db->createCommand()->update('hr_employee_operate', $row, 'id=:id', array(':id'=>$this->id));

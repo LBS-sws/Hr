@@ -94,6 +94,24 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                         ); ?>
                     </div>
                 </div>
+                <div class="opr_next_div  hide">
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'change_city_old',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="col-sm-3">
+                            <?php echo $form->dropDownList($model, 'city',WordForm::getCityListAll(),
+                                array('disabled'=>(true))
+                            ); ?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'change_city',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="col-sm-3">
+                            <?php echo $form->dropDownList($model, 'change_city',WordForm::getCityListAll(),
+                                array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
+                            ); ?>
+                        </div>
+                    </div>
+                </div>
             <?php endif; ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
@@ -801,6 +819,14 @@ $('#HistoryForm_test_type').on('change',function(){
             netDom.find('input').eq(1).prop('readonly',false).removeClass('readonly');
         }
     });
+    //調職變化
+    $('#HistoryForm_opr_type').on('change',function(){
+        if($(this).val() == 'transfer'){
+            $('.opr_next_div').removeClass('hide');
+        }else{
+            $('.opr_next_div').addClass('hide');
+        }
+    }).trigger('change');
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
