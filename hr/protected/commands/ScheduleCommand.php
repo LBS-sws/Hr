@@ -8,7 +8,7 @@ class ScheduleCommand extends CConsoleCommand {
 	protected $multiuser = false;
 	protected $users = array();
 
-	public function actionRptStaffList() {
+	public function actionRptStaffList($whitelist='', $blacklist='') {
 		$tdate = date("Y/m/d");
 		$this->rptId = 'RptStaffList';
 		$this->rptName = Yii::t('report','Staff List');
@@ -17,15 +17,23 @@ class ScheduleCommand extends CConsoleCommand {
 	
 		$cities = General::getCityListWithNoDescendant();
 		foreach ($cities as $city=>$name) {
-			$this->data = array(
+			if (!empty($whitelist)) {
+				$flag = (strpos($whitelist,$city)!==false);
+			} else {
+				$flag = (empty($blacklist) || (strpos($blacklist,$city)===false));
+			}
+			
+			if ($flag) {
+				$this->data = array(
 					'RPT_ID'=>$this->rptId,
 					'RPT_NAME'=>$this->rptName,
 					'CITY'=>$city,
 					'TARGET_DT'=>General::toMyDate($tdate),
 					'LANGUAGE'=>'zh_cn',
 					'CITY_NAME'=>$name,
-				);
-			$this->addQueueItem();
+					);
+				$this->addQueueItem();
+			}
 		}
 	}
 
@@ -33,7 +41,7 @@ class ScheduleCommand extends CConsoleCommand {
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$sql = "insert into opr_queue (rpt_desc, req_dt, username, status, rpt_type)
+			$sql = "insert into hr_queue (rpt_desc, req_dt, username, status, rpt_type)
 						values(:rpt_desc, :req_dt, :username, 'P', :rpt_type)
 					";
 			$now = date("Y-m-d H:i:s");
@@ -49,7 +57,7 @@ class ScheduleCommand extends CConsoleCommand {
 			$command->execute();
 			$qid = Yii::app()->db->getLastInsertID();
 	
-			$sql = "insert into opr_queue_param (queue_id, param_field, param_value)
+			$sql = "insert into hr_queue_param (queue_id, param_field, param_value)
 						values(:queue_id, :param_field, :param_value)
 					";
 			foreach ($this->data as $key=>$value) {
@@ -64,7 +72,7 @@ class ScheduleCommand extends CConsoleCommand {
 			}
 
 			if ($this->multiuser) {
-				$sql = "insert into swo_queue_user (queue_id, username)
+				$sql = "insert into hr_queue_user (queue_id, username)
 						values(:queue_id, :username)
 					";
 				if (!empty($this->users)) {

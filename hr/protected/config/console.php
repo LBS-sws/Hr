@@ -22,7 +22,7 @@ return array(
 	// application components
 	'components'=>array(
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=hr',
+			'connectionString' => 'mysql:host=localhost;dbname=hruat',
 			'emulatePrepare' => true,
 			'username' => 'swuser',
 			'password' => 'swisher168',
@@ -43,7 +43,7 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		'systemEmail'=>'it@lbsgroup.com.hk',
-		'webroot'=>'http://192.168.0.162/operation',
-		'envSuffix'=>'dev',
+		'webroot'=>'http://http://118.89.46.224/hr-uat',
+		'envSuffix'=>'uat',
 	),
 );

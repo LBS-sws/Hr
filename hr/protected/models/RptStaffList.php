@@ -44,7 +44,8 @@ class RptStaffList extends CReport {
 
 		$sql = "select a.*, b.name as job_title 
 				from hr_employee a left outer join hr_dept b on a.position = b.id
-				where city='$city' and (leave_time >= '$start_dt' or leave_time is null)
+				where a.city='$city' and (a.leave_time >= '$start_dt' or a.leave_time is null)
+				order by a.name
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
@@ -53,19 +54,19 @@ class RptStaffList extends CReport {
 				$temp['name'] = $row['name'];
 				$temp['gender'] = Yii::t('contract',$row['sex']);
 				$temp['position'] = $row['job_title'];
-				$temp['user_card'] = $row['user_card'];
+				$temp['user_card'] = is_numeric($row['user_card']) ? $row['user_card'].' ' : $row['user_card'];
 				$temp['user_card_date'] = General::toDate($row['user_card_date']);
 				$temp['dob'] = General::toDate($row['birth_time']);
 				$temp['address'] = $row['address'];
 				$temp['contact_address'] = $row['contact_address'];
-				$temp['phone'] = $row['phone'];
+				$temp['phone'] = is_numeric($row['phone']) ? $row['phone'].' ' : $row['phone'];
 				$temp['fix_time'] = Yii::t('contract',$row['fix_time']);
 				$temp['join_dt'] = General::toDate($row['entry_time']);
 				$temp['start_dt'] = General::toDate($row['start_time']);
 				$temp['end_dt'] = General::toDate($row['end_time']);
-				$temp['social_code'] = $row['social_code'];
+				$temp['social_code'] = is_numeric($row['social_code']) ? $row['social_code'].' ' : $row['social_code'];
 				$temp['emergency_user'] = $row['emergency_user'];
-				$temp['emergency_phone'] = $row['emergency_phone'];
+				$temp['emergency_phone'] = is_numeric($row['emergency_phone']) ? $row['emergency_phone'].' ' : $row['emergency_phone'];
 				$temp['change_dt'] = ($row['staff_status']=-1 && strtotime($row['leave_time']) < strtotime($end_dt)
 								? General::toDate($row['leave_time']) : '');
 				$temp['reason'] = ($row['staff_status']=-1 && strtotime($row['leave_time']) < strtotime($end_dt)
@@ -86,7 +87,7 @@ class RptStaffList extends CReport {
 		$city = $this->criteria['CITY'];
 		$date = $this->criteria['TARGET_DT'];
 		
-		$users = $this->getUsersWithRight('ZB01');
+		$users = $this->getUsersWithRight($city,'ZB01');
 
 		$to = General::getEmailByUserIdArray($users);
 		$to = General::dedupToEmailList($to);
@@ -103,7 +104,7 @@ class RptStaffList extends CReport {
 				'description'=>$desc,
 				'message'=>Yii::t('report','Please find the attached report for your reference.'),
 			);
-		$fn = Yii::t('report','StaffList').'xlsx';
+		$fn = Yii::t('report','Staff List').'_'.General::getCityName($city).'.xlsx';
 		$connection = Yii::app()->db;
 		$this->sendEmailWithAttachment($connection, $param, array($fn=>$output));
 	}
@@ -117,7 +118,8 @@ class RptStaffList extends CReport {
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (!empty($rows)) {
-			$citylist = City::getAncestorList($city).','.$city;
+			$cityo = new City;
+			$citylist = $cityo->getAncestorList($city).','.$city;
 			foreach ($rows as $row) {
 				if (strpos($citylist,$row['city'])!==false) $rtn[] = $row['username'];
 			}

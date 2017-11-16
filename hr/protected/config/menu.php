@@ -148,7 +148,7 @@ return array(
 		),
 	),
 	'Report'=>array(
-		'access'=>'ZB',
+		'access'=>'ZY',
 		'items'=>array(
 			'Staff List'=>array(
 				'access'=>'ZB01',
