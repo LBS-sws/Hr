@@ -147,4 +147,14 @@ return array(
 			),
 		),
 	),
+	'Report'=>array(
+		'access'=>'ZY',
+		'items'=>array(
+			'Staff List'=>array(
+				'access'=>'ZB01',
+				'url'=>'#',
+				'hidden'=>true,
+			),
+		),
+	),
 );
