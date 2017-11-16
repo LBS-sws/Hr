@@ -298,5 +298,7 @@ return array(
     'ID Card Date'=>'身份证有效期',
     'Emergency User'=>'紧急联络人姓名',
     'Emergency Phone'=>'紧急联络人手机号',
+    'Change City'=>'调职后城市',
+    'Staff City'=>'调职前城市',
 );
 ?>
