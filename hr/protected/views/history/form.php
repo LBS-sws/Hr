@@ -70,6 +70,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
 
             <?php echo $form->hiddenField($model, 'scenario'); ?>
             <?php echo $form->hiddenField($model, 'city'); ?>
+            <?php echo $form->hiddenField($model, 'change_city'); ?>
             <?php echo $form->hiddenField($model, 'staff_status'); ?>
             <?php echo $form->hiddenField($model, 'employee_id'); ?>
             <?php echo $form->hiddenField($model, 'id'); ?>
