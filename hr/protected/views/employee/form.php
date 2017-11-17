@@ -60,9 +60,11 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                         'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
                     ?>
                 </div>
+            <?php endif; ?>
+            <?php if (Yii::app()->user->validRWFunction('ZR01')): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php
-                    echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('app','Contract Word'), array(
+                    echo TbHtml::button('<span class="fa fa-clone"></span> '.Yii::t('app','Contract Word'), array(
                         'name'=>'downOnly','id'=>'downOnly','data-toggle'=>'modal','data-target'=>'#jectdialog'));
                     ?>
                 </div>
@@ -253,14 +255,6 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                     ); ?>
                 </div>
             </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'code_old',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'code_old',
-                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
-                    ); ?>
-                </div>
-            </div>
 
             <legend><?php echo Yii::t("contract","position data");?></legend>
             <div class="form-group">
@@ -325,6 +319,13 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'price1',WagesForm::getWagesList(),
                         array('disabled'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'code_old',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'code_old',
+                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
             </div>

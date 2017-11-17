@@ -101,6 +101,7 @@ return array(
     'Reward Apply'=>'獎金申請',
     'Reward Audit'=>'獎金審核',
     'Supplemental Agreement'=>'補充協議',
+    'Staff Word'=>'選擇合同文檔下載',
     //沈超添加结束
 );
 ?>

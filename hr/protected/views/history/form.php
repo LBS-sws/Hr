@@ -305,14 +305,6 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     ); ?>
                 </div>
             </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'code_old',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'code_old',
-                        array('readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
-                    ); ?>
-                </div>
-            </div>
 
             <legend><?php echo Yii::t("contract","position data");?></legend>
             <div class="form-group">
@@ -391,6 +383,13 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'price1',WagesForm::getWagesList(),
                         array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
+                    ); ?>
+                </div>
+                <!--分割-->
+                <?php echo $form->labelEx($model,'code_old',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'code_old',
+                        array('readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
                     ); ?>
                 </div>
             </div>

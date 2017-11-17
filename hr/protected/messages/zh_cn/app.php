@@ -99,6 +99,7 @@ return array(
     'Reward Apply'=>'奖金申请',
     'Reward Audit'=>'奖金审核',
     'Supplemental Agreement'=>'补充协议',
+    'Staff Word'=>'选择合同文档下载',
     //沈超添加结束
 );
 ?>
