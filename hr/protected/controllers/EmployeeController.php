@@ -106,6 +106,33 @@ class EmployeeController extends Controller
 
     }
 
+    //下載合同(選擇部分文檔下載）
+
+    public function actionDownOnlyContract()
+    {
+        $index = $_POST["id"];
+        if(empty($index) || empty($_POST["word"])){
+            Dialog::message(Yii::t('dialog','Information'), "請選擇需要的合同文檔");
+            $this->redirect(Yii::app()->createUrl('employee/edit',array('index'=>$index)));
+            return false;
+        }
+        $url = EmployeeForm::updateEmployeeWord($index,$_POST["word"]);
+        if($url){
+            $file = Yii::app()->basePath."/../".$url["word_url"];
+            // To prevent corrupted zip - Percy
+            ob_clean();
+            ob_end_flush();
+            //
+            header("Content-type: application/octet-stream");
+            header('Content-Disposition: attachment; filename='.$url["name"].'.docx');
+            header("Content-Length: ". filesize($file));
+            readfile($file);
+        }else{
+            $this->render('index');
+        }
+
+    }
+
 
     //下載補充協議
     public function actionDownAgreement($index,$staff){

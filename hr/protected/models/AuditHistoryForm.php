@@ -79,6 +79,7 @@ class AuditHistoryForm extends CFormModel
     public $emergency_user;//紧急联络人姓名
     public $emergency_phone;//紧急联络人手机号
     public $change_city;//調職城市
+    public $code_old;//員工編號（舊）
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -150,6 +151,7 @@ class AuditHistoryForm extends CFormModel
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
             'change_city'=>Yii::t('contract','Change City'),
             'change_city_old'=>Yii::t('contract','Staff City'),
+            'code_old'=>Yii::t('contract','Code Old'),
 		);
 	}
 
@@ -299,6 +301,7 @@ class AuditHistoryForm extends CFormModel
                 $this->emergency_user = $row['emergency_user'];
                 $this->emergency_phone = $row['emergency_phone'];
                 $this->change_city = $row['change_city'];
+                $this->code_old = $row['code_old'];
 				break;
 			}
 		}

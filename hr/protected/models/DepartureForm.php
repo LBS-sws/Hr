@@ -68,6 +68,7 @@ class DepartureForm extends CFormModel
     public $user_card_date;//身份证有效期
     public $emergency_user;//紧急联络人姓名
     public $emergency_phone;//紧急联络人手机号
+    public $code_old;//員工編號（舊）
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -130,6 +131,7 @@ class DepartureForm extends CFormModel
             'user_card_date'=>Yii::t('contract','ID Card Date'),
             'emergency_user'=>Yii::t('contract','Emergency User'),
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
+            'code_old'=>Yii::t('contract','Code Old'),
 		);
 	}
 
@@ -290,6 +292,7 @@ class DepartureForm extends CFormModel
                 $this->user_card_date = $row['user_card_date'];
                 $this->emergency_user = $row['emergency_user'];
                 $this->emergency_phone = $row['emergency_phone'];
+                $this->code_old = $row['code_old'];
 				break;
 			}
 		}

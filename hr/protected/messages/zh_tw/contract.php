@@ -295,5 +295,6 @@ return array(
     'Emergency Phone'=>'緊急聯絡人號碼',
     'Change City'=>'調職后城市',
     'Staff City'=>'調職前城市',
+    'Code Old'=>'員工編號（舊）',
 );
 ?>

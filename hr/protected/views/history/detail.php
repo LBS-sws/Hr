@@ -239,6 +239,14 @@ $this->pageTitle=Yii::app()->name . ' - Detail Form';
                     ); ?>
                 </div>
             </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'code_old',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'code_old',
+                        array('readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
+                    ); ?>
+                </div>
+            </div>
 
             <legend><?php echo Yii::t("contract","position data");?></legend>
             <div class="form-group">

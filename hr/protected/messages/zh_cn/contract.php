@@ -300,5 +300,6 @@ return array(
     'Emergency Phone'=>'紧急联络人手机号',
     'Change City'=>'调职后城市',
     'Staff City'=>'调职前城市',
+    'Code Old'=>'员工编号（旧）',
 );
 ?>

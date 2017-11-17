@@ -60,6 +60,12 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                         'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
                     ?>
                 </div>
+                <div class="btn-group pull-right" role="group">
+                    <?php
+                    echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('app','Contract Word'), array(
+                        'name'=>'downOnly','id'=>'downOnly','data-toggle'=>'modal','data-target'=>'#jectdialog'));
+                    ?>
+                </div>
             <?php endif; ?>
             <div class="btn-group pull-right" role="group">
                 <?php if ($model->scenario!='new'){
@@ -244,6 +250,14 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'health',EmployList::getHealthList(),
                         array('disabled'=>($model->scenario=='view'||($model->staff_status != 1)))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'code_old',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'code_old',
+                        array('readonly'=>($model->scenario=='view'||$model->staff_status != 1))
                     ); ?>
                 </div>
             </div>
@@ -656,4 +670,7 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ));
 ?>
 </div><!-- form -->
+<?php
+$this->renderPartial('//site/contractlist',array('model'=>$model,'form'=>$form,'submit'=>Yii::app()->createUrl('employee/downOnlyContract')));
+?>
 
