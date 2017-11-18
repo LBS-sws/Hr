@@ -399,7 +399,7 @@ class EmployForm extends CFormModel
 							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
 						) values (
 							:name, :sex, :attachment, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
-							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,:user_card_date,:emergency_user,:emergency_phone,:code_old,
+							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,:date_user_card,:emergency_user,:emergency_phone,:code_old,
 							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
 						)";
 				break;
@@ -454,7 +454,7 @@ class EmployForm extends CFormModel
 							empoyment_code = :empoyment_code,
 							social_code = :social_code,
 							fix_time = :fix_time,
-							user_card_date = :user_card_date,
+							user_card_date = :date_user_card,
 							emergency_user = :emergency_user,
 							emergency_phone = :emergency_phone,
 							code_old = :code_old,
@@ -495,7 +495,7 @@ class EmployForm extends CFormModel
 			$command->bindParam(':contact_address',$this->contact_address,PDO::PARAM_STR);
 		if (strpos($sql,':phone')!==false)
 			$command->bindParam(':phone',$this->phone,PDO::PARAM_STR);
-		if (strpos($sql,':user_card')!==false)
+		if (strpos($sql,':user_card,')!==false)
 			$command->bindParam(':user_card',$this->user_card,PDO::PARAM_STR);
 		if (strpos($sql,':department')!==false)
 			$command->bindParam(':department',$this->department,PDO::PARAM_STR);
@@ -578,8 +578,8 @@ class EmployForm extends CFormModel
             $command->bindParam(':social_code',$this->social_code,PDO::PARAM_STR);
         if (strpos($sql,':fix_time')!==false)
             $command->bindParam(':fix_time',$this->fix_time,PDO::PARAM_STR);
-        if (strpos($sql,':user_card_date')!==false)
-            $command->bindParam(':user_card_date',$this->user_card_date,PDO::PARAM_STR);
+        if (strpos($sql,':date_user_card')!==false)
+            $command->bindParam(':date_user_card',$this->user_card_date,PDO::PARAM_STR);
         if (strpos($sql,':emergency_user')!==false)
             $command->bindParam(':emergency_user',$this->emergency_user,PDO::PARAM_STR);
         if (strpos($sql,':emergency_phone')!==false)
