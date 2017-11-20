@@ -176,17 +176,13 @@ class EmployController extends Controller
             $date = $_POST['dateTime'];
             $month = $_POST['month'];
             $lastDate = date('Y-m-d', strtotime("$date +$month month"));
-            $oldMonth = date("m",strtotime($date));
-            $newMonth = date("m",strtotime($lastDate));
-            if($newMonth - $oldMonth > $month){
-                $oldYear = date("Y",strtotime($date));
-                $newMonth = intval($oldMonth)+$month;
-                if($newMonth > 12){
-                    $oldYear = intval($oldYear)+1;
-                    $newMonth-=12;
-                }
-                $BeginDate = $oldYear."-".$newMonth."-01";
-                $lastDate = date('Y-m-d', strtotime("$BeginDate +1 month -1 day"));
+            $oldMonth = intval(date("m",strtotime($date)));
+            $oldYear = intval(date("Y",strtotime($date)));
+            $newMonth = intval(date("m",strtotime($lastDate)));
+            $newYear = intval(date("Y",strtotime($lastDate)));
+            if(($newYear-$oldYear)*12 + $newMonth - $oldMonth > $month){
+                $BeginDate = date("Y-m-01",strtotime($lastDate));
+                $lastDate = date('Y-m-d', strtotime("$BeginDate -1 day"));
             }
             echo CJSON::encode($lastDate);
         }else{
