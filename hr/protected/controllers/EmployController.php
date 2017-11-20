@@ -175,7 +175,14 @@ class EmployController extends Controller
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
             $date = $_POST['dateTime'];
             $month = $_POST['month'];
-            $lastDate = date('Y-m-d', strtotime("$date +$month month"));
+            $oldMonth = date("m",strtotime($date));
+            $oldYear = date("Y",strtotime($date));
+            $newMonth = intval($oldMonth)+$month;
+            if($newMonth > 12){
+                $newMonth-=12;
+            }
+            $BeginDate = $oldYear."-".$newMonth."-01";
+            $lastDate = date('Y-m-d', strtotime("$BeginDate +1 month -1 day"));
             echo CJSON::encode($lastDate);
         }else{
             $this->redirect(Yii::app()->createUrl('employ/index'));
