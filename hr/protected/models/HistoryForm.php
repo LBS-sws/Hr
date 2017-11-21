@@ -164,7 +164,7 @@ class HistoryForm extends CFormModel
             array('id,employee_id,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,user_card_date,emergency_user,emergency_phone,
              ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type, leave_reason, leave_time, code_old,
-              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other, change_city',
+              education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, change_city',
                 'safe'),
 			array('update_remark','required'),
 			array('code','required'),
@@ -357,8 +357,8 @@ class HistoryForm extends CFormModel
                 $this->year_day = $row['year_day'];
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
-                $this->price1 = $row['price1'];
-                $this->price3 = explode(",",$row['price3']);
+/*                $this->price1 = $row['price1'];
+                $this->price3 = explode(",",$row['price3']);*/
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];

@@ -464,8 +464,8 @@ class EmployeeForm extends CFormModel
                 $this->year_day = $row['year_day'];
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
-                $this->price1 = $row['price1'];
-                $this->price3 = explode(",",$row['price3']);
+/*                $this->price1 = $row['price1'];
+                $this->price3 = explode(",",$row['price3']);*/
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];

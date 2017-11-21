@@ -150,7 +150,7 @@ class EmployForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
-              education, experience, english, technology, other, year_day, email, remark, price1, price3, image_user, image_code, image_work, image_other, fix_time, code_old,
+              education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
                test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, user_card_date, emergency_user, emergency_phone',
                 'safe'),
 			array('entry_time','required'),
@@ -314,8 +314,8 @@ class EmployForm extends CFormModel
                 $this->year_day = $row['year_day'];
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
-                $this->price1 = $row['price1'];
-                $this->price3 = explode(",",$row['price3']);
+/*                $this->price1 = $row['price1'];
+                $this->price3 = explode(",",$row['price3']);*/
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
@@ -396,11 +396,11 @@ class EmployForm extends CFormModel
 				$sql = "insert into hr_employee(
 							name, sex, attachment, staff_id, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
 							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,fix_time,user_card_date,emergency_user,emergency_phone,code_old,
-							 email,remark,price1,price2,price3,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
+							 email,remark,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
 						) values (
 							:name, :sex, :attachment, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
 							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,:date_user_card,:emergency_user,:emergency_phone,:code_old,
-							 :email,:remark,:price1,:price2,:price3,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
+							 :email,:remark,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
 						)";
 				break;
 			case 'edit':
@@ -442,9 +442,6 @@ class EmployForm extends CFormModel
 							year_day = :year_day,
 							email = :email,
 							remark = :remark,
-							price1 = :price1,
-							price2 = :price2,
-							price3 = :price3,
 							image_user = :image_user,
 							image_code = :image_code,
 							image_work = :image_work,
@@ -467,11 +464,6 @@ class EmployForm extends CFormModel
 		    $this->test_wage = null;
 		    $this->test_start_time = null;
 		    $this->test_end_time = null;
-        }
-        if(is_array($this->price3)&&!empty($this->price1)){
-            $this->price3 = implode(",",$this->price3);
-        }else{
-            $this->price3 = "";
         }
 
 		$command=$connection->createCommand($sql);
@@ -546,12 +538,6 @@ class EmployForm extends CFormModel
 			$command->bindParam(':email',$this->email,PDO::PARAM_STR);
 		if (strpos($sql,':remark')!==false)
 			$command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
-		if (strpos($sql,':price1')!==false)
-			$command->bindParam(':price1',$this->price1,PDO::PARAM_STR);
-		if (strpos($sql,':price2')!==false)
-			$command->bindParam(':price2',$this->price2,PDO::PARAM_STR);
-		if (strpos($sql,':price3')!==false)
-			$command->bindParam(':price3',$this->price3,PDO::PARAM_STR);
 		if (strpos($sql,':image_user')!==false)
 			$command->bindParam(':image_user',$this->image_user,PDO::PARAM_STR);
 		if (strpos($sql,':image_code')!==false)

@@ -165,7 +165,7 @@ class AuditHistoryForm extends CFormModel
             array('id,employee_id,ject_remark,operation,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
              ld_card, sb_card, jj_card,attachment,nation, household, empoyment_code, social_code, fix_time,change_city,
-              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
+              education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('ject_remark','required',"on"=>"reject"),
 		);
@@ -247,8 +247,8 @@ class AuditHistoryForm extends CFormModel
                 $this->phone = $row['phone'];
                 $this->city = $row['city'];
                 $this->user_card = $row['user_card'];
-                $this->department = DeptForm::getDeptToid($row['department']);
-                $this->position = DeptForm::getDeptToid($row['position']);
+                $this->department = $row['department'];
+                $this->position = $row['position'];
                 $this->wage = $row['wage'];
                 $this->start_time = $row['start_time'];
                 $this->end_time = $row['end_time'];
@@ -274,8 +274,8 @@ class AuditHistoryForm extends CFormModel
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
                 $this->ject_remark = $row['ject_remark'];
-                $this->price1 = $row['price1'];
-                $this->price3 = explode(",",$row['price3']);
+/*                $this->price1 = $row['price1'];
+                $this->price3 = explode(",",$row['price3']);*/
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];

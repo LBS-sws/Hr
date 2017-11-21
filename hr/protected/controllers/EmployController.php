@@ -178,12 +178,13 @@ class EmployController extends Controller
             $lastDate = date('Y-m-d', strtotime("$date +$month month"));
             $oldMonth = intval(date("m",strtotime($date)));
             $oldYear = intval(date("Y",strtotime($date)));
+
             $newMonth = intval(date("m",strtotime($lastDate)));
             $newYear = intval(date("Y",strtotime($lastDate)));
             if(($newYear-$oldYear)*12 + $newMonth - $oldMonth > $month){
-                $BeginDate = date("Y-m-01",strtotime($lastDate));
-                $lastDate = date('Y-m-d', strtotime("$BeginDate -1 day"));
+                $lastDate = date("Y-m-01",strtotime($lastDate));
             }
+            $lastDate = date('Y-m-d', strtotime("$lastDate - 1 day"));
             echo CJSON::encode($lastDate);
         }else{
             $this->redirect(Yii::app()->createUrl('employ/index'));

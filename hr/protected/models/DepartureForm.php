@@ -145,7 +145,7 @@ class DepartureForm extends CFormModel
             array('id, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
              ld_card, sb_card, jj_card,
-              education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
+              education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('code','required'),
 			array('name','required'),
@@ -272,9 +272,6 @@ class DepartureForm extends CFormModel
                 $this->year_day = $row['year_day'];
                 $this->email = $row['email'];
                 $this->remark = $row['remark'];
-                $this->price1 = $row['price1'];
-                $this->price2 = $row['price2'];
-                $this->price3 = $row['price3'];
                 $this->image_user = $row['image_user'];
                 $this->image_code = $row['image_code'];
                 $this->image_work = $row['image_work'];
