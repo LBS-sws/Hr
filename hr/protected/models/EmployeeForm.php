@@ -351,9 +351,14 @@ class EmployeeForm extends CFormModel
                     $word->setValue("stafftestyears2",date("Y",strtotime($staff["staff"]["test_end_time"])));
                     $word->setValue("stafftestmonth2",date("m",strtotime($staff["staff"]["test_end_time"])));
                     $word->setValue("stafftestday2",date("d",strtotime($staff["staff"]["test_end_time"])));
-                    $yearNum = intval(date("Y",strtotime($staff["staff"]["test_end_time"])))-intval(date("Y",strtotime($staff["staff"]["test_start_time"])));
-                    $monthNum = intval(date("m",strtotime($staff["staff"]["test_end_time"])))-intval(date("m",strtotime($staff["staff"]["test_start_time"])));
+                    $test_start_time = strtotime($staff["staff"]["test_start_time"]);
+                    $test_end_time = strtotime($staff["staff"]["test_end_time"]);
+                    $yearNum = intval(date("Y",$test_end_time))-intval(date("Y",$test_start_time));
+                    $monthNum = intval(date("m",$test_end_time))-intval(date("m",$test_start_time));
                     $testNum = $yearNum*12 + $monthNum;
+                    if(intval(date("d",$test_end_time))>intval(date("d",$test_start_time))){
+                        $testNum++;
+                    }
                 }else{
                     $word->setValue("stafftestyears1","/");
                     $word->setValue("stafftestmonth1","/");
