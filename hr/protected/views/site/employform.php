@@ -441,7 +441,7 @@ if (!empty($contractNum)){
             if(empty($model->image_user)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' src='".$model->image_other."'></div>";
+                echo "<div class='form-control-static'><img height='80px' src='".$model->image_user."'></div>";
             }
         }else{
             if(!empty($model->image_user)){
@@ -467,7 +467,7 @@ if (!empty($contractNum)){
             if(empty($model->image_code)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' src='".$model->image_other."'></div>";
+                echo "<div class='form-control-static'><img height='80px' src='".$model->image_code."'></div>";
             }
         }else{
             if(!empty($model->image_code)){
@@ -493,7 +493,7 @@ if (!empty($contractNum)){
             if(empty($model->image_work)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' src='".$model->image_other."'></div>";
+                echo "<div class='form-control-static'><img height='80px' src='".$model->image_work."'></div>";
             }
         }else{
             if(!empty($model->image_work)){
