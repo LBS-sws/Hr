@@ -301,5 +301,6 @@ return array(
     'Change City'=>'调职后城市',
     'Staff City'=>'调职前城市',
     'Code Old'=>'员工编号（旧）',
+    'Contract Pay'=>'合同工资',
 );
 ?>

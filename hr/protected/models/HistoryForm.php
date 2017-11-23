@@ -103,7 +103,7 @@ class HistoryForm extends CFormModel
             'user_card'=>Yii::t('contract','ID Card'),
             'department'=>Yii::t('contract','Department'),
             'position'=>Yii::t('contract','Position'),
-            'wage'=>Yii::t('contract','Wage'),
+            'wage'=>Yii::t('contract','Contract Pay'),
             'time'=>Yii::t('contract','Contract Time'),
             'start_time'=>Yii::t('contract','Contract Start Time'),
             'end_time'=>Yii::t('contract','Contract End Time'),
