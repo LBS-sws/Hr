@@ -349,7 +349,7 @@ if (!empty($contractNum)){
 </div>
 <div class="test-div">
     <div class="form-group">
-        <?php echo $form->labelEx($model,'test_length',array('class'=>"col-sm-2 control-label")); ?>
+        <?php echo $form->labelEx($model,'test_length',array('class'=>"col-sm-2 control-label required","label"=>$model->getAttributeLabel("test_length").'&nbsp;<span class="required">*</span>')); ?>
         <div class="col-sm-3">
             <?php echo $form->dropDownList($model, 'test_length',EmployList::getMonthList(),
                 array('class'=>'test_add_time','disabled'=>($readonly))
@@ -357,7 +357,7 @@ if (!empty($contractNum)){
         </div>
     </div>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'test_time',array('class'=>"col-sm-2 control-label")); ?>
+        <?php echo $form->labelEx($model,'test_time',array('class'=>"col-sm-2 control-label required","label"=>$model->getAttributeLabel("test_time").'&nbsp;<span class="required">*</span>')); ?>
         <div class="col-sm-3">
             <div class="input-group">
                 <div class="input-group-addon">
@@ -381,7 +381,8 @@ if (!empty($contractNum)){
         </div>
     </div>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'test_wage',array('class'=>"col-sm-2 control-label")); ?>
+        <!--<span class="required">*</span>-->
+        <?php echo $form->labelEx($model,'test_wage',array('class'=>"col-sm-2 control-label required","label"=>$model->getAttributeLabel("test_wage").'&nbsp;<span class="required">*</span>')); ?>
         <div class="col-sm-3">
             <?php echo $form->numberField($model, 'test_wage',
                 array('min'=>0,'readonly'=>($readonly))
@@ -437,7 +438,7 @@ if (!empty($contractNum)){
     <div class="col-sm-3">
         <?php
         if($readonly){
-            if(empty($model->image_other)){
+            if(empty($model->image_user)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
                 echo "<div class='form-control-static'><img height='80px' src='".$model->image_other."'></div>";
@@ -463,7 +464,7 @@ if (!empty($contractNum)){
     <div class="col-sm-3">
         <?php
         if($readonly){
-            if(empty($model->image_other)){
+            if(empty($model->image_code)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
                 echo "<div class='form-control-static'><img height='80px' src='".$model->image_other."'></div>";
@@ -489,7 +490,7 @@ if (!empty($contractNum)){
     <div class="col-sm-3">
         <?php
         if($readonly){
-            if(empty($model->image_other)){
+            if(empty($model->image_work)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
                 echo "<div class='form-control-static'><img height='80px' src='".$model->image_other."'></div>";
