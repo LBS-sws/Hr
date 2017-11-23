@@ -61,7 +61,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                     ?>
                 </div>
             <?php endif; ?>
-            <?php if (Yii::app()->user->validRWFunction('ZR01')): ?>
+            <?php if (Yii::app()->user->validFunction('ZR01')): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php
                     echo TbHtml::button('<span class="fa fa-clone"></span> '.Yii::t('app','Contract Word'), array(
