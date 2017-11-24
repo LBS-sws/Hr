@@ -58,6 +58,11 @@ class DepartureForm extends CFormModel
     public $ld_card;//勞動保障卡號
     public $sb_card;//社保卡號
     public $jj_card;//公積金卡號
+    public $nation;//民族
+    public $household;//户籍类型
+    public $empoyment_code;//就业登记证号
+    public $social_code;//社会保障卡号
+    public $fix_time=0;//合同類型
     public $historyList;//員工歷史
     public $staff_type;//员工类别
     public $staff_leader;//队长/组长
@@ -128,6 +133,13 @@ class DepartureForm extends CFormModel
             'attachment'=>Yii::t('contract','Attachment'),
             'leave_reason'=>Yii::t('contract','Leave Reason'),
             'leave_time'=>Yii::t('contract','Leave Time'),
+
+            'nation'=>Yii::t('contract','nation'),
+            'household'=>Yii::t('contract','Household type'),
+            'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
+            'social_code'=>Yii::t('contract','Social security card number'),
+            'fix_time'=>Yii::t('contract','contract deadline'),
+
             'user_card_date'=>Yii::t('contract','ID Card Date'),
             'emergency_user'=>Yii::t('contract','Emergency User'),
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
@@ -280,6 +292,12 @@ class DepartureForm extends CFormModel
                 $this->sb_card = $row['sb_card'];
                 $this->jj_card = $row['jj_card'];
                 $this->historyList = AuditHistoryForm::getStaffHistoryList($this->id);
+                $this->nation = $row['nation'];
+                $this->household = $row['household'];
+                $this->empoyment_code = $row['empoyment_code'];
+                $this->social_code = $row['social_code'];
+                $this->fix_time = $row['fix_time'];
+
                 $this->test_length = $row['test_length'];
                 $this->staff_type = $row['staff_type'];
                 $this->staff_leader = $row['staff_leader'];
