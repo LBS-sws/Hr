@@ -19,6 +19,7 @@ class HistoryList extends CListPageModel
             'contract_id'=>Yii::t('contract','Contract Name'),
             'staff_status'=>Yii::t('contract','Status'),
             'operation'=>Yii::t('contract','Operation Status'),
+            'entry_time'=>Yii::t('contract','Entry Time'),
         );
     }
 
@@ -86,6 +87,7 @@ class HistoryList extends CListPageModel
                     'phone'=>$record['phone'],
                     'staff_status'=>$arr["status"],
                     'style'=>$arr["style"],
+                    'entry_time'=>$record["entry_time"],
                 );
             }
         }

@@ -18,6 +18,7 @@ class EmployeeList extends CListPageModel
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
 			'status'=>Yii::t('contract','Status'),
+            'entry_time'=>Yii::t('contract','Entry Time'),
 		);
 	}
 
@@ -84,6 +85,7 @@ class EmployeeList extends CListPageModel
 					'phone'=>$record['phone'],
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],
+                    'entry_time'=>$record["entry_time"],
 				);
 			}
 		}

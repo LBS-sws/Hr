@@ -107,7 +107,7 @@ return array(
     'Work photo'=>'工作证明',
     'Other photo'=>'其它照片',
     'Rejected'=>'拒绝',
-    'Entry Time'=>'入职时间',
+    'Entry Time'=>'入职日期',
     'Emergency call'=>'紧急电话',
     'Sent, pending approval'=>'已发送，等待审核',
     'pending approval'=>'等待审核',
