@@ -91,6 +91,7 @@ class EmployeeController extends Controller
     {
         $url = EmployeeForm::updateEmployeeWord($index);
         if($url){
+            Dialog::message(Yii::t('dialog','Information'), Yii::t("contract","Please handle the documents of the contract salary"));
             $file = Yii::app()->basePath."/../".$url["word_url"];
             // To prevent corrupted zip - Percy
             ob_clean();
