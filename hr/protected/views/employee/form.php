@@ -57,7 +57,8 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
             <?php if ($model->scenario!='new'): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
-                        'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
+                        'id'=>"down_btn_word"
+                    ));
                     ?>
                 </div>
             <?php endif; ?>
@@ -164,6 +165,11 @@ $('#EmployeeForm_test_type').on('change',function(){
         var url = $(this).find('img:first').attr('src');
         $(this).parent('div').children('input[type=\"hidden\"]').val(url);
         $(this).parent('div').children('input[type=\"file\"]').removeClass('hide').hide();
+    });
+    //合同下載
+    $('#down_btn_word').on('click',function(){
+        window.open('".Yii::app()->createUrl('employee/Downfile?index='.$model->id)."');
+        location.reload();
     });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);

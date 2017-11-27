@@ -104,6 +104,12 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                         array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
+                <?php echo $form->labelEx($model,'taxpayer_num',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'taxpayer_num',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
             </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'agent',array('class'=>"col-sm-2 control-label")); ?>

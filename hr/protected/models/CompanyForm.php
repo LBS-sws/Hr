@@ -30,6 +30,7 @@ class CompanyForm extends CFormModel
 	public $organization_time;
 	public $license_code;
 	public $license_time;
+	public $taxpayer_num;//納稅人識別號
 
 
 
@@ -75,6 +76,7 @@ class CompanyForm extends CFormModel
             'postal2'=>Yii::t('contract','Postal code 2'),
             'address2'=>Yii::t('contract','Company Address 2'),
             'mie'=>Yii::t('contract','Level of pest control'),
+            'taxpayer_num'=>Yii::t('contract','Taxpayer number'),
 		);
 	}
 
@@ -86,7 +88,7 @@ class CompanyForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, head, agent, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time,
-            legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
+            legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
             ','safe'),
 			array('name','required'),
 			array('name','validateName'),
@@ -179,6 +181,7 @@ class CompanyForm extends CFormModel
                 $this->postal2 = $row['postal2'];
                 $this->address2 = $row['address2'];
                 $this->mie = $row['mie'];
+                $this->taxpayer_num = $row['taxpayer_num'];
                 $this->no_of_attm['company'] = $row['companydoc'];
 				break;
 			}
@@ -229,10 +232,10 @@ class CompanyForm extends CFormModel
 			case 'new':
 				$sql = "insert into hr_company(
 							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, tacitly, lcu
-							, legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
+							, legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
 						) values (
 							:name, :agent, :head, :city, :address, :phone, :security_code, :organization_code, :organization_time, :license_code, :license_time, :tacitly, :lcu
-							, :legal, :legal_email, :legal_city, :head_email, :agent_email, :postal, :postal2, :address2, :mie
+							, :legal, :legal_email, :legal_city, :head_email, :agent_email, :postal, :postal2, :address2, :mie, :taxpayer_num
 						)";
 				break;
 			case 'edit':
@@ -257,6 +260,7 @@ class CompanyForm extends CFormModel
 							legal_city = :legal_city,
 							legal_email = :legal_email,
 							legal = :legal,
+							taxpayer_num = :taxpayer_num,
 							luu = :luu 
 						where id = :id
 						";
@@ -306,6 +310,8 @@ class CompanyForm extends CFormModel
             $command->bindParam(':address2',$this->address2,PDO::PARAM_STR);
         if (strpos($sql,':mie')!==false)
             $command->bindParam(':mie',$this->mie,PDO::PARAM_STR);
+        if (strpos($sql,':taxpayer_num')!==false)
+            $command->bindParam(':taxpayer_num',$this->taxpayer_num,PDO::PARAM_STR);
         //legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);

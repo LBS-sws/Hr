@@ -52,7 +52,8 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 	<div class="btn-group pull-right" role="group">
         <?php if ($model->staff_status == 4): ?>
             <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
-                'submit'=>Yii::app()->createUrl('employee/Downfile?index='.$model->id)));
+                'id'=>"down_btn_word"
+            ));
             ?>
         <?php endif; ?>
         <?php
@@ -142,6 +143,11 @@ $('#AuditForm_test_type').on('change',function(){
             }
         });
     }).trigger('change');
+    //合同下載
+    $('#down_btn_word').on('click',function(){
+        window.open('".Yii::app()->createUrl('employee/Downfile?index='.$model->id)."');
+        location.reload();
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

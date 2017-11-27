@@ -302,5 +302,9 @@ return array(
     'Staff City'=>'调职前城市',
     'Code Old'=>'员工编号（旧）',
     'Contract Pay'=>'合同工资',
+
+    //11-27
+    'Taxpayer number'=>'纳税人识别号',
+    'Please handle the documents of the contract salary'=>'请同时手动处理【合同工资组成部分】文件',
 );
 ?>

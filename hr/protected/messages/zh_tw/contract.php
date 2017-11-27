@@ -297,5 +297,9 @@ return array(
     'Staff City'=>'調職前城市',
     'Code Old'=>'員工編號（舊）',
     'Contract Pay'=>'合同工資',
+
+    //11-27
+    'Taxpayer number'=>'納稅人識別號',
+    'Please handle the documents of the contract salary'=>'請同時手動處理【合同工資組成部分】文件',
 );
 ?>
