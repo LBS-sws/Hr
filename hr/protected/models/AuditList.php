@@ -19,19 +19,20 @@ class AuditList extends CListPageModel
 			'contract_id'=>Yii::t('contract','Contract Name'),
 			'staff_status'=>Yii::t('contract','Status'),
             'entry_time'=>Yii::t('contract','Entry Time'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city();
+		$city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_employee
-                where city='$city' AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
+                where city in ($city_allow) AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
 			";
 		$sql2 = "select count(id)
 				from hr_employee 
-				where city='$city' AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
+				where city in ($city_allow) AND (staff_status = 2 OR staff_status = 3 OR staff_status = 4)
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -42,6 +43,9 @@ class AuditList extends CListPageModel
 					break;
 				case 'code':
 					$clause .= General::getSqlConditionClause('code',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
 					break;
 				case 'phone':
 					$clause .= General::getSqlConditionClause('phone',$svalue);
@@ -85,12 +89,13 @@ class AuditList extends CListPageModel
 					'phone'=>$record['phone'],
                     'staff_status'=>$arr["status"],
                     'style'=>$arr["style"],
+                    'city'=>CGeneral::getCityName($record["city"]),
                     'entry_time'=>$record["entry_time"],
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+		$session['audit_01'] = $this->getCriteria();
 		return true;
 	}
 

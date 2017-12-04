@@ -18,6 +18,7 @@ class HistoryList extends CListPageModel
             'company_id'=>Yii::t('contract','Company Name'),
             'contract_id'=>Yii::t('contract','Contract Name'),
             'staff_status'=>Yii::t('contract','Status'),
+            'city'=>Yii::t('contract','City'),
             'operation'=>Yii::t('contract','Operation Status'),
             'entry_time'=>Yii::t('contract','Entry Time'),
         );
@@ -27,12 +28,13 @@ class HistoryList extends CListPageModel
     {
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $sql1 = "select * from hr_employee_operate
-                where city='$city' AND finish != 1
+                where city IN ($city_allow) AND finish != 1
 			";
         $sql2 = "select count(id)
 				from hr_employee_operate 
-				where city='$city' AND finish != 1
+				where city IN ($city_allow) AND finish != 1
 			";
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -48,7 +50,10 @@ class HistoryList extends CListPageModel
                     $clause .= General::getSqlConditionClause('phone',$svalue);
                     break;
                 case 'position':
-                    $clause .= General::getSqlConditionClause('phone',$svalue);
+                    $clause .= General::getSqlConditionClause('position',$svalue);
+                    break;
+                case 'city':
+                    $clause .= General::getSqlConditionClause('city',$svalue);
                     break;
                 case 'company_id':
                     //$clause .= General::getSqlConditionClause('company_id',$svalue);
@@ -86,13 +91,14 @@ class HistoryList extends CListPageModel
                     //'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
                     'phone'=>$record['phone'],
                     'staff_status'=>$arr["status"],
+                    'city'=>CGeneral::getCityName($record["city"]),
                     'style'=>$arr["style"],
                     'entry_time'=>$record["entry_time"],
                 );
             }
         }
         $session = Yii::app()->session;
-        $session['criteria_a07'] = $this->getCriteria();
+        $session['history_01'] = $this->getCriteria();
         return true;
     }
 

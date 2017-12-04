@@ -12,6 +12,7 @@ class BindingForm extends CFormModel
 	public $employee_id;
 	public $employee_name;
 	public $user_id;
+	public $city;
 	public $user_name;
 	/**
 	 * Declares customized attribute labels.
@@ -24,6 +25,7 @@ class BindingForm extends CFormModel
 			'id'=>Yii::t('staff','Record ID'),
             'employee_id'=>Yii::t('contract','Employee Name'),
             'user_id'=>Yii::t('contract','Account number'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -44,10 +46,11 @@ class BindingForm extends CFormModel
 
 	public function validateUser($attribute, $params){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
         $rows = Yii::app()->db->createCommand()->select("disp_name")->from($from)
-            ->where('username=:username and city=:city ', array(':username'=>$this->user_id,':city'=>$city))->queryRow();
+            ->where("username=:username and city in ($city_allow)", array(':username'=>$this->user_id))->queryRow();
         if ($rows){
             $this->user_name = $rows["disp_name"];
         }else{
@@ -58,10 +61,12 @@ class BindingForm extends CFormModel
 
 	public function validateEmployee($attribute, $params){
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select("name")->from("hr_employee")
-            ->where('id=:id and city=:city and staff_status=0 ', array(':id'=>$this->employee_id,':city'=>$city))->queryRow();
+        $city_allow = Yii::app()->user->city_allow();
+        $rows = Yii::app()->db->createCommand()->select("name,city")->from("hr_employee")
+            ->where("id=:id and city in ($city_allow) and staff_status=0 ", array(':id'=>$this->employee_id))->queryRow();
         if ($rows){
             $this->employee_name = $rows["name"];
+            $this->city = $rows["city"];
         }else{
             $message = Yii::t('contract','Employee Name'). Yii::t('contract',' Did not find');
             $this->addError($attribute,$message);
@@ -70,10 +75,11 @@ class BindingForm extends CFormModel
     //獲取用戶表的所有用戶(相同城市)
 	public function getUserList(){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
-        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city=:city",array(":city"=>$city))->queryAll();
-        $bindList = Yii::app()->db->createCommand()->select("user_id")->from("hr_binding")->where("city=:city and id !=:id",array(":city"=>$city,":id"=>$this->id))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city in ($city_allow)")->queryAll();
+        $bindList = Yii::app()->db->createCommand()->select("user_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $bindList = array_column($bindList,"user_id");
         $arr = array(""=>"");
         foreach ($rows as $row){
@@ -86,9 +92,10 @@ class BindingForm extends CFormModel
     //獲取用戶表的所有員工(相同城市)
 	public function getEmployeeList(){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $from = "hr_employee";
-        $rows = Yii::app()->db->createCommand()->select("id,name")->from($from)->where("city=:city and staff_status=0",array(":city"=>$city))->queryAll();
-        $bindList = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")->where("city=:city and id !=:id",array(":city"=>$city,":id"=>$this->id))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("id,name")->from($from)->where("city in ($city_allow) and staff_status=0")->queryAll();
+        $bindList = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $arr = array(""=>"");
         $bindList = array_column($bindList,"employee_id");
         foreach ($rows as $row){
@@ -112,8 +119,9 @@ class BindingForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_binding")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow) ", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -123,6 +131,7 @@ class BindingForm extends CFormModel
 				$this->user_id = $row['user_id'];
                 $this->employee_id = $row['employee_id'];
                 $this->employee_name = $row['employee_name'];
+                $this->city = $row['city'];
 				break;
 			}
 		}
@@ -147,10 +156,11 @@ class BindingForm extends CFormModel
 	{
 		$sql = '';
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_binding where id = :id and city = :city";
+                $sql = "delete from hr_binding where id = :id and city IN ($city_allow)";
 				break;
 			case 'new':
 				$sql = "insert into hr_binding(
@@ -163,6 +173,7 @@ class BindingForm extends CFormModel
 				$sql = "update hr_binding set
 							employee_id = :employee_id, 
 							employee_name = :employee_name, 
+							city = :city, 
 							user_id = :user_id,
 							user_name = :user_name,
 							luu = :luu,
@@ -185,7 +196,7 @@ class BindingForm extends CFormModel
 			$command->bindParam(':user_name',$this->user_name,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)

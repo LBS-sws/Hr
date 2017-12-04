@@ -182,7 +182,7 @@ class DepartureForm extends CFormModel
     //獲取可用公司
     public function getCompanyToCity(){
 	    $arr = array(""=>"");
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
             ->where('city=:city ', array(':city'=>$city))->queryAll();
         if(count($rows)>0){
@@ -195,7 +195,7 @@ class DepartureForm extends CFormModel
     //獲取可用合同
     public function getContractToCity(){
 	    $arr = array(""=>"");
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
             ->where('city=:city ', array(':city'=>$city))->queryAll();
         if(count($rows)>0){
@@ -208,7 +208,7 @@ class DepartureForm extends CFormModel
 
     //根據id獲取公司員工合同信息
     public function getEmployeeToId($id){
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
             ->where('id=:id and city=:city ', array(':id'=>$id,':city'=>$city))->queryAll();
         if($rows){
@@ -240,8 +240,9 @@ class DepartureForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in($city_allow) ", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -258,8 +259,8 @@ class DepartureForm extends CFormModel
                 $this->phone = $row['phone'];
                 $this->city = $row['city'];
                 $this->user_card = $row['user_card'];
-                $this->department = DeptForm::getDeptToid($row['department']);
-                $this->position = DeptForm::getDeptToid($row['position']);
+                $this->position = $row['position'];
+                $this->department = $row['department'];
                 $this->wage = $row['wage'];
                 $this->start_time = $row['start_time'];
                 $this->end_time = $row['end_time'];

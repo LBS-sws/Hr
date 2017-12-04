@@ -59,6 +59,14 @@ $this->pageTitle=Yii::app()->name . ' - HolidayCon Form';
 					); ?>
 				</div>
 			</div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'z_index',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">

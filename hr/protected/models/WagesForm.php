@@ -10,6 +10,7 @@ class WagesForm extends CFormModel
 	/* User Fields */
 	public $id;
 	public $wages_name;
+	public $city;
 	public $wages_list=array(array("type_name"=>"基本工資","compute"=>"0","z_index"=>"999"));
 	public $bool = true;//是否允許操作
 	/**
@@ -23,6 +24,7 @@ class WagesForm extends CFormModel
 			'id'=>Yii::t('staff','Record ID'),
 			'wages_name'=>Yii::t('contract','Wages Name'),
 			'wages_list'=>Yii::t('contract','Wages Type'),
+			'city'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -33,8 +35,9 @@ class WagesForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id,bool, wages_name, wages_list','safe'),
+            array('id,bool,city, wages_name, wages_list','safe'),
 			array('wages_name','required'),
+			array('city','required'),
 			array('wages_name','validateName'),
 			array('wages_list','required'),
 			array('wages_list','validateList'),
@@ -43,7 +46,7 @@ class WagesForm extends CFormModel
 	}
 
     public function validateName($attribute, $params){
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_wages")
             ->where('id!=:id and wages_name=:wages_name and city=:city ', array(':id'=>$this->id,':wages_name'=>$this->wages_name,':city'=>$city))->queryAll();
         if (count($rows) > 0){
@@ -82,7 +85,8 @@ class WagesForm extends CFormModel
     //獲取所有工资组合(相同城市)
 	public function getWagesList(){
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select("id,wages_name")->from("hr_wages")->where("city=:city",array(":city"=>$city))->queryAll();
+        $city_allow = Yii::app()->user->city_allow();
+        $rows = Yii::app()->db->createCommand()->select("id,wages_name")->from("hr_wages")->where("city in ($city_allow)")->queryAll();
         $arr = array(""=>"");
         foreach ($rows as $row){
             $arr[$row["id"]] = $row["wages_name"];
@@ -133,15 +137,16 @@ class WagesForm extends CFormModel
 
 	public function retrieveData($index)
 	{
-        $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_wages")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow)", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
 				$this->id = $row['id'];
 				$this->wages_name = $row['wages_name'];
+				$this->city = $row['city'];
 				$this->wages_list = $this->getWagesTypeList($this->id);
 
                 $bool = Yii::app()->db->createCommand()->select()->from("hr_employee")
@@ -175,10 +180,11 @@ class WagesForm extends CFormModel
 	{
 		$sql = '';
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_wages where id = :id and city = :city";
+                $sql = "delete from hr_wages where id = :id and city in ($city_allow)";
 				break;
 			case 'new':
 				$sql = "insert into hr_wages(
@@ -190,6 +196,7 @@ class WagesForm extends CFormModel
 			case 'edit':
 				$sql = "update hr_wages set
 							wages_name = :wages_name, 
+							city = :city, 
 							lud = :lud,
 							luu = :luu 
 						where id = :id
@@ -204,7 +211,7 @@ class WagesForm extends CFormModel
 			$command->bindParam(':wages_name',$this->wages_name,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)

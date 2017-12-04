@@ -9,7 +9,9 @@ $this->pageTitle=Yii::app()->name . ' - MakeWages Form';
     'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
     'htmlOptions'=>array('enctype' => 'multipart/form-data')
 )); ?>
-
+<style>
+    select[readonly]{pointer-events: none;}
+</style>
 <section class="content-header">
     <h1>
         <strong>
@@ -109,6 +111,14 @@ $this->pageTitle=Yii::app()->name . ' - MakeWages Form';
                 <div class="col-sm-5">
                     <?php echo $form->textField($model, 'code',
                         array('readonly'=>true)
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
+                        array('readonly'=>(true))
                     ); ?>
                 </div>
             </div>

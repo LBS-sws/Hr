@@ -19,6 +19,7 @@ class HolidayList extends CListPageModel
             'end_time'=>Yii::t('contract','End Time'),
             'holiday_name'=>Yii::t('contract',' Cause'),
             'status'=>Yii::t('contract','Status'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -80,21 +81,22 @@ class HolidayList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$type = $this->type;
 		$sql1 = "select * from hr_employee_work 
-                where city='$city' AND type=$type 
+                where type=$type 
 			";
 		$sql2 = "select count(id)
 				from hr_employee_work 
-				where city='$city'AND type=$type 
+				where type=$type 
 			";
 		$clause = "";
 		if(empty($this->only)){
             $sql1.=" and employee_id = ".$this->employee_id." ";
             $sql2.=" and employee_id = ".$this->employee_id." ";
         }else{
-            $sql1.=" and status != 0 ";
-            $sql2.=" and status != 0 ";
+            $sql1.="and city in($city_allow) and status != 0 ";
+            $sql2.="and city in($city_allow) and status != 0 ";
         }
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
@@ -104,6 +106,9 @@ class HolidayList extends CListPageModel
 					break;
 				case 'holiday_name':
 					$clause .= General::getSqlConditionClause('holiday_name',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
 					break;
 			}
 		}
@@ -128,6 +133,7 @@ class HolidayList extends CListPageModel
 					'id'=>$record['id'],
 					'employee_name'=>$record['employee_name'],
 					'holiday_name'=>$record['holiday_name'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 					'end_time'=>date("Y-m-d",strtotime($record['end_time'])),
 					'start_time'=>date("Y-m-d",strtotime($record['start_time'])),
 					'status'=>$this->translateEmploy($record['status']),

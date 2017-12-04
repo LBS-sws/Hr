@@ -68,6 +68,14 @@ $this->pageTitle=Yii::app()->name . ' - Wages Form';
 					); ?>
 				</div>
 			</div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'wages_list',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-7">

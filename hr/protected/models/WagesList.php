@@ -18,18 +18,22 @@ class WagesList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
-		$city = Yii::app()->user->city();
+		//$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_wages 
-                where city='$city' 
+                where city in ($city_allow) 
 			";
 		$sql2 = "select count(id)
 				from hr_company 
-				where city='$city'
+				where city in ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
+					break;
 				case 'wages_name':
 					$clause .= General::getSqlConditionClause('wages_name',$svalue);
 					break;
@@ -56,12 +60,12 @@ class WagesList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'wages_name'=>$record['wages_name'],
-					'city'=>$record['city'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+		$session['wages_01'] = $this->getCriteria();
 		return true;
 	}
 

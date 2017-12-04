@@ -273,7 +273,7 @@ class EmployeeForm extends CFormModel
                     $bool = false;//無試用期
                 }
                 $contractBool = $staff["staff"]["fix_time"] == "fixation";
-                $word = new Template($staff["word"],$bool,$contractBool);
+                $word = new Template($staff["word"],$bool,$contractBool,$staff["staff"]["city"]);
 
                 $word->setValue("city",$staff["company"]["city"]);
                 $word->setValue("companyname",$staff["company"]["name"]);
@@ -394,8 +394,9 @@ class EmployeeForm extends CFormModel
     //根據id獲取公司員工合同信息
     public function getEmployeeToId($id){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$id,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow)", array(':id'=>$id))->queryAll();
         if($rows){
             $arr["company"]=CompanyForm::getCompanyToId($rows[0]["company_id"]);
             $wordIdList = ContractForm::getWordListToConIdDesc($rows[0]["contract_id"]);
@@ -425,8 +426,9 @@ class EmployeeForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow)", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)

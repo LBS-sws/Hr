@@ -16,6 +16,7 @@ class CompanyList extends CListPageModel
 			'head'=>Yii::t('contract','Head'),
 			'agent'=>Yii::t('contract','Agent'),
 			'tacitly'=>Yii::t('contract','Status'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -23,12 +24,13 @@ class CompanyList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_company 
-                where city='$city' 
+                where city in ($city_allow) 
 			";
 		$sql2 = "select count(id)
 				from hr_company 
-				where city='$city'
+				where city in ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -39,6 +41,9 @@ class CompanyList extends CListPageModel
 					break;
 				case 'head':
 					$clause .= General::getSqlConditionClause('head',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
 					break;
 				case 'agent':
 					$clause .= General::getSqlConditionClause('agent',$svalue);
@@ -69,13 +74,35 @@ class CompanyList extends CListPageModel
 					'name'=>$record['name'],
 					'head'=>$record['head'],
 					'agent'=>$record['agent'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 					'tacitly'=>$record['tacitly']
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+		$session['company_01'] = $this->getCriteria();
 		return true;
 	}
+
+	//獲取管轄城市列表
+    public function getSingleCityToList() {
+        $str = Yii::app()->session['city_allow'];
+        $city = Yii::app()->session['city'];
+        $cityName = Yii::app()->session['city_name'];
+        $items = explode(",",str_replace("'","",$str));
+        $arr = array();
+        if (($items===false) || empty($items)){
+            $arr[$city] = $cityName;
+        }else{
+            if(count($items)<=1){
+                $arr[$city] = $cityName;
+            }else{
+                foreach ($items as $item){
+                    $arr[$item] = CGeneral::getCityName($item);
+                }
+            }
+        }
+        return $arr;
+    }
 
 }

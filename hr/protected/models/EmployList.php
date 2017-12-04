@@ -19,6 +19,7 @@ class EmployList extends CListPageModel
 			'contract_id'=>Yii::t('contract','Contract Name'),
 			'staff_status'=>Yii::t('contract','Status'),
             'entry_time'=>Yii::t('contract','Entry Time'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 

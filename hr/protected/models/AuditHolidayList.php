@@ -17,6 +17,7 @@ class AuditHolidayList extends CListPageModel
             'end_time'=>Yii::t('contract','End Time'),
             'holiday_name'=>Yii::t('contract',' Cause'),
             'status'=>Yii::t('contract','Status'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -46,13 +47,14 @@ class AuditHolidayList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $type = $this->type;
 		$sql1 = "select * from hr_employee_work
-                where city='$city' AND status != 4 AND status != 0 AND type = '$type' 
+                where city IN ($city_allow) AND status != 4 AND status != 0 AND type = '$type' 
 			";
 		$sql2 = "select count(id)
 				from hr_employee_work 
-                where city='$city' AND status != 4 AND status != 0 AND type = '$type' 
+                where city IN ($city_allow) AND status != 4 AND status != 0 AND type = '$type' 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -63,6 +65,9 @@ class AuditHolidayList extends CListPageModel
                     break;
                 case 'holiday_name':
                     $clause .= General::getSqlConditionClause('holiday_name',$svalue);
+                    break;
+                case 'city':
+                    $clause .= General::getSqlConditionClause('city',$svalue);
                     break;
 			}
 		}
@@ -90,6 +95,7 @@ class AuditHolidayList extends CListPageModel
                     'end_time'=>date("Y-m-d",strtotime($record['end_time'])),
                     'start_time'=>date("Y-m-d",strtotime($record['start_time'])),
                     'status'=>$this->returnStaffStatus($record['status']),
+                    'city'=>CGeneral::getCityName($record["city"]),
                     'acc'=>$this->getTypeAcc(),
 				);
 			}

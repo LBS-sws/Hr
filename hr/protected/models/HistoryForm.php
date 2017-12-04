@@ -239,7 +239,7 @@ class HistoryForm extends CFormModel
     //獲取可用公司
     public function getCompanyToCity(){
 	    $arr = array(""=>"");
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
             ->where('city=:city ', array(':city'=>$city))->queryAll();
         if(count($rows)>0){
@@ -267,7 +267,7 @@ class HistoryForm extends CFormModel
     //獲取可用合同
     public function getContractToCity(){
 	    $arr = array(""=>"");
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
             ->where('city=:city ', array(':city'=>$city))->queryAll();
         if(count($rows)>0){
@@ -277,12 +277,15 @@ class HistoryForm extends CFormModel
         }
         return $arr;
     }
+
+    //驗證是否有變更記錄
     public function validateStaff($index,$type){
         $arr = array("update","change","departure");
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         if(in_array($type,$arr)){
             $count = Yii::app()->db->createCommand()->select("count(id)")->from("hr_employee_operate")
-                ->where('employee_id=:id and city=:city  and finish=0', array(':id'=>$index,':city'=>$city))->queryScalar();
+                ->where("employee_id=:id and city in ($city_allow)  and finish=0", array(':id'=>$index))->queryScalar();
             if($count>0){
                 return false;
             }
@@ -295,14 +298,15 @@ class HistoryForm extends CFormModel
 	    $type = $this->scenario;
 	    $arr = array("update","change","departure");
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 	    if(in_array($type,$arr)){
             $count = Yii::app()->db->createCommand()->select("count(id)")->from("hr_employee_operate")
-                ->where('employee_id=:id and city=:city  and finish=0', array(':id'=>$index,':city'=>$city))->queryScalar();
+                ->where("employee_id=:id and city in ($city_allow) and finish=0", array(':id'=>$index))->queryScalar();
             if($count>0){
                 return false;
             }
             $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-                ->where('id=:id and city=:city  and staff_status=0', array(':id'=>$index,':city'=>$city))->queryAll();
+                ->where("id=:id and city in ($city_allow) and staff_status=0", array(':id'=>$index))->queryAll();
         }else{
             $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
                 ->where('id=:id', array(':id'=>$index))->queryAll();
@@ -312,14 +316,15 @@ class HistoryForm extends CFormModel
 			foreach ($rows as $row)
 			{
 			    if(!empty($row['employee_id'])){
+                    $this->id = $row['id'];
 			        $this->employee_id = $row['employee_id'];
                     $this->update_remark = $row['update_remark'];
                     $this->ject_remark = $row['ject_remark'];
                 }else{
                     $this->employee_id = $row['id'];
+                    $this->id = "";
                 }
                 $this->historyList = AuditHistoryForm::getStaffHistoryList($this->employee_id);
-                $this->id = $row['id'];
                 $this->code = $row['code'];
                 $this->name = $row['name'];
                 $this->sex = $row['sex'];
@@ -383,6 +388,12 @@ class HistoryForm extends CFormModel
                 $this->emergency_phone = $row['emergency_phone'];
                 $this->code_old = $row['code_old'];
                 $this->change_city = empty($row['change_city'])?$row['city']:$row['change_city'];
+                if($this->staff_status == 1 || $this->staff_status == 3){
+                    $this->scenario = $row['operation'];
+                }
+                if(empty($this->scenario)){
+                    $this->scenario = "view";
+                }
 				break;
 			}
 		}
@@ -412,7 +423,7 @@ class HistoryForm extends CFormModel
         }
         $row['lcu'] = $uid;
         $row['lcd'] = date("Y-m-d H:i:s");
-        $row['staff_status'] = 2;
+        $row['staff_status'] = $this->staff_status;
         $row['ject_remark'] = "";
         $row['operation'] = $this->scenario;
         $row['opr_type'] = $this->opr_type;
@@ -424,10 +435,16 @@ class HistoryForm extends CFormModel
             Yii::app()->db->createCommand()->update('hr_employee_operate', $row, 'id=:id', array(':id'=>$this->id));
             $row['operation'] = "Again Audit";//再次審核
             $id = "";
-        }else{
+        }else if (empty($this->id)){
             Yii::app()->db->createCommand()->insert('hr_employee_operate', $row);
             $id = Yii::app()->db->getLastInsertID();
             $this->id = $id;
+        }else{
+            Yii::app()->db->createCommand()->update('hr_employee_operate', $row, 'id=:id', array(':id'=>$this->id));
+            $id = $this->id;
+        }
+        if($this->staff_status == 1){ //草稿不生成記錄
+            return true;
         }
         $his_arr =  array(
             "employee_id"=>$this->employee_id,

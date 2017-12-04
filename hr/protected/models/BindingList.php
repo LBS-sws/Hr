@@ -12,6 +12,7 @@ class BindingList extends CListPageModel
 		return array(	
 			'id'=>Yii::t('contract','ID'),
 			'employee_name'=>Yii::t('contract','Employee Name'),
+			'city'=>Yii::t('contract','City'),
 			'user_name'=>Yii::t('contract','Account number'),
 		);
 	}
@@ -20,12 +21,13 @@ class BindingList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_binding 
-                where city='$city' 
+                where city IN ($city_allow) 
 			";
 		$sql2 = "select count(id)
 				from hr_company 
-				where city='$city'
+				where city IN ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -36,6 +38,9 @@ class BindingList extends CListPageModel
 					break;
 				case 'head':
 					$clause .= General::getSqlConditionClause('head',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
 					break;
 				case 'agent':
 					$clause .= General::getSqlConditionClause('agent',$svalue);
@@ -64,6 +69,7 @@ class BindingList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'employee_name'=>$record['employee_name'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 					'user_name'=>$record['user_name'],
 				);
 			}

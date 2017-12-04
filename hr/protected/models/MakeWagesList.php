@@ -18,6 +18,7 @@ class MakeWagesList extends CListPageModel
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
 			'staff_status'=>Yii::t('contract','Wages Status'),
+			'city'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -25,12 +26,13 @@ class MakeWagesList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_employee
-                where city='$city' AND staff_status = 0
+                where city IN ($city_allow) AND staff_status = 0
 			";
 		$sql2 = "select count(id)
 				from hr_employee 
-				where city='$city' AND staff_status = 0
+				where city IN ($city_allow) AND staff_status = 0
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -41,6 +43,9 @@ class MakeWagesList extends CListPageModel
 					break;
 				case 'code':
 					$clause .= General::getSqlConditionClause('code',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
 					break;
 				case 'phone':
 					$clause .= General::getSqlConditionClause('phone',$svalue);
@@ -76,6 +81,7 @@ class MakeWagesList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'code'=>$record['code'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 					'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					'phone'=>$record['phone'],
@@ -85,7 +91,7 @@ class MakeWagesList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+		$session['makewages_01'] = $this->getCriteria();
 		return true;
 	}
 

@@ -33,7 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				'submit'=>Yii::app()->createUrl('company/index')));
 		?>
 
-        <?php if ($model->scenario!='view' && ($model->city == Yii::app()->user->city() || $model->scenario=='new')): ?>
+        <?php if ($model->scenario!='view'): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('company/save')));
             ?>
@@ -67,6 +67,14 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 					<?php echo $form->textField($model, 'name',
 						array('readonly'=>($model->scenario=='view'))
 					); ?>
+				</div>
+			</div>
+			<div class="form-group">
+				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-5">
+                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
 				</div>
 			</div>
 			<div class="form-group">

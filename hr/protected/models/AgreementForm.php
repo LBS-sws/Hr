@@ -39,6 +39,7 @@ class AgreementForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, type, docx_url, file, city','safe'),
+			array('city','required'),
 			array('name','required'),
 			array('name','validateName'),
 			array('type','required'),
@@ -48,8 +49,9 @@ class AgreementForm extends CFormModel
 	}
 
 	public function validateName($attribute, $params){
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")
-            ->where('id!=:id and name=:name ', array(':id'=>$this->id,':name'=>$this->name))->queryAll();
+            ->where('id!=:id and name=:name and city=:city  ', array(':id'=>$this->id,':name'=>$this->name,':city'=>$this->city))->queryAll();
         if (count($rows) > 0){
             $message = Yii::t('contract','Agreement Name'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
@@ -84,8 +86,9 @@ class AgreementForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")
-            ->where('id=:id', array(':id'=>$index))->queryAll();
+            ->where("id=:id and city in($city_allow)", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -141,6 +144,7 @@ class AgreementForm extends CFormModel
 				$sql = "update hr_agreement set
 							name = :name, 
 							type = :type, 
+							city = :city, 
 							docx_url = :docx_url,
 							lud = :lud,
 							luu = :luu 
@@ -160,7 +164,7 @@ class AgreementForm extends CFormModel
 			$command->bindParam(':docx_url',$this->docx_url,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)
@@ -184,7 +188,7 @@ class AgreementForm extends CFormModel
         if($this->type == 1){
             Yii::app()->db->createCommand()->update('hr_agreement', array(
                 'type'=>0,
-            ), 'id!=:id', array(':id'=>$this->id));
+            ), 'id!=:id and city=:city', array(':id'=>$this->id,":city"=>$this->city));
         }
     }
 }

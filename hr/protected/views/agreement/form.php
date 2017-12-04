@@ -65,6 +65,14 @@ $this->pageTitle=Yii::app()->name . ' - Agreement Form';
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'type'); ?>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">

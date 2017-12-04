@@ -11,6 +11,7 @@ class MakeWagesForm extends CFormModel
 	public $id;
 	public $employee_id;
 	public $name;
+	public $city;
 	public $code;
 	public $phone;
 	public $position;
@@ -37,6 +38,7 @@ class MakeWagesForm extends CFormModel
             'time'=>Yii::t('contract','Wages Time'),
             'hour'=>Yii::t('contract','Wages Hour'),
             'sum'=>Yii::t('contract','Wages Sum'),
+            'city'=>Yii::t('contract','City'),
             'wages_body'=>Yii::t('contract','Wages Group'),
             'just_remark'=>Yii::t('contract','Rejected Remark'),
 		);
@@ -49,7 +51,7 @@ class MakeWagesForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, employee_id, wages_status, name, code, phone, position, time, hour, sum, wages_head, wages_body, just_remark','safe'),
+            array('id, employee_id, wages_status, name, code, city, phone, position, time, hour, sum, wages_head, wages_body, just_remark','safe'),
 			array('wages_body','required'),
 			array('wages_body','validateList'),
 /*            array('license_time, organization_time','date','allowEmpty'=>true,
@@ -86,9 +88,9 @@ class MakeWagesForm extends CFormModel
 
     //完成操作
     public function finishWages($id){
-        $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rs = Yii::app()->db->createCommand()->select()->from("hr_employee_wages")
-            ->where('id=:id and city=:city', array(':id'=>$id,':city'=>$city))->queryRow();
+            ->where("id=:id and city in($city_allow)", array(':id'=>$id))->queryRow();
         if($rs){
             Yii::app()->db->createCommand()->update('hr_employee_wages', array(
                 'wages_status'=>0,
@@ -102,8 +104,9 @@ class MakeWagesForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in($city_allow)", array(':id'=>$index))->queryAll();
         $fastDate = date('Y-m-01', strtotime(date("Y-m-d")));
         $lastDate = date('Y-m-d', strtotime("$fastDate +1 month -1 day"));
         $records = Yii::app()->db->createCommand()->select()->from("hr_employee_wages")
@@ -115,6 +118,7 @@ class MakeWagesForm extends CFormModel
 				$this->name = $row['name'];
 				$this->code = $row['code'];
                 $this->phone = $row['phone'];
+                $this->city = $row['city'];
                 $this->position = DeptForm::getDeptToid($row['position']);
                 if ($records){
                     $this->scenario ="edit";
@@ -166,10 +170,11 @@ class MakeWagesForm extends CFormModel
 	{
 		$sql = '';
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->user_display_name();
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_company where id = :id and city = :city";
+                $sql = "delete from hr_company where id = :id and city in ($city_allow)";
 				break;
 			case 'new':
 				$sql = "insert into hr_employee_wages(
@@ -211,7 +216,7 @@ class MakeWagesForm extends CFormModel
 			$command->bindParam(':wages_body',$this->wages_body,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)

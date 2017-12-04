@@ -12,19 +12,21 @@ class AuditRewardList extends CListPageModel
             'reward_goods'=>Yii::t('contract','Reward Goods'),
             'lcd'=>Yii::t('queue','Req. Date'),
             'status'=>Yii::t('contract','Status'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 	
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select *
 				from hr_employee_reward
-				where status !=0 AND status !=4 
+				where city IN ($city_allow) AND status !=0 AND status !=4 
 			";
 		$sql2 = "select count(id)
 				from hr_employee_reward
-				where status !=0 AND status !=4 
+				where city IN ($city_allow) AND  status !=0 AND status !=4 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -44,6 +46,9 @@ class AuditRewardList extends CListPageModel
 					break;
 				case 'reward_money':
 					$clause .= General::getSqlConditionClause('reward_money', $svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city', $svalue);
 					break;
 			}
 		}
@@ -72,6 +77,7 @@ class AuditRewardList extends CListPageModel
 						'employee_name'=>$record['employee_name'],
 						'reward_id'=>$record['reward_id'],
 						'reward_name'=>$record['reward_name'],
+                        'city'=>CGeneral::getCityName($record["city"]),
 						'status'=>$this->getListStatus($record['status']),
 						'lcd'=>date("Y-m-d",strtotime($record['lcd'])),
 						'reward_goods'=>empty($record['reward_goods'])?"无":$record['reward_goods'],

@@ -75,9 +75,10 @@ class AuditHolidayForm extends CFormModel
     //獲取列表
 	public function getHolidayAllList($type=0){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 	    $arr=array(""=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_holiday")
-            ->where('city=:city and type=:type',array(':city'=>$city,':type'=>$this->type))->queryAll();
+            ->where("city in ($city_allow) and type=:type",array(':type'=>$this->type))->queryAll();
         if ($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -90,8 +91,9 @@ class AuditHolidayForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_work")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow)", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)

@@ -63,12 +63,14 @@ class Template {
      * 
      * @param string $strFilename
      */
-    public function __construct($arr,$testBool=true,$contractBool=true) {
+    public function __construct($arr,$testBool=true,$contractBool=true,$city="") {
         $path = Yii::app()->basePath."/../upload/staff/";
         if (!file_exists($path)){
             mkdir ($path);
         }
-        $city = Yii::app()->user->city();
+        if(empty($city)){
+            $city = Yii::app()->user->city();
+        }
         $path = $path.$city."/";
         if (!file_exists($path)){
             mkdir ($path);

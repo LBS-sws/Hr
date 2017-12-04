@@ -15,6 +15,7 @@ class AuditWagesList extends CListPageModel
 			'code'=>Yii::t('contract','Employee Code'),
 			'phone'=>Yii::t('contract','Employee Phone'),
 			'position'=>Yii::t('contract','Position'),
+			'city'=>Yii::t('contract','City'),
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
 			'staff_status'=>Yii::t('contract','Wages Status'),
@@ -24,15 +25,16 @@ class AuditWagesList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
+        $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
         $fastDate = date('Y-m-01', strtotime(date("Y-m-d")));
         $lastDate = date('Y-m-d', strtotime("$fastDate +1 month -1 day"));
 		$sql1 = "select * from hr_employee_wages
-                where city='$city' AND wages_status != 1 AND wages_status != 0 and lcd >='$fastDate' and lcd <='$lastDate'
+                where city IN ($city_allow) AND wages_status != 1 AND wages_status != 0 and lcd >='$fastDate' and lcd <='$lastDate'
 			";
 		$sql2 = "select count(id)
 				from hr_employee_wages 
-				where city='$city' AND wages_status != 1 AND wages_status != 0 and lcd >='$fastDate' and lcd <='$lastDate'
+				where city IN ($city_allow) AND wages_status != 1 AND wages_status != 0 and lcd >='$fastDate' and lcd <='$lastDate'
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -40,6 +42,9 @@ class AuditWagesList extends CListPageModel
 			switch ($this->searchField) {
 				case 'name':
 					$clause .= General::getSqlConditionClause('name',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
 					break;
 			}
 		}
@@ -70,13 +75,14 @@ class AuditWagesList extends CListPageModel
 					'position'=>DeptForm::getDeptToid($staff['position']),
 					'company_id'=>CompanyForm::getCompanyToId($staff['company_id'])["name"],
 					'phone'=>$staff['phone'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 					'staff_status'=>$arr["status"],
 					'style'=>$arr["style"],
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+		$session['auditwages_01'] = $this->getCriteria();
 		return true;
 	}
 

@@ -14,6 +14,7 @@ class HolidayConList extends CListPageModel
 			'id'=>Yii::t('contract','ID'),
 			'z_index'=>Yii::t('contract','Level'),
 			'name'=>Yii::t('contract',' Name'),
+			'city'=>Yii::t('contract','City'),
             'name_0'=>Yii::t('contract','Holiday Name'),
 			'name_1'=>Yii::t('contract','Work Name'),
 		);
@@ -37,13 +38,14 @@ class HolidayConList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$type = $this->type;
 		$sql1 = "select * from hr_holiday 
-                where city='$city' AND type=$type 
+                where city IN ($city_allow) AND type=$type 
 			";
 		$sql2 = "select count(id)
 				from hr_dept 
-				where city='$city'AND type=$type 
+				where city IN ($city_allow) AND type=$type 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -51,6 +53,12 @@ class HolidayConList extends CListPageModel
 			switch ($this->searchField) {
 				case 'name':
 					$clause .= General::getSqlConditionClause('name',$svalue);
+					break;
+				case 'city':
+					$clause .= General::getSqlConditionClause('city',$svalue);
+					break;
+				case 'z_index':
+					$clause .= General::getSqlConditionClause('z_index',$svalue);
 					break;
 			}
 		}
@@ -77,6 +85,7 @@ class HolidayConList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'z_index'=>$record['z_index'],
+                    'city'=>CGeneral::getCityName($record["city"]),
                     'acc'=>$this->getTypeAcc()
 				);
 			}

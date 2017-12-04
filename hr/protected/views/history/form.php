@@ -32,15 +32,20 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
     <div class="box"><div class="box-body">
             <div class="btn-group" role="group">
                 <?php
-                $url = $model->scenario!='view'?Yii::app()->createUrl('employee/edit',array("index"=>$model->id)):Yii::app()->createUrl('history/index');
+                $url = Yii::app()->createUrl('history/index');
                 echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
                     'submit'=>$url));
                 ?>
             </div>
             <?php if ($model->scenario!='view'||$model->staff_status==3): ?>
                 <div class="btn-group" role="group">
-                    <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','For Audit'), array(
+                    <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                         'submit'=>Yii::app()->createUrl('history/save')));
+                    ?>
+                </div>
+                <div class="btn-group" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','For Audit'), array(
+                        'submit'=>Yii::app()->createUrl('history/audit')));
                     ?>
                 </div>
             <?php endif; ?>

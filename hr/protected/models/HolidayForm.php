@@ -11,6 +11,7 @@ class HolidayForm extends CFormModel
 	public $id;
 	public $employee_id;
 	public $employee_name;
+	public $city;
 	public $holiday_id;
 	public $holiday_name;
 	public $start_time;
@@ -44,12 +45,13 @@ class HolidayForm extends CFormModel
 	    if (empty($this->only)){
             $uid = Yii::app()->user->id;
             $city = Yii::app()->user->city();
-            $rows = Yii::app()->db->createCommand()->select("employee_id,employee_name")->from("hr_binding")
+            $rows = Yii::app()->db->createCommand()->select("employee_id,employee_name,city")->from("hr_binding")
                 ->where('user_id=:user_id and city=:city',
                     array(':user_id'=>$uid,':city'=>$city))->queryRow();
             if ($rows){
                 $this->employee_id = $rows["employee_id"];
                 $this->employee_name = $rows["employee_name"];
+                $this->city = $rows["city"];
                 return true;
             }
             return false;
@@ -118,9 +120,10 @@ class HolidayForm extends CFormModel
     //獲取列表
 	public function getHolidayAllList($type=0){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 	    $arr=array(""=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_holiday")
-            ->where('city=:city and type=:type',array(':city'=>$city,':type'=>$this->type))->queryAll();
+            ->where("city in ($city_allow) and type=:type",array(':type'=>$this->type))->queryAll();
         if ($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -147,8 +150,9 @@ class HolidayForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_work")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow)", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
@@ -156,6 +160,7 @@ class HolidayForm extends CFormModel
 				$this->id = $row['id'];
 				$this->employee_id = $row['employee_id'];
 				$this->employee_name = $row['employee_name'];
+				$this->city = $row['city'];
 				$this->holiday_id = $row['holiday_id'];
 				$this->start_time = date("Y/m/d",strtotime($row['start_time']));
 				$this->end_time = date("Y/m/d",strtotime($row['end_time']));

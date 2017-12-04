@@ -6,6 +6,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('city'),'#',$this->createOrderLink('company-list','city'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('head').$this->drawOrderArrow('head'),'#',$this->createOrderLink('company-list','head'))
 			;
 		?>

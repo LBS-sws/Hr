@@ -124,9 +124,10 @@ class DeptForm extends CFormModel
     //獲取職位列表
 	public function getDeptAllList($type=0){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 	    $arr=array(""=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
-            ->where('type=:type and city=:city', array(':type'=>$type,':city'=>$city))->order("z_index desc")->queryAll();
+            ->where("type=:type and city in ($city_allow)", array(':type'=>$type))->order("z_index desc")->queryAll();
         if ($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -137,9 +138,10 @@ class DeptForm extends CFormModel
     //獲取職位列表(僅職位)
     public function getDeptOneAllList(){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $arr=array(""=>array("name"=>"","type"=>"","dept_class"=>""));
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
-            ->where('type=:type and city=:city', array(':type'=>1,':city'=>$city))->order("z_index desc")->queryAll();
+            ->where("type=:type and city in ($city_allow)", array(':type'=>1))->order("z_index desc")->queryAll();
         if ($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = array("name"=>$row["name"],"type"=>$row["dept_id"],"dept_class"=>$row["dept_class"]);

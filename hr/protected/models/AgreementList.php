@@ -21,12 +21,13 @@ class AgreementList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_agreement 
-                where id > 0 
+                where city IN ($city_allow) 
 			";
 		$sql2 = "select count(id)
 				from hr_agreement 
-				where id > 0 
+				where city IN ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -61,6 +62,7 @@ class AgreementList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 					'type'=>empty($record['type'])?Yii::t("misc","Inactive"):Yii::t("misc","Active")
 				);
 			}

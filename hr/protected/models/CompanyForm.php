@@ -77,6 +77,7 @@ class CompanyForm extends CFormModel
             'address2'=>Yii::t('contract','Company Address 2'),
             'mie'=>Yii::t('contract','Level of pest control'),
             'taxpayer_num'=>Yii::t('contract','Taxpayer number'),
+            'city'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -91,6 +92,7 @@ class CompanyForm extends CFormModel
             legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
             ','safe'),
 			array('name','required'),
+			array('city','required'),
 			array('name','validateName'),
 			array('head','required'),
 			array('head_email','required'),
@@ -103,7 +105,7 @@ class CompanyForm extends CFormModel
 	}
 
 	public function validateName($attribute, $params){
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
             ->where('id!=:id and name=:name and city=:city ', array(':id'=>$this->id,':name'=>$this->name,':city'=>$city))->queryAll();
         if (count($rows) > 0){
@@ -113,10 +115,11 @@ class CompanyForm extends CFormModel
     }
     //獲取用戶表的所有用戶(相同城市)
 	public function getUserList(){
-        $city = Yii::app()->user->city();
+        //$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
-        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city=:city",array(":city"=>$city))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city in ($city_allow)")->queryAll();
         $arr = array(""=>"");
         foreach ($rows as $row){
             $arr[$row["username"]] = $row["disp_name"];
@@ -147,12 +150,13 @@ class CompanyForm extends CFormModel
 
 	public function retrieveData($index)
 	{
-        $city = Yii::app()->user->city();
+        //$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $sql = "select a.* ,
 				docman$suffix.countdoc('COMPANY',id) as companydoc
 				from hr_company a
-				where a.id=$index AND a.city='$city'";
+				where a.id=$index AND a.city in ($city_allow)";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
@@ -223,11 +227,12 @@ class CompanyForm extends CFormModel
 	protected function saveStaff(&$connection)
 	{
 		$sql = '';
-        $city = Yii::app()->user->city();
+        //$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_company where id = :id and city = :city";
+                $sql = "delete from hr_company where id = :id and city IN ($city_allow)";
 				break;
 			case 'new':
 				$sql = "insert into hr_company(
@@ -241,6 +246,7 @@ class CompanyForm extends CFormModel
 			case 'edit':
 				$sql = "update hr_company set
 							name = :name, 
+							city = :city, 
 							agent = :agent, 
 							head = :head,
 							address = :address,
@@ -314,7 +320,7 @@ class CompanyForm extends CFormModel
             $command->bindParam(':taxpayer_num',$this->taxpayer_num,PDO::PARAM_STR);
         //legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)
@@ -333,7 +339,7 @@ class CompanyForm extends CFormModel
 	    if($this->tacitly == 1){
             Yii::app()->db->createCommand()->update('hr_company', array(
                 'tacitly'=>0
-            ), 'id!=:id', array(':id'=>$this->id));
+            ), 'id!=:id and city=:city', array(':id'=>$this->id,":city"=>$this->city));
         }
     }
 

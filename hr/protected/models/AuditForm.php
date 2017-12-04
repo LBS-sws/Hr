@@ -156,8 +156,9 @@ class AuditForm extends CFormModel
     public function getCompanyToCity(){
 	    $arr = array(""=>"");
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
-            ->where('city=:city ', array(':city'=>$city))->queryAll();
+            ->where("city in ($city_allow)")->queryAll();
         if(count($rows)>0){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -169,8 +170,9 @@ class AuditForm extends CFormModel
     public function getContractToCity(){
 	    $arr = array(""=>"");
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
-            ->where('city=:city ', array(':city'=>$city))->queryAll();
+            ->where("city in ($city_allow)")->queryAll();
         if(count($rows)>0){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -182,8 +184,9 @@ class AuditForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow) ", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)

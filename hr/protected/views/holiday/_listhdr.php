@@ -6,6 +6,12 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php
+        echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('city'),'#',$this->createOrderLink('holiday-list','city'))
+			;
+		?>
+	</th>
     <th>
         <?php echo TbHtml::link($this->model->getTypeName().$this->getLabelName('holiday_name').$this->drawOrderArrow('holiday_name'),'#',$this->createOrderLink('holiday-list','holiday_name'))
         ;

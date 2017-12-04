@@ -51,6 +51,7 @@ class RewardForm extends CFormModel
             if($rows){
                 $this->employee_code = $rows["code"];
                 $this->employee_name = $rows["name"];
+                $this->city = $rows["city"];
             }else{
                 $message = Yii::t('contract','Employee').Yii::t('contract',' not exist');
                 $this->addError($attribute,$message);
@@ -74,14 +75,16 @@ class RewardForm extends CFormModel
 	}
 
 	public function retrieveData($index) {
+        $city_allow = Yii::app()->user->city_allow();
 		$rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_employee_reward")->where("id=:id",array(":id"=>$index))->queryAll();
+            ->from("hr_employee_reward")->where("id=:id and city in($city_allow)",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->employee_id = $row['employee_id'];
                 $this->employee_code = $row['employee_code'];
                 $this->employee_name = $row['employee_name'];
+                $this->city = $row['city'];
                 $this->reward_id = $row['reward_id'];
                 $this->reward_name = $row['reward_name'];
                 $this->reward_money = empty($row['reward_money'])?"":sprintf("%.2f",$row['reward_money']);
@@ -112,8 +115,9 @@ class RewardForm extends CFormModel
     //獲取正式員工
     public function getEmployeeList(){
         $arr = array(""=>"");
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_employee")->where("staff_status=0")->queryAll();
+            ->from("hr_employee")->where("staff_status=0 and city in($city_allow)")->queryAll();
         foreach ($rows as $row){
             $arr[$row["id"]] = $row["code"]." - ".$row["name"];
         }
@@ -153,8 +157,9 @@ class RewardForm extends CFormModel
 
     //完成獎金的驗證
     public function finshValidate(){
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_employee_reward")->where("id=:id and status = 2",array(":id"=>$this->id))->queryRow();
+            ->from("hr_employee_reward")->where("id=:id and city in($city_allow) and status = 2",array(":id"=>$this->id))->queryRow();
         if($rows){
             return true;
         }else{
@@ -179,6 +184,7 @@ class RewardForm extends CFormModel
     /*  id;employee_id;employee_code;employee_name;reward_id;reward_name;reward_money;reward_goods;remark;city;*/
 	protected function saveGoods(&$connection) {
 		$sql = '';
+        $city_allow = Yii::app()->user->city_allow();
         switch ($this->scenario) {
             case 'delete':
                 $sql = "delete from hr_employee_reward where id = :id";

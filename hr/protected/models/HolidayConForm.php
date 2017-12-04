@@ -23,6 +23,7 @@ class HolidayConForm extends CFormModel
 		return array(
 			'id'=>Yii::t('staff','Record ID'),
 			'name'=>Yii::t('contract',' Name'),
+			'city'=>Yii::t('contract','City'),
 			'z_index'=>Yii::t('contract','Level'),
 		);
 	}
@@ -34,14 +35,15 @@ class HolidayConForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, type','safe'),
+            array('id, name, city, z_index, type','safe'),
 			array('name','required'),
+			array('city','required'),
 			array('name','validateName'),
 		);
 	}
 
 	public function validateName($attribute, $params){
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $rows = Yii::app()->db->createCommand()->select()->from("hr_holiday")
             ->where('id!=:id and name=:name and city=:city and type=:type',
                 array(':id'=>$this->id,':name'=>$this->name,':city'=>$city,':type'=>$this->type))->queryAll();
@@ -68,9 +70,10 @@ class HolidayConForm extends CFormModel
     //獲取職位列表
 	public function getHolidayAllList($type=0){
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 	    $arr=array(""=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_holiday")
-            ->where('type=:type and city=:city', array(':type'=>$type,':city'=>$city))->order("z_index desc")->queryAll();
+            ->where("type=:type and city in ($city_allow)", array(':type'=>$type))->order("z_index desc")->queryAll();
         if ($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -106,14 +109,16 @@ class HolidayConForm extends CFormModel
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_holiday")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
+            ->where("id=:id and city in ($city_allow)", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
 				$this->id = $row['id'];
 				$this->name = $row['name'];
+				$this->city = $row['city'];
 				$this->z_index = $row['z_index'];
                 $this->type = $row['type'];
 				break;
@@ -140,10 +145,11 @@ class HolidayConForm extends CFormModel
 	{
 		$sql = '';
         $city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
 		switch ($this->scenario) {
 			case 'delete':
-                $sql = "delete from hr_holiday where id = :id and city = :city";
+                $sql = "delete from hr_holiday where id = :id and city IN ($city_allow)";
 				break;
 			case 'new':
 				$sql = "insert into hr_holiday(
@@ -155,6 +161,7 @@ class HolidayConForm extends CFormModel
 			case 'edit':
 				$sql = "update hr_holiday set
 							name = :name, 
+							city = :city, 
 							type = :type, 
 							z_index = :z_index,
 							luu = :luu 
@@ -174,7 +181,7 @@ class HolidayConForm extends CFormModel
 			$command->bindParam(':type',$this->type,PDO::PARAM_INT);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
 		if (strpos($sql,':lcu')!==false)
