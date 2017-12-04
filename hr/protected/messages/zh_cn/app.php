@@ -101,5 +101,7 @@ return array(
     'Supplemental Agreement'=>'补充协议',
     'Staff Word'=>'选择合同文档下载',
     //沈超添加结束
+	
+	'Staff List'=>'员工名册',
 );
 ?>

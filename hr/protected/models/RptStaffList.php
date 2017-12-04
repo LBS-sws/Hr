@@ -35,16 +35,34 @@ class RptStaffList extends CReport {
 		public function retrieveData() {
 		$temp_dt = strtotime($this->criteria['TARGET_DT'].' -1 month');
 		$start_dt = date('Y',$temp_dt).'-'.date('m',$temp_dt).'-01 00:00:00';
+		
 		$temp_dt = strtotime($this->criteria['TARGET_DT']);
-		$end_dt = date('Y',$temp_dt).'/'.date('m',$temp_dt).'/01';
+		$end_dt = date('Y',$temp_dt).'-'.date('m',$temp_dt).'-01';
 
 		$city = $this->criteria['CITY'];
 		
 		$suffix = Yii::app()->params['envSuffix'];
 
+		$tolist = $this->getTransferOutList($city, $start_dt);
+		$tilist = $this->getTransferInList($city, $end_dt.' 00:00:00');
+		$exist = $this->getExistList($city, $start_dt);
+		
+		$idlist = '';
+		if (!empty($exist)) {
+			foreach ($exist as $id) {
+				if (!in_array($id, $tilist)) $idlist .= ($idlist=='' ? '' : ',').$id;
+			}
+		}
+		if (!empty($tolist)) {
+			foreach ($tolist as $id=>$items) {
+				$idlist .= ($idlist=='' ? '' : ',').$id;
+			}
+		}
+		if ($idlist=='') $idlist = '0';
+				
 		$sql = "select a.*, b.name as job_title 
 				from hr_employee a left outer join hr_dept b on a.position = b.id
-				where a.city='$city' and (a.leave_time >= '$start_dt' or a.leave_time is null)
+				where a.id in ($idlist)
 				order by a.name
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
@@ -67,16 +85,120 @@ class RptStaffList extends CReport {
 				$temp['social_code'] = is_numeric($row['social_code']) ? $row['social_code'].' ' : $row['social_code'];
 				$temp['emergency_user'] = $row['emergency_user'];
 				$temp['emergency_phone'] = is_numeric($row['emergency_phone']) ? $row['emergency_phone'].' ' : $row['emergency_phone'];
-				$temp['change_dt'] = ($row['staff_status']=-1 && strtotime($row['leave_time']) < strtotime($end_dt)
-								? General::toDate($row['leave_time']) : '');
-				$temp['reason'] = ($row['staff_status']=-1 && strtotime($row['leave_time']) < strtotime($end_dt)
-								? General::toDate($row['leave_reason']) : '');
+				$temp['change_dt'] = ($row['city']!=$city ? $tolist[$row['id']]['change_dt'] :
+										($row['staff_status']=-1 && strtotime($row['leave_time']) < strtotime($end_dt)
+										? General::toDate($row['leave_time']) : '')
+									);
+				$temp['reason'] = ($row['city']!=$city ? $tolist[$row['id']]['remarks'] :
+										($row['staff_status']=-1 && strtotime($row['leave_time']) < strtotime($end_dt)
+										? $row['leave_reason'] : '')
+									);
 				$temp['remarks'] = '';
 				$this->data[] = $temp;
 			}
 		}
 		
 		return true;	}
+
+	protected function getExistList($city, $dt) {
+		$rtn = array();
+		
+		$sql = "select a.id 
+				from hr_employee a 
+				where a.city='$city' and (a.leave_time >= '$dt' or a.leave_time is null)
+				order by a.id
+			";
+		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		if (!empty($rows)) {
+			foreach ($rows as $row) {
+				$rtn[] = $row['id'];
+			}
+		}
+		
+		return $rtn;
+	}
+	
+	protected function getTransferOutList($city, $dt) {
+		$rtn = array();
+		
+		$sql = "select a.employee_id, a.id, a.remark, c.start_time, a.lcd   
+				from hr_employee_history a, hr_employee_operate b, hr_employee c 
+				where a.history_id=b.id and a.status='transfer' and a.lcd >= '$dt'
+				and a.employee_id = c.id
+				and b.city='$city' and b.city <> b.change_city 
+				and (b.change_city <> '' or b.change_city is not null)
+			";
+		$trfout = Yii::app()->db->createCommand($sql)->queryAll();
+		if (!empty($trfout)) {
+			foreach ($trfout as $row) {
+				$accept = false;
+				$eid = $row['employee_id'];
+				$hid = $row['id'];
+				
+				$sql = "select status from hr_employee_history 
+						where employee_id=$eid and id > $hid
+						order by id
+					";
+				$hist = Yii::app()->db->createCommand($sql)->queryAll();
+				if (!empty($hist)) {
+					foreach ($hist as $rec) {
+						$stop = '/update/change/departure/promotion/contract/transfer/';
+						if (strpos($stop,'/'.$rec['status'].'/')!==false) break;
+						if ($rec['status']=='finish') {
+							$accept = true;
+							break;
+						}
+					}
+				}
+				
+				if ($accept) {
+					$rtn[$row['employee_id']] = array('change_dt'=>$row['lcd'], 'remarks'=>$row['remark']);
+				}
+			}
+		}
+
+		return $rtn;
+	}
+	
+	protected function getTransferInList($city, $dt) {
+		$rtn = array();
+		
+		$sql = "select a.employee_id, a.id, c.start_time 
+				from hr_employee_history a, hr_employee_operate b, hr_employee c 
+				where a.history_id=b.id and a.status='transfer' and a.lcd > '$dt'
+				and a.employee_id = c.id
+				and b.change_city='$city' and b.city <> b.change_city 
+				and (b.change_city <> '' or b.change_city is not null)
+			";
+		$trfout = Yii::app()->db->createCommand($sql)->queryAll();
+		if (!empty($trfout)) {
+			foreach ($trfout as $row) {
+				$accept = false;
+				$eid = $row['employee_id'];
+				$hid = $row['id'];
+				
+				$sql = "select status from hr_employee_history 
+						where employee_id=$eid and id > $hid
+						order by id
+					";
+				$hist = Yii::app()->db->createCommand($sql)->queryAll();
+				if (!empty($hist)) {
+					foreach ($hist as $rec) {
+						$stop = '/update/change/departure/promotion/contract/transfer/';
+						if (strpos($stop,'/'.$rec['status'].'/')!==false) break;
+						if ($rec['status']=='finish') {
+							$accept = true;
+							break;
+						}
+					}
+				}
+				
+				if ($accept) $rtn[] = $row['employee_id'];
+			}
+		}
+
+		return $rtn;
+	}
 
 	public function getReportName() {
 		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria['CITY']) : '';
