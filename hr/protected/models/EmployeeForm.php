@@ -292,7 +292,7 @@ class EmployeeForm extends CFormModel
                 $word->setValue("staffaddrpostcode",$staff["staff"]["contact_address_code"]);//通讯地址 邮编
                 $word->setValue("staffdob",$staff["staff"]["birth_time"]);//出生日期
                 $word->setValue("staffage",$staff["staff"]["age"]);//員工年齡
-                $word->setValue("staffeducation",Yii::t("contract",$staff["staff"]["education"]));//学历
+                $word->setValue("staffeducation",Yii::t("staff",$staff["staff"]["education"]));//学历
                 $word->setValue("staffjoindate",date("Y-m-d",strtotime($staff["staff"]["entry_time"])));//入职时间
                 $word->setValue("stafflanglevel",$staff["staff"]["english"]);//外语水平
                 $word->setValue("stafftechlevel",$staff["staff"]["technology"]);//技术水平
