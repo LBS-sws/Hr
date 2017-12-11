@@ -416,7 +416,7 @@ class EmployeeForm extends CFormModel
     public function getEmployeeOneToId($id){
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$id,':city'=>$city))->queryAll();
+            ->where('id=:id', array(':id'=>$id))->queryAll();
         if($rows){
             return $rows[0];
         }

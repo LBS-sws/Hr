@@ -1,0 +1,272 @@
+<?php
+
+class WorkForm extends CFormModel
+{
+	public $id;
+	public $work_code;
+	public $employee_id;
+	public $work_type;
+	public $work_cause;//加班原因
+    public $work_cost;//加班費用
+	public $work_address;
+	public $hours="08:00";//開始時間的小時
+	public $start_time;
+	public $end_time;
+	public $log_time;
+	public $z_index;
+	public $status;
+	public $area_lcu;
+	public $area_lcd;
+	public $head_lcu;
+	public $head_lcd;
+	public $reject_cause;
+	public $cost_num;//節假日的工資倍率
+	public $audit = false;//是否需要審核
+
+	public function attributeLabels()
+	{
+		return array(
+            'work_code'=>Yii::t('fete','Work Code'),
+            'work_type'=>Yii::t('fete','Work Type'),
+            'work_address'=>Yii::t('fete','Work Address'),
+            'work_cause'=>Yii::t('fete','Work Cause'),
+            'work_cost'=>Yii::t('fete','Work Cost'),
+            'employee_id'=>Yii::t('contract','Employee Name'),
+            'start_time'=>Yii::t('contract','Start Time'),
+            'end_time'=>Yii::t('contract','End Time'),
+            'log_time'=>Yii::t('fete','Log Date'),
+            'status'=>Yii::t('contract','Status'),
+            'area_lcu'=>Yii::t('fete','area lcu'),
+            'area_lcd'=>Yii::t('fete','area lcd'),
+            'head_lcu'=>Yii::t('fete','head lcu'),
+            'head_lcd'=>Yii::t('fete','head lcd'),
+            'reject_cause'=>Yii::t('contract','Rejected Remark'),
+		);
+	}
+
+	/**
+	 * Declares the validation rules.
+	 */
+	public function rules()
+	{
+		return array(
+			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time','safe'),
+            array('work_type','required'),
+            array('work_type','validateWorkType'),
+            array('work_cause','required'),
+            array('work_address','required'),
+            array('log_time','required'),
+            array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true),
+		);
+	}
+
+
+    public function validateWorkType($attribute, $params){
+        $city = Yii::app()->user->city();
+	    if($this->work_type == 2){
+            $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
+                ->where("start_time<=:start_time and end_time >=:end_time and city='$city'", array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
+            if($rows){
+                $this->cost_num = $rows["cost_num"];
+            }else{
+                $message = Yii::t('fete','This time period is not a legal holiday, please contact the administrator');
+                $this->addError($attribute,$message);
+            }
+        }else if($this->work_type == 1){
+	        $week = date("w",strtotime($this->start_time));
+            if($week == 6 || $week == 0){
+                //是週末
+            }else{
+                $message = Yii::t('fete','This time period is not a weekend');
+                $this->addError($attribute,$message);
+            }
+        }
+    }
+
+	public function retrieveData($index) {
+        $uid = $this->getEmployeeIdToUser();
+		$rows = Yii::app()->db->createCommand()->select("*")
+            ->from("hr_employee_work")->where("id=:id and employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
+		if (count($rows) > 0) {
+			foreach ($rows as $row) {
+			    $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
+                $this->id = $row['id'];
+                $this->work_code = $row['work_code'];
+                $this->employee_id = $employeeList["name"];
+                $this->work_type = $row['work_type'];
+                $this->work_cause = $row['work_cause'];
+                $this->work_address = $row['work_address'];
+                if ($this->work_type == 2){
+                    $this->start_time = date("Y/m/d",strtotime($row['start_time']));
+                    $this->end_time = date("Y/m/d",strtotime($row['end_time']));
+                }else{
+                    $this->start_time = date("Y/m/d",strtotime($row['start_time']));
+                    $this->hours = date("H:i",strtotime($row['start_time']));
+                    $this->end_time = date("Y/m/d H:i",strtotime($row['end_time']));
+                }
+                $this->log_time = $row['log_time'];
+                $this->z_index = $row['z_index'];
+                $this->status = $row['status'];
+                $this->area_lcu = $row['area_lcu'];
+                $this->area_lcd = $row['area_lcd'];
+                $this->head_lcu = $row['head_lcu'];
+                $this->head_lcd = $row['head_lcd'];
+                $this->reject_cause = $row['reject_cause'];
+                break;
+			}
+		}
+		return true;
+	}
+
+    //刪除驗證
+    public function deleteValidate(){
+        return true;
+    }
+
+	public function saveData()
+	{
+		$connection = Yii::app()->db;
+		$transaction=$connection->beginTransaction();
+		try {
+			$this->saveGoods($connection);
+			$transaction->commit();
+		}
+		catch(Exception $e) {
+			$transaction->rollback();
+			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
+		}
+	}
+
+	protected function saveGoods(&$connection) {
+		$sql = '';
+        switch ($this->scenario) {
+            case 'delete':
+                $sql = "delete from hr_employee_work where id = :id";
+                break;
+            case 'new':
+                $sql = "insert into hr_employee_work(
+							employee_id,work_type,work_cause, work_address, start_time, end_time, log_time, work_cost, city, status, lcu
+						) values (
+							:employee_id,:work_type,:work_cause, :work_address, :start_time, :end_time, :log_time, :work_cost, :city, :status, :lcu
+						)";
+                break;
+            case 'edit':
+                $sql = "update hr_employee_work set
+							work_type = :work_type, 
+							work_cause = :work_cause, 
+							work_address = :work_address, 
+							work_cost = :work_cost, 
+							start_time = :start_time, 
+							end_time = :end_time, 
+							log_time = :log_time, 
+							city = :city, 
+							status = :status, 
+							reject_cause = '', 
+							luu = :luu
+						where id = :id
+						";
+                break;
+        }
+		if (empty($sql)) return false;
+
+        $city = Yii::app()->user->city();
+        $uid = Yii::app()->user->id;
+        $this->employee_id = $this->getEmployeeIdToUser();
+        $this->resetWorkCost();//計算員工的工資
+
+        $command=$connection->createCommand($sql);
+        if (strpos($sql,':id')!==false)
+            $command->bindParam(':id',$this->id,PDO::PARAM_INT);
+        //employee_id,work_type,work_cause, work_address, start_time, end_time, log_time, work_cost, city, lcu
+        if (strpos($sql,':employee_id')!==false)
+            $command->bindParam(':employee_id',$this->employee_id,PDO::PARAM_STR);
+        if (strpos($sql,':work_type')!==false)
+            $command->bindParam(':work_type',$this->work_type,PDO::PARAM_STR);
+        if (strpos($sql,':work_cause')!==false)
+            $command->bindParam(':work_cause',$this->work_cause,PDO::PARAM_STR);
+        if (strpos($sql,':work_address')!==false)
+            $command->bindParam(':work_address',$this->work_address,PDO::PARAM_STR);
+        if (strpos($sql,':work_cost')!==false)
+            $command->bindParam(':work_cost',$this->work_cost,PDO::PARAM_STR);
+        if (strpos($sql,':start_time')!==false)
+            $command->bindParam(':start_time',$this->start_time,PDO::PARAM_STR);
+        if (strpos($sql,':end_time')!==false)
+            $command->bindParam(':end_time',$this->end_time,PDO::PARAM_STR);
+        if (strpos($sql,':log_time')!==false)
+            $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
+        if (strpos($sql,':status')!==false)
+            $command->bindParam(':status',$this->status,PDO::PARAM_STR);
+
+        if (strpos($sql,':city')!==false)
+            $command->bindParam(':city',$city,PDO::PARAM_STR);
+        if (strpos($sql,':luu')!==false)
+            $command->bindParam(':luu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':lcu')!==false)
+            $command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+        $command->execute();
+
+        if ($this->scenario=='new'){
+            $this->id = Yii::app()->db->getLastInsertID();
+            $this->scenario = "edit";
+            Yii::app()->db->createCommand()->update('hr_employee_work', array(
+                'work_code'=>$this->lenStr($this->id)
+            ), 'id=:id', array(':id'=>$this->id));
+        }
+		return true;
+	}
+
+	//計算員工的加班費用
+    public function resetWorkCost(){
+        if($this->audit){
+            $this->status = 1;
+        }else{
+            $this->status = 0;
+        }
+        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
+        $wage = floatval($employeeList["wage"]);
+        if($this->work_type == 2){
+            if($this->cost_num == 1){
+                $this->cost_num = 3;
+            }else{
+                $this->cost_num = 2;
+            }
+            $this->work_cost = ($wage/21.76)*intval($this->log_time)*intval($this->cost_num);
+        }else{
+            $this->work_cost = ($wage/(21.76*8))*intval($this->log_time)*1.5;
+            $this->start_time .=" ".$this->hours;
+        }
+    }
+
+    private function lenStr($id){
+        $code = strval($id);
+        $str = "4";
+        for($i = 0;$i < 5-strlen($code);$i++){
+            $str.="0";
+        }
+        $str .= $code;
+        return $str;
+    }
+
+	//獲取當前用戶的員工id
+	public function getEmployeeIdToUser(){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")
+            ->where('user_id=:user_id',
+                array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            return $rows["employee_id"];
+        }
+        return "";
+    }
+
+	//判斷輸入框能否修改
+	public function getInputBool(){
+        if($this->scenario == "view"){
+            return true;
+        }
+        if($this->status == 1 || $this->status == 2 || $this->status == 4){
+            return true;
+        }
+        return false;
+    }
+}

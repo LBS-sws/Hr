@@ -100,8 +100,14 @@ return array(
     'Reward Audit'=>'奖金审核',
     'Supplemental Agreement'=>'补充协议',
     'Staff Word'=>'选择合同文档下载',
+    'Fete Config'=>'节日配置',
+    'apply for work overtime'=>'加班申请',
+    'Overtime work List'=>'加班列表',
+    'Ask leave List'=>'请假列表',
+    'Application for leave'=>'请假申请',
+    'audit for work overtime'=>'加班审核',
+    'audit for leave'=>'请假审核',
+    'Vacation Config'=>'请假配置',
     //沈超添加结束
-	
-	'Staff List'=>'员工名册',
 );
 ?>

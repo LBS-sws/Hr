@@ -1,0 +1,51 @@
+<?php
+return array(
+    'Fete List'=>'节日列表',
+    'Fete Form'=>'节日表单',
+    'Fete Name'=>'节日名字',
+    'Wage rate'=>'工资倍率',
+    'Two times the salary'=>'两倍工资',
+    'Three times the salary'=>'三倍工资',
+    'Log Time'=>'假期天数',
+    'Log Date'=>'时间周期',
+    'Cost Num'=>'工资倍率',
+    'hours'=>'点整',
+
+    'Overtime work List'=>'加班列表',
+    'Overtime work Form'=>'加班表单',
+    'Work Code'=>'加班编号',
+    'Work Type'=>'加班类型',
+    'Work Cause'=>'加班原因',
+    'Work Cost'=>'加班工资',
+    'Work Address'=>'加班地点',
+
+    'Ask leave List'=>'请假列表',
+    'Ask leave Form'=>'请假表单',
+    'Leave Code'=>'请假编号',
+    'Leave Type'=>'请假类型',
+    'Leave Cause'=>'请假原因',
+    'Leave Cost'=>'扣减工资',
+
+
+    'Working days'=>'工作日',
+    'Weekend off'=>'周末休息日',
+    'Statutory leave day'=>'法定休假日',
+    'area lcu'=>'地区审核人',
+    'area lcd'=>'地区审核时间',
+    'head lcu'=>'总部审核人',
+    'head lcd'=>'总部审核时间',
+
+    'This time period is not a legal holiday, please contact the administrator'=>'该时间段不是法定节假日，请与管理员联系',
+    'This time period is not a weekend'=>'该时间段不是周末',
+    'approve'=>'批准',
+    'Overtime record this month'=>'本月加班记录',
+    'Leave record this month'=>'本月请假记录',
+
+    'Vacation Name'=>'请假类型',
+    'Vacation Form'=>'请假配置表單',
+    'deduct multiple'=>'倍数',
+    'most number of days'=>'最多天数',
+    'or max number of days'=>'是否有最大天数',
+    'Whether to deduct salary'=>'是否扣减工资',
+);
+?>

@@ -16,13 +16,13 @@ return array(
                 'access'=>'ZA04',
                 'url'=>'/makeWages/index',
             ),
-            'Only Holiday List'=>array(
+            'apply for work overtime'=>array(
                 'access'=>'ZA05',
-                'url'=>'/holiday/index',
+                'url'=>'/work/index',
             ),
-            'Only Work List'=>array(
+            'Application for leave'=>array(
                 'access'=>'ZA06',
-                'url'=>'/holiday/index?type=1',
+                'url'=>'/leave/index',
             ),
             'Reward Apply'=>array(
                 'access'=>'ZA07',
@@ -72,13 +72,13 @@ return array(
 				'access'=>'ZE04',
 				'url'=>'/history/index',
 			),
-            'All Holiday List'=>array(
+            'audit for work overtime'=>array(
                 'access'=>'ZE05',
-                'url'=>'/holiday/index?only=1',
+                'url'=>'/auditWork/index?only=1',
             ),
-            'All Work List'=>array(
+            'audit for leave'=>array(
                 'access'=>'ZE06',
-                'url'=>'/holiday/index?only=1&type=1',
+                'url'=>'/auditLeave/index?only=1',
             ),
 		),
 	),
@@ -101,14 +101,14 @@ return array(
 				'access'=>'ZG03',
 				'url'=>'/auditWages/index',
 			),
-            'Holiday Audit'=>array(
+            'audit for work overtime'=>array(
                 'access'=>'ZG04',
                 //'url'=>'/employer/index',
-                'url'=>'/auditHoliday/index',
+                'url'=>'/auditWork/index?only=2',
             ),
-            'Work Audit'=>array(
+            'audit for leave'=>array(
                 'access'=>'ZG05',
-                'url'=>'/auditHoliday/index?type=1',
+                'url'=>'/auditLeave/index?only=2',
             ),
             'Reward Audit'=>array(
                 'access'=>'ZG06',
@@ -128,14 +128,13 @@ return array(
 				'access'=>'ZC02',
 				'url'=>'/dept/index?type=1',
 			),
-			'Holiday Config'=>array(
+			'Fete Config'=>array(
 				'access'=>'ZC03',
-				//'url'=>'/employer/index',
-				'url'=>'/holidayCon/index',
+				'url'=>'/fete/index',
 			),
-			'Work Config'=>array(
+			'Vacation Config'=>array(
 				'access'=>'ZC04',
-				'url'=>'/holidayCon/index?type=1',
+				'url'=>'/vacation/index',
 			),
 			'employee binding account'=>array(
 				'access'=>'ZC05',
