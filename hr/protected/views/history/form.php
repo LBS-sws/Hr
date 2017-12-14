@@ -56,12 +56,18 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
+                <?php if ($model->no_of_attm['employ'] > 0): ?>
+                    <?php
+                    $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
+                    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> 原'.Yii::t('misc','Attachment').$counter, array(
+                            'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+                    );
+                    ?>
+                <?php endif; ?>
                 <?php
-                echo $form->hiddenField($model, 'attachment',array("class"=>"changeAttachment"));
-                $counter = $model->setAttachment();
-                $counter = (count($counter) > 0) ? ' <span id="docpayreq" class="label label-info">'.count($counter).'</span>' : ' <span id="docpayreq"></span>';
+                $counter = ($model->no_of_attm['employee'] > 0) ? ' <span id="docemployee" class="label label-info">'.$model->no_of_attm['employee'].'</span>' : ' <span id="docemployee"></span>';
                 echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadpayreq',)
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademployee',)
                 );
                 ?>
             </div>
@@ -202,9 +208,33 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
 <?php
 $this->renderPartial('//site/historylist',array('model'=>$model));
 ?>
+<?php if ($model->no_of_attm['employ'] > 0): ?>
+    <?php
+    $history_id = $model->id;
+    $model->id = $model->employee_id;
+    $this->renderPartial('//site/fileupload',array(
+        'model'=>$model,
+        'form'=>$form,
+        'doctype'=>"EMPLOY",
+        'header'=>"原".Yii::t('misc','Attachment'),
+        'ronly'=>(true),
+    ));
+    $model->id = $history_id;
+    ?>
+<?php endif; ?>
+<?php
+$this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>"EMPLOYEE",
+    'header'=>"".Yii::t('misc','Attachment'),
+    'ronly'=>($model->scenario=='view'),
+));
+?>
 <?php
 /*if ($model->scenario!='new')
     $this->renderPartial('//site/flowword',array('model'=>$model));*/
+Script::genFileUpload($model,$form->id,'EMPLOYEE');
+Script::genFileUpload($model,$form->id,'EMPLOY');
 
 $js = "
 var staffStatus = '".$model->staff_status."';
@@ -273,52 +303,6 @@ $('#HistoryForm_test_type').on('change',function(){
         }).trigger('change');
     }
     
-    //附件上傳
-    $('#importUp').on('click',function(){
-        $('#UploadFileForm').ajaxSubmit({
-            'type':'POST',
-            'dataType':'JSON',
-            'success':function(data){
-                if(data.status == 1){
-                    var file = data.data;
-                    var html = '<tr>';
-                    html+='<td>';
-                    html+=file['down_url'];
-                    html+='&nbsp;&nbsp;';
-                    html+=file['delete_url'];
-                    html+='</td>';
-                    html+='<td>'+file['file_name']+'</td>';
-                    html+='<td>'+file['lcd']+'</td>';
-                    html+='</tr>';
-                    $('#attachmentList>tbody').append(html);
-                    $('#file_fasd').val('');
-                    if($('.changeAttachment:first').val() == ''){
-                        $('.changeAttachment:first').val(file['id']);
-                    }else{
-                        var value = $('.changeAttachment:first').val()+','+file['id'];
-                        $('.changeAttachment:first').val(value);
-                    }
-                }else{
-                    location.reload();
-                }
-            },
-        });
-    });
-    //附件刪除
-    $('#attachmentList').delegate('.attachmentDelete','click',function(){
-        var value = $('.changeAttachment:first').val();
-        var deleteId=$(this).data('id');
-        if(value != ''){
-            var list = value.split(',');
-            for(var i= 0;i<list.length;i++){
-                if(list[i] == deleteId){
-                    list.splice(i,1);
-                }
-            }
-            $('.changeAttachment:first').val(list.join(','))
-        }
-        $(this).parents('tr:first').remove();
-    });
     //年齡計算
     $('#HistoryForm_birth_time').on('change',function(){
         var birth_time = $(this).val();
@@ -367,6 +351,7 @@ if ($model->scenario!='view'||$model->staff_status == 3) {
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 
+
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/jquery-form.js", CClientScript::POS_END);
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/ajaxFile.js", CClientScript::POS_END);
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js?2", CClientScript::POS_END);
@@ -374,14 +359,5 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ?>
 
 <?php $this->endWidget(); ?>
-
-<?php $this->renderPartial('//site/attachmentload',array('model'=>$model,
-    'form'=>$form,
-    'doctype'=>'PAYREQ',
-    'type'=>1,
-    'header'=>Yii::t('dialog','File Attachment'),
-    'ronly'=>($model->scenario=='view'&&$model->staff_status!=3),
-));
-?>
 </div><!-- form -->
 

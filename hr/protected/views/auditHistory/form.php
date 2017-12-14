@@ -41,7 +41,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                         'submit'=>Yii::app()->createUrl('auditHistory/audit')));
                 }
-                if(($model->city == Yii::app()->user->city() || $model->scenario=='new')&&$model->staff_status == 2){
+                if($model->staff_status == 2){
                     echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','Rejected'), array(
                         'submit'=>Yii::app()->createUrl('auditHistory/reject')));
                 }
@@ -54,11 +54,9 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
                 <?php
-                echo $form->hiddenField($model, 'attachment',array("class"=>"changeAttachment"));
-                $counter = $model->setAttachment();
-                $counter = (count($counter) > 0) ? ' <span id="docpayreq" class="label label-info">'.count($counter).'</span>' : ' <span id="docpayreq"></span>';
+                $counter = ($model->no_of_attm['employee'] > 0) ? ' <span id="docemployee" class="label label-info">'.$model->no_of_attm['employee'].'</span>' : ' <span id="docemployee"></span>';
                 echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadpayreq',)
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademployee',)
                 );
                 ?>
             </div>
@@ -205,9 +203,17 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
 <?php
 $this->renderPartial('//site/historylist',array('model'=>$model));
 ?>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'EMPLOYEE',
+    'header'=>Yii::t('misc','Attachment'),
+    'ronly'=>($model->scenario=='view'),
+));
+?>
 <?php
 /*if ($model->scenario!='new')
     $this->renderPartial('//site/flowword',array('model'=>$model));*/
+Script::genFileUpload($model,$form->id,'EMPLOYEE');
 
 $js = "
 var staffStatus = '".$model->staff_status."';
@@ -231,14 +237,5 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ?>
 
 <?php $this->endWidget(); ?>
-
-<?php $this->renderPartial('//site/attachmentload',array('model'=>$model,
-    'form'=>$form,
-    'doctype'=>'PAYREQ',
-    'type'=>1,
-    'header'=>Yii::t('dialog','File Attachment'),
-    'ronly'=>($model->scenario=='view'),
-));
-?>
 </div><!-- form -->
 

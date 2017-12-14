@@ -100,7 +100,7 @@ class CompanyForm extends CFormModel
             array('license_time, organization_time','date','allowEmpty'=>true,
                 'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d'),
             ),
-            array('files, removeFileId, docMasterId','safe'),
+            array('files, removeFileId, docMasterId, no_of_attm','safe'),
         );
 	}
 

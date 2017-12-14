@@ -9,6 +9,46 @@
 class AuditHistoryController extends Controller
 {
 
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('edit','reject','audit'),
+                'expression'=>array('AuditHistoryController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view','fileDownload'),
+                'expression'=>array('AuditHistoryController','allowReadOnly'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+
+    public static function allowReadWrite() {
+        return Yii::app()->user->validRWFunction('ZG02');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZG02');
+    }
+
     public function actionIndex($pageNum=0){
         $model = new AuditHistoryList;
         if (isset($_POST['AuditHistoryList'])) {
@@ -42,23 +82,6 @@ class AuditHistoryController extends Controller
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $this->render('form',array('model'=>$model,));
-        }
-    }
-
-    public function actionSave()
-    {
-        if (isset($_POST['AuditHistoryForm'])) {
-            $model = new AuditHistoryForm($_POST['AuditHistoryForm']['scenario']);
-            $model->attributes = $_POST['AuditHistoryForm'];
-            if ($model->validate()) {
-                $model->saveData();
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('AuditHistory/Form',array('index'=>$model->id,"type"=>"view")));
-            } else {
-                $message = CHtml::errorSummary($model);
-                Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->render('form',array('model'=>$model,));
-            }
         }
     }
     //審核通過
@@ -95,6 +118,23 @@ class AuditHistoryController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl('AuditHistory/edit',array('index'=>$model->id)));
             }
+        }
+    }
+    //下載附件
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        $sql = "select city from hr_employee_operate where id = $docId";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $citylist = Yii::app()->user->city_allow();
+            if (strpos($citylist, $row['city']) !== false) {
+                $docman = new DocMan($doctype,$docId,'EmployForm');
+                $docman->masterId = $mastId;
+                $docman->fileDownload($fileId);
+            } else {
+                throw new CHttpException(404,'Access right not match.');
+            }
+        } else {
+            throw new CHttpException(404,'Record not found.');
         }
     }
 }

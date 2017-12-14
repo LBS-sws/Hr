@@ -69,6 +69,7 @@ class LeaveForm extends CFormModel
             array('vacation_id','validateLeaveType'),
             array('log_time','validateLogTime'),
             array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>false),
+            array('files, removeFileId, docMasterId','safe'),
 		);
 	}
 	//驗證請假類型
@@ -166,6 +167,7 @@ class LeaveForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveGoods($connection);
+            $this->updateDocman($connection,'LEAVE');
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -173,6 +175,18 @@ class LeaveForm extends CFormModel
 			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
 		}
 	}
+
+    protected function updateDocman(&$connection, $doctype) {
+        if ($this->scenario=='new') {
+            $docidx = strtolower($doctype);
+            if ($this->docMasterId[$docidx] > 0) {
+                $docman = new DocMan($doctype,$this->id,get_class($this));
+                $docman->masterId = $this->docMasterId[$docidx];
+                $docman->updateDocId($connection, $this->docMasterId[$docidx]);
+            }
+            $this->scenario = "edit";
+        }
+    }
 
 	protected function saveGoods(&$connection) {
 		$sql = '';
@@ -240,7 +254,6 @@ class LeaveForm extends CFormModel
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
-            $this->scenario = "edit";
             Yii::app()->db->createCommand()->update('hr_employee_leave', array(
                 'leave_code'=>$this->lenStr($this->id)
             ), 'id=:id', array(':id'=>$this->id));

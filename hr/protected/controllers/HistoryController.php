@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Created by PhpStorm.
  * User: 沈超
@@ -8,6 +7,46 @@
  */
 class HistoryController extends Controller
 {
+
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('new','edit','delete','save','audit','finish','fileupload','fileRemove'),
+                'expression'=>array('HistoryController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view','form','detail','fileDownload'),
+                'expression'=>array('HistoryController','allowReadOnly'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+
+    public static function allowReadWrite() {
+        return Yii::app()->user->validFunction('ZE03');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZE03');
+    }
 
     public function actionIndex($pageNum=0){
         $model = new HistoryList;
@@ -126,4 +165,59 @@ class HistoryController extends Controller
         }
     }
 
+    //上傳附件
+    public function actionFileupload($doctype) {
+        $model = new HistoryForm();
+        if (isset($_POST['HistoryForm'])) {
+            $model->attributes = $_POST['HistoryForm'];
+
+            $id = (empty($_POST['HistoryForm']['id'])) ? 0 : $model->id;
+            $docman = new DocMan($model->docType,$id,get_class($model));
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+            $docman->fileUpload();
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
+        }
+    }
+
+    //刪除附件
+    public function actionFileRemove($doctype) {
+        $model = new HistoryForm();
+        if (isset($_POST['HistoryForm'])) {
+            $model->attributes = $_POST['HistoryForm'];
+
+            $docman = new DocMan($model->docType,$model->id,'HistoryForm');
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
+        }
+    }
+
+    //下載附件
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        if($doctype == "EMPLOYEE"){
+            $form = "HistoryForm";
+            $sql = "select city from hr_employee_operate where id = $docId";
+        }else{
+            $form = "EmployForm";
+            $sql = "select city from hr_employee where id = $docId";
+        }
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $citylist = Yii::app()->user->city_allow();
+            if (strpos($citylist, $row['city']) !== false) {
+                $docman = new DocMan($doctype,$docId,$form);
+                $docman->masterId = $mastId;
+                $docman->fileDownload($fileId);
+            } else {
+                throw new CHttpException(404,'Access right not match.');
+            }
+        } else {
+            throw new CHttpException(404,'Record not found.');
+        }
+    }
 }

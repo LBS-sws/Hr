@@ -72,6 +72,18 @@ class EmployForm extends CFormModel
     public $emergency_user;//紧急联络人姓名
     public $emergency_phone;//紧急联络人手机号
     public $code_old;//員工編號（舊）
+
+    public $no_of_attm = array(
+        'employ'=>0
+    );
+    public $docType = 'EMPLOY';
+    public $docMasterId = array(
+        'employ'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'employ'=>0
+    );
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -173,6 +185,7 @@ class EmployForm extends CFormModel
 			array('end_time','validateEndTime'),
 			array('test_type','required'),
 			array('test_type','validateTestType'),
+            array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
 
@@ -269,13 +282,15 @@ class EmployForm extends CFormModel
 
 	public function retrieveData($index)
 	{
+        $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
+        $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
             ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
+                $this->no_of_attm['employ'] = $row['employdoc'];
 				$this->id = $row['id'];
 				$this->code = $row['code'];
 				$this->name = $row['name'];
@@ -366,6 +381,7 @@ class EmployForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveStaff($connection);
+            $this->updateDocman($connection,'EMPLOY');
 			$transaction->commit();
 		}catch(Exception $e) {
 			$transaction->rollback();
@@ -373,6 +389,17 @@ class EmployForm extends CFormModel
 		}
 	}
 
+    protected function updateDocman(&$connection, $doctype) {
+        if ($this->scenario=='new') {
+            $docidx = strtolower($doctype);
+            if ($this->docMasterId[$docidx] > 0) {
+                $docman = new DocMan($doctype,$this->id,get_class($this));
+                $docman->masterId = $this->docMasterId[$docidx];
+                $docman->updateDocId($connection, $this->docMasterId[$docidx]);
+            }
+            $this->scenario = "edit";
+        }
+    }
 
 	protected function saveStaff(&$connection)
 	{
@@ -583,7 +610,6 @@ class EmployForm extends CFormModel
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
-            $this->scenario = "edit";
             $this->lenStr();
             Yii::app()->db->createCommand()->update('hr_employee', array(
                 'code'=>$this->code

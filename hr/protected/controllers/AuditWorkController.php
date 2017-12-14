@@ -9,6 +9,54 @@
 class AuditWorkController extends Controller
 {
 
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('edit','reject','audit'),
+                'expression'=>array('AuditWorkController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view'),
+                'expression'=>array('AuditWorkController','allowReadOnly'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+
+    public static function allowReadWrite() {
+        if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
+            return Yii::app()->user->validRWFunction('ZG04');
+        }else{
+            return Yii::app()->user->validRWFunction('ZE05');
+        }
+    }
+
+    public static function allowReadOnly() {
+        if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
+            return Yii::app()->user->validFunction('ZG04');
+        }else{
+            return Yii::app()->user->validFunction('ZE05');
+        }
+    }
+
     public function actionIndex($pageNum=0,$only = 1){
         $model = new AuditWorkList;
         $model->only = $only;

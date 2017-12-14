@@ -80,6 +80,17 @@ class AuditHistoryForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $change_city;//調職城市
     public $code_old;//員工編號（舊）
+    public $no_of_attm = array(
+        'employee'=>0
+    );
+    public $docType = 'EMPLOYEE';
+    public $docMasterId = array(
+        'employee'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'employee'=>0
+    );
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -226,13 +237,15 @@ class AuditHistoryForm extends CFormModel
 
 	public function retrieveData($index)
 	{
+        $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
+        $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOYEE',id) as employeedoc")->from("hr_employee")->from("hr_employee_operate")
             ->where('id=:id and finish != 1', array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
+                $this->no_of_attm['employee'] = $row['employeedoc'];
                 $this->id = $row['id'];
                 $this->employee_id = $row['employee_id'];
                 $this->update_remark = $row['update_remark'];
@@ -400,12 +413,47 @@ class AuditHistoryForm extends CFormModel
         Yii::app()->db->createCommand()->update('hr_employee', $staffNew, 'id=:id', array(':id'=>$this->employee_id));
         Yii::app()->db->createCommand()->update('hr_employee_operate', $staff, 'id=:id', array(':id'=>$this->id));
 
-        //記錄
-        Yii::app()->db->createCommand()->insert('hr_employee_history', array(
-            "employee_id"=>$this->employee_id,
-            "status"=>"finish",
-            "lcu"=>$uid,
-            "lcd"=>$date,
-        ));
+        //交換員工附件
+        $this->replaceAttachment();
+    }
+
+    //交換員工附件
+    public function replaceAttachment(){
+        $connection = Yii::app()->db;
+        $suffix = Yii::app()->params['envSuffix'];
+        $attachment_old = $connection->createCommand()->select("id,doc_type_code,doc_id,remove")->from("docman$suffix.dm_master")
+            ->where('doc_id=:doc_id and doc_type_code=:doc_type_code', array(
+                ':doc_id'=>$this->employee_id,
+                ':doc_type_code'=>"EMPLOY"
+            ))->queryRow();
+        $attachment_now = $connection->createCommand()->select("id,doc_type_code,doc_id,remove")->from("docman$suffix.dm_master")
+            ->where('doc_id=:doc_id and doc_type_code=:doc_type_code', array(
+                ':doc_id'=>$this->id,
+                ':doc_type_code'=>"EMPLOYEE"
+            ))->queryRow();
+
+        if($attachment_old&&$attachment_now){
+            //都有附件
+            $old_id =$attachment_old["id"];
+            $now_id =$attachment_now["id"];
+            unset($attachment_old["id"]);
+            unset($attachment_now["id"]);
+            $connection->createCommand()->update("docman$suffix.dm_master",$attachment_old,'id=:id', array(':id'=>$now_id));
+            $connection->createCommand()->update("docman$suffix.dm_master",$attachment_now,'id=:id', array(':id'=>$old_id));
+        }elseif($attachment_old){
+            //有旧没有新
+            $old_id =$attachment_old["id"];
+            unset($attachment_old["id"]);
+            $attachment_now["doc_type_code"]="EMPLOYEE";
+            $attachment_now["doc_id"]=$this->id;
+            $connection->createCommand()->update("docman$suffix.dm_master",$attachment_now,'id=:id', array(':id'=>$old_id));
+        }elseif ($attachment_now){
+            //有新没有旧
+            $now_id =$attachment_now["id"];
+            unset($attachment_now["id"]);
+            $attachment_now["doc_type_code"]="EMPLOY";
+            $attachment_now["doc_id"]=$this->employee_id;
+            $connection->createCommand()->update("docman$suffix.dm_master",$attachment_now,'id=:id', array(':id'=>$now_id));
+        }
     }
 }

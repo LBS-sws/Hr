@@ -9,6 +9,45 @@
 class CompanyController extends Controller
 {
 
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('new','edit','save','delete','fileupload','fileRemove'),
+                'expression'=>array('CompanyController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view','fileDownload'),
+                'expression'=>array('CompanyController','allowReadOnly'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+    public static function allowReadWrite() {
+        return Yii::app()->user->validRWFunction('ZA02');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZA02');
+    }
+
     public function actionIndex($pageNum=0){
         $model = new CompanyList;
         if (isset($_POST['CompanyList'])) {
@@ -52,7 +91,6 @@ class CompanyController extends Controller
         }
     }
 
-
     public function actionSave()
     {
         if (isset($_POST['CompanyForm'])) {
@@ -67,21 +105,6 @@ class CompanyController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }
-        }
-    }
-
-    //設置默認公司
-    public function actionTacitly($index)
-    {
-        $model = new CompanyForm('edit');
-        if (!$model->retrieveData($index)) {
-            throw new CHttpException(404,'The requested page does not exist.');
-        } else {
-            Yii::app()->db->createCommand()->update('hr_company', array('tacitly'=>0));
-            $rs = Yii::app()->db->createCommand()->update('hr_company', array(
-                'tacitly'=>1
-            ), 'id=:id', array(':id'=>$index));
-            $this->redirect(Yii::app()->createUrl('company/index'));
         }
     }
 
@@ -100,7 +123,6 @@ class CompanyController extends Controller
         }
         $this->redirect(Yii::app()->createUrl('company/index'));
     }
-
 
 
     public function actionFileupload($doctype) {
@@ -162,11 +184,4 @@ class CompanyController extends Controller
         }
     }
 
-    public static function allowReadWrite() {
-        return Yii::app()->user->validRWFunction('ZA02');
-    }
-
-    public static function allowReadOnly() {
-        return Yii::app()->user->validFunction('ZA02');
-    }
 }

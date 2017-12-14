@@ -9,6 +9,54 @@
 class WorkController extends Controller
 {
 
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('new','edit','delete','save','audit'),
+                'expression'=>array('WorkController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view'),
+                'expression'=>array('WorkController','allowReadOnly'),
+            ),
+            array('allow',
+                'actions'=>array('addDate'),
+                'expression'=>array('WorkController','allowWrite'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+
+    public static function allowReadWrite() {
+        return Yii::app()->user->validFunction('ZA05');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZA05');
+    }
+
+    public static function allowWrite() {
+        return true;
+    }
+
     public function actionIndex($pageNum=0){
         $model = new WorkList;
         if($model->validateEmployee()){
@@ -33,7 +81,12 @@ class WorkController extends Controller
     public function actionNew()
     {
         $model = new WorkForm('new');
-        $model->employee_id = Yii::app()->user->user_display_name();
+        $employeeName = WorkList::getEmployeeName();
+        if(empty($employeeName)){
+            throw new CHttpException(404,Yii::t("contract",'The account has no binding staff, please contact the administrator'));
+        }else{
+            $model->employee_id = $employeeName;
+        }
         $this->render('form',array('model'=>$model,));
     }
 

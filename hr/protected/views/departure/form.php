@@ -34,6 +34,12 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
             </div>
 
             <div class="btn-group pull-right" role="group">
+                <?php
+                $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+                );
+                ?>
                 <?php if ($model->scenario!='new'){
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
@@ -123,9 +129,17 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
 <?php
 $this->renderPartial('//site/historylist',array('model'=>$model));
 ?>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'EMPLOY',
+    'header'=>Yii::t('misc','Attachment'),
+    'ronly'=>($model->scenario=='view'||($model->staff_status != 1)),
+));
+?>
 <?php
 /*if ($model->scenario!='new')
     $this->renderPartial('//site/flowword',array('model'=>$model));*/
+Script::genFileUpload($model,$form->id,'EMPLOY');
 
 $js = "
 var staffStatus = '".$model->staff_status."';

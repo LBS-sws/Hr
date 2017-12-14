@@ -9,6 +9,54 @@
 class DeptController extends Controller
 {
 
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('edit','new','save','delete'),
+                'expression'=>array('DeptController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view'),
+                'expression'=>array('DeptController','allowReadOnly'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+
+    public static function allowReadWrite() {
+        if(array_key_exists("type",$_GET) && $_GET["type"] == 1){
+            return Yii::app()->user->validRWFunction('ZC02');
+        }else{
+            return Yii::app()->user->validRWFunction('ZC01');
+        }
+    }
+
+    public static function allowReadOnly() {
+        if(array_key_exists("type",$_GET) && $_GET["type"] == 1){
+            return Yii::app()->user->validFunction('ZC02');
+        }else{
+            return Yii::app()->user->validFunction('ZC01');
+        }
+    }
+
     public function actionIndex($pageNum=0,$type=0){
         $model = new DeptList;
         $model->type=$type;

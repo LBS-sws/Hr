@@ -9,6 +9,55 @@
 class AuditController extends Controller
 {
 
+
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('edit','reject','audit'),
+                'expression'=>array('AuditController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view','fileDownload'),
+                'expression'=>array('AuditController','allowReadOnly'),
+            ),
+            array('allow',
+                'actions'=>array('Generate'),
+                'expression'=>array('AuditController','allowWrite'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+
+    public static function allowReadWrite() {
+        return Yii::app()->user->validRWFunction('ZG01');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZG01');
+    }
+
+    public static function allowWrite() {
+        return true;
+    }
+
     public function actionIndex($pageNum=0){
         $model = new AuditList;
         if (isset($_POST['AuditList'])) {
@@ -89,6 +138,23 @@ class AuditController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','Contract formation success'));
                 $this->redirect(Yii::app()->createUrl('audit/edit',array('index'=>$index)));
             }
+        }
+    }
+    //下載附件
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        $sql = "select city from hr_employee where id = $docId";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $citylist = Yii::app()->user->city_allow();
+            if (strpos($citylist, $row['city']) !== false) {
+                $docman = new DocMan($doctype,$docId,'EmployForm');
+                $docman->masterId = $mastId;
+                $docman->fileDownload($fileId);
+            } else {
+                throw new CHttpException(404,'Access right not match.');
+            }
+        } else {
+            throw new CHttpException(404,'Record not found.');
         }
     }
 }

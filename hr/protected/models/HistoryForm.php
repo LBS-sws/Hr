@@ -79,6 +79,20 @@ class HistoryForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $change_city;//調職城市
     public $code_old;//員工編號（舊）
+    public $no_of_attm = array(
+        'employee'=>0,
+        'employ'=>0
+    );
+    public $docType = 'EMPLOYEE';
+    public $docMasterId = array(
+        'employee'=>0,
+        'employ'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'employee'=>0,
+        'employ'=>0
+    );
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -191,6 +205,7 @@ class HistoryForm extends CFormModel
 			array('end_time','validateEndTime'),
 			array('test_type','required'),
 			array('test_type','validateTestType'),
+            array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
 
@@ -295,6 +310,7 @@ class HistoryForm extends CFormModel
 
 	public function retrieveData($index)
 	{
+        $suffix = Yii::app()->params['envSuffix'];
 	    $type = $this->scenario;
 	    $arr = array("update","change","departure");
         $city = Yii::app()->user->city();
@@ -305,10 +321,10 @@ class HistoryForm extends CFormModel
             if($count>0){
                 return false;
             }
-            $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
+            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
                 ->where("id=:id and city in ($city_allow) and staff_status=0", array(':id'=>$index))->queryAll();
         }else{
-            $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
+            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOYEE',id) as employeedoc")->from("hr_employee_operate")
                 ->where('id=:id', array(':id'=>$index))->queryAll();
         }
 		if (count($rows) > 0)
@@ -317,10 +333,12 @@ class HistoryForm extends CFormModel
 			{
 			    if(!empty($row['employee_id'])){
                     $this->id = $row['id'];
+                    $this->no_of_attm['employee'] = $row['employeedoc'];
 			        $this->employee_id = $row['employee_id'];
                     $this->update_remark = $row['update_remark'];
                     $this->ject_remark = $row['ject_remark'];
                 }else{
+                    $this->no_of_attm['employ'] = $row['employdoc'];
                     $this->employee_id = $row['id'];
                     $this->id = "";
                 }
@@ -436,9 +454,13 @@ class HistoryForm extends CFormModel
             $row['operation'] = "Again Audit";//再次審核
             $id = "";
         }else if (empty($this->id)){
-            Yii::app()->db->createCommand()->insert('hr_employee_operate', $row);
-            $id = Yii::app()->db->getLastInsertID();
+            $connection = Yii::app()->db;
+            $connection->createCommand()->insert('hr_employee_operate', $row);
+            $id = $connection->getLastInsertID();
             $this->id = $id;
+            $this->updateDocman($connection,'EMPLOYEE');
+            //複製員工的附件
+            $this->copyAttachment();
         }else{
             Yii::app()->db->createCommand()->update('hr_employee_operate', $row, 'id=:id', array(':id'=>$this->id));
             $id = $this->id;
@@ -468,6 +490,20 @@ class HistoryForm extends CFormModel
         Yii::app()->db->createCommand()->insert('hr_employee_history',$his_arr);
 	}
 
+
+    protected function updateDocman(&$connection, $doctype) {
+        $docidx = strtolower($doctype);
+        if ($this->docMasterId[$docidx] > 0) {
+            $docman = new DocMan($doctype,$this->id,get_class($this));
+            $docman->masterId = $this->docMasterId[$docidx];
+            $docman->updateDocId($connection, $this->docMasterId[$docidx]);
+        }
+    }
+
+//複製員工的附件
+    public function copyAttachment(){
+        //新增事暫時不處理
+    }
     public function setAttachment(){
         $str = $this->attachment;
         if(empty($str)){

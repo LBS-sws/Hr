@@ -9,6 +9,38 @@
 class DepartureController extends Controller
 {
 
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('index','view','edit','fileDownload'),
+                'expression'=>array('DepartureController','allowReadOnly'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZE02');
+    }
+
     public function actionIndex($pageNum=0){
         $model = new DepartureList;
         if (isset($_POST['DepartureList'])) {
@@ -44,16 +76,21 @@ class DepartureController extends Controller
             $this->render('form',array('model'=>$model,));
         }
     }
-
-
-/*    //刪除員工
-    public function actionDelete(){
-        $model = new DepartureForm('delete');
-        if (isset($_POST['DepartureForm'])) {
-            $model->attributes = $_POST['DepartureForm'];
-            $model->saveData();
-            Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+    //下載附件
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        $sql = "select city from hr_employee where id = $docId";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $citylist = Yii::app()->user->city_allow();
+            if (strpos($citylist, $row['city']) !== false) {
+                $docman = new DocMan($doctype,$docId,'EmployForm');
+                $docman->masterId = $mastId;
+                $docman->fileDownload($fileId);
+            } else {
+                throw new CHttpException(404,'Access right not match.');
+            }
+        } else {
+            throw new CHttpException(404,'Record not found.');
         }
-        $this->redirect(Yii::app()->createUrl('departure/index'));
-    }*/
+    }
 }

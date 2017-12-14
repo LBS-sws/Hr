@@ -68,12 +68,10 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
     <?php endif; ?>
     <?php endif; ?>
     <?php
-        echo $form->hiddenField($model, 'attachment',array("class"=>"changeAttachment"));
-    $counter = $model->setAttachment();
-    $counter = (count($counter) > 0) ? ' <span id="docpayreq" class="label label-info">'.count($counter).'</span>' : ' <span id="docpayreq"></span>';
-    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-            'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadpayreq',)
-    );
+        $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
+        echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+        );
     ?>
 
 	</div>
@@ -148,12 +146,20 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 	</div>
 </section>
 
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'EMPLOY',
+    'header'=>Yii::t('misc','Attachment'),
+    'ronly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),
+));
+?>
 <?php
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
 /*if ($model->scenario!='new')
     $this->renderPartial('//site/flowword',array('model'=>$model));*/
+Script::genFileUpload($model,$form->id,'EMPLOY');
 
 $js = "
 var staffStatus = '".$model->staff_status."';
@@ -222,52 +228,6 @@ $('#EmployForm_test_type').on('change',function(){
         }).trigger('change');
     }
     
-    //附件上傳
-    $('#importUp').on('click',function(){
-        $('#UploadFileForm').ajaxSubmit({
-            'type':'POST',
-            'dataType':'JSON',
-            'success':function(data){
-                if(data.status == 1){
-                    var file = data.data;
-                    var html = '<tr>';
-                    html+='<td>';
-                    html+=file['down_url'];
-                    html+='&nbsp;&nbsp;';
-                    html+=file['delete_url'];
-                    html+='</td>';
-                    html+='<td>'+file['file_name']+'</td>';
-                    html+='<td>'+file['lcd']+'</td>';
-                    html+='</tr>';
-                    $('#attachmentList>tbody').append(html);
-                    $('#file_fasd').val('');
-                    if($('.changeAttachment:first').val() == ''){
-                        $('.changeAttachment:first').val(file['id']);
-                    }else{
-                        var value = $('.changeAttachment:first').val()+','+file['id'];
-                        $('.changeAttachment:first').val(value);
-                    }
-                }else{
-                    location.reload();
-                }
-            },
-        });
-    });
-    //附件刪除
-    $('#attachmentList').delegate('.attachmentDelete','click',function(){
-        var value = $('.changeAttachment:first').val();
-        var deleteId=$(this).data('id');
-        if(value != ''){
-            var list = value.split(',');
-            for(var i= 0;i<list.length;i++){
-                if(list[i] == deleteId){
-                    list.splice(i,1);
-                }
-            }
-            $('.changeAttachment:first').val(list.join(','))
-        }
-        $(this).parents('tr:first').remove();
-    });
     //年齡計算
     $('#EmployForm_birth_time').on('change',function(){
         var birth_time = $(this).val();
@@ -325,13 +285,5 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js
 ?>
 
 <?php $this->endWidget(); ?>
-<?php $this->renderPartial('//site/attachmentload',array('model'=>$model,
-    'form'=>$form,
-    'doctype'=>'PAYREQ',
-    'type'=>1,
-    'header'=>Yii::t('dialog','File Attachment'),
-    'ronly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),
-));
-?>
 </div><!-- form -->
 

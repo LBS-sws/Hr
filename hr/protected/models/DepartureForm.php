@@ -74,6 +74,17 @@ class DepartureForm extends CFormModel
     public $emergency_user;//紧急联络人姓名
     public $emergency_phone;//紧急联络人手机号
     public $code_old;//員工編號（舊）
+    public $no_of_attm = array(
+        'employ'=>0
+    );
+    public $docType = 'EMPLOY';
+    public $docMasterId = array(
+        'employ'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'employ'=>0
+    );
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -239,14 +250,16 @@ class DepartureForm extends CFormModel
 
 	public function retrieveData($index)
 	{
+        $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
+        $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
             ->where("id=:id and city in($city_allow) ", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
+                $this->no_of_attm['employ'] = $row['employdoc'];
                 $this->id = $row['id'];
                 $this->code = $row['code'];
                 $this->name = $row['name'];
