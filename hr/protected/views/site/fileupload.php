@@ -19,7 +19,17 @@
 		</thead>
 		<tbody>
 <?php
-	echo $doc->genTableFileList($ronly);
+if($model->scenario=='new'){
+    if($model->docMasterId[strtolower($doc->docType)]>0){
+        $doc->masterId = $model->docMasterId[strtolower($doc->docType)];
+    }
+}
+if(get_class($model)=="HistoryForm"&&empty($model->id)){
+    if($model->docMasterId[strtolower($doc->docType)]>0){
+        $doc->masterId = $model->docMasterId[strtolower($doc->docType)];
+    }
+}
+echo $doc->genTableFileList($ronly);
 ?>
 		</tbody>
 	</table>

@@ -56,7 +56,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
-                <?php if ($model->no_of_attm['employ'] > 0): ?>
+                <?php if (array_key_exists('employ',$model->no_of_attm)&&$model->no_of_attm['employ'] > 0): ?>
                     <?php
                     $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
                     echo TbHtml::button('<span class="fa  fa-file-text-o"></span> 原'.Yii::t('misc','Attachment').$counter, array(
@@ -208,7 +208,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
 <?php
 $this->renderPartial('//site/historylist',array('model'=>$model));
 ?>
-<?php if ($model->no_of_attm['employ'] > 0): ?>
+<?php if (array_key_exists('employ',$model->no_of_attm)&&$model->no_of_attm['employ'] > 0): ?>
     <?php
     $history_id = $model->id;
     $model->id = $model->employee_id;
