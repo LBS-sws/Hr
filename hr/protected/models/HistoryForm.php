@@ -503,11 +503,10 @@ class HistoryForm extends CFormModel
 
 //複製員工的附件
     public function copyAttachment(){
-        //新增事暫時不處理
         $connection = Yii::app()->db;
         $uid = Yii::app()->user->id;
         $suffix = Yii::app()->params['envSuffix'];
-        $sql="SELECT a.id,b.display_name FROM docman$suffix.dm_master a,docman$suffix.dm_file b WHERE a.id = b.mast_id AND a.doc_type_code='EMPLOY' AND a.doc_id=".$this->employee_id;
+        $sql="SELECT a.id,b.display_name,b.phy_file_name,b.phy_path_name,b.file_type,b.remove,b.archive FROM docman$suffix.dm_master a,docman$suffix.dm_file b WHERE a.id = b.mast_id AND a.doc_type_code='EMPLOY' AND a.doc_id=".$this->employee_id;
         $attachment_old = $connection->createCommand($sql)->queryAll();
         if($attachment_old){//如果有附件
             $connection->createCommand()->insert("docman$suffix.dm_master", array(
