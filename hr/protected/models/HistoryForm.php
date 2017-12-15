@@ -338,9 +338,10 @@ class HistoryForm extends CFormModel
                     $this->update_remark = $row['update_remark'];
                     $this->ject_remark = $row['ject_remark'];
                 }else{
-                    $this->no_of_attm['employ'] = $row['employdoc'];
+                    //$this->no_of_attm['employ'] = $row['employdoc'];
                     $this->employee_id = $row['id'];
                     $this->id = "";
+                    $this->copyAttachment();
                 }
                 $this->historyList = AuditHistoryForm::getStaffHistoryList($this->employee_id);
                 $this->code = $row['code'];
@@ -503,6 +504,27 @@ class HistoryForm extends CFormModel
 //複製員工的附件
     public function copyAttachment(){
         //新增事暫時不處理
+        $connection = Yii::app()->db;
+        $uid = Yii::app()->user->id;
+        $suffix = Yii::app()->params['envSuffix'];
+        $sql="SELECT a.id,b.display_name FROM docman$suffix.dm_master a,docman$suffix.dm_file b WHERE a.id = b.mast_id AND a.doc_type_code='EMPLOY' AND a.doc_id=".$this->employee_id;
+        $attachment_old = $connection->createCommand($sql)->queryAll();
+        if($attachment_old){//如果有附件
+            $connection->createCommand()->insert("docman$suffix.dm_master", array(
+                'doc_type_code'=>'EMPLOYEE',
+                'doc_id'=>0,
+                'lcu'=>$uid,
+            ));
+            $innerId = $connection->getLastInsertID();
+            $this->docMasterId['employee']=$innerId;
+            $this->no_of_attm['employee']=count($attachment_old);
+            foreach ($attachment_old as $attachment){
+                $arr = $attachment;
+                unset($arr["id"]);
+                $arr["mast_id"]=$innerId;
+                $connection->createCommand()->insert("docman$suffix.dm_file", $arr);
+            }
+        }
     }
     public function setAttachment(){
         $str = $this->attachment;
