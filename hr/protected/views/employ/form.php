@@ -173,6 +173,7 @@ $('#EmployForm_test_type').on('change',function(){
     $('.file-update').upload({uploadUrl:'".Yii::app()->createUrl('employ/uploadImg')."'});
     
     $('body').delegate('.fileImgShow a','click',function(){
+        $(this).parents('.form-group:first').find('input').val('');
         $(this).parents('.fileImgShow').parents('.form-group:first').find('input[type=\"file\"]').show();
         $(this).parents('.fileImgShow').remove();
     });
