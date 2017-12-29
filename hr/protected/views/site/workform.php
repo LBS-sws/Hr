@@ -56,26 +56,33 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'log_time',array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-3">
-        <div class="input-group">
-            <?php echo $form->numberField($model, 'log_time',
-                array('disabled'=>($model->getInputBool()),"id"=>"log_time")
-            ); ?>
-            <span class="input-group-addon">天</span>
-        </div>
-    </div>
-</div>
-<div class="form-group">
     <?php echo $form->labelEx($model,'end_time',array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <div class="input-group">
             <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
             </div>
             <?php echo $form->textField($model, 'end_time',
-                array('readonly'=>(true),"id"=>"end_time")
+                array('readonly'=>($model->getInputBool()),"id"=>"end_time")
             ); ?>
+            <?php if (!empty($model->hours)): ?>
+                <div class="input-group-btn" style="width: 100px;">
+                    <?php echo $form->dropDownList($model, 'hours_end',WorkList::getHoursList(),
+                        array('disabled'=>($model->getInputBool()),"id"=>"hours_end","style"=>"border-left:0px;")
+                    ); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'log_time',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <div class="input-group">
+            <?php echo $form->numberField($model, 'log_time',
+                array('readonly'=>(true),"id"=>"log_time")
+            ); ?>
+            <span class="input-group-addon">天</span>
         </div>
     </div>
 </div>
@@ -135,9 +142,11 @@
         $('#work_type').on('change',function(){
             if($(this).val()==2){
                 $('#hours').hide();
+                $('#hours_end').hide();
                 $('#log_time').next('span').text('天');
             }else{
                 $('#hours').show();
+                $('#hours_end').show();
                 $('#log_time').next('span').text('小时');
             }
             $('#start_time').trigger('change');

@@ -9,6 +9,6 @@
     <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['start_time']; ?></td>
     <td><?php echo $this->record['end_time']; ?></td>
-    <td><?php echo $this->record['log_time']; ?></td>
+    <td><?php echo $this->record['only']; ?></td>
     <td><?php echo $this->record['cost_num']; ?></td>
 </tr>

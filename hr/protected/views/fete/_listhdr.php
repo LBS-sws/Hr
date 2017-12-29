@@ -21,7 +21,7 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('log_time').$this->drawOrderArrow('log_time'),'#',$this->createOrderLink('fete-list','log_time'))
+		<?php echo TbHtml::link($this->getLabelName('only').$this->drawOrderArrow('only'),'#',$this->createOrderLink('fete-list','only'))
 			;
 		?>
 	</th>

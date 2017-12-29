@@ -10,6 +10,7 @@ class AuditWorkForm extends CFormModel
     public $work_cost;//加班費用
     public $work_address;
     public $hours="08:00";//開始時間的小時
+    public $hours_end="08:00";//開始時間的小時
     public $start_time;
     public $end_time;
     public $log_time;
@@ -78,7 +79,8 @@ class AuditWorkForm extends CFormModel
                 }else{
                     $this->start_time = date("Y/m/d",strtotime($row['start_time']));
                     $this->hours = date("H:i",strtotime($row['start_time']));
-                    $this->end_time = date("Y/m/d H:i",strtotime($row['end_time']));
+                    $this->end_time = date("Y/m/d",strtotime($row['end_time']));
+                    $this->hours_end = date("H:i",strtotime($row['end_time']));
                 }
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];

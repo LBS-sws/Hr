@@ -82,17 +82,6 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'log_time',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
-                    <div class="input-group">
-                        <?php echo $form->numberField($model, 'log_time',
-                            array('disabled'=>($model->scenario=='view'),"id"=>"log_time")
-                        ); ?>
-                        <span class="input-group-addon">天</span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
                 <?php echo $form->labelEx($model,'end_time',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <div class="input-group">
@@ -100,7 +89,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'end_time',
-                            array('readonly'=>(true),"id"=>"end_time")
+                            array('readonly'=>($model->scenario=='view'),"id"=>"end_time")
                         ); ?>
                     </div>
                 </div>
@@ -110,6 +99,14 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <div class="col-sm-2">
                     <?php echo $form->dropDownList($model, 'cost_num',FeteList::getCostNumList(),
                         array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'only',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->inlineRadioButtonList($model, 'only',array("local"=>Yii::t("fete","local"),"default"=>Yii::t("fete","default")),
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
@@ -141,35 +138,7 @@ $this->renderPartial('//site/removedialog');
 
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
-
-$('#start_time,#log_time').on('change',changeTime);
-$('#log_time').on('keyup',changeTime);
-function changeTime(){
-    var startTime = $('#start_time').val();
-    var logDay = $('#log_time').val();
-    if(startTime == ''||logDay == ''){
-        $('#end_time').val('');
-        return false;
-    }
-    if(logDay == 1){
-        $('#end_time').val(startTime);
-        return false;
-    }
-    $.ajax({
-        type: 'post',
-        url: '".Yii::app()->createUrl('fete/addDate')."',
-        data: {startDate:startTime,day:logDay},
-        dataType: 'json',
-        success: function(data){
-            if(data.status == 1){
-                $('#end_time').val(data.lastDate);
-            }else{
-                $('#fete_error .errorSummary>ul').html('<li>'+data.message+'</li>');
-                $('#fete_error').modal('show');
-            }
-        }
-    });
-}
+$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('fete/delete'));

@@ -16,6 +16,7 @@ class FeteList extends CListPageModel
 			'end_time'=>Yii::t('contract','End Time'),
 			'log_time'=>Yii::t('fete','Log Time'),
 			'cost_num'=>Yii::t('fete','Cost Num'),
+			'only'=>Yii::t('fete','Scope of application'),
 		);
 	}
 
@@ -23,11 +24,11 @@ class FeteList extends CListPageModel
 	{
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_fete 
-                where city in ($city_allow) 
+                where (city in ($city_allow) OR only='default')
 			";
 		$sql2 = "select count(id)
 				from hr_fete 
-				where city in ($city_allow) 
+                where (city in ($city_allow) OR only='default')
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -77,6 +78,7 @@ class FeteList extends CListPageModel
 					'start_time'=>$record['start_time'],
 					'end_time'=>$record['end_time'],
 					'log_time'=>$record['log_time'],
+					'only'=>Yii::t("fete",$record['only']),
 					'cost_num'=>$costNumList[$record['cost_num']],
                     'city'=>CGeneral::getCityName($record["city"]),
 				);

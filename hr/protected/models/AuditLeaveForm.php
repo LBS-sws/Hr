@@ -10,6 +10,8 @@ class AuditLeaveForm extends CFormModel
     public $leave_cost;//請假費用
     public $start_time;
     public $end_time;
+    public $start_time_lg;
+    public $end_time_lg;
     public $log_time;
     public $z_index;
     public $status;
@@ -86,6 +88,8 @@ class AuditLeaveForm extends CFormModel
                 $this->end_time = date("Y/m/d",strtotime($row['end_time']));
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
+                $this->start_time_lg = $row['start_time_lg'];
+                $this->end_time_lg = $row['end_time_lg'];
                 $this->status = $row['status'];
                 $this->city = $row['city'];
                 $this->area_lcu = $row['area_lcu'];

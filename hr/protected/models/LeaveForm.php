@@ -9,7 +9,9 @@ class LeaveForm extends CFormModel
 	public $leave_cause;//加班原因
     public $leave_cost;//加班費用
 	public $start_time;
+	public $start_time_lg;
 	public $end_time;
+	public $end_time_lg;
 	public $log_time;
 	public $z_index;
 	public $status;
@@ -61,11 +63,12 @@ class LeaveForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,log_time','safe'),
+			array('id,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time','safe'),
             array('vacation_id','required'),
             array('leave_cause','required'),
             array('log_time','required'),
             array('start_time','required'),
+            array('end_time','required'),
             array('vacation_id','validateLeaveType'),
             array('log_time','validateLogTime'),
             array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>false),
@@ -126,6 +129,8 @@ class LeaveForm extends CFormModel
                 $this->end_time = date("Y/m/d",strtotime($row['end_time']));
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
+                $this->start_time_lg = $row['start_time_lg'];
+                $this->end_time_lg = $row['end_time_lg'];
                 $this->status = $row['status'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
@@ -152,7 +157,7 @@ class LeaveForm extends CFormModel
         }
         $arr = array();
         $rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_vacation")->where("city='$city'")->queryAll();
+            ->from("hr_vacation")->where("city='$city' OR only='default'")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -196,9 +201,9 @@ class LeaveForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_employee_leave(
-							employee_id,vacation_id,leave_cause, start_time, end_time, log_time, leave_cost, city, status, lcu
+							employee_id,vacation_id,leave_cause, start_time_lg, end_time_lg, start_time, end_time, log_time, leave_cost, city, status, lcu
 						) values (
-							:employee_id,:vacation_id,:leave_cause, :start_time, :end_time, :log_time, :leave_cost, :city, :status, :lcu
+							:employee_id,:vacation_id,:leave_cause, :start_time_lg, :end_time_lg, :start_time, :end_time, :log_time, :leave_cost, :city, :status, :lcu
 						)";
                 break;
             case 'edit':
@@ -206,6 +211,8 @@ class LeaveForm extends CFormModel
 							vacation_id = :vacation_id, 
 							leave_cause = :leave_cause, 
 							leave_cost = :leave_cost, 
+							start_time_lg = :start_time_lg, 
+							end_time_lg = :end_time_lg, 
 							start_time = :start_time, 
 							end_time = :end_time, 
 							log_time = :log_time, 
@@ -235,6 +242,10 @@ class LeaveForm extends CFormModel
             $command->bindParam(':leave_cause',$this->leave_cause,PDO::PARAM_STR);
         if (strpos($sql,':leave_cost')!==false)
             $command->bindParam(':leave_cost',$this->leave_cost,PDO::PARAM_STR);
+        if (strpos($sql,':start_time_lg')!==false)
+            $command->bindParam(':start_time_lg',$this->start_time_lg,PDO::PARAM_STR);
+        if (strpos($sql,':end_time_lg')!==false)
+            $command->bindParam(':end_time_lg',$this->end_time_lg,PDO::PARAM_STR);
         if (strpos($sql,':start_time')!==false)
             $command->bindParam(':start_time',$this->start_time,PDO::PARAM_STR);
         if (strpos($sql,':end_time')!==false)
@@ -260,6 +271,14 @@ class LeaveForm extends CFormModel
         }
 		return true;
 	}
+
+    //獲取上午下午列表
+    public function getAMPMList(){
+        return array(
+            "AM"=>Yii::t("fete","AM"),
+            "PM"=>Yii::t("fete","PM")
+        );
+    }
 
 	//計算員工的請假費用
     public function resetLeaveCost(){

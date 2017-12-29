@@ -91,40 +91,40 @@ $this->renderPartial('//site/removedialog');
 
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
-
-$('#start_time,#log_time').on('change',changeTime);
-$('#log_time').on('keyup',changeTime);
-function changeTime(){
-    var startTime = $('#start_time').val();
-    var logDay = $('#log_time').val();
-    var thisType = $('#work_type').val();
-    var hours = $('#hours').val();
-    if(startTime == ''||logDay == ''){
-        $('#end_time').val('');
-        return false;
-    }
-    if(logDay == 1){
-        $('#end_time').val(startTime);
-        return false;
-    }
-    if(thisType != 2){
-        startTime+=' '+hours;
-    }
-    $.ajax({
-        type: 'post',
-        url: '".Yii::app()->createUrl('work/addDate')."',
-        data: {startDate:startTime,day:logDay,type:thisType},
-        dataType: 'json',
-        success: function(data){
-            if(data.status == 1){
-                $('#end_time').val(data.lastDate);
+$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('#start_time,#end_time,#hours,#hours_end').on('change',function(){
+    var start_day = $('#start_time').val();
+    var end_day = $('#end_time').val();
+    var start_hour = $('#hours').val();
+    var end_hour = $('#hours_end').val();
+    if(start_day!=''&&end_day!=''){
+        var d1 = new Date(start_day);
+        var d2 = new Date(end_day);
+        d1 = d1.getTime();
+        d2 = d2.getTime();
+        if(d1<=d2){
+            var time = d2-d1;
+            if($('#work_type').val()==2){
+                var hours=time/(24*3600*1000); 
+                hours++;
             }else{
-                $('#fete_error .errorSummary>ul').html('<li>'+data.message+'</li>');
-                $('#fete_error').modal('show');
+                var hours=time/(3600*1000); 
+                end_hour = end_hour=='00:00'?'24:00':end_hour;
+                var num = parseInt(end_hour,10)-parseInt(start_hour,10);
+                hours+=num;
             }
+            if(hours>0){
+                $('#log_time').val(hours);
+            }else{
+                $('#log_time').val('');
+            }
+        }else{
+            $('#log_time').val('');
         }
-    });
-}
+    }else{
+        $('#log_time').val('');
+    }
+});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('work/delete'));

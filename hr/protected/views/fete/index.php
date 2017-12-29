@@ -37,7 +37,6 @@ $this->pageTitle=Yii::app()->name . ' - Fete';
     <?php
     $search = array(
         'name',
-        'log_time',
     );
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('fete','Fete List'),

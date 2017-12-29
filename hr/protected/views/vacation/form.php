@@ -112,6 +112,14 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 </div>
             </div>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'only',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->inlineRadioButtonList($model, 'only',array("local"=>Yii::t("fete","local"),"default"=>Yii::t("fete","default")),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>

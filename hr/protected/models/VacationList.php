@@ -12,6 +12,7 @@ class VacationList extends CListPageModel
 		return array(	
 			'name'=>Yii::t('fete','Vacation Name'),
 			'city'=>Yii::t('contract','City'),
+            'only'=>Yii::t('fete','Scope of application'),
 		);
 	}
 
@@ -19,11 +20,11 @@ class VacationList extends CListPageModel
 	{
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select * from hr_vacation 
-                where city in ($city_allow) 
+                where (city in ($city_allow) OR only='default')
 			";
 		$sql2 = "select count(id)
 				from hr_vacation 
-				where city in ($city_allow) 
+                where (city in ($city_allow) OR only='default')
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -57,6 +58,7 @@ class VacationList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+					'only'=>Yii::t("fete",$record['only']),
                     'city'=>CGeneral::getCityName($record["city"]),
 				);
 			}

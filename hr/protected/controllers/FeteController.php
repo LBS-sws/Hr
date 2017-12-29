@@ -8,6 +8,44 @@
  */
 class FeteController extends Controller
 {
+    public function filters()
+    {
+        return array(
+            'enforceSessionExpiration',
+            'enforceNoConcurrentLogin',
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    /**
+     * Specifies the access control rules.
+     * This method is used by the 'accessControl' filter.
+     * @return array access control rules
+     */
+    public function accessRules()
+    {
+        return array(
+            array('allow',
+                'actions'=>array('new','edit','delete','save'),
+                'expression'=>array('FeteController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('index','view'),
+                'expression'=>array('FeteController','allowReadOnly'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }
+    public static function allowReadWrite() {
+        return Yii::app()->user->validRWFunction('ZC03');
+    }
+
+    public static function allowReadOnly() {
+        return Yii::app()->user->validFunction('ZC03');
+    }
 
     public function actionIndex($pageNum=0){
         $model = new FeteList;
@@ -86,32 +124,4 @@ class FeteController extends Controller
         }
     }
 
-    //時間運算
-    public function actionAddDate(){
-        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
-            $startDate = $_POST['startDate'];
-            $day = $_POST['day'];
-            if(empty($startDate)||empty($day)){
-                echo CJSON::encode(array("status"=>0,"message"=>"時間不能為空"));
-                return true;
-            }
-            if(!is_numeric($day)){
-                echo CJSON::encode(array("status"=>0,"message"=>"天數只能為數字"));
-                return true;
-            }
-            if(intval($day) != $day){
-                echo CJSON::encode(array("status"=>0,"message"=>"天數只能為正整數"));
-                return true;
-            }
-            if($day < 2){
-                echo CJSON::encode(array("status"=>0,"message"=>"天數必須大於1天"));
-                return true;
-            }
-            $day--;
-            $lastDate = date('Y/m/d', strtotime("$startDate +$day day"));
-            echo CJSON::encode(array("status"=>1,"lastDate"=>$lastDate));
-        }else{
-            $this->redirect(Yii::app()->createUrl(''));
-        }
-    }
 }

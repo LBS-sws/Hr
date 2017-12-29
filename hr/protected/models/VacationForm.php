@@ -9,6 +9,7 @@ class VacationForm extends CFormModel
 	public $sub_bool;
 	public $sub_multiple;
 	public $city;
+    public $only;
 
 	public function attributeLabels()
 	{
@@ -19,6 +20,7 @@ class VacationForm extends CFormModel
             'max_log'=>Yii::t('fete','most number of days'),
             'sub_bool'=>Yii::t('fete','Whether to deduct salary'),
             'sub_multiple'=>Yii::t('fete','deduct multiple'),
+            'only'=>Yii::t('fete','Scope of application'),
 		);
 	}
 
@@ -28,9 +30,10 @@ class VacationForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, name,log_bool,max_log,sub_bool,city,sub_multiple','safe'),
+			array('id, name,log_bool,max_log,sub_bool,city,sub_multiple,only','safe'),
             array('name','required'),
             array('city','required'),
+            array('only','required'),
 			array('name','validateName'),
 			array('name','validateLog'),
 			array('name','validateSub'),
@@ -78,6 +81,7 @@ class VacationForm extends CFormModel
                 $this->sub_bool = $row['sub_bool'];
                 $this->sub_multiple = $row['sub_multiple'];
                 $this->city = $row['city'];
+                $this->only = $row['only'];
                 break;
 			}
 		}
@@ -121,9 +125,9 @@ class VacationForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_vacation(
-							name,log_bool,max_log, sub_bool, sub_multiple, city, lcu
+							name,log_bool,max_log, sub_bool, sub_multiple, city, only, lcu
 						) values (
-							:name,:log_bool,:max_log, :sub_bool, :sub_multiple, :city, :lcu
+							:name,:log_bool,:max_log, :sub_bool, :sub_multiple, :city, :only, :lcu
 						)";
                 break;
             case 'edit':
@@ -133,6 +137,7 @@ class VacationForm extends CFormModel
 							max_log = :max_log, 
 							sub_bool = :sub_bool, 
 							city = :city, 
+							only = :only, 
 							sub_multiple = :sub_multiple, 
 							luu = :luu
 						where id = :id
@@ -159,6 +164,8 @@ class VacationForm extends CFormModel
         if (strpos($sql,':sub_multiple')!==false)
             $command->bindParam(':sub_multiple',$this->sub_multiple,PDO::PARAM_STR);
 
+        if (strpos($sql,':only')!==false)
+            $command->bindParam(':only',$this->only,PDO::PARAM_STR);
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)

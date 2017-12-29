@@ -113,36 +113,38 @@ Script::genFileUpload($model,$form->id,'LEAVE');
 
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 
-$('#start_time,#log_time').on('change',changeTime);
-$('#log_time').on('keyup',changeTime);
-function changeTime(){
-    var startTime = $('#start_time').val();
-    var logDay = $('#log_time').val();
-    var thisType = $('#leave_type').val();
-    if(startTime == ''||logDay == ''){
-        $('#end_time').val('');
-        return false;
-    }
-    if(logDay < 2){
-        $('#end_time').val(startTime);
-        return false;
-    }
-    $.ajax({
-        type: 'post',
-        url: '".Yii::app()->createUrl('leave/addDate')."',
-        data: {startDate:startTime,day:logDay},
-        dataType: 'json',
-        success: function(data){
-            if(data.status == 1){
-                $('#end_time').val(data.lastDate);
+$('#start_time,#end_time,#start_time_lg,#end_time_lg').on('change',function(){
+    var start_day = $('#start_time').val();
+    var end_day = $('#end_time').val();
+    var start_hour = $('#start_time_lg').val();
+    var end_hour = $('#end_time_lg').val();
+    if(start_day!=''&&end_day!=''){
+        var d1 = new Date(start_day);
+        var d2 = new Date(end_day);
+        d1 = d1.getTime();
+        d2 = d2.getTime();
+        if(d1<=d2){
+            var time = d2-d1;
+            var hours=time/(24*3600*1000); 
+            if(start_hour==end_hour){
+                hours+=0.5;
             }else{
-                $('#fete_error .errorSummary>ul').html('<li>'+data.message+'</li>');
-                $('#fete_error').modal('show');
+                hours++;
             }
+            if(hours>0){
+                $('#log_time').val(hours);
+            }else{
+                $('#log_time').val('');
+            }
+        }else{
+            $('#log_time').val('');
         }
-    });
-}
+    }else{
+        $('#log_time').val('');
+    }
+});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('leave/delete'));

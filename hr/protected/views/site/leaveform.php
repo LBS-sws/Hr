@@ -37,7 +37,7 @@
 </div>
 <div class="form-group">
     <?php echo $form->labelEx($model,'start_time',array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-3">
+    <div class="col-sm-4">
         <div class="input-group">
             <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
@@ -45,6 +45,29 @@
             <?php echo $form->textField($model, 'start_time',
                 array('readonly'=>($model->getInputBool()),"id"=>"start_time")
             ); ?>
+            <div class="input-group-btn" style="width: 80px;">
+                <?php echo $form->dropDownList($model, 'start_time_lg',LeaveForm::getAMPMList(),
+                    array('disabled'=>($model->getInputBool()),"id"=>"start_time_lg","style"=>"border-left:0px;")
+                ); ?>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'end_time',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-4">
+        <div class="input-group">
+            <div class="input-group-addon">
+                <i class="fa fa-calendar"></i>
+            </div>
+            <?php echo $form->textField($model, 'end_time',
+                array('readonly'=>($model->getInputBool()),"id"=>"end_time")
+            ); ?>
+            <div class="input-group-btn" style="width: 80px;">
+                <?php echo $form->dropDownList($model, 'end_time_lg',LeaveForm::getAMPMList(),
+                    array('disabled'=>($model->getInputBool()),"id"=>"end_time_lg","style"=>"border-left:0px;")
+                ); ?>
+            </div>
         </div>
     </div>
 </div>
@@ -53,22 +76,9 @@
     <div class="col-sm-3">
         <div class="input-group">
             <?php echo $form->numberField($model, 'log_time',
-                array('disabled'=>($model->getInputBool()),"id"=>"log_time")
+                array('readonly'=>(true),"id"=>"log_time")
             ); ?>
             <span class="input-group-addon">天</span>
-        </div>
-    </div>
-</div>
-<div class="form-group">
-    <?php echo $form->labelEx($model,'end_time',array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-3">
-        <div class="input-group">
-            <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-            </div>
-            <?php echo $form->textField($model, 'end_time',
-                array('readonly'=>(true),"id"=>"end_time")
-            ); ?>
         </div>
     </div>
 </div>

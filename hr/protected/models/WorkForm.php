@@ -10,6 +10,7 @@ class WorkForm extends CFormModel
     public $work_cost;//加班費用
 	public $work_address;
 	public $hours="08:00";//開始時間的小時
+	public $hours_end="08:00";//開始時間的小時
 	public $start_time;
 	public $end_time;
 	public $log_time;
@@ -50,22 +51,40 @@ class WorkForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time','safe'),
+			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,hours,hours_end','safe'),
             array('work_type','required'),
             array('work_type','validateWorkType'),
             array('work_cause','required'),
             array('work_address','required'),
+            array('start_time','required'),
+            array('end_time','required'),
             array('log_time','required'),
+            array('end_time','validateTime'),
             array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true),
 		);
 	}
+    public function validateTime($attribute, $params){
+        if(!empty($this->end_time)&&!empty($this->start_time)){
+            $date2 = strtotime($this->start_time);
+            $date1 = strtotime($this->end_time);
+            if($date2>$date1){
+                $message = Yii::t('fete','Start time cannot be greater than end time');
+                $this->addError($attribute,$message);
+            }else{
+                if($this->log_time <= 0){
+                    $message = Yii::t('fete','Start time cannot be greater than end time');
+                    $this->addError($attribute,$message);
+                }
+            }
+        }
+    }
 
 
     public function validateWorkType($attribute, $params){
         $city = Yii::app()->user->city();
 	    if($this->work_type == 2){
             $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
-                ->where("start_time<=:start_time and end_time >=:end_time and city='$city'", array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
+                ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')", array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
             if($rows){
                 $this->cost_num = $rows["cost_num"];
             }else{
@@ -102,7 +121,8 @@ class WorkForm extends CFormModel
                 }else{
                     $this->start_time = date("Y/m/d",strtotime($row['start_time']));
                     $this->hours = date("H:i",strtotime($row['start_time']));
-                    $this->end_time = date("Y/m/d H:i",strtotime($row['end_time']));
+                    $this->end_time = date("Y/m/d",strtotime($row['end_time']));
+                    $this->hours_end = date("H:i",strtotime($row['end_time']));
                 }
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
@@ -234,6 +254,7 @@ class WorkForm extends CFormModel
         }else{
             $this->work_cost = ($wage/(21.76*8))*intval($this->log_time)*1.5;
             $this->start_time .=" ".$this->hours;
+            $this->end_time .=" ".$this->hours_end;
         }
     }
 

@@ -47,5 +47,12 @@ return array(
     'most number of days'=>'最多天数',
     'or max number of days'=>'是否有最大天数',
     'Whether to deduct salary'=>'是否扣减工资',
+    'Start time cannot be greater than end time'=>'开始时间不能大于结束时间',
+
+    'Scope of application'=>'适用范围',
+    'local'=>'本地适用',
+    'default'=>'各地通用',
+    'AM'=>'上午',
+    'PM'=>'下午',
 );
 ?>

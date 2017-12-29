@@ -10,4 +10,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('only').$this->drawOrderArrow('only'),'#',$this->createOrderLink('vacation-list','only'))
+			;
+		?>
+	</th>
 </tr>

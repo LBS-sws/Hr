@@ -8,6 +8,7 @@ class FeteForm extends CFormModel
 	public $end_time;
 	public $log_time;
 	public $cost_num;
+	public $only;
 	public $city;
 
 	public function attributeLabels()
@@ -19,6 +20,7 @@ class FeteForm extends CFormModel
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Time'),
             'cost_num'=>Yii::t('fete','Cost Num'),
+            'only'=>Yii::t('fete','Scope of application'),
 		);
 	}
 
@@ -28,14 +30,15 @@ class FeteForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, name,start_time,end_time,log_time,city,cost_num','safe'),
+			array('id, name,start_time,end_time,log_time,city,cost_num,only','safe'),
             array('name','required'),
+            array('name','validateName'),
             array('start_time','required'),
             array('end_time','required'),
-            array('log_time','required'),
             array('city','required'),
             array('cost_num','required'),
-			array('name','validateName'),
+            array('only','required'),
+            array('end_time','validateTime'),
             array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true),
             array('end_time, start_time','date','allowEmpty'=>true,
                 'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d'),
@@ -57,6 +60,21 @@ class FeteForm extends CFormModel
             $this->addError($attribute,$message);
         }
 	}
+	public function validateTime($attribute, $params){
+	    if(!empty($this->end_time)&&!empty($this->start_time)){
+            $date2 = strtotime($this->start_time);
+            $date1 = strtotime($this->end_time);
+            if($date2>$date1){
+                $message = Yii::t('fete','Start time cannot be greater than end time');
+                $this->addError($attribute,$message);
+            }else{
+                $time_difference = $date1 - $date2;
+                $seconds_per_year = 60*60*24;
+                $yrs = round($time_difference / $seconds_per_year);
+                $this->log_time = strval($yrs);
+            }
+        }
+	}
 
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
@@ -71,6 +89,7 @@ class FeteForm extends CFormModel
                 $this->log_time = $row['log_time'];
                 $this->city = $row['city'];
                 $this->cost_num = $row['cost_num'];
+                $this->only = $row['only'];
                 break;
 			}
 		}
@@ -104,9 +123,9 @@ class FeteForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_fete(
-							name,start_time,end_time, log_time, cost_num, city, lcu
+							name,start_time,end_time, log_time, cost_num, only, city, lcu
 						) values (
-							:name,:start_time,:end_time, :log_time, :cost_num, :city, :lcu
+							:name,:start_time,:end_time, :log_time, :cost_num, :only, :city, :lcu
 						)";
                 break;
             case 'edit':
@@ -117,6 +136,7 @@ class FeteForm extends CFormModel
 							log_time = :log_time, 
 							city = :city, 
 							cost_num = :cost_num, 
+							only = :only, 
 							luu = :luu
 						where id = :id
 						";
@@ -141,6 +161,8 @@ class FeteForm extends CFormModel
             $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
         if (strpos($sql,':cost_num')!==false)
             $command->bindParam(':cost_num',$this->cost_num,PDO::PARAM_STR);
+        if (strpos($sql,':only')!==false)
+            $command->bindParam(':only',$this->only,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);
