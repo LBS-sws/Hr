@@ -441,7 +441,7 @@ if (!empty($contractNum)){
             if(empty($model->image_user)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' src='".$model->image_user."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->image_user."'></div>";
             }
         }else{
             if(!empty($model->image_user)){
@@ -467,7 +467,7 @@ if (!empty($contractNum)){
             if(empty($model->image_code)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' src='".$model->image_code."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->image_code."'></div>";
             }
         }else{
             if(!empty($model->image_code)){
@@ -493,7 +493,7 @@ if (!empty($contractNum)){
             if(empty($model->image_work)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' src='".$model->image_work."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->image_work."'></div>";
             }
         }else{
             if(!empty($model->image_work)){
@@ -519,7 +519,7 @@ if (!empty($contractNum)){
             if(empty($model->image_other)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' src='".$model->image_other."'></div>";
+                echo "<div class='form-control-static'><img height='80px' class='openBigImg' src='".$model->image_other."'></div>";
             }
         }else{
             if(!empty($model->image_other)){
@@ -537,3 +537,28 @@ if (!empty($contractNum)){
         ?>
     </div>
 </div>
+
+<script>
+    $(function ($) {
+        $("body").append('<div class="modal fade text-center" style="padding-top: 30px;" id="bigImgDiv"></div>');
+        $("body").delegate(".openBigImg,.fileImgShow img","click",function () {
+            var imgSrc = $(this).attr("src");
+            var width = $(this).width();
+            var height = $(this).height();
+            var max_width= $(window).width()-100;
+            var max_height= $(window).height()-100;
+            var new_width = width/height*max_height;
+            var new_height = height/width*new_width;
+            if(new_width>max_width){
+                new_width = max_width;
+                new_height = height/width*new_width;
+            }
+            if(new_height>max_height){
+                new_height = max_height;
+                new_width = width/height*new_height;
+            }
+            $('#bigImgDiv').html("<img src='"+imgSrc+"' height='"+new_height+"px' width='"+new_width+"px'>");
+            $('#bigImgDiv').modal('show');
+        });
+    })
+</script>
