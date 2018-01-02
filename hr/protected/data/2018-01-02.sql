@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50620
 File Encoding         : 65001
 
-Date: 2018-01-02 14:15:31
+Date: 2018-01-02 14:23:29
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -29,7 +29,7 @@ CREATE TABLE `hr_employee_leave` (
   `start_time_lg` varchar(10) DEFAULT 'AM',
   `end_time` datetime DEFAULT NULL COMMENT '請假結束時間',
   `end_time_lg` varchar(10) DEFAULT 'PM',
-  `log_time` float(5,2) DEFAULT NULL COMMENT '請假總時長',
+  `log_time` float(5,1) DEFAULT NULL COMMENT '請假總時長',
   `leave_cost` float(10,2) DEFAULT NULL COMMENT '請假費用',
   `z_index` int(10) DEFAULT '0' COMMENT '審核層級（0:地區審核、1：總部審核、2：完成審核）',
   `status` int(10) DEFAULT '0' COMMENT '審核的狀態(0:草稿、1：審核、2：審核通過、3：拒絕、4：完成）',
