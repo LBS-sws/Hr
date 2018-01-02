@@ -6,8 +6,8 @@ class FeteForm extends CFormModel
 	public $name;
 	public $start_time;
 	public $end_time;
-	public $log_time;
-	public $cost_num;
+	public $log_time=0;
+	public $cost_num=0;
 	public $only;
 	public $city;
 

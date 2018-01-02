@@ -5,9 +5,9 @@ class VacationForm extends CFormModel
 	public $id;
 	public $name;
 	public $log_bool;
-	public $max_log;
+	public $max_log=0;
 	public $sub_bool;
-	public $sub_multiple;
+	public $sub_multiple=0;
 	public $city;
     public $only;
 
