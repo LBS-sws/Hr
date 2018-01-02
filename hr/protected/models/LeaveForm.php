@@ -293,7 +293,7 @@ class LeaveForm extends CFormModel
         if($vacationList["sub_bool"] == 1){ //
             $dayNum = $employeeList["staff_type"] == "Office"?22:26;
             $sub_multiple = floatval($vacationList["sub_multiple"])/100;
-            $this->leave_cost = ($wage/$dayNum)*intval($this->log_time)*$sub_multiple;
+            $this->leave_cost = ($wage/$dayNum)*floatval($this->log_time)*$sub_multiple;
         }else{
             $this->leave_cost = 0;
         }
