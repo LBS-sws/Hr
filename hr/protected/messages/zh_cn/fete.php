@@ -19,6 +19,7 @@ return array(
     'Work Cost'=>'加班工资',
     'Work Address'=>'加班地点',
 
+    'Audit Info'=>'审核信息',
     'Ask leave List'=>'请假列表',
     'Ask leave Form'=>'请假表单',
     'Leave Code'=>'请假编号',

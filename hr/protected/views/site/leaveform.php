@@ -92,7 +92,7 @@
 </div>
 
 <?php if (!empty($model->area_lcu)): ?>
-    <legend>&nbsp;</legend>
+    <legend><?php echo Yii::t("fete","Audit Info")?></legend>
     <div class="form-group">
         <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-sm-2 control-label")); ?>
         <div class="col-sm-3">
