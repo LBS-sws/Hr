@@ -114,7 +114,7 @@ class WordForm extends CFormModel
             array_push($arr,"'".$row["code"]."'");
         }
         if(empty($arr)){
-            return "()";
+            return "('')";
         }else{
             $arr = implode(",",$arr);
             return "($arr)";

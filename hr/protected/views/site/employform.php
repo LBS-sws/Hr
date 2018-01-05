@@ -308,12 +308,16 @@ if (!empty($contractNum)){
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-3">
-        <?php echo $form->numberField($model, 'wage',
-            array('min'=>0,'readonly'=>($readonly))
-        ); ?>
-    </div>
+    <?php if (EmployForm::validateWageInput()): ?>
+        <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->numberField($model, 'wage',
+                array('min'=>0,'readonly'=>($readonly))
+            ); ?>
+        </div>
+    <?php else: ?>
+        <?php echo $form->hiddenField($model, 'wage'); ?>
+    <?php endif; ?>
     <!--分割-->
     <?php echo $form->labelEx($model,'year_day',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">

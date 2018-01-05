@@ -20,6 +20,7 @@ class DepartureList extends CListPageModel
 			'leave_time'=>Yii::t('contract','Leave Time'),
 			'status'=>Yii::t('contract','Status'),
 			'city'=>Yii::t('contract','City'),
+			'city_name'=>Yii::t('contract','City'),
             'entry_time'=>Yii::t('contract','Entry Time'),
 		);
 	}
@@ -49,15 +50,12 @@ class DepartureList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('phone',$svalue);
 					break;
-				case 'position':
-					$clause .= General::getSqlConditionClause('position',$svalue);
-					break;
-				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
-					break;
-				case 'company_id':
-					//$clause .= General::getSqlConditionClause('company_id',$svalue);
-					break;
+                case 'position':
+                    $clause .= ' and position in '.DeptForm::getDeptSqlLikeName($svalue);
+                    break;
+                case 'city_name':
+                    $clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
 			}
 		}
 		

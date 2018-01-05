@@ -178,7 +178,7 @@ class EmployForm extends CFormModel
 			array('user_card','required'),
 			array('department','required'),
 			array('position','required'),
-			array('wage','required'),
+			array('wage','validateWage','on'=>"audit"),//由於工資有些用戶沒有權限
 			array('time','required'),
             array('fix_time','required'),
 			array('start_time','required'),
@@ -193,6 +193,18 @@ class EmployForm extends CFormModel
 	    if($this->fix_time == "fixation"){
 	        if(empty($this->end_time)){
                 $message = Yii::t('contract','Contract End Time'). Yii::t('contract',' can not be empty');
+                $this->addError($attribute,$message);
+            }
+        }
+    }
+
+	public function validateWage($attribute, $params){
+        if(empty($this->wage)){
+            if(Yii::app()->user->validFunction('ZR02')){
+                $message = Yii::t('contract','Contract Pay'). Yii::t('contract',' can not be empty');
+                $this->addError($attribute,$message);
+            }else{
+                $message = Yii::t('contract','You do not have salary change authority, please save the contact leader');
                 $this->addError($attribute,$message);
             }
         }
@@ -659,5 +671,14 @@ class EmployForm extends CFormModel
         }
         $this->attachment = $arr;
         return $arr;
+    }
+
+    //工資權限
+    public function validateWageInput(){
+	    if(Yii::app()->user->validFunction('ZR02')||Yii::app()->user->validRWFunction('ZG01')||Yii::app()->user->validRWFunction('ZG02')){
+	        return true;
+        }else{
+	        return false;
+        }
     }
 }

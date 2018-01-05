@@ -108,6 +108,22 @@ class DeptForm extends CFormModel
             }
         }
     }
+    public function getDeptSqlLikeName($dept_name){
+        $sql = "select id from hr_dept
+                where type=1 AND name LIKE '%$dept_name%'
+			";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        $arr = array();
+        foreach ($rows as $row){
+            array_push($arr,"'".$row["id"]."'");
+        }
+        if(empty($arr)){
+            return "('')";
+        }else{
+            $arr = implode(",",$arr);
+            return "($arr)";
+        }
+    }
     //獲取職位列表
 	public function getDeptAllListNoCity($type=0){
         $city = Yii::app()->user->city();

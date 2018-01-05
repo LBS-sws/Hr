@@ -40,7 +40,7 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
                         'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
                 );
                 ?>
-                <?php if ($model->scenario!='new'){
+                <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')){
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));

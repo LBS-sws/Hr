@@ -20,6 +20,7 @@ class AuditList extends CListPageModel
 			'staff_status'=>Yii::t('contract','Status'),
             'entry_time'=>Yii::t('contract','Entry Time'),
             'city'=>Yii::t('contract','City'),
+            'city_name'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -50,12 +51,12 @@ class AuditList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('phone',$svalue);
 					break;
-				case 'position':
-					$clause .= General::getSqlConditionClause('phone',$svalue);
-					break;
-				case 'company_id':
-					//$clause .= General::getSqlConditionClause('company_id',$svalue);
-					break;
+                case 'position':
+                    $clause .= ' and position in '.DeptForm::getDeptSqlLikeName($svalue);
+                    break;
+                case 'city_name':
+                    $clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
 			}
 		}
 		

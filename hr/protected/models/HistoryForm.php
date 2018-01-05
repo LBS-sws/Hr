@@ -418,6 +418,21 @@ class HistoryForm extends CFormModel
 		}
 		return true;
 	}
+	//刪除驗證
+    public function validateDelete(){
+        $rows = Yii::app()->db->createCommand()->select("id")->from("hr_employee_operate")
+            ->where('id=:id and staff_status in (1,3)', array(':id'=>$this->id))->queryRow();
+        if($rows){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+	//刪除草稿
+    public function deleteHistory(){
+        Yii::app()->db->createCommand()->delete('hr_employee_operate', 'id=:id', array(':id'=>$this->id));
+    }
 	
 	public function saveData()
 	{

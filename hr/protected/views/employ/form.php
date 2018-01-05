@@ -59,7 +59,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 	</div>
 
 	<div class="btn-group pull-right" role="group">
-        <?php if ($model->scenario!='new'): ?>
+        <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')): ?>
     <?php if ($model->staff_status == 4): ?>
                 <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
                     'id'=>"down_btn_word"

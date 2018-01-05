@@ -49,9 +49,18 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     ?>
                 </div>
             <?php endif; ?>
+            <?php if (!empty($model->id)&&($model->staff_status == 1||$model->staff_status == 3)): ?>
+                <div class="btn-group" role="group">
+                    <?php
+                    echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                            'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                    );
+                    ?>
+                </div>
+            <?php endif; ?>
 
             <div class="btn-group pull-right" role="group">
-                <?php if ($model->scenario!='new'){
+                <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')){
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
@@ -204,6 +213,9 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
     </div>
 </section>
 
+<?php
+$this->renderPartial('//site/removedialog');
+?>
 
 <?php
 $this->renderPartial('//site/historylist',array('model'=>$model));
@@ -352,6 +364,8 @@ if ($model->scenario!='view'||$model->staff_status == 3) {
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 
+$js = Script::genDeleteData(Yii::app()->createUrl('history/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/jquery-form.js", CClientScript::POS_END);
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/ajaxFile.js", CClientScript::POS_END);

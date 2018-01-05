@@ -21,6 +21,7 @@ class AuditHistoryList extends CListPageModel
             'operation'=>Yii::t('contract','Operation Status'),
             'entry_time'=>Yii::t('contract','Entry Time'),
             'city'=>Yii::t('contract','City'),
+            'city_name'=>Yii::t('contract','City'),
         );
     }
 
@@ -50,13 +51,10 @@ class AuditHistoryList extends CListPageModel
                     $clause .= General::getSqlConditionClause('phone',$svalue);
                     break;
                 case 'position':
-                    $clause .= General::getSqlConditionClause('position',$svalue);
+                    $clause .= ' and position in '.DeptForm::getDeptSqlLikeName($svalue);
                     break;
-                case 'city':
-                    $clause .= General::getSqlConditionClause('city',$svalue);
-                    break;
-                case 'company_id':
-                    //$clause .= General::getSqlConditionClause('company_id',$svalue);
+                case 'city_name':
+                    $clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
             }
         }

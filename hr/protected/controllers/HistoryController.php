@@ -113,6 +113,22 @@ class HistoryController extends Controller
         }
     }
 
+
+    //刪除草稿
+    public function actionDelete(){
+        $model = new HistoryForm('delete');
+        if (isset($_POST['HistoryForm'])) {
+            $model->attributes = $_POST['HistoryForm'];
+            if($model->validateDelete()){
+                $model->deleteHistory();
+                $this->redirect(Yii::app()->createUrl('history/index'));
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+            }else{
+                Dialog::message(Yii::t('dialog','Information'), "無法刪除,該變更不是草稿");
+                $this->redirect(Yii::app()->createUrl('history/edit',array('index'=>$model->id)));
+            }
+        }
+    }
     public function actionSave()
     {
         if (isset($_POST['HistoryForm'])) {

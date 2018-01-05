@@ -288,9 +288,9 @@ class EmployeeForm extends CFormModel
 
                 $word->setValue("city",$staff["company"]["city"]);
                 $word->setValue("companyname",$staff["company"]["name"]);
+                $word->setValue("companyaddresspost2",$staff["company"]["postal2"]);//公司地址2 邮编
                 $word->setValue("companyaddresspost",$staff["company"]["postal"]);//公司地址 邮编
                 $word->setValue("companyaddress2",$staff["company"]["address2"]);//公司地址 2
-                $word->setValue("companyaddresspost2",$staff["company"]["postal2"]);//公司地址2 邮编
                 $word->setValue("companyaddress",$staff["company"]["address"]);
                 $word->setValue("companyhead",$staff["company"]["head"]);
                 $word->setValue("companyagent",$staff["company"]["agent"]);

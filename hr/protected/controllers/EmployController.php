@@ -127,6 +127,7 @@ class EmployController extends Controller
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $model->setScenario($_POST['EmployForm']['scenario']);
                 $this->render('form',array('model'=>$model,));
             }
         }

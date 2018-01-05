@@ -54,7 +54,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
-            <?php if ($model->scenario!='new'): ?>
+            <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
                         'id'=>"down_btn_word"
@@ -71,7 +71,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 </div>
             <?php endif; ?>
             <div class="btn-group pull-right" role="group">
-                <?php if ($model->scenario!='new'){
+                <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')){
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
                         'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));

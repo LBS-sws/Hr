@@ -110,6 +110,9 @@ return array(
     'audit for work overtime'=>'加班審核',
     'audit for leave'=>'請假審核',
     'Vacation Config'=>'請假配置',
+    'Contract Pay'=>'合同工資',
+    'All Overtime work List'=>'所有加班列表',
+    'All Ask leave List'=>'所有請假列表',
     //沈超添加结束
 );
 ?>
