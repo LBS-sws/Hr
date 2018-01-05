@@ -24,6 +24,18 @@ class WorkForm extends CFormModel
 	public $cost_num;//節假日的工資倍率
 	public $audit = false;//是否需要審核
 
+
+    public $no_of_attm = array(
+        'workem'=>0
+    );
+    public $docType = 'WORKEM';
+    public $docMasterId = array(
+        'workem'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'workem'=>0
+    );
 	public function attributeLabels()
 	{
 		return array(
@@ -61,6 +73,7 @@ class WorkForm extends CFormModel
             array('log_time','required'),
             array('end_time','validateTime'),
             array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true),
+            array('files, removeFileId, docMasterId','safe'),
 		);
 	}
     public function validateTime($attribute, $params){
@@ -103,9 +116,16 @@ class WorkForm extends CFormModel
     }
 
 	public function retrieveData($index) {
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
         $uid = $this->getEmployeeIdToUser();
-		$rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_employee_work")->where("id=:id and employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
+        if(Yii::app()->user->validFunction('ZR03')){
+            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('WORKEM',id) as workemdoc")
+                ->from("hr_employee_work")->where("id=:id and city in ($city_allow)",array(":id"=>$index))->queryAll();
+        }else{
+            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('WORKEM',id) as workemdoc")
+                ->from("hr_employee_work")->where("id=:id and employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
+        }
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 			    $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
@@ -132,6 +152,7 @@ class WorkForm extends CFormModel
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
                 $this->reject_cause = $row['reject_cause'];
+                $this->no_of_attm['workem'] = $row['workemdoc'];
                 break;
 			}
 		}
@@ -149,6 +170,7 @@ class WorkForm extends CFormModel
 		$transaction=$connection->beginTransaction();
 		try {
 			$this->saveGoods($connection);
+            $this->updateDocman($connection,'WORKEM');
 			$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -156,6 +178,18 @@ class WorkForm extends CFormModel
 			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
 		}
 	}
+
+    protected function updateDocman(&$connection, $doctype) {
+        if ($this->scenario=='new') {
+            $docidx = strtolower($doctype);
+            if ($this->docMasterId[$docidx] > 0) {
+                $docman = new DocMan($doctype,$this->id,get_class($this));
+                $docman->masterId = $this->docMasterId[$docidx];
+                $docman->updateDocId($connection, $this->docMasterId[$docidx]);
+            }
+            $this->scenario = "edit";
+        }
+    }
 
 	protected function saveGoods(&$connection) {
 		$sql = '';
@@ -227,7 +261,6 @@ class WorkForm extends CFormModel
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
-            $this->scenario = "edit";
             Yii::app()->db->createCommand()->update('hr_employee_work', array(
                 'work_code'=>$this->lenStr($this->id)
             ), 'id=:id', array(':id'=>$this->id));

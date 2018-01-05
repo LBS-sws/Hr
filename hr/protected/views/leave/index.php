@@ -37,7 +37,10 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
     <?php
     $search = array(
         'leave_code',
+        'employee_code',
+        'employee_name',
     );
+    if (Yii::app()->user->validFunction('ZR04')) $search[] = 'city_name';
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('fete','Ask leave List'),
         'model'=>$model,

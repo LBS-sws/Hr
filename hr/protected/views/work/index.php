@@ -37,7 +37,10 @@ $this->pageTitle=Yii::app()->name . ' - Work';
     <?php
     $search = array(
         'work_code',
+        'employee_code',
+        'employee_name',
     );
+    if (Yii::app()->user->validFunction('ZR03')) $search[] = 'city_name';
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('fete','Overtime work List'),
         'model'=>$model,
