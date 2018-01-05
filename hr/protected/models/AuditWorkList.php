@@ -13,12 +13,14 @@ class AuditWorkList extends CListPageModel
         return array(
             'work_code'=>Yii::t('fete','Work Code'),
             'work_type'=>Yii::t('fete','Work Type'),
-            'employee_id'=>Yii::t('contract','Employee Name'),
+            'employee_name'=>Yii::t('contract','Employee Name'),
+            'employee_code'=>Yii::t('contract','Employee Code'),
             'start_time'=>Yii::t('contract','Start Time'),
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
+            'city_name'=>Yii::t('contract','City'),
         );
     }
 
@@ -33,44 +35,36 @@ class AuditWorkList extends CListPageModel
     public function retrieveDataByPage($pageNum=1)
     {
         $city_allow = Yii::app()->user->city_allow();
-        $sql1 = "select * from hr_employee_work 
-                where city in ($city_allow) AND status !=0
+        $sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code 
+                from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
+                where a.city in ($city_allow) AND a.status !=0
 			";
-        $sql2 = "select count(id)
-				from hr_employee_work 
-				where city in ($city_allow) AND status !=0  AND z_index =0 
+        $sql2 = "select count(a.id)
+                from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
+				where a.city in ($city_allow) AND a.status !=0
 			";
         if($this->only ==1 ){
-            $sql1.=" AND z_index =0 ";
-            $sql2.=" AND z_index =0 ";
+            $sql1.=" AND a.z_index =0 ";
+            $sql2.=" AND a.z_index =0 ";
         }else{
-            $sql1.=" AND z_index =1 ";
-            $sql2.=" AND z_index =1 ";
+            $sql1.=" AND a.z_index =1 ";
+            $sql2.=" AND a.z_index =1 ";
         }
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {
             $svalue = str_replace("'","\'",$this->searchValue);
             switch ($this->searchField) {
                 case 'work_code':
-                    $clause .= General::getSqlConditionClause('work_code',$svalue);
+                    $clause .= General::getSqlConditionClause('a.work_code',$svalue);
                     break;
-                case 'employee_id':
-                    $clause .= General::getSqlConditionClause('employee_id',$svalue);
+                case 'employee_name':
+                    $clause .= General::getSqlConditionClause('b.name',$svalue);
                     break;
-                case 'start_time':
-                    $clause .= General::getSqlConditionClause('start_time',$svalue);
+                case 'employee_code':
+                    $clause .= General::getSqlConditionClause('b.code',$svalue);
                     break;
-                case 'end_time':
-                    $clause .= General::getSqlConditionClause('end_time',$svalue);
-                    break;
-                case 'log_time':
-                    $clause .= General::getSqlConditionClause('log_time',$svalue);
-                    break;
-                case 'status':
-                    $clause .= General::getSqlConditionClause('status',$svalue);
-                    break;
-                case 'city':
-                    $clause .= General::getSqlConditionClause('city',$svalue);
+                case 'city_name':
+                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
             }
         }
@@ -93,7 +87,6 @@ class AuditWorkList extends CListPageModel
         if (count($records) > 0) {
             foreach ($records as $k=>$record) {
                 $colorList = $this->statusToColor($record['status']);
-                $employeeList = EmployeeForm::getEmployeeOneToId($record['employee_id']);
                 if($record['work_type'] == 2){
                     $record['start_time'] = date("Y/m/d",strtotime($record['start_time']));
                     $record['end_time'] = date("Y/m/d",strtotime($record['end_time']));
@@ -106,7 +99,8 @@ class AuditWorkList extends CListPageModel
                 $this->attr[] = array(
                     'id'=>$record['id'],
                     'work_code'=>$record['work_code'],
-                    'employee_id'=>$employeeList["name"],
+                    'employee_code'=>$record['employee_code'],
+                    'employee_name'=>$record['employee_name'],
                     'start_time'=>$record['start_time'],
                     'end_time'=>$record['end_time'],
                     'log_time'=>$record['log_time'].$dayStr,

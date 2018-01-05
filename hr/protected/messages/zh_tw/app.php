@@ -113,6 +113,7 @@ return array(
     'Contract Pay'=>'合同工資',
     'All Overtime work List'=>'所有加班列表',
     'All Ask leave List'=>'所有請假列表',
+    'Work overtime and leave after the review is cancelled'=>'取消審核后的加班、請假',
     //沈超添加结束
 );
 ?>

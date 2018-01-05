@@ -1,42 +1,47 @@
 <tr>
 	<th></th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('leave_code').$this->drawOrderArrow('leave_code'),'#',$this->createOrderLink('auditLeave-list','leave_code'))
+		<?php echo TbHtml::link($this->getLabelName('leave_code').$this->drawOrderArrow('a.leave_code'),'#',$this->createOrderLink('auditLeave-list','a.leave_code'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('employee_id').$this->drawOrderArrow('employee_id'),'#',$this->createOrderLink('auditLeave-list','employee_id'))
+		<?php echo TbHtml::link($this->getLabelName('employee_code').$this->drawOrderArrow('b.code'),'#',$this->createOrderLink('auditLeave-list','b.code'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('city'),'#',$this->createOrderLink('auditLeave-list','city'))
+		<?php echo TbHtml::link($this->getLabelName('employee_name').$this->drawOrderArrow('b.name'),'#',$this->createOrderLink('auditLeave-list','b.name'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('vacation_id').$this->drawOrderArrow('vacation_id'),'#',$this->createOrderLink('auditLeave-list','vacation_id'))
+		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('a.city'),'#',$this->createOrderLink('auditLeave-list','a.city'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('start_time').$this->drawOrderArrow('start_time'),'#',$this->createOrderLink('auditLeave-list','start_time'))
+		<?php echo TbHtml::link($this->getLabelName('vacation_id').$this->drawOrderArrow('a.vacation_id'),'#',$this->createOrderLink('auditLeave-list','a.vacation_id'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('end_time').$this->drawOrderArrow('end_time'),'#',$this->createOrderLink('auditLeave-list','end_time'))
+		<?php echo TbHtml::link($this->getLabelName('start_time').$this->drawOrderArrow('a.start_time'),'#',$this->createOrderLink('auditLeave-list','a.start_time'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('log_time').$this->drawOrderArrow('log_time'),'#',$this->createOrderLink('auditLeave-list','log_time'))
+		<?php echo TbHtml::link($this->getLabelName('end_time').$this->drawOrderArrow('a.end_time'),'#',$this->createOrderLink('auditLeave-list','a.end_time'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('status').$this->drawOrderArrow('status'),'#',$this->createOrderLink('auditLeave-list','status'))
+		<?php echo TbHtml::link($this->getLabelName('log_time').$this->drawOrderArrow('a.log_time'),'#',$this->createOrderLink('auditLeave-list','a.log_time'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('status').$this->drawOrderArrow('a.status'),'#',$this->createOrderLink('auditLeave-list','a.status'))
 			;
 		?>
 	</th>

@@ -6,7 +6,8 @@
 
 
     <td><?php echo $this->record['work_code']; ?></td>
-    <td><?php echo $this->record['employee_id']; ?></td>
+    <td><?php echo $this->record['employee_code']; ?></td>
+    <td><?php echo $this->record['employee_name']; ?></td>
     <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['work_type']; ?></td>
     <td><?php echo $this->record['start_time']; ?></td>
