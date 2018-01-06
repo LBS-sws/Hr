@@ -63,8 +63,8 @@ class WorkList extends CListPageModel
                 where a.id!=0 
 			";
 		if(Yii::app()->user->validFunction('ZR03')){
-            $sql1.=" and a.city in($city_allow) and a.status !=0 ";
-            $sql2.=" and a.city in($city_allow) and status !=0 ";
+            $sql1.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
+            $sql2.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
         }else{
 		    $sql1.=" and a.employee_id='$employee_id' ";
             $sql2.=" and a.employee_id='$employee_id' ";

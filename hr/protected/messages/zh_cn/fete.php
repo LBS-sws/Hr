@@ -55,5 +55,7 @@ return array(
     'default'=>'各地通用',
     'AM'=>'上午',
     'PM'=>'下午',
+    'Are you sure to cancel?'=>'确定要取消？',
+    'Cancel Form'=>'取消记录',
 );
 ?>

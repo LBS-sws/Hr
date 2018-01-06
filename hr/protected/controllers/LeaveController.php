@@ -39,6 +39,10 @@ class LeaveController extends Controller
                 'actions'=>array('addDate'),
                 'expression'=>array('LeaveController','allowWrite'),
             ),
+            array('allow',
+                'actions'=>array('cancel'),
+                'expression'=>array('LeaveController','allowCancelled'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
@@ -55,6 +59,10 @@ class LeaveController extends Controller
 
     public static function allowWrite() {
         return true;
+    }
+
+    public static function allowCancelled() {
+        return Yii::app()->user->validFunction('ZR05');
     }
 
     public function actionIndex($pageNum=0){
@@ -157,6 +165,23 @@ class LeaveController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
                 $this->redirect(Yii::app()->createUrl('leave/index'));
             }else{
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
+                $this->redirect(Yii::app()->createUrl('leave/edit',array('index'=>$model->id)));
+            }
+        }
+    }
+
+    //取消
+    public function actionCancel(){
+        $model = new LeaveForm('cancel');
+        if (isset($_POST['LeaveForm'])) {
+            $model->attributes = $_POST['LeaveForm'];
+            if($model->validate()){
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Cancel Done'));
+                $this->redirect(Yii::app()->createUrl('leave/index'));
+            }else{
+                $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
                 $this->redirect(Yii::app()->createUrl('leave/edit',array('index'=>$model->id)));
             }
