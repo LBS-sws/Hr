@@ -11,7 +11,7 @@
 <?php endif; ?>
 <?php if ($model->scenario!='new'): ?>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'leave_code',array('class'=>"col-sm-2 control-label")); ?>
+        <?php echo TbHtml::label($model->getAttributeLabel("leave_code").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
         <div class="col-sm-4">
             <?php echo $form->textField($model, 'leave_code',
                 array('readonly'=>(true))
@@ -20,7 +20,7 @@
     </div>
 <?php endif; ?>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-4">
         <?php echo $form->textField($model, 'employee_id',
             array('readonly'=>(true))
@@ -28,7 +28,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'vacation_id',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo TbHtml::label($model->getAttributeLabel("vacation_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'vacation_id',LeaveForm::getLeaveTypeList($model->city),
             array('disabled'=>($model->getInputBool()),"id"=>"leave_type")
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'start_time',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo TbHtml::label($model->getAttributeLabel("start_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-4">
         <div class="input-group">
             <div class="input-group-addon">
@@ -54,7 +54,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'end_time',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo TbHtml::label($model->getAttributeLabel("end_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-4">
         <div class="input-group">
             <div class="input-group-addon">
@@ -72,7 +72,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'log_time',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo TbHtml::label($model->getAttributeLabel("log_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-3">
         <div class="input-group">
             <?php echo $form->numberField($model, 'log_time',
@@ -83,7 +83,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'leave_cause',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo TbHtml::label($model->getAttributeLabel("leave_cause").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-6">
         <?php echo $form->textArea($model, 'leave_cause',
             array('readonly'=>($model->getInputBool()),"rows"=>4)

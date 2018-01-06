@@ -48,6 +48,12 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                 );
                 ?>
             <?php endif; ?>
+            <?php if (Yii::app()->user->validFunction('ZR05')&&$model->status == 4): ?>
+                <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','cancel'), array(
+                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#canceldialog',)
+                );
+                ?>
+            <?php endif; ?>
         <?php endif; ?>
 	</div>
             <div class="btn-group pull-right" role="group">
@@ -107,6 +113,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 </div>
 <?php
 $this->renderPartial('//site/removedialog');
+$this->renderPartial('//site/canceldialog');
 ?>
 <?php
 Script::genFileUpload($model,$form->id,'LEAVE');
@@ -144,6 +151,12 @@ $('#start_time,#end_time,#start_time_lg,#end_time_lg').on('change',function(){
     }else{
         $('#log_time').val('');
     }
+});
+//取消事件
+$('#btnCancelData').on('click',function() {
+	$('#canceldialog').modal('hide');
+	var elm=$('#btnCancelData');
+	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('leave/cancel')."',{});
 });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);

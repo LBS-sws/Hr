@@ -64,15 +64,15 @@ class WorkForm extends CFormModel
 	{
 		return array(
 			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,hours,hours_end','safe'),
-            array('work_type','required'),
-            array('work_type','validateWorkType'),
-            array('work_cause','required'),
-            array('work_address','required'),
-            array('start_time','required'),
-            array('end_time','required'),
-            array('log_time','required'),
-            array('end_time','validateTime'),
-            array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true),
+            array('work_type','required','on'=>array("new","edit","audit")),
+            array('work_type','validateWorkType','on'=>array("new","edit","audit")),
+            array('work_cause','required','on'=>array("new","edit","audit")),
+            array('work_address','required','on'=>array("new","edit","audit")),
+            array('start_time','required','on'=>array("new","edit","audit")),
+            array('end_time','required','on'=>array("new","edit","audit")),
+            array('log_time','required','on'=>array("new","edit","audit")),
+            array('end_time','validateTime','on'=>array("new","edit","audit")),
+            array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
@@ -195,6 +195,9 @@ class WorkForm extends CFormModel
 		$sql = '';
         switch ($this->scenario) {
             case 'delete':
+                $sql = "delete from hr_employee_work where id = :id";
+                break;
+            case 'cancel':
                 $sql = "delete from hr_employee_work where id = :id";
                 break;
             case 'new':

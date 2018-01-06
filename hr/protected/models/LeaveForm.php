@@ -64,14 +64,14 @@ class LeaveForm extends CFormModel
 	{
 		return array(
 			array('id,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time','safe'),
-            array('vacation_id','required'),
-            array('leave_cause','required'),
-            array('log_time','required'),
-            array('start_time','required'),
-            array('end_time','required'),
-            array('vacation_id','validateLeaveType'),
-            array('log_time','validateLogTime'),
-            array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>false),
+            array('vacation_id','required','on'=>array("new","edit","audit")),
+            array('leave_cause','required','on'=>array("new","edit","audit")),
+            array('log_time','required','on'=>array("new","edit","audit")),
+            array('start_time','required','on'=>array("new","edit","audit")),
+            array('end_time','required','on'=>array("new","edit","audit")),
+            array('vacation_id','validateLeaveType','on'=>array("new","edit","audit")),
+            array('log_time','validateLogTime','on'=>array("new","edit","audit")),
+            array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
@@ -103,7 +103,8 @@ class LeaveForm extends CFormModel
                 if (strpos($this->log_time,'.')!==false){
                     //含有小數
                     $float = end(explode(".",$this->log_time));
-                    if(intval($float) != 5){
+                    $float = intval($float);
+                    if($float !== 5 && $float !== 0){
                         $message = Yii::t('fete','Log Date')."的小数必须为0.5";
                         $this->addError($attribute,$message);
                     }
@@ -197,6 +198,9 @@ class LeaveForm extends CFormModel
 		$sql = '';
         switch ($this->scenario) {
             case 'delete':
+                $sql = "delete from hr_employee_leave where id = :id";
+                break;
+            case 'cancel':
                 $sql = "delete from hr_employee_leave where id = :id";
                 break;
             case 'new':

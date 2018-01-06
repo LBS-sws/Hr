@@ -33,7 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 				'submit'=>Yii::app()->createUrl('auditLeave/index',array("only"=>$model->only))));
 		?>
 
-        <?php if ($model->scenario!='view'&&$model->status!='3'): ?>
+        <?php if ($model->scenario!='view'&&$model->status!=3): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                 'submit'=>Yii::app()->createUrl('auditLeave/audit')));
             ?>
