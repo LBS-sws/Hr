@@ -46,6 +46,9 @@ class AuditLeaveList extends CListPageModel
         if($this->only ==1 ){
             $sql1.=" AND a.z_index =0 ";
             $sql2.=" AND a.z_index =0 ";
+        }elseif($this->only ==3 ){
+            $sql1.=" AND a.z_index =3 ";
+            $sql2.=" AND a.z_index =3 ";
         }else{
             $sql1.=" AND a.z_index =1 ";
             $sql2.=" AND a.z_index =1 ";

@@ -44,6 +44,8 @@ class AuditWorkController extends Controller
     public static function allowReadWrite() {
         if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
             return Yii::app()->user->validRWFunction('ZG04');
+        }elseif(array_key_exists("only",$_GET) && $_GET["only"] == 3){
+            return Yii::app()->user->validRWFunction('ZA08');
         }else{
             return Yii::app()->user->validRWFunction('ZE05');
         }
@@ -52,6 +54,8 @@ class AuditWorkController extends Controller
     public static function allowReadOnly() {
         if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
             return Yii::app()->user->validFunction('ZG04');
+        }elseif(array_key_exists("only",$_GET) && $_GET["only"] == 3){
+            return Yii::app()->user->validFunction('ZA08');
         }else{
             return Yii::app()->user->validFunction('ZE05');
         }

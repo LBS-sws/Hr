@@ -5,6 +5,7 @@ class AuditWorkForm extends CFormModel
     public $id;
     public $work_code;
     public $employee_id;
+    public $employee_name;
     public $work_type;
     public $work_cause;//加班原因
     public $work_cost;//加班費用
@@ -16,6 +17,9 @@ class AuditWorkForm extends CFormModel
     public $log_time;
     public $z_index;
     public $status;
+    public $audit_remark;
+    public $user_lcu;
+    public $user_lcd;
     public $area_lcu;
     public $area_lcd;
     public $head_lcu;
@@ -23,7 +27,7 @@ class AuditWorkForm extends CFormModel
     public $reject_cause;
     public $cost_num;//節假日的工資倍率
     public $wage;//合約工資
-    public $only = 1;//1：地區審核  2：總部審核
+    public $only = 1;//  3：領導審核   1：地區審核  2：總部審核
 
     public function attributeLabels()
     {
@@ -38,10 +42,13 @@ class AuditWorkForm extends CFormModel
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
+            'user_lcu'=>Yii::t('fete','user lcu'),
+            'user_lcd'=>Yii::t('fete','user lcd'),
             'area_lcu'=>Yii::t('fete','area lcu'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','head lcu'),
             'head_lcd'=>Yii::t('fete','head lcd'),
+            'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
         );
@@ -53,11 +60,58 @@ class AuditWorkForm extends CFormModel
     public function rules()
     {
         return array(
-            array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only','safe'),
+            array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name','safe'),
+            array('work_type','required','on'=>array("audit")),
+            array('work_type','validateWorkType','on'=>array("audit")),
+            array('work_cause','required','on'=>array("audit")),
+            array('work_address','required','on'=>array("audit")),
+            array('start_time','required','on'=>array("audit")),
+            array('end_time','required','on'=>array("audit")),
+            array('log_time','required','on'=>array("audit")),
+            array('end_time','validateTime','on'=>array("audit")),
+            array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true,'on'=>array("audit")),
             array('reject_cause','required',"on"=>"reject"),
         );
     }
 
+    public function validateTime($attribute, $params){
+        if(!empty($this->end_time)&&!empty($this->start_time)){
+            $date2 = strtotime($this->start_time);
+            $date1 = strtotime($this->end_time);
+            if($date2>$date1){
+                $message = Yii::t('fete','Start time cannot be greater than end time');
+                $this->addError($attribute,$message);
+            }else{
+                if($this->log_time <= 0){
+                    $message = Yii::t('fete','Start time cannot be greater than end time');
+                    $this->addError($attribute,$message);
+                }
+            }
+        }
+    }
+
+
+    public function validateWorkType($attribute, $params){
+        $city = Yii::app()->user->city();
+        if($this->work_type == 2){
+            $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
+                ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')", array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
+            if($rows){
+                $this->cost_num = $rows["cost_num"];
+            }else{
+                $message = Yii::t('fete','This time period is not a legal holiday, please contact the administrator');
+                $this->addError($attribute,$message);
+            }
+        }else if($this->work_type == 1){
+            $week = date("w",strtotime($this->start_time));
+            if($week == 6 || $week == 0){
+                //是週末
+            }else{
+                $message = Yii::t('fete','This time period is not a weekend');
+                $this->addError($attribute,$message);
+            }
+        }
+    }
 
     public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
@@ -68,6 +122,7 @@ class AuditWorkForm extends CFormModel
                 $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
                 $this->id = $row['id'];
                 $this->work_code = $row['work_code'];
+                $this->employee_name = $row['employee_id'];
                 $this->employee_id = $employeeList["name"];
                 $this->work_type = $row['work_type'];
                 $this->work_cause = $row['work_cause'];
@@ -85,10 +140,13 @@ class AuditWorkForm extends CFormModel
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
                 $this->status = $row['status'];
+                $this->user_lcu = $row['user_lcu'];
+                $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
+                $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->wage = $employeeList['wage'];
                 break;
@@ -116,10 +174,24 @@ class AuditWorkForm extends CFormModel
         switch ($this->scenario) {
             case 'audit':
                 $sql = "update hr_employee_work set
-							z_index = :z_index, ";
+							z_index = :z_index,
+							audit_remark = :audit_remark,
+							 ";
                 if($this->only == 1){
                     $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
+                }elseif($this->only == 3){
+                    $this->only = 0;
+                    $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
                 }else{
+                    //總部審核
+                    $this->resetWorkCost();//計算員工的工資
+                    $sql.="work_type = :work_type, 
+							work_cause = :work_cause, 
+							work_address = :work_address, 
+							work_cost = :work_cost, 
+							start_time = :start_time, 
+							end_time = :end_time, 
+							log_time = :log_time, ";
                     $sql.="status = 4, head_lcu = :head_lcu, head_lcd = :head_lcd, ";
                 }
                 $sql.="luu = :luu
@@ -129,8 +201,11 @@ class AuditWorkForm extends CFormModel
                 $sql = "update hr_employee_work set
 							status = 3, 
 							reject_cause = :reject_cause, 
+							audit_remark = :audit_remark, 
 							";
                 if($this->only == 1){
+                    $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
+                }elseif($this->only == 3){
                     $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
                 }else{
                     $sql.="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
@@ -151,9 +226,30 @@ class AuditWorkForm extends CFormModel
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
         if (strpos($sql,':reject_cause')!==false)
             $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
+        if (strpos($sql,':audit_remark')!==false)
+            $command->bindParam(':audit_remark',$this->audit_remark,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false)
             $command->bindParam(':z_index',$this->only,PDO::PARAM_STR);
 
+        if (strpos($sql,':work_type')!==false)
+            $command->bindParam(':work_type',$this->work_type,PDO::PARAM_STR);
+        if (strpos($sql,':work_cause')!==false)
+            $command->bindParam(':work_cause',$this->work_cause,PDO::PARAM_STR);
+        if (strpos($sql,':work_address')!==false)
+            $command->bindParam(':work_address',$this->work_address,PDO::PARAM_STR);
+        if (strpos($sql,':work_cost')!==false)
+            $command->bindParam(':work_cost',$this->work_cost,PDO::PARAM_STR);
+        if (strpos($sql,':start_time')!==false)
+            $command->bindParam(':start_time',$this->start_time,PDO::PARAM_STR);
+        if (strpos($sql,':end_time')!==false)
+            $command->bindParam(':end_time',$this->end_time,PDO::PARAM_STR);
+        if (strpos($sql,':log_time')!==false)
+            $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
+
+        if (strpos($sql,':user_lcu')!==false)
+            $command->bindParam(':user_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':user_lcd')!==false)
+            $command->bindParam(':user_lcd',date("Y-m-d"),PDO::PARAM_STR);
         if (strpos($sql,':area_lcu')!==false)
             $command->bindParam(':area_lcu',$uid,PDO::PARAM_STR);
         if (strpos($sql,':area_lcd')!==false)
@@ -169,9 +265,48 @@ class AuditWorkForm extends CFormModel
         return true;
     }
 
+    //計算員工的加班費用
+    public function resetWorkCost(){
+        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
+        $wage = floatval($employeeList["wage"]);
+        if($this->work_type == 2){
+            if($this->cost_num == 1){
+                $this->cost_num = 3;
+            }else{
+                $this->cost_num = 2;
+            }
+            $this->work_cost = ($wage/21.76)*intval($this->log_time)*intval($this->cost_num);
+        }else{
+            $this->work_cost = ($wage/(21.76*8))*intval($this->log_time)*1.5;
+            $this->start_time .=" ".$this->hours;
+            $this->end_time .=" ".$this->hours_end;
+        }
+    }
+
     //判斷輸入框能否修改
     public function getInputBool(){
-        return true;
+        if($this->only == 2&&$this->getScenario()!='view'){
+            return false;
+        }else{
+            return true;
+        }
+    }
+    //獲取假期的倍率
+    public function getMuplite(){
+        $city = Yii::app()->user->city();
+        $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
+            ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')",
+                array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
+        if($rows){
+            if($rows["cost_num"] == 1){
+                $this->cost_num = 3;
+            }else{
+                $this->cost_num = 2;
+            }
+            return $this->cost_num;
+        }else{
+            return 2;
+        }
     }
     //獲取本月加班記錄
     public function getHistoryList(){

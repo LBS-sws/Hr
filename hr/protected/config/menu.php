@@ -28,6 +28,15 @@ return array(
                 'access'=>'ZA07',
                 'url'=>'/reward/index',
             ),
+            'audit for work overtime'=>array(
+                'access'=>'ZA08',
+                //'url'=>'/employer/index',
+                'url'=>'/auditWork/index?only=3',
+            ),
+            'audit for leave'=>array(
+                'access'=>'ZA09',
+                'url'=>'/auditLeave/index?only=3',
+            ),
 		),
 	),
     //合同模塊

@@ -5,6 +5,10 @@ if (empty($model->id)&&$model->scenario == "edit"){
 $this->pageTitle=Yii::app()->name . ' - Work Form';
 ?>
 
+<style>
+    *[readonly]{pointer-events: none;}
+</style>
+
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'work-form',
 'enableClientValidation'=>true,
@@ -55,6 +59,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'status'); ?>
 			<?php echo $form->hiddenField($model, 'only'); ?>
+            <?php echo $form->hiddenField($model, 'employee_name'); ?>
 
             <?php
             $this->renderPartial('//site/workform',array('model'=>$model,
@@ -85,6 +90,28 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                         array('readonly'=>(true)));
                     ?>
                 </div>
+                <div class="form-control-static col-sm-7">
+                    <?php
+                    echo $model->wage."÷";
+                    if($model->work_type == 2){
+                        echo "21.76"."×".$model->getMuplite()."×".$model->log_time;
+                    }else{
+                        echo "(21.76×8)×1.5×".$model->log_time;
+                    }
+                    echo " = ".$model->work_cost;
+                    ?>
+                </div>
+            </div>
+
+
+            <legend>&nbsp;</legend>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'audit_remark',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-6">
+                    <?php echo $form->textArea($model, 'audit_remark',
+                        array('readonly'=>($model->scenario=='view'),"rows"=>4)
+                    ); ?>
+                </div>
             </div>
             <?php
             $this->renderPartial('//site/ject',array(
@@ -109,8 +136,51 @@ $this->renderPartial('//site/removedialog');
 <?php
 
 $js = "
+$('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('#start_time').on('change',function(){
+    if($('#end_time').val()==''){
+        $('#end_time').val($(this).val());
+        $('#end_time').trigger('change');
+    }
+});
+$('#start_time,#end_time,#hours,#hours_end').on('change',function(){
+    var start_day = $('#start_time').val();
+    var end_day = $('#end_time').val();
+    var start_hour = $('#hours').val();
+    var end_hour = $('#hours_end').val();
+    if(start_day!=''&&end_day!=''){
+        var d1 = new Date(start_day);
+        var d2 = new Date(end_day);
+        d1 = d1.getTime();
+        d2 = d2.getTime();
+        if(d1<=d2){
+            var time = d2-d1;
+            if($('#work_type').val()==2){
+                var hours=time/(24*3600*1000); 
+                hours++;
+            }else{
+                var hours=time/(3600*1000); 
+                end_hour = end_hour=='00:00'?'24:00':end_hour;
+                var num = parseInt(end_hour,10)-parseInt(start_hour,10);
+                hours+=num;
+            }
+            if(hours>0){
+                $('#log_time').val(hours);
+            }else{
+                $('#log_time').val('');
+            }
+        }else{
+            $('#log_time').val('');
+        }
+    }else{
+        $('#log_time').val('');
+    }
+});
 ";
-Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
+if($model->only == 2){
+    Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
+}
 $js = Script::genDeleteData(Yii::app()->createUrl('work/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 

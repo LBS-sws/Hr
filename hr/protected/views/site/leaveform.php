@@ -19,19 +19,30 @@
         </div>
     </div>
 <?php endif; ?>
-<div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-4">
-        <?php echo $form->textField($model, 'employee_id',
-            array('readonly'=>(true))
-        ); ?>
+<?php if (get_class($model) == "LeaveForm"&&Yii::app()->user->validFunction('ZR06')): ?>
+    <div class="form-group">
+        <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
+        <div class="col-sm-4">
+            <?php echo $form->dropDownList($model, 'employee_id',LeaveForm::getBindEmployeeList(),
+                array('readonly'=>($model->getInputBool()))
+            ); ?>
+        </div>
     </div>
-</div>
+<?php else:?>
+    <div class="form-group">
+        <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
+        <div class="col-sm-4">
+            <?php echo $form->textField($model, 'employee_id',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+    </div>
+<?php endif; ?>
 <div class="form-group">
     <?php echo TbHtml::label($model->getAttributeLabel("vacation_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'vacation_id',LeaveForm::getLeaveTypeList($model->city),
-            array('disabled'=>($model->getInputBool()),"id"=>"leave_type")
+            array('readonly'=>($model->getInputBool()),"id"=>"leave_type")
         ); ?>
     </div>
 </div>
@@ -47,7 +58,7 @@
             ); ?>
             <div class="input-group-btn" style="width: 80px;">
                 <?php echo $form->dropDownList($model, 'start_time_lg',LeaveForm::getAMPMList(),
-                    array('disabled'=>($model->getInputBool()),"id"=>"start_time_lg","style"=>"border-left:0px;")
+                    array('readonly'=>($model->getInputBool()),"id"=>"start_time_lg","style"=>"border-left:0px;")
                 ); ?>
             </div>
         </div>
@@ -65,7 +76,7 @@
             ); ?>
             <div class="input-group-btn" style="width: 80px;">
                 <?php echo $form->dropDownList($model, 'end_time_lg',LeaveForm::getAMPMList(),
-                    array('disabled'=>($model->getInputBool()),"id"=>"end_time_lg","style"=>"border-left:0px;")
+                    array('readonly'=>($model->getInputBool()),"id"=>"end_time_lg","style"=>"border-left:0px;")
                 ); ?>
             </div>
         </div>
@@ -91,8 +102,24 @@
     </div>
 </div>
 
-<?php if (!empty($model->area_lcu)): ?>
+<?php if (!empty($model->user_lcu)): ?>
     <legend><?php echo Yii::t("fete","Audit Info")?></legend>
+    <div class="form-group">
+        <?php echo $form->labelEx($model,'user_lcu',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'user_lcu',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+        <?php echo $form->labelEx($model,'user_lcd',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'user_lcd',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if (!empty($model->area_lcu)): ?>
     <div class="form-group">
         <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-sm-2 control-label")); ?>
         <div class="col-sm-3">

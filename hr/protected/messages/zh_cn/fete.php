@@ -31,6 +31,8 @@ return array(
     'Working days'=>'工作日',
     'Weekend off'=>'周末休息日',
     'Statutory leave day'=>'法定休假日',
+    'user lcu'=>'领导审核人',
+    'user lcd'=>'领导审核时间',
     'area lcu'=>'地区审核人',
     'area lcd'=>'地区审核时间',
     'head lcu'=>'总部审核人',
@@ -57,5 +59,7 @@ return array(
     'PM'=>'下午',
     'Are you sure to cancel?'=>'确定要取消？',
     'Cancel Form'=>'取消记录',
+    'Audit Remark'=>'审核备注',
+    'Generation ask for leave'=>'代人请假',
 );
 ?>

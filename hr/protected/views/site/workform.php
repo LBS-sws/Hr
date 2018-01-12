@@ -31,7 +31,7 @@
     <?php echo TbHtml::label($model->getAttributeLabel("work_type").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'work_type',WorkList::getWorkTypeList(),
-            array('disabled'=>($model->getInputBool()),"id"=>"work_type")
+            array('readonly'=>($model->getInputBool()),"id"=>"work_type")
         ); ?>
     </div>
 </div>
@@ -48,7 +48,7 @@
             <?php if (!empty($model->hours)): ?>
                 <div class="input-group-btn" style="width: 100px;">
                     <?php echo $form->dropDownList($model, 'hours',WorkList::getHoursList(),
-                        array('disabled'=>($model->getInputBool()),"id"=>"hours","style"=>"border-left:0px;")
+                        array('readonly'=>($model->getInputBool()),"id"=>"hours","style"=>"border-left:0px;")
                     ); ?>
                 </div>
             <?php endif; ?>
@@ -103,8 +103,24 @@
     </div>
 </div>
 
-<?php if (!empty($model->area_lcu)): ?>
+<?php if (!empty($model->user_lcu)): ?>
     <legend><?php echo Yii::t("fete","Audit Info")?></legend>
+    <div class="form-group">
+        <?php echo $form->labelEx($model,'user_lcu',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'user_lcu',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+        <?php echo $form->labelEx($model,'user_lcd',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'user_lcd',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if (!empty($model->area_lcu)): ?>
     <div class="form-group">
         <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-sm-2 control-label")); ?>
         <div class="col-sm-3">

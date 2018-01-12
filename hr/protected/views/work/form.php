@@ -13,6 +13,9 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
     'htmlOptions'=>array('enctype' => 'multipart/form-data')
 )); ?>
 
+<style>
+    *[readonly]{pointer-events: none;}
+</style>
 <section class="content-header">
 	<h1>
 		<strong><?php echo Yii::t('fete','Overtime work Form'); ?></strong>
@@ -78,6 +81,17 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                 'model'=>$model,
             ));
             ?>
+            <?php if ($model->z_index != 3 && $model->scenario!='new'): ?>
+                <legend>&nbsp;</legend>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'audit_remark',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-6">
+                        <?php echo $form->textArea($model, 'audit_remark',
+                            array('readonly'=>(true),"rows"=>4)
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 		</div>
 	</div>
 </section>
@@ -86,8 +100,9 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
     'form'=>$form,
     'doctype'=>'WORKEM',
     'header'=>Yii::t('misc','Attachment'),
-    'ronly'=>($model->getInputBool()),
+    'ronly'=>(false),
 ));
+//$model->getInputBool()
 ?>
 <div id="fete_error" role="dialog" tabindex="-1" class="modal fade" style="display: none;">
     <div class="modal-dialog">
@@ -116,6 +131,12 @@ Script::genFileUpload($model,$form->id,'WORKEM');
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 $('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('#start_time').on('change',function(){
+    if($('#end_time').val()==''){
+        $('#end_time').val($(this).val());
+        $('#end_time').trigger('change');
+    }
+});
 $('#start_time,#end_time,#hours,#hours_end').on('change',function(){
     var start_day = $('#start_time').val();
     var end_day = $('#end_time').val();

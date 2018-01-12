@@ -27,6 +27,8 @@ class AuditWorkList extends CListPageModel
     public function getAcc(){
         if($this->only == 1){
             return "ZE05";
+        }elseif($this->only == 3){
+            return "ZA08";
         }else{
             return "ZG04";
         }
@@ -46,6 +48,9 @@ class AuditWorkList extends CListPageModel
         if($this->only ==1 ){
             $sql1.=" AND a.z_index =0 ";
             $sql2.=" AND a.z_index =0 ";
+        }elseif($this->only ==3){
+            $sql1.=" AND a.z_index =3 ";
+            $sql2.=" AND a.z_index =3 ";
         }else{
             $sql1.=" AND a.z_index =1 ";
             $sql2.=" AND a.z_index =1 ";

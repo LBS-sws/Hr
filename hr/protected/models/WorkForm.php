@@ -16,6 +16,9 @@ class WorkForm extends CFormModel
 	public $log_time;
 	public $z_index;
 	public $status;
+    public $audit_remark;
+    public $user_lcu;
+    public $user_lcd;
 	public $area_lcu;
 	public $area_lcd;
 	public $head_lcu;
@@ -49,10 +52,13 @@ class WorkForm extends CFormModel
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
+            'user_lcu'=>Yii::t('fete','user lcu'),
+            'user_lcd'=>Yii::t('fete','user lcd'),
             'area_lcu'=>Yii::t('fete','area lcu'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','head lcu'),
             'head_lcd'=>Yii::t('fete','head lcd'),
+            'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
 		);
 	}
@@ -147,10 +153,13 @@ class WorkForm extends CFormModel
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
                 $this->status = $row['status'];
+                $this->user_lcu = $row['user_lcu'];
+                $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
+                $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['workem'] = $row['workemdoc'];
                 break;
@@ -202,9 +211,9 @@ class WorkForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_employee_work(
-							employee_id,work_type,work_cause, work_address, start_time, end_time, log_time, work_cost, city, status, lcu
+							employee_id,work_type,work_cause, work_address, start_time, end_time, log_time, work_cost, city, status, z_index, lcu
 						) values (
-							:employee_id,:work_type,:work_cause, :work_address, :start_time, :end_time, :log_time, :work_cost, :city, :status, :lcu
+							:employee_id,:work_type,:work_cause, :work_address, :start_time, :end_time, :log_time, :work_cost, :city, :status, 3, :lcu
 						)";
                 break;
             case 'edit':
@@ -265,7 +274,7 @@ class WorkForm extends CFormModel
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
             Yii::app()->db->createCommand()->update('hr_employee_work', array(
-                'work_code'=>$this->lenStr($this->id)
+                'work_code'=>"J".$this->lenStr($this->id)
             ), 'id=:id', array(':id'=>$this->id));
         }
 		return true;

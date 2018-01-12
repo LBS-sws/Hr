@@ -40,7 +40,16 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
         'employee_code',
         'employee_name',
     );
-    if (Yii::app()->user->validFunction('ZR04')) $search[] = 'city_name';
+    $search_add_html="";
+    $modelName = get_class($model);
+    if (Yii::app()->user->validFunction('ZR04')){
+        $search[] = 'city_name';
+        $search_add_html .= TbHtml::textField($modelName.'[searchTimeStart]',$model->searchTimeStart,
+            array('size'=>15,'placeholder'=>Yii::t('misc','Start Date'),"class"=>"form-control","id"=>"start_time"));
+        $search_add_html.="<span>&nbsp;&nbsp;-&nbsp;&nbsp;</span>";
+        $search_add_html .= TbHtml::textField($modelName.'[searchTimeEnd]',$model->searchTimeEnd,
+            array('size'=>15,'placeholder'=>Yii::t('misc','End Date'),"class"=>"form-control","id"=>"end_time"));
+    }
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('fete','Ask leave List'),
         'model'=>$model,
@@ -48,6 +57,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
         'viewdtl'=>'//leave/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
+        'search_add_html'=>$search_add_html,
         'search'=>$search,
     ));
     ?>
@@ -61,6 +71,11 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+$js = "
+$('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

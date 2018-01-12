@@ -15,6 +15,9 @@ class LeaveForm extends CFormModel
 	public $log_time;
 	public $z_index;
 	public $status;
+	public $audit_remark;
+    public $user_lcu;
+    public $user_lcd;
 	public $area_lcu;
 	public $area_lcd;
 	public $head_lcu;
@@ -49,10 +52,13 @@ class LeaveForm extends CFormModel
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
+            'user_lcu'=>Yii::t('fete','user lcu'),
+            'user_lcd'=>Yii::t('fete','user lcd'),
             'area_lcu'=>Yii::t('fete','area lcu'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','head lcu'),
             'head_lcd'=>Yii::t('fete','head lcd'),
+            'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
 		);
 	}
@@ -64,6 +70,7 @@ class LeaveForm extends CFormModel
 	{
 		return array(
 			array('id,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time','safe'),
+            array('employee_id','validateUser','on'=>array("new","edit","audit")),
             array('vacation_id','required','on'=>array("new","edit","audit")),
             array('leave_cause','required','on'=>array("new","edit","audit")),
             array('log_time','required','on'=>array("new","edit","audit")),
@@ -75,6 +82,13 @@ class LeaveForm extends CFormModel
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
+
+	public function validateUser($attribute, $params){
+        if(Yii::app()->user->validFunction('ZR06')&&empty($this->employee_id)){
+            $message = Yii::t('contract','Employee Name').Yii::t('contract',' not exist');
+            $this->addError($attribute,$message);
+        }
+    }
 	//驗證請假類型
     public function validateLeaveType($attribute, $params){
 	    $id = $this->vacation_id;
@@ -133,11 +147,14 @@ class LeaveForm extends CFormModel
                 $this->start_time_lg = $row['start_time_lg'];
                 $this->end_time_lg = $row['end_time_lg'];
                 $this->status = $row['status'];
+                $this->user_lcu = $row['user_lcu'];
+                $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
                 $this->city = $row['city'];
+                $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['leave'] = $row['leavedoc'];
                 break;
@@ -231,8 +248,10 @@ class LeaveForm extends CFormModel
 		if (empty($sql)) return false;
 
         $city = Yii::app()->user->city();
-        $uid = Yii::app()->user->id;
-        $this->employee_id = $this->getEmployeeIdToUser();
+        $uid = Yii::app()->user->id;//ZR06
+        if(!Yii::app()->user->validFunction('ZR06')){
+            $this->employee_id = $this->getEmployeeIdToUser();
+        }
         $this->resetLeaveCost();//計算員工的工資
 
         $command=$connection->createCommand($sql);
@@ -270,11 +289,25 @@ class LeaveForm extends CFormModel
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
             Yii::app()->db->createCommand()->update('hr_employee_leave', array(
-                'leave_code'=>$this->lenStr($this->id)
+                'leave_code'=>"Q".$this->lenStr($this->id)
             ), 'id=:id', array(':id'=>$this->id));
         }
 		return true;
 	}
+
+	//獲取綁定員工的列表
+    public function getBindEmployeeList(){
+        $arr = array();
+        $rows = Yii::app()->db->createCommand()->select("a.employee_id as id,b.name as name")->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+
 
     //獲取上午下午列表
     public function getAMPMList(){

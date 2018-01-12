@@ -3,6 +3,8 @@
 class LeaveList extends CListPageModel
 {
     public $employee_id;//員工id
+    public $searchTimeStart;//開始日期
+    public $searchTimeEnd;//結束日期
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -24,6 +26,12 @@ class LeaveList extends CListPageModel
 		);
 	}
 
+    public function rules()
+    {
+        return array(
+            array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, searchTimeStart, searchTimeEnd','safe',),
+        );
+    }
 	//驗證賬號是否綁定員工
     public function validateEmployee(){
         $uid = Yii::app()->user->id;
@@ -77,6 +85,14 @@ class LeaveList extends CListPageModel
                     break;
 			}
 		}
+        if (!empty($this->searchTimeStart) && !empty($this->searchTimeStart)) {
+            $svalue = str_replace("'","\'",$this->searchTimeStart);
+            $clause .= " and a.start_time >='$svalue 00:00:00' ";
+        }
+        if (!empty($this->searchTimeEnd) && !empty($this->searchTimeEnd)) {
+            $svalue = str_replace("'","\'",$this->searchTimeEnd);
+            $clause .= " and a.start_time <='$svalue 23:59:59' ";
+        }
 		
 		$order = "";
 		if (!empty($this->orderField)) {
