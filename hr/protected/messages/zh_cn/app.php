@@ -21,6 +21,7 @@ return array(
 
 	'Report'=>'报表',
 	'Report Manager'=>'报表管理员',
+	'Staff List'=>'员工名册',
 
 	'System Setting'=>'系统设置',
 	'Security'=>'保安',
