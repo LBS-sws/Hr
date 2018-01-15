@@ -89,19 +89,21 @@ class MyPDFTwo {
         switch ($arr["work_type"]){
             case 1:
                 $timeHeight = 16;
+                $timeHtml = "<p>".date("Y年m月d日 H时i分",strtotime($arr["start_time"]))."&nbsp;&nbsp;～&nbsp;&nbsp;".date("Y年m月d日 H时i分",strtotime($arr["end_time"]))."</p>";
                 break;
             case 2:
                 $timeHeight = 32;
+                $timeHtml = "<p>".date("Y年m月d日",strtotime($arr["start_time"]))."&nbsp;&nbsp;～&nbsp;&nbsp;".date("Y年m月d日",strtotime($arr["end_time"]))."</p>";
                 break;
             default:
                 $timeHeight = 0;//0:工作日  16：週末休息日   32：法定休息日
+                $timeHtml = "<p>".date("Y年m月d日 H时i分",strtotime($arr["start_time"]))."&nbsp;&nbsp;～&nbsp;&nbsp;".date("Y年m月d日 H时i分",strtotime($arr["end_time"]))."</p>";
         }
         $this->_PDF->SetFont('stsongstdlight', '', 18, '', true);
         $html = "√";
         $this->_PDF->writeHTMLCell(20, 20, 50,40+$timeHeight, $html, 0, 1, false, true, 'L', true);
         $this->_PDF->SetFont('stsongstdlight', '', 14, '', true);
-        $html = "<p>".date("Y年m月d日 H时i分",strtotime($arr["start_time"]))."&nbsp;&nbsp;～&nbsp;&nbsp;".date("Y年m月d日 H时i分",strtotime($arr["end_time"]))."</p>";
-        $this->_PDF->writeHTMLCell(140, 8, 60,49+$timeHeight, $html, 0, 1, false, true, 'L', true);
+        $this->_PDF->writeHTMLCell(140, 8, 60,49+$timeHeight, $timeHtml, 0, 1, false, true, 'L', true);
         //加班事由
         $html = "加班事由";
         $this->_PDF->writeHTMLCell(40, 10, 10,98, $html, 0, 1, false, true, 'C', true);
