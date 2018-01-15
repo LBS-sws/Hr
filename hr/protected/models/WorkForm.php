@@ -168,6 +168,23 @@ class WorkForm extends CFormModel
 		return true;
 	}
 
+	//根據加班id獲取加班信息
+	public function getWorkListToWorkId($work_id){
+        $connection = Yii::app()->db;
+        $sql = "select a.*,b.name AS employee_name,b.code AS employee_code ,b.company_id,b.department
+                from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
+                where a.id =$work_id
+			";
+        $records = $connection->createCommand($sql)->queryRow();
+        if($records){
+            $company = CompanyForm::getCompanyToId($records["company_id"]);
+            $records["company_name"]=$company["name"];
+            $records["dept_name"]=DeptForm::getDeptToId($records["department"]);
+            return $records;
+        }else{
+            return false;
+        }
+    }
     //刪除驗證
     public function deleteValidate(){
         return true;

@@ -59,6 +59,13 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
             <?php endif; ?>
         <?php endif; ?>
 	</div>
+            <?php if ($model->status==4): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('misc','Download'), array(
+                        'submit'=>Yii::app()->createUrl('work/PdfDownload',array("index"=>$model->id))));
+                    ?>
+                </div>
+            <?php endif; ?>
             <div class="btn-group pull-right" role="group">
                 <?php
                 $counter = ($model->no_of_attm['workem'] > 0) ? ' <span id="docworkem" class="label label-info">'.$model->no_of_attm['workem'].'</span>' : ' <span id="docworkem"></span>';

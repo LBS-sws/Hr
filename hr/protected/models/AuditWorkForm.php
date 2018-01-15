@@ -115,8 +115,13 @@ class AuditWorkForm extends CFormModel
 
     public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
+        if($this->only == 2){
+            $sql = "id=:id";
+        }else{
+            $sql = "id=:id and city in ($city_allow)";
+        }
         $rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_employee_work")->where("id=:id and city in ($city_allow)",array(":id"=>$index))->queryAll();
+            ->from("hr_employee_work")->where($sql,array(":id"=>$index))->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);

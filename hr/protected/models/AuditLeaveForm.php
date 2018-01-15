@@ -128,8 +128,13 @@ class AuditLeaveForm extends CFormModel
     public function retrieveData($index) {
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
+        if($this->only == 2){
+            $sql = "id=:id";
+        }else{
+            $sql = "id=:id and city in ($city_allow)";
+        }
         $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('LEAVE',id) as leavedoc")
-            ->from("hr_employee_leave")->where("id=:id and city in ($city_allow)",array(":id"=>$index))->queryAll();
+            ->from("hr_employee_leave")->where($sql,array(":id"=>$index))->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);

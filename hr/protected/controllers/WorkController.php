@@ -32,7 +32,7 @@ class WorkController extends Controller
                 'expression'=>array('WorkController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload'),
+                'actions'=>array('index','view','fileDownload','PdfDownload'),
                 'expression'=>array('WorkController','allowReadOnly'),
             ),
             array('allow',
@@ -256,7 +256,7 @@ class WorkController extends Controller
     }
 
     public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
-        $sql = "select city from hr_employee_leave where id = $docId";
+        $sql = "select city from hr_employee_work where id = $docId";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if ($row!==false) {
             $citylist = Yii::app()->user->city_allow();
@@ -269,6 +269,19 @@ class WorkController extends Controller
             }
         } else {
             throw new CHttpException(404,'Record not found.');
+        }
+    }
+
+    //測試PDF下載
+    public function actionPdfDownload($index = 0){
+        $model = new WorkForm('edit');
+        $arr = $model->getWorkListToWorkId($index);
+        if (!$arr) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $pdf = new MyPDFTwo();
+            $pdf->setPageToWork($arr);
+            $pdf->getOutput($arr["employee_name"]."".$arr["work_code"]);
         }
     }
 }
