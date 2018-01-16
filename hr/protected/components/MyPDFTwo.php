@@ -83,7 +83,7 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(150, 8, 51,41, $html, 0, 1, false, true, 'L', true);
         $html = "<p>□周末休息日：（年/月/日/时/分～年/月/日/时/分）</p>";
         $this->_PDF->writeHTMLCell(150, 8, 51,57, $html, 0, 1, false, true, 'L', true);
-        $html = "<p>□法定休假日：（年/月/日/时/分～年/月/日/时/分）</p>";
+        $html = "<p>□法定休假日：（年/月/日～年/月/日）</p>";
         $this->_PDF->writeHTMLCell(150, 8, 51,73, $html, 0, 1, false, true, 'L', true);
         //加班時間隨動
         switch ($arr["work_type"]){

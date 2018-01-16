@@ -68,38 +68,50 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
             ));
             ?>
             <legend>&nbsp;</legend>
-            <div class="form-group text-danger">
-                <label class="col-sm-2 control-label">
-                    加班工资计算公式
-                </label>
-                <div class="form-control-static col-sm-10">
-                    1、非法定节假日加班费= 员工合同约定月工资÷(21.76×8)×150%×加班小时数<br>
-                    2、法定节假日加班费= 员工合同约定月工资÷ 21.76×工资倍率×加班天数
+            <?php if ($model->only == 2): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'bool_cost',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'bool_cost',AuditWorkForm::getPayList(),
+                            array('readonly'=>($model->getInputBool()),"id"=>"bool_cost")
+                        ); ?>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="form-control-static col-sm-10">
-                    <?php echo $model->wage;?>
+            <?php endif; ?>
+            <div id="bool_cost_div">
+                <div class="form-group text-danger">
+                    <label class="col-sm-2 control-label">
+                        加班工资计算公式
+                    </label>
+                    <div class="form-control-static col-sm-10">
+                        1、非法定节假日加班费= 员工合同约定月工资÷(21.76×8)×150%×加班小时数<br>
+                        2、法定节假日加班费= 员工合同约定月工资÷ 21.76×工资倍率×加班天数
+                    </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'work_cost',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'work_cost',
-                        array('readonly'=>(true)));
-                    ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="form-control-static col-sm-10">
+                        <?php echo $model->wage;?>
+                    </div>
                 </div>
-                <div class="form-control-static col-sm-7">
-                    <?php
-                    echo $model->wage."÷";
-                    if($model->work_type == 2){
-                        echo "21.76"."×".$model->getMuplite()."×".$model->log_time;
-                    }else{
-                        echo "(21.76×8)×1.5×".$model->log_time;
-                    }
-                    echo " = ".$model->work_cost;
-                    ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'work_cost',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->textField($model, 'work_cost',
+                            array('readonly'=>(true)));
+                        ?>
+                    </div>
+                    <div class="form-control-static col-sm-7">
+                        <?php
+                        echo $model->wage."÷";
+                        if($model->work_type == 2){
+                            echo "21.76"."×".$model->getMuplite()."×".$model->log_time;
+                        }else{
+                            echo "(21.76×8)×1.5×".$model->log_time;
+                        }
+                        echo " = ".$model->work_cost;
+                        ?>
+                    </div>
                 </div>
             </div>
 
@@ -175,6 +187,14 @@ $('#start_time,#end_time,#hours,#hours_end').on('change',function(){
         }
     }else{
         $('#log_time').val('');
+    }
+});
+
+$('#bool_cost').on('change',function(){
+    if($(this).val()==0){
+        $('#bool_cost_div').stop().slideUp('fast');
+    }else{
+        $('#bool_cost_div').stop().slideDown('fast');
     }
 });
 ";

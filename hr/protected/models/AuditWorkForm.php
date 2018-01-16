@@ -28,6 +28,7 @@ class AuditWorkForm extends CFormModel
     public $cost_num;//節假日的工資倍率
     public $wage;//合約工資
     public $only = 1;//  3：領導審核   1：地區審核  2：總部審核
+    public $bool_cost = 1;//是否支付加班費用  1：支付  0：不支付
 
     public function attributeLabels()
     {
@@ -47,7 +48,8 @@ class AuditWorkForm extends CFormModel
             'area_lcu'=>Yii::t('fete','area lcu'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','head lcu'),
-            'head_lcd'=>Yii::t('fete','head lcd'),
+            'bool_cost'=>Yii::t('fete','Bool Work Cost'),
+            'head_lcd'=>Yii::t('fete','Bool Work Cost'),
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
@@ -60,7 +62,7 @@ class AuditWorkForm extends CFormModel
     public function rules()
     {
         return array(
-            array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name','safe'),
+            array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name,bool_cost','safe'),
             array('work_type','required','on'=>array("audit")),
             array('work_type','validateWorkType','on'=>array("audit")),
             array('work_cause','required','on'=>array("audit")),
@@ -272,8 +274,12 @@ class AuditWorkForm extends CFormModel
 
     //計算員工的加班費用
     public function resetWorkCost(){
-        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
-        $wage = floatval($employeeList["wage"]);
+        if($this->bool_cost == 0){ //不支付加班工資
+            $wage = 0;
+        }else{
+            $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
+            $wage = floatval($employeeList["wage"]);
+        }
         if($this->work_type == 2){
             if($this->cost_num == 1){
                 $this->cost_num = 3;
@@ -296,6 +302,12 @@ class AuditWorkForm extends CFormModel
             return true;
         }
     }
+
+    //支付不支付列表
+    public function getPayList(){
+        return array(Yii::t("fete","Do not pay"),Yii::t("fete","pay"));
+    }
+
     //獲取假期的倍率
     public function getMuplite(){
         $city = Yii::app()->user->city();
@@ -313,6 +325,7 @@ class AuditWorkForm extends CFormModel
             return 2;
         }
     }
+
     //獲取本月加班記錄
     public function getHistoryList(){
         $thisWork = Yii::app()->db->createCommand()->select("*")

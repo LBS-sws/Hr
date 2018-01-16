@@ -88,6 +88,51 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                 'model'=>$model,
             ));
             ?>
+            <?php if (($model->status != 0 || $model->status != 3) && Yii::app()->user->validFunction('ZR03') && $model->scenario!='new'): ?>
+                <legend>&nbsp;</legend>
+                <?php if ($model->work_cost == "0.00"): ?>
+                    <div class="form-group text-danger">
+                        <label class="col-sm-4 col-sm-offset-2 form-control-static">
+                            不支付加班工資
+                        </label>
+                    </div>
+                    <?php else:?>
+                    <div class="form-group text-danger">
+                        <label class="col-sm-2 control-label">
+                            加班工资计算公式
+                        </label>
+                        <div class="form-control-static col-sm-10">
+                            1、非法定节假日加班费= 员工合同约定月工资÷(21.76×8)×150%×加班小时数<br>
+                            2、法定节假日加班费= 员工合同约定月工资÷ 21.76×工资倍率×加班天数
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="form-control-static col-sm-10">
+                            <?php echo $model->wage;?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'work_cost',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="col-sm-3">
+                            <?php echo $form->textField($model, 'work_cost',
+                                array('readonly'=>(true)));
+                            ?>
+                        </div>
+                        <div class="form-control-static col-sm-7">
+                            <?php
+                            echo $model->wage."÷";
+                            if($model->work_type == 2){
+                                echo "21.76"."×".$model->getMuplite()."×".$model->log_time;
+                            }else{
+                                echo "(21.76×8)×1.5×".$model->log_time;
+                            }
+                            echo " = ".$model->work_cost;
+                            ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
             <?php if ($model->z_index != 3 && $model->scenario!='new'): ?>
                 <legend>&nbsp;</legend>
                 <div class="form-group">

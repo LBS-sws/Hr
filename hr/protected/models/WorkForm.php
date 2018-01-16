@@ -26,6 +26,7 @@ class WorkForm extends CFormModel
 	public $reject_cause;
 	public $cost_num;//節假日的工資倍率
 	public $audit = false;//是否需要審核
+    public $wage;//合約工資
 
 
     public $no_of_attm = array(
@@ -60,6 +61,7 @@ class WorkForm extends CFormModel
             'head_lcd'=>Yii::t('fete','head lcd'),
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
+            'wage'=>Yii::t('contract','Contract Pay'),
 		);
 	}
 
@@ -156,12 +158,14 @@ class WorkForm extends CFormModel
                 $this->user_lcu = $row['user_lcu'];
                 $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
+                $this->work_cost = $row['work_cost'];
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['workem'] = $row['workemdoc'];
+                $this->wage = $employeeList['wage'];
                 break;
 			}
 		}
@@ -190,6 +194,23 @@ class WorkForm extends CFormModel
         return true;
     }
 
+    //獲取假期的倍率
+    public function getMuplite(){
+        $city = Yii::app()->user->city();
+        $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
+            ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')",
+                array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
+        if($rows){
+            if($rows["cost_num"] == 1){
+                $this->cost_num = 3;
+            }else{
+                $this->cost_num = 2;
+            }
+            return $this->cost_num;
+        }else{
+            return 2;
+        }
+    }
 	public function saveData()
 	{
 		$connection = Yii::app()->db;

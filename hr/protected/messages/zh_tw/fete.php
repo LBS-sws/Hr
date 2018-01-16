@@ -61,5 +61,10 @@ return array(
     'Cancel Form'=>'取消記錄',
     'Audit Remark'=>'審核備註',
     'Generation ask for leave'=>'代人請假',
+
+    //2018-01-16
+    'Bool Work Cost'=>'加班費用',
+    'pay'=>'支付',
+    'Do not pay'=>'不支付',
 );
 ?>
