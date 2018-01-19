@@ -67,6 +67,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                 'model'=>$model,
             ));
             ?>
+            <?php if (Yii::app()->user->validFunction('ZR07')||$model->only == 2): ?>
             <legend>&nbsp;</legend>
             <?php if ($model->only == 2): ?>
                 <div class="form-group">
@@ -114,6 +115,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
 
 
             <legend>&nbsp;</legend>

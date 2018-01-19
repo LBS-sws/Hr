@@ -21,7 +21,6 @@ return array(
 
 	'Report'=>'报表',
 	'Report Manager'=>'报表管理员',
-	'Staff List'=>'员工名册',
 
 	'System Setting'=>'系统设置',
 	'Security'=>'保安',
@@ -113,6 +112,7 @@ return array(
     'All Overtime work List'=>'所有加班列表',
     'All Ask leave List'=>'所有请假列表',
     'Work overtime and leave after the review is cancelled'=>'取消审核后的加班、请假',
+    'salary deduction is shown'=>'工资扣减显示',
     //沈超添加结束
 );
 ?>
