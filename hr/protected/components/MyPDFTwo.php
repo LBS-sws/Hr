@@ -28,10 +28,10 @@ class MyPDFTwo {
 	//210mm×297mm
 	//190mm×287mm
 	public function setPageToLeave($arr=array()){
-        $suffix = Yii::app()->params['systemId'];
+        $suffix = Yii::app()->basePath;
         $this->_PDF->AddPage();
         //员工请假单
-        $this->_PDF->Image("/$suffix/images/LBS_Group.jpg",92,5,25,22);
+        $this->_PDF->Image("$suffix/../images/LBS_Group.jpg",92,5,25,22);
         $this->_PDF->SetFont('stsongstdlight', '', 18, '', true);
         $html = "员工请假单";
         $this->_PDF->writeHTMLCell(190, 10, 10,33, $html, 0, 1, 0, true, 'C', true);
