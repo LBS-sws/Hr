@@ -32,7 +32,7 @@ class LeaveController extends Controller
                 'expression'=>array('LeaveController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload'),
+                'actions'=>array('index','view','fileDownload','PdfDownload'),
                 'expression'=>array('LeaveController','allowReadOnly'),
             ),
             array('allow',
@@ -260,6 +260,19 @@ class LeaveController extends Controller
             }
         } else {
             throw new CHttpException(404,'Record not found.');
+        }
+    }
+
+    //PDF下載
+    public function actionPdfDownload($index = 0){
+        $model = new LeaveForm('edit');
+        $arr = $model->getLeaveListToLeaveId($index);
+        if (!$arr) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $pdf = new MyPDFTwo();
+            $pdf->setPageToLeave($arr);
+            $pdf->getOutput($arr["employee_name"]."".$arr["leave_code"]);
         }
     }
 }

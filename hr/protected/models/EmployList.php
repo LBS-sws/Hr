@@ -26,7 +26,7 @@ class EmployList extends CListPageModel
 
     //獲取性別列表
     public function getSexList(){
-        return array("man"=>Yii::t("contract","man"),"woman"=>Yii::t("contract","woman"));
+        return array(""=>"","man"=>Yii::t("contract","man"),"woman"=>Yii::t("contract","woman"));
     }
     //獲取年齡列表
     public function getAgeList(){

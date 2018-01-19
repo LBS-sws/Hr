@@ -168,7 +168,9 @@ $('#start_time,#end_time,#start_time_lg,#end_time_lg').on('change',function(){
             if(start_hour==end_hour){
                 hours+=0.5;
             }else{
-                hours++;
+                if(start_hour == 'AM'){
+                    hours++;
+                }
             }
             if(hours>0){
                 $('#log_time').val(hours);

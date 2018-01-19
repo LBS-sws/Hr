@@ -66,6 +66,14 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
 				</div>
 			</div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'vaca_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-7">
+                    <?php echo $form->dropDownList($model, 'vaca_type',VacationForm::getVacaTypeList(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),

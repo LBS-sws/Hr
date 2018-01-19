@@ -27,6 +27,162 @@ class MyPDFTwo {
 
 	//210mm×297mm
 	//190mm×287mm
+	public function setPageToLeave($arr=array()){
+        $suffix = Yii::app()->params['systemId'];
+        $this->_PDF->AddPage();
+        //员工请假单
+        $this->_PDF->Image("/$suffix/images/LBS_Group.jpg",92,5,25,22);
+        $this->_PDF->SetFont('stsongstdlight', '', 18, '', true);
+        $html = "员工请假单";
+        $this->_PDF->writeHTMLCell(190, 10, 10,33, $html, 0, 1, 0, true, 'C', true);
+
+
+        $this->_PDF->SetFont('stsongstdlight', '', 14, '', true);
+        //繪製表格
+        $this->_PDF->MultiCell(190,12,"",1);
+        $this->_PDF->MultiCell(190,12,"",1);
+        $this->_PDF->MultiCell(190,40,"",1);
+        $this->_PDF->MultiCell(190,20,"",1);
+        $this->_PDF->MultiCell(190,25,"",1);
+        //竖线
+        $this->_PDF->Line(35,43,35,67);
+        $this->_PDF->Line(65,43,65,67);
+        $this->_PDF->Line(90,43,90,67);
+        $this->_PDF->Line(130,43,130,55);
+        $this->_PDF->Line(160,43,160,55);
+
+        $this->_PDF->Line(30,107,30,152);
+        $this->_PDF->Line(45,107,45,152);
+        $this->_PDF->Line(85,107,85,152);
+        $this->_PDF->Line(125,107,125,152);
+        $this->_PDF->Line(155,107,155,152);
+
+        $this->_PDF->Line(115,162,200,162);
+        $this->_PDF->Line(54,171,98,171);
+        $this->_PDF->Line(145,171,200,171);
+
+        $this->_PDF->MultiCell(190,5,"",0,"L");
+        $html = "合计 = ";
+        $this->_PDF->MultiCell(190,8,$html,0,"C");
+
+        $this->_PDF->MultiCell(100,8,"员工签名：",0,"L",false,0,30);
+        $this->_PDF->MultiCell(100,8,"日期：",0,"L",false,0);
+        //$this->_PDF->writeHTMLCell(190, 8, 20,"", $html, 0, 1, 0, true, 'L', true);
+        //繪製表格
+        $this->_PDF->SetFillColor(10,10,10,10);
+        $this->_PDF->writeHTMLCell(190, 8, 10,"", "", 0, 1, 0, true, 'L', true);
+        $this->_PDF->MultiCell(190,10,"",1,"L",true);
+        $this->_PDF->MultiCell(190,20,"",1,"L");
+        $this->_PDF->MultiCell(190,10,"",1,"L",true);
+        $this->_PDF->MultiCell(190,30,"",1,"L");
+        $this->_PDF->MultiCell(190,2,"",0,"L");
+        //竖线
+        $this->_PDF->Line(52,183,52,203);
+        $this->_PDF->Line(52,213,52,243);
+        $this->_PDF->Line(100,183,100,203);
+        $this->_PDF->Line(100,213,100,243);
+        $this->_PDF->Line(118,213,118,243);
+        $this->_PDF->Line(148,213,148,243);
+        $this->_PDF->Line(172,213,172,243);
+
+        $this->_PDF->Line(52,193,200,193);
+        $this->_PDF->Line(10,228,100,228);
+
+        $this->_PDF->SetFont('stsongstdlight', '', 12, '', true);
+        $html = "备注：";
+        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $html = "1. 表格必须填写完整、无遗漏。";
+        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $html = "2. 一次性申请年假天数为3天（含）以上的，提前2周申请。";
+        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $html = "3. 病假需提供二级以上医院出具的病假单，无病假单算事假处理。";
+        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $html = "4. 请假流程：员工填写《员工请假单》→人事部审核→华东区营运总监或中国区营运总监签批→人事部存档";
+        $this->_PDF->writeHTMLCell(190, 10, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $html = "5. 该请假单适用于公司内的所有员工。";
+        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+
+        $html = "姓名";
+        $this->_PDF->writeHTMLCell(25, 8, 10,47, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["employee_name"];
+        $this->_PDF->writeHTMLCell(30, 8, 35,47, $html, 0, 1, 0, true, 'C', true);
+        $html = "员工工号";
+        $this->_PDF->writeHTMLCell(25, 8, 65,47, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["employee_code"];
+        $this->_PDF->writeHTMLCell(40, 8, 90,47, $html, 0, 1, 0, true, 'C', true);
+        $html = "入职日期";
+        $this->_PDF->writeHTMLCell(30, 8, 130,47, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["entry_time"];
+        $this->_PDF->writeHTMLCell(40, 8, 160,47, $html, 0, 1, 0, true, 'C', true);
+        $html = "部门";
+        $this->_PDF->writeHTMLCell(25, 8, 10,59, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["dept_name"];
+        $this->_PDF->writeHTMLCell(30, 8, 35,59, $html, 0, 1, 0, true, 'C', true);
+        $html = "岗位";
+        $this->_PDF->writeHTMLCell(25, 8, 65,59, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["posi_name"];
+        $this->_PDF->writeHTMLCell(110, 8, 90,59, $html, 0, 1, 0, true, 'C', true);
+
+        $html = "<p><b>休假类别：（请选择你申请的类别）</b></p>";
+        $this->_PDF->writeHTMLCell(190, 9, 11,71, $html, 0, 1, 0, true, 'L', true);
+        $this->_PDF->MultiCell(190,6,"A类：加班调休 年休假 特别调休",0,"L",false,1,11);
+        $this->_PDF->MultiCell(190,6,"B 类：婚假、丧假、护理假、产假、晚育假、哺乳假",0,"L",false,1,11);
+        $this->_PDF->MultiCell(190,6,"C类：产前假、病假",0,"L",false,1,11);
+        $this->_PDF->MultiCell(190,6,"D类：事假",0,"L",false,1,11);
+
+        $html = "休假类别";
+        $this->_PDF->writeHTMLCell(20, 11, 10,115, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["vacation_name"];
+        $this->_PDF->writeHTMLCell(20, 20, 10,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "具体<br>假种";
+        $this->_PDF->writeHTMLCell(15, 11, 30,113, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["vaca_type"];
+        $this->_PDF->writeHTMLCell(15, 11, 30,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "起始日期/时间";
+        $this->_PDF->writeHTMLCell(40, 11, 45,115, $html, 0, 1, 0, true, 'C', true);
+        $html = date("Y-m-d",strtotime($arr["start_time"]));
+        $this->_PDF->writeHTMLCell(40, 11, 45,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "终止日期/时间";
+        $this->_PDF->writeHTMLCell(40, 11, 85,115, $html, 0, 1, 0, true, 'C', true);
+        $html = date("Y-m-d",strtotime($arr["end_time"]));
+        $this->_PDF->writeHTMLCell(40, 11, 85,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "工作天数/时数";
+        $this->_PDF->writeHTMLCell(30, 11, 125,115, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["log_time"]." 天";
+        $this->_PDF->writeHTMLCell(30, 11, 125,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "请假事由";
+        $this->_PDF->writeHTMLCell(45, 11, 155,115, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["leave_cause"];
+        $this->_PDF->writeHTMLCell(45, 11, 155,130, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["log_time"]." 天";
+        $this->_PDF->writeHTMLCell(85, 6, 115,156, $html, 0, 1, 0, true, 'C', true);
+        $html = date("Y-m-d",strtotime($arr["lcd"]));
+        $this->_PDF->writeHTMLCell(55, 6, 145,165, $html, 0, 1, 0, true, 'C', true);
+
+        $html = "复核：";
+        $this->_PDF->writeHTMLCell(45, 6, 11,176, $html, 0, 1, 0, true, 'L', true);
+        $html = "人事部门意见：";
+        $this->_PDF->writeHTMLCell(42, 6, 10,191, $html, 0, 1, 0, true, 'C', true);
+        $html = "休假前年假天数";
+        $this->_PDF->writeHTMLCell(47, 6, 52,186, $html, 0, 1, 0, true, 'L', true);
+        $html = "休假后年假剩余天数";
+        $this->_PDF->writeHTMLCell(47, 6, 52,196, $html, 0, 1, 0, true, 'L', true);
+        $html = "签批：";
+        $this->_PDF->writeHTMLCell(45, 6, 11,206, $html, 0, 1, 0, true, 'L', true);
+        $html = "部门经理";
+        $this->_PDF->writeHTMLCell(42, 6, 10,219, $html, 0, 1, 0, true, 'C', true);
+        $html = "副地区总经理/<br>地区总经理";
+        $this->_PDF->writeHTMLCell(42, 6, 10,232, $html, 0, 1, 0, true, 'C', true);
+        $html = "区域经<br>理/总监";
+        $this->_PDF->writeHTMLCell(18, 6, 100,225, $html, 0, 1, 0, true, 'C', true);
+        $html = "中国区营运<br>总监";
+        $this->_PDF->writeHTMLCell(24, 6, 148,225, $html, 0, 1, 0, true, 'C', true);
+
+/*       $this->_PDF->Line(10,228,100,228);*/
+    }
+
+	//210mm×297mm
+	//190mm×287mm
 	public function setPageToWork($arr=array()){
         $this->_PDF->AddPage();
 /*        $html = "<table border='1' width='100%'><thead><tr><th>1</th><th>2</th></tr></thead><tbody><tr><td>22</td><td>333</td></tr></tbody></table>";
@@ -176,7 +332,7 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(150, 10, 40,270, $html, 0, 1, false, true, 'L', true);*/
     }
 
-	public function getOutput($str="docx") {
+	public function getOutput($str="docx") {//D
         $this->_PDF->Output($str.".pdf", 'D');
 	}
 }

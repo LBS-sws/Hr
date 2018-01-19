@@ -74,7 +74,7 @@ class AuditLeaveForm extends CFormModel
     public function rules()
     {
         return array(
-            array('id,employee_id,vacation_id,status,leave_cause,start_time,city,end_time,log_time,only,audit_remark,staff_type,employee_name','safe'),
+            array('id,leave_code,employee_id,vacation_id,status,leave_cause,start_time,start_time_lg,city,end_time,,end_time_lg,log_time,only,audit_remark,staff_type,employee_name','safe'),
             array('reject_cause','required',"on"=>"reject"),
             array('vacation_id','required','on'=>array("audit")),
             array('leave_cause','required','on'=>array("audit")),
@@ -286,6 +286,18 @@ class AuditLeaveForm extends CFormModel
 
     //計算員工的請假費用
     public function resetLeaveCost(){
+        $startPm = $this->start_time_lg;
+        $endPm = $this->end_time_lg;
+        if($startPm == "AM"){
+            $this->start_time.=" 9:00:00";
+        }else{
+            $this->start_time.=" 13:00:00";
+        }
+        if($endPm == "AM"){
+            $this->end_time.=" 12:00:00";
+        }else{
+            $this->end_time.=" 18:00:00";
+        }
         $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
         $wage = floatval($employeeList["wage"]);
         $vacationList = $this->vacation_list;

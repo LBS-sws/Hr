@@ -47,6 +47,7 @@ class LeaveList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+        $lcuId = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
 		$sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code 
@@ -58,11 +59,11 @@ class LeaveList extends CListPageModel
 				where a.id!=0 
 			";
         if(Yii::app()->user->validFunction('ZR04')){
-            $sql1.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
-            $sql2.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
+            $sql1.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
+            $sql2.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
         }else{
-            $sql1.=" and a.employee_id='$employee_id' ";
-            $sql2.=" and a.employee_id='$employee_id' ";
+            $sql1.=" and (a.employee_id='$employee_id' or a.lcu='$lcuId') ";
+            $sql2.=" and (a.employee_id='$employee_id' or a.lcu='$lcuId') ";
         }
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

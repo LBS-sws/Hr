@@ -88,7 +88,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                 'model'=>$model,
             ));
             ?>
-            <?php if (($model->status != 0 || $model->status != 3) && Yii::app()->user->validFunction('ZR03') && $model->scenario!='new'): ?>
+            <?php if ($model->status != 0 && $model->status != 3 && Yii::app()->user->validFunction('ZR03') && $model->scenario!='new'): ?>
                 <legend>&nbsp;</legend>
                 <?php if ($model->work_cost == "0.00"): ?>
                     <div class="form-group text-danger">
@@ -133,7 +133,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
-            <?php if ($model->z_index != 3 && $model->scenario!='new'): ?>
+            <?php if ($model->z_index != 3 && $model->z_index != 0): ?>
                 <legend>&nbsp;</legend>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'audit_remark',array('class'=>"col-sm-2 control-label")); ?>

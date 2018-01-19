@@ -11,7 +11,7 @@ class LeaveForm extends CFormModel
 	public $start_time;
 	public $start_time_lg;
 	public $end_time;
-	public $end_time_lg;
+	public $end_time_lg='PM';
 	public $log_time;
 	public $z_index;
 	public $status;
@@ -26,6 +26,9 @@ class LeaveForm extends CFormModel
 	public $vacation_list;//倍率
 	public $city;
 	public $audit = false;//是否需要審核
+    public $wage;//合約工資
+    public $staff_type;//員工的辦公類型
+
 
 
     public $no_of_attm = array(
@@ -60,6 +63,7 @@ class LeaveForm extends CFormModel
             'head_lcd'=>Yii::t('fete','head lcd'),
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
+            'wage'=>Yii::t('contract','Contract Pay'),
 		);
 	}
 
@@ -69,13 +73,14 @@ class LeaveForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time','safe'),
+			array('id,leave_code,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time','safe'),
             array('employee_id','validateUser','on'=>array("new","edit","audit")),
             array('vacation_id','required','on'=>array("new","edit","audit")),
             array('leave_cause','required','on'=>array("new","edit","audit")),
             array('log_time','required','on'=>array("new","edit","audit")),
             array('start_time','required','on'=>array("new","edit","audit")),
             array('end_time','required','on'=>array("new","edit","audit")),
+            array('end_time','validateEndTime','on'=>array("new","edit","audit")),
             array('vacation_id','validateLeaveType','on'=>array("new","edit","audit")),
             array('log_time','validateLogTime','on'=>array("new","edit","audit")),
             array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
@@ -126,18 +131,76 @@ class LeaveForm extends CFormModel
             }
         }
     }
+    //請假時間段的驗證
+    public function validateEndTime($attribute, $params){
+        if(!empty($this->start_time)&&!empty($this->end_time)){
+            if($this->start_time_lg == "AM"){
+                $startTime = $this->start_time." 10:00:00";
+            }else{
+                $startTime = $this->start_time." 14:00:00";
+            }
+            if($this->end_time_lg == "AM"){
+                $endTime = $this->end_time." 10:00:00";
+            }else{
+                $endTime = $this->end_time." 14:00:00";
+            }
+            $sql = "select leave_code from hr_employee_leave WHERE ((start_time<='$startTime' AND end_time >='$startTime') OR (start_time<='$endTime' AND end_time >='$endTime')) AND status=4 ";
+            if(Yii::app()->user->validFunction('ZR06')){
+                $sql.=" and employee_id=".$this->employee_id;
+            }else{
+                $sql.=" and employee_id=".$this->getEmployeeIdToUser();;
+            }
+            $connection = Yii::app()->db;
+            $rows = $connection->createCommand($sql)->queryRow();
+            if($rows){
+                $message = Yii::t('fete','Part or part of the application has been approved.')."：".$rows["leave_code"];
+                $this->addError($attribute,$message);
+            }
+        }
+    }
+
+    //根據加班id獲取加班信息
+    public function getLeaveListToLeaveId($leave_id){
+        $connection = Yii::app()->db;
+        $sql = "select a.*,b.name AS employee_name,b.code AS employee_code ,b.entry_time,b.department,b.position,d.name AS vacation_name,d.vaca_type
+                from hr_employee_leave a LEFT JOIN hr_employee b ON a.employee_id = b.id
+                LEFT JOIN hr_vacation d ON a.vacation_id=d.id
+                where a.id =$leave_id
+			";
+        $records = $connection->createCommand($sql)->queryRow();
+        if($records){
+            $records["dept_name"]=DeptForm::getDeptToId($records["department"]);
+            $records["posi_name"]=DeptForm::getDeptToId($records["position"]);
+            return $records;
+        }else{
+            return false;
+        }
+    }
 
 	public function retrieveData($index) {
+        $lcuId = Yii::app()->user->id;
+        $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $uid = $this->getEmployeeIdToUser();
-		$rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('LEAVE',id) as leavedoc")
-            ->from("hr_employee_leave")->where("id=:id and employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
+        if(Yii::app()->user->validFunction('ZR03')){
+            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('LEAVE',id) as leavedoc")
+                ->from("hr_employee_leave")->where("id=:id and city in ($city_allow)",array(":id"=>$index))->queryAll();
+        }else{
+            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('LEAVE',id) as leavedoc")
+                ->from("hr_employee_leave")->where("id=:id and (employee_id=:employee_id or lcu =:lcu)",array(":id"=>$index,":employee_id"=>$uid,":lcu"=>$lcuId))->queryAll();
+        }
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 			    $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
                 $this->id = $row['id'];
                 $this->leave_code = $row['leave_code'];
-                $this->employee_id = $employeeList["name"];
+                if(Yii::app()->user->validFunction('ZR06')){
+                    $this->employee_id = $row['employee_id'];
+                }else{
+                    $this->employee_id = $employeeList["name"];
+                }
+                $this->wage = $employeeList['wage'];
+                $this->staff_type = $employeeList['staff_type'];
                 $this->vacation_id = $row['vacation_id'];
                 $this->leave_cause = $row['leave_cause'];
                 $this->start_time = date("Y/m/d",strtotime($row['start_time']));
@@ -156,6 +219,7 @@ class LeaveForm extends CFormModel
                 $this->city = $row['city'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
+                $this->leave_cost = $row['leave_cost'];
                 $this->no_of_attm['leave'] = $row['leavedoc'];
                 break;
 			}
@@ -167,7 +231,23 @@ class LeaveForm extends CFormModel
     public function deleteValidate(){
         return true;
     }
-
+    //獲取員工工作日
+    public function getUserWorkDay(){
+        $dayNum = $this->staff_type == "Office"?22:26;
+        return $dayNum;
+    }
+    //獲取假期的倍率
+    public function getMuplite(){
+        $id = $this->vacation_id;
+        $rows = Yii::app()->db->createCommand()->select("*")
+            ->from("hr_vacation")->where("id='$id'")->queryRow();
+        if($rows){
+            $sub_multiple = floatval($rows["sub_multiple"])/100;
+        }else{
+            $sub_multiple = 1.5;
+        }
+        return $sub_multiple;
+    }
     //獲取當前城市的所有請假類型
     public function getLeaveTypeList($city){
         if(empty($city)){
@@ -230,6 +310,7 @@ class LeaveForm extends CFormModel
             case 'edit':
                 $sql = "update hr_employee_leave set
 							vacation_id = :vacation_id, 
+							employee_id = :employee_id, 
 							leave_cause = :leave_cause, 
 							leave_cost = :leave_cost, 
 							start_time_lg = :start_time_lg, 
@@ -323,6 +404,29 @@ class LeaveForm extends CFormModel
             $this->status = 1;
         }else{
             $this->status = 0;
+        }
+        $startTime = strtotime($this->start_time);
+        $startPm = $this->start_time_lg;
+        $endTime = strtotime($this->end_time);
+        $endPm = $this->end_time_lg;
+        $day = ($endTime-$startTime)/(60*60*24);
+        if($startPm != $endPm){
+            if($startPm =="AM"){
+                $day++;
+            }
+        }else{
+            $day+=0.5;
+        }
+        $this->log_time = $day;
+        if($startPm == "AM"){
+            $this->start_time.=" 9:00:00";
+        }else{
+            $this->start_time.=" 13:00:00";
+        }
+        if($endPm == "AM"){
+            $this->end_time.=" 12:00:00";
+        }else{
+            $this->end_time.=" 18:00:00";
         }
         $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
         $wage = floatval($employeeList["wage"]);

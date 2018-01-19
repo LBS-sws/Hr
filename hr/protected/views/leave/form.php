@@ -59,6 +59,13 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
             <?php endif; ?>
         <?php endif; ?>
 	</div>
+            <?php if ($model->status==4): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('misc','Download'), array(
+                        'submit'=>Yii::app()->createUrl('leave/PdfDownload',array("index"=>$model->id))));
+                    ?>
+                </div>
+            <?php endif; ?>
             <div class="btn-group pull-right" role="group">
                 <?php
                 $counter = ($model->no_of_attm['leave'] > 0) ? ' <span id="docleave" class="label label-info">'.$model->no_of_attm['leave'].'</span>' : ' <span id="docleave"></span>';
@@ -86,7 +93,48 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                 'model'=>$model,
             ));
             ?>
-            <?php if ($model->z_index != 3 && $model->scenario!='new'): ?>
+            <?php if ($model->status != 0 && $model->status != 3 && Yii::app()->user->validFunction('ZR03') && $model->scenario!='new'): ?>
+                <legend>&nbsp;</legend>
+                <?php if ($model->leave_cost == "0.00"): ?>
+                    <div class="form-group text-danger">
+                        <label class="col-sm-4 col-sm-offset-2 form-control-static">
+                            不扣減工資
+                        </label>
+                    </div>
+                <?php else:?>
+                    <div class="form-group text-danger">
+                        <label class="col-sm-2 control-label">
+                            扣减工资计算公式
+                        </label>
+                        <div class="form-control-static col-sm-10">
+                            扣减工资= 员工合同约定月工资÷出勤天数×請假天数×假期倍率<br>
+                            出勤天数：22天（員工类型为办公室）、26天（员工类型不是办公室）
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="form-control-static col-sm-10">
+                            <?php echo $model->wage;?>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($model,'leave_cost',array('class'=>"col-sm-2 control-label")); ?>
+                        <div class="col-sm-3">
+                            <?php echo $form->textField($model, 'leave_cost',
+                                array('readonly'=>(true)));
+                            ?>
+                        </div>
+                        <div class="form-control-static col-sm-7">
+                            <?php
+                            echo $model->wage."÷";
+                            echo $model->getUserWorkDay()."×".$model->log_time."×".$model->getMuplite();
+                            echo " = ".$model->leave_cost;
+                            ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+            <?php if ($model->z_index != 3 && $model->z_index != 0): ?>
                 <legend>&nbsp;</legend>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'audit_remark',array('class'=>"col-sm-2 control-label")); ?>
@@ -158,7 +206,9 @@ $('#start_time,#end_time,#start_time_lg,#end_time_lg').on('change',function(){
             if(start_hour==end_hour){
                 hours+=0.5;
             }else{
-                hours++;
+                if(start_hour == 'AM'){
+                    hours++;
+                }
             }
             if(hours>0){
                 $('#log_time').val(hours);

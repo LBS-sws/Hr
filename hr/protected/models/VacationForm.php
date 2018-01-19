@@ -10,6 +10,7 @@ class VacationForm extends CFormModel
 	public $sub_multiple=0;
 	public $city;
     public $only;
+    public $vaca_type;//休假類型
 
 	public function attributeLabels()
 	{
@@ -21,6 +22,7 @@ class VacationForm extends CFormModel
             'sub_bool'=>Yii::t('fete','Whether to deduct salary'),
             'sub_multiple'=>Yii::t('fete','deduct multiple'),
             'only'=>Yii::t('fete','Scope of application'),
+            'vaca_type'=>Yii::t('fete','Vacation Type'),
 		);
 	}
 
@@ -30,9 +32,10 @@ class VacationForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, name,log_bool,max_log,sub_bool,city,sub_multiple,only','safe'),
+			array('id, name,log_bool,max_log,sub_bool,city,sub_multiple,only,vaca_type','safe'),
             array('name','required'),
             array('city','required'),
+            array('vaca_type','required'),
             array('only','required'),
 			array('name','validateName'),
 			array('name','validateLog'),
@@ -82,6 +85,7 @@ class VacationForm extends CFormModel
                 $this->sub_multiple = $row['sub_multiple'];
                 $this->city = $row['city'];
                 $this->only = $row['only'];
+                $this->vaca_type = $row['vaca_type'];
                 break;
 			}
 		}
@@ -97,6 +101,16 @@ class VacationForm extends CFormModel
         }else{
             return $id;
         }
+    }
+
+    //根據id獲取請假類型
+    public function getVacaTypeLIst(){
+        return array(
+            "A"=>Yii::t("fete","Overtime, annual leave, special accommodation"),
+            "B"=>Yii::t("fete","Wedding leave, funeral leave, nursing leave, maternity leave, late childbirth, breast-feeding leave"),
+            "C"=>Yii::t("fete","Prenatal leave, sick leave"),
+            "D"=>Yii::t("fete","Private affair leave")
+        );
     }
     //刪除驗證
     public function deleteValidate(){
@@ -125,15 +139,16 @@ class VacationForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_vacation(
-							name,log_bool,max_log, sub_bool, sub_multiple, city, only, lcu
+							name,log_bool,max_log, sub_bool, sub_multiple, vaca_type, city, only, lcu
 						) values (
-							:name,:log_bool,:max_log, :sub_bool, :sub_multiple, :city, :only, :lcu
+							:name,:log_bool,:max_log, :sub_bool, :sub_multiple, :vaca_type, :city, :only, :lcu
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_vacation set
 							name = :name, 
 							log_bool = :log_bool, 
+							vaca_type = :vaca_type, 
 							max_log = :max_log, 
 							sub_bool = :sub_bool, 
 							city = :city, 
@@ -155,6 +170,8 @@ class VacationForm extends CFormModel
         //log_bool,max_log,sub_bool,sub_multiple
         if (strpos($sql,':name')!==false)
             $command->bindParam(':name',$this->name,PDO::PARAM_STR);
+        if (strpos($sql,':vaca_type')!==false)
+            $command->bindParam(':vaca_type',$this->vaca_type,PDO::PARAM_STR);
         if (strpos($sql,':log_bool')!==false)
             $command->bindParam(':log_bool',$this->log_bool,PDO::PARAM_STR);
         if (strpos($sql,':max_log')!==false)
