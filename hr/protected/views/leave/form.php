@@ -93,7 +93,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                 'model'=>$model,
             ));
             ?>
-            <?php if ($model->status != 0 && $model->status != 3 && Yii::app()->user->validFunction('ZR03') && $model->scenario!='new'): ?>
+            <?php if ($model->status != 0 && $model->status != 3 && Yii::app()->user->validFunction('ZR04') && $model->scenario!='new'): ?>
                 <legend>&nbsp;</legend>
                 <?php if ($model->leave_cost == "0.00"): ?>
                     <div class="form-group text-danger">
