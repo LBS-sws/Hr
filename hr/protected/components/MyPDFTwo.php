@@ -130,13 +130,37 @@ class MyPDFTwo {
         $this->_PDF->MultiCell(190,6,"C类：产前假、病假",0,"L",false,1,11);
         $this->_PDF->MultiCell(190,6,"D类：事假",0,"L",false,1,11);
 
+        $vaca_type = $arr["vaca_type"];
+        $vaca_type =$vaca_type=="E"?"A":$vaca_type;
+
+        $sumDay = 0;
+        if($arr["vaca_type"] == "E"){
+            $zero1=strtotime ($arr["entry_time"]." 00:00:00");  //入職時間
+            $zero2=strtotime ($arr["start_time"]);  //請假開始時間
+            $guonian=floor(($zero2-$zero1)/(60*60*24*365));
+            if($guonian<1){
+                $sumDay = 0;
+            }elseif ($guonian<10){
+                $sumDay = 5;
+            }elseif ($guonian<20){
+                $sumDay = 10;
+            }else{
+                $sumDay = 15;
+            }
+            $sumDay=$sumDay + floatval($arr["sumDay"]) - floatval($arr["leaveNum"]);
+            $html = $sumDay."天";
+            $this->_PDF->writeHTMLCell(98, 6, 101,186, $html, 0, 1, 0, true, 'C', true);
+            $html = $sumDay-floatval($arr["log_time"])."天";
+            $this->_PDF->writeHTMLCell(98, 6, 101,196, $html, 0, 1, 0, true, 'C', true);
+        }
+
         $html = "休假类别";
         $this->_PDF->writeHTMLCell(20, 11, 10,115, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["vacation_name"];
         $this->_PDF->writeHTMLCell(20, 20, 10,130, $html, 0, 1, 0, true, 'C', true);
         $html = "具体<br>假种";
         $this->_PDF->writeHTMLCell(15, 11, 30,113, $html, 0, 1, 0, true, 'C', true);
-        $html = $arr["vaca_type"];
+        $html = $vaca_type;
         $this->_PDF->writeHTMLCell(15, 11, 30,130, $html, 0, 1, 0, true, 'C', true);
         $html = "起始日期/时间";
         $this->_PDF->writeHTMLCell(40, 11, 45,115, $html, 0, 1, 0, true, 'C', true);

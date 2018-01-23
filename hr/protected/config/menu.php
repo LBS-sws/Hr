@@ -145,6 +145,10 @@ return array(
 				'access'=>'ZC04',
 				'url'=>'/vacation/index',
 			),
+			'cumulative annual leave'=>array(
+				'access'=>'ZC07',
+				'url'=>'/YearDay/index',
+			),
 			'employee binding account'=>array(
 				'access'=>'ZC05',
 				'url'=>'/binding/index',

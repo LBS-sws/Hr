@@ -70,9 +70,18 @@ return array(
     //2018-01-17
     'Part or part of the application has been approved.'=>'申請的假期有部分或部分已經審批過了',
     'Vacation Type'=>'假期種類',
+    'annual leave'=>'年休假',
+    'Overtime, special accommodation'=>'加班調休、特別調休',
     'Overtime, annual leave, special accommodation.'=>'加班調休、年休假、特別調休',
     'Wedding leave, funeral leave, nursing leave, maternity leave, late childbirth, breast-feeding leave'=>'婚假、喪假、護理假、產假、晚育假、哺乳假',
     'Prenatal leave, sick leave'=>'產前假、病假',
     'Private affair leave'=>'事假',
+
+    //2018-01-23
+    'cumulative annual leave List'=>'累積年假列表',
+    'cumulative annual leave Form'=>'累積年假表單',
+    'Where Year'=>'哪年適用',
+    'Year'=>'年',
+    'Cumulative Day'=>'累積天數',
 );
 ?>

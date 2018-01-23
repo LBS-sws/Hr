@@ -106,7 +106,8 @@ class VacationForm extends CFormModel
     //根據id獲取請假類型
     public function getVacaTypeLIst(){
         return array(
-            "A"=>Yii::t("fete","Overtime, annual leave, special accommodation"),
+            "E"=>Yii::t("fete","annual leave"),
+            "A"=>Yii::t("fete","Overtime, special accommodation"),
             "B"=>Yii::t("fete","Wedding leave, funeral leave, nursing leave, maternity leave, late childbirth, breast-feeding leave"),
             "C"=>Yii::t("fete","Prenatal leave, sick leave"),
             "D"=>Yii::t("fete","Private affair leave")

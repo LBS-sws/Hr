@@ -113,6 +113,7 @@ return array(
     'All Ask leave List'=>'所有请假列表',
     'Work overtime and leave after the review is cancelled'=>'取消审核后的加班、请假',
     'salary deduction is shown'=>'工资扣减显示',
+    'cumulative annual leave'=>'累积年假配置',
     //沈超添加结束
 );
 ?>

@@ -171,9 +171,33 @@ class LeaveForm extends CFormModel
         if($records){
             $records["dept_name"]=DeptForm::getDeptToId($records["department"]);
             $records["posi_name"]=DeptForm::getDeptToId($records["position"]);
+            if($records["vaca_type"] == "E"){ //年假
+                $records["sumDay"] =YearDayForm::getSumDayToYear($records["employee_id"],$records["start_time"]);
+                $records["leaveNum"] =LeaveForm::getLeaveNumToYear($records["employee_id"],$records["start_time"]);
+            }else{
+                $records["sumDay"]=0;
+                $records["leaveNum"]=0;
+            }
             return $records;
         }else{
             return false;
+        }
+    }
+
+    //某年累積的請假天數（僅年假)
+    public function getLeaveNumToYear($employee_id,$time){
+        if(empty($time)||empty($employee_id)){
+            return 0;
+        }
+        $year = date("Y",strtotime($time));
+        $sql = "select sum(a.log_time) AS sumDay from hr_employee_leave a 
+            LEFT JOIN hr_vacation b ON a.vacation_id = b.id
+            WHERE a.start_time>='$year-01-01 00:00:00'AND a.start_time<'$time' AND a.status=4 AND b.vaca_type='E' AND a.employee_id=$employee_id";
+        $Sum = Yii::app()->db->createCommand($sql)->queryRow();
+        if($Sum){
+            return $Sum["sumDay"];
+        }else{
+            return 0;
         }
     }
 
