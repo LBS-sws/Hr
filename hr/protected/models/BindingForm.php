@@ -78,7 +78,7 @@ class BindingForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
-        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city in ($city_allow)")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city in ($city_allow) and status='A'")->queryAll();
         $bindList = Yii::app()->db->createCommand()->select("user_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $bindList = array_column($bindList,"user_id");
         $arr = array(""=>"");
