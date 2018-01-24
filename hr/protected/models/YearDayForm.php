@@ -51,11 +51,11 @@ class YearDayForm extends CFormModel
     //獲取可以選擇的員工
     public function getEmployeeList(){
 	    $arr = array(""=>"");
-        $rows = Yii::app()->db->createCommand()->select("b.name,b.id")
+        $rows = Yii::app()->db->createCommand()->select("b.code,b.name,b.id")
             ->from("hr_binding a")->leftJoin("hr_employee b","a.employee_id = b.id")->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $arr[$row["id"]] = $row["name"];
+                $arr[$row["id"]] = $row["code"]." - ".$row["name"];
             }
         }
         return $arr;

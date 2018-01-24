@@ -5,6 +5,7 @@
 
 
 
+    <td><?php echo $this->record['employee_code']; ?></td>
     <td><?php echo $this->record['employee_name']; ?></td>
     <td><?php echo $this->record['year']; ?></td>
     <td><?php echo $this->record['add_num']; ?></td>

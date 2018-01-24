@@ -10,6 +10,7 @@ class YearDayList extends CListPageModel
 	public function attributeLabels()
 	{
 		return array(	
+			'employee_code'=>Yii::t('contract','Employee Code'),
 			'employee_name'=>Yii::t('contract','Employee Name'),
 			'year'=>Yii::t('fete','Year'),
             'add_num'=>Yii::t('fete','Cumulative Day'),
@@ -19,25 +20,30 @@ class YearDayList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select * from hr_staff_year 
-                where id>0 
+		$sql1 = "select a.*,b.code AS employee_code,b.name AS employee_name from hr_staff_year a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id 
+                where a.id>0 
 			";
-		$sql2 = "select count(id)
-				from hr_staff_year 
-                where id>0 
+		$sql2 = "select count(a.id)
+				from hr_staff_year a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id 
+                where a.id>0 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
 				case 'year':
-					$clause .= General::getSqlConditionClause('year',$svalue);
+					$clause .= General::getSqlConditionClause('a.year',$svalue);
 					break;
 				case 'add_num':
-					$clause .= General::getSqlConditionClause('add_num',$svalue);
+					$clause .= General::getSqlConditionClause('a.add_num',$svalue);
+					break;
+				case 'employee_code':
+                    $clause .= General::getSqlConditionClause('b.code',$svalue);
 					break;
 				case 'employee_name':
-                    $clause .= ' and employee_id in '.$this->getEmployeeNameSqlLikeName($svalue);
+                    $clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
 			}
 		}
@@ -60,7 +66,8 @@ class YearDayList extends CListPageModel
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'employee_name'=>$this->getEmployeeNameToId($record['employee_id']),
+					'employee_code'=>$record['employee_code'],
+					'employee_name'=>$record['employee_name'],
 					'year'=>$record['year'],
 					'add_num'=>$record['add_num'],
 				);

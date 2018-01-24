@@ -36,6 +36,7 @@ $this->pageTitle=Yii::app()->name . ' - YearDay';
         </div></div>
     <?php
     $search = array(
+        'employee_code',
         'employee_name',
         'year',
         'add_num',
