@@ -129,20 +129,22 @@ class AuditLeaveForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         if($this->only == 2){
-            $sql = "id=:id";
+            $sql = "a.id=:id";
         }else{
-            $sql = "id=:id and city in ($city_allow)";
+            $sql = "a.id=:id and b.city in ($city_allow)";
         }
-        $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('LEAVE',id) as leavedoc")
-            ->from("hr_employee_leave")->where($sql,array(":id"=>$index))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
+            ->from("hr_employee_leave a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where($sql,array(":id"=>$index))->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
-                $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
                 $this->id = $row['id'];
                 $this->leave_code = $row['leave_code'];
-                $this->employee_id = $employeeList["name"];
+                $this->employee_id = $row['employee_name'];
                 $this->employee_name = $row['employee_id'];
-                $this->staff_type = $employeeList["staff_type"];
+                $this->staff_type = $row['staff_type'];
+                $this->wage = $row['wage'];
                 $this->vacation_id = $row['vacation_id'];
                 $this->leave_cause = $row['leave_cause'];
                 $this->leave_cost = $row['leave_cost'];
@@ -162,7 +164,6 @@ class AuditLeaveForm extends CFormModel
                 $this->head_lcd = $row['head_lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
-                $this->wage = $employeeList['wage'];
                 $this->no_of_attm['leave'] = $row['leavedoc'];
                 break;
             }
@@ -281,6 +282,7 @@ class AuditLeaveForm extends CFormModel
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
 
+        $this->only = empty($this->only)?3:$this->only;
         return true;
     }
 

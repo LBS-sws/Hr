@@ -92,6 +92,14 @@ class LeaveForm extends CFormModel
         if(Yii::app()->user->validFunction('ZR06')&&empty($this->employee_id)){
             $message = Yii::t('contract','Employee Name').Yii::t('contract',' not exist');
             $this->addError($attribute,$message);
+        }else{
+            $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
+            if($employeeList){
+                $this->city = $employeeList["city"];
+            }else{
+                $message = "用戶不存在";
+                $this->addError($attribute,$message);
+            }
         }
     }
 	//驗證請假類型
@@ -207,24 +215,28 @@ class LeaveForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $uid = $this->getEmployeeIdToUser();
         if(Yii::app()->user->validFunction('ZR03')){
-            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('LEAVE',id) as leavedoc")
-                ->from("hr_employee_leave")->where("id=:id and city in ($city_allow)",array(":id"=>$index))->queryAll();
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
+                ->from("hr_employee_leave a")
+                ->leftJoin("hr_employee b","a.employee_id = b.id")
+                ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
         }else{
-            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('LEAVE',id) as leavedoc")
-                ->from("hr_employee_leave")->where("id=:id and (employee_id=:employee_id or lcu =:lcu)",array(":id"=>$index,":employee_id"=>$uid,":lcu"=>$lcuId))->queryAll();
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
+                ->from("hr_employee_leave a")
+                ->leftJoin("hr_employee b","a.employee_id = b.id")
+                ->where("a.id=:id and (a.employee_id=:employee_id or a.lcu =:lcu)",
+                    array(":id"=>$index,":employee_id"=>$uid,":lcu"=>$lcuId))->queryAll();
         }
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
-			    $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
                 $this->id = $row['id'];
                 $this->leave_code = $row['leave_code'];
                 if(Yii::app()->user->validFunction('ZR06')){
                     $this->employee_id = $row['employee_id'];
                 }else{
-                    $this->employee_id = $employeeList["name"];
+                    $this->employee_id = $row['employee_name'];
                 }
-                $this->wage = $employeeList['wage'];
-                $this->staff_type = $employeeList['staff_type'];
+                $this->wage = $row['wage'];
+                $this->staff_type = $row['staff_type'];
                 $this->vacation_id = $row['vacation_id'];
                 $this->leave_cause = $row['leave_cause'];
                 $this->start_time = date("Y/m/d",strtotime($row['start_time']));
@@ -355,7 +367,9 @@ class LeaveForm extends CFormModel
         $city = Yii::app()->user->city();
         $uid = Yii::app()->user->id;//ZR06
         if(!Yii::app()->user->validFunction('ZR06')){
-            $this->employee_id = $this->getEmployeeIdToUser();
+            $employeeList = $this->getEmployeeOneToUser();
+            $this->employee_id = $employeeList["id"];
+            $this->city = $employeeList["city"];
         }
         $this->resetLeaveCost();//計算員工的工資
 
@@ -384,7 +398,7 @@ class LeaveForm extends CFormModel
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         if (strpos($sql,':lcu')!==false)
@@ -482,6 +496,16 @@ class LeaveForm extends CFormModel
                 array(':user_id'=>$uid))->queryRow();
         if ($rows){
             return $rows["employee_id"];
+        }
+        return "";
+    }
+	//獲取當前用戶的員工id
+	public function getEmployeeOneToUser(){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("b.id,b.city")->from("hr_binding a")->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where('user_id=:user_id',array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            return $rows;
         }
         return "";
     }

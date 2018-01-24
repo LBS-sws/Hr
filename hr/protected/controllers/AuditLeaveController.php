@@ -28,7 +28,7 @@ class AuditLeaveController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','reject','audit'),
+                'actions'=>array('edit','reject','audit','Fileupload','FileRemove'),
                 'expression'=>array('AuditLeaveController','allowReadWrite'),
             ),
             array('allow',
@@ -128,6 +128,36 @@ class AuditLeaveController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl('auditLeave/edit',array('index'=>$model->id)));
             }
+        }
+    }
+
+    public function actionFileupload($doctype) {
+        $model = new AuditLeaveForm();
+        if (isset($_POST['AuditLeaveForm'])) {
+            $model->attributes = $_POST['AuditLeaveForm'];
+
+            $id = ($_POST['AuditLeaveForm']['scenario']=='new') ? 0 : $model->id;
+            $docman = new DocMan($model->docType,$id,get_class($model));
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+            $docman->fileUpload();
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
+        }
+    }
+
+    public function actionFileRemove($doctype) {
+        $model = new AuditLeaveForm();
+        if (isset($_POST['AuditLeaveForm'])) {
+            $model->attributes = $_POST['AuditLeaveForm'];
+
+            $docman = new DocMan($model->docType,$model->id,'LeaveForm');
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
         }
     }
 

@@ -128,18 +128,22 @@ class WorkForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $uid = $this->getEmployeeIdToUser();
         if(Yii::app()->user->validFunction('ZR03')){
-            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('WORKEM',id) as workemdoc")
-                ->from("hr_employee_work")->where("id=:id and city in ($city_allow)",array(":id"=>$index))->queryAll();
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
+                ->from("hr_employee_work a")
+                ->leftJoin("hr_employee b","a.employee_id = b.id")
+                ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
         }else{
-            $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('WORKEM',id) as workemdoc")
-                ->from("hr_employee_work")->where("id=:id and employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
+                ->from("hr_employee_work a")
+                ->leftJoin("hr_employee b","a.employee_id = b.id")
+                ->where("a.id=:id and a.employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
         }
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
-			    $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
                 $this->id = $row['id'];
                 $this->work_code = $row['work_code'];
-                $this->employee_id = $employeeList["name"];
+                $this->employee_id = $row['employee_name'];
+                $this->wage = $row['wage'];
                 $this->work_type = $row['work_type'];
                 $this->work_cause = $row['work_cause'];
                 $this->work_address = $row['work_address'];
@@ -165,7 +169,6 @@ class WorkForm extends CFormModel
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['workem'] = $row['workemdoc'];
-                $this->wage = $employeeList['wage'];
                 break;
 			}
 		}
@@ -275,7 +278,9 @@ class WorkForm extends CFormModel
 
         $city = Yii::app()->user->city();
         $uid = Yii::app()->user->id;
-        $this->employee_id = $this->getEmployeeIdToUser();
+        $employeeList = $this->getEmployeeOneToUser();
+        $this->employee_id = $employeeList["id"];
+        $city = $employeeList["city"];
         $this->resetWorkCost();//計算員工的工資
 
         $command=$connection->createCommand($sql);
@@ -359,6 +364,16 @@ class WorkForm extends CFormModel
                 array(':user_id'=>$uid))->queryRow();
         if ($rows){
             return $rows["employee_id"];
+        }
+        return "";
+    }
+    //獲取當前用戶的員工id
+    public function getEmployeeOneToUser(){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("b.id,b.city")->from("hr_binding a")->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where('user_id=:user_id',array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            return $rows;
         }
         return "";
     }

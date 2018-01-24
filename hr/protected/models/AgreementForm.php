@@ -89,7 +89,7 @@ class AgreementForm extends CFormModel
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")
-            ->where("id=:id and city in($city_allow)", array(':id'=>$index))->queryAll();
+            ->where("id=:id and (city IN ($city_allow) or type = 1) ", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)

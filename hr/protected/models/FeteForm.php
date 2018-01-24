@@ -79,7 +79,7 @@ class FeteForm extends CFormModel
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
 		$rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_fete")->where("id=:id and city in ($city_allow) ",array(":id"=>$index))->queryAll();
+            ->from("hr_fete")->where("id=:id and (city in ($city_allow) OR only='default') ",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];

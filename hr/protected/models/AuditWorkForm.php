@@ -30,6 +30,19 @@ class AuditWorkForm extends CFormModel
     public $only = 1;//  3：領導審核   1：地區審核  2：總部審核
     public $bool_cost = 1;//是否支付加班費用  1：支付  0：不支付
 
+
+    public $no_of_attm = array(
+        'workem'=>0
+    );
+    public $docType = 'WORKEM';
+    public $docMasterId = array(
+        'workem'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'workem'=>0
+    );
+
     public function attributeLabels()
     {
         return array(
@@ -73,6 +86,7 @@ class AuditWorkForm extends CFormModel
             array('end_time','validateTime','on'=>array("audit")),
             array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true,'on'=>array("audit")),
             array('reject_cause','required',"on"=>"reject"),
+            array('files, removeFileId, docMasterId','safe'),
         );
     }
 
@@ -117,20 +131,23 @@ class AuditWorkForm extends CFormModel
 
     public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
         if($this->only == 2){
-            $sql = "id=:id";
+            $sql = "a.id=:id";
         }else{
-            $sql = "id=:id and city in ($city_allow)";
+            $sql = "a.id=:id and b.city in ($city_allow)";
         }
-        $rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_employee_work")->where($sql,array(":id"=>$index))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
+            ->from("hr_employee_work a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where($sql,array(":id"=>$index))->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
-                $employeeList = EmployeeForm::getEmployeeOneToId($row['employee_id']);
                 $this->id = $row['id'];
                 $this->work_code = $row['work_code'];
                 $this->employee_name = $row['employee_id'];
-                $this->employee_id = $employeeList["name"];
+                $this->employee_id = $row['employee_name'];
+                $this->wage = $row['wage'];
                 $this->work_type = $row['work_type'];
                 $this->work_cause = $row['work_cause'];
                 $this->work_address = $row['work_address'];
@@ -155,7 +172,7 @@ class AuditWorkForm extends CFormModel
                 $this->head_lcd = $row['head_lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
-                $this->wage = $employeeList['wage'];
+                $this->no_of_attm['workem'] = $row['workemdoc'];
                 break;
             }
         }
@@ -268,7 +285,7 @@ class AuditWorkForm extends CFormModel
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
-
+        $this->only = empty($this->only)?3:$this->only;
         return true;
     }
 

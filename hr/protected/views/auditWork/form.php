@@ -50,6 +50,12 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                 <?php echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('fete','Overtime record this month'), array(
                     'name'=>'btn99','id'=>'btn99','data-toggle'=>'modal','data-target'=>'#workList'));
                 ?>
+                <?php
+                $counter = ($model->no_of_attm['workem'] > 0) ? ' <span id="docworkem" class="label label-info">'.$model->no_of_attm['workem'].'</span>' : ' <span id="docworkem"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadworkem',)
+                );
+                ?>
             </div>
 	</div></div>
 
@@ -138,6 +144,13 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
 		</div>
 	</div>
 </section>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'WORKEM',
+    'header'=>Yii::t('misc','Attachment'),
+    'ronly'=>($model->getInputBool()),
+));
+?>
 <?php
 $this->renderPartial('//site/workList',array(
     'model'=>$model,
@@ -148,6 +161,7 @@ $this->renderPartial('//site/workList',array(
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
+Script::genFileUpload($model,$form->id,'WORKEM');
 
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
