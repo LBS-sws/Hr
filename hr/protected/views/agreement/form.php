@@ -109,7 +109,7 @@ $this->pageTitle=Yii::app()->name . ' - Agreement Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->inlineRadioButtonList($model, 'type',array(Yii::t("misc","Inactive"),Yii::t("misc","Active")),
+                    <?php echo $form->inlineRadioButtonList($model, 'type',array(Yii::t("contract","local"),Yii::t("contract","default")),
                         array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>

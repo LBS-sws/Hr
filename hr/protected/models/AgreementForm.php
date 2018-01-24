@@ -59,7 +59,8 @@ class AgreementForm extends CFormModel
     }
 
     public function getAgreementUrl(){
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")->order('type desc')->queryRow();
+        $city_allow = Yii::app()->user->city_allow();
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_agreement")->where("city IN ($city_allow) or type = 1")->order('id desc')->queryRow();
         if($rows){
             return $rows["docx_url"];
         }else{
