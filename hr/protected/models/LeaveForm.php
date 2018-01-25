@@ -89,16 +89,18 @@ class LeaveForm extends CFormModel
 	}
 
 	public function validateUser($attribute, $params){
-        if(Yii::app()->user->validFunction('ZR06')&&empty($this->employee_id)){
-            $message = Yii::t('contract','Employee Name').Yii::t('contract',' not exist');
-            $this->addError($attribute,$message);
-        }else{
-            $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
-            if($employeeList){
-                $this->city = $employeeList["city"];
-            }else{
-                $message = "用戶不存在";
+        if(Yii::app()->user->validFunction('ZR06')){
+            if(empty($this->employee_id)){
+                $message = Yii::t('contract','Employee Name').Yii::t('contract',' not exist');
                 $this->addError($attribute,$message);
+            }else{
+                $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
+                if($employeeList){
+                    $this->city = $employeeList["city"];
+                }else{
+                    $message = "用戶不存在";
+                    $this->addError($attribute,$message);
+                }
             }
         }
     }
