@@ -17,7 +17,7 @@
 	</th>
     <?php if (Yii::app()->user->validFunction('ZR03')): ?>
         <th>
-            <?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('a.city'),'#',$this->createOrderLink('work-list','a.city'))
+            <?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('b.city'),'#',$this->createOrderLink('work-list','b.city'))
             ;
             ?>
         </th>

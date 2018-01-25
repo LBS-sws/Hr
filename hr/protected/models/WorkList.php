@@ -63,7 +63,7 @@ class WorkList extends CListPageModel
 	{
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
-		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code 
+		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where a.id!=0 
 			";
@@ -72,8 +72,8 @@ class WorkList extends CListPageModel
                 where a.id!=0 
 			";
 		if(Yii::app()->user->validFunction('ZR03')){
-            $sql1.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
-            $sql2.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
+            $sql1.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
+            $sql2.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
         }else{
 		    $sql1.=" and a.employee_id='$employee_id' ";
             $sql2.=" and a.employee_id='$employee_id' ";
@@ -92,7 +92,7 @@ class WorkList extends CListPageModel
 					$clause .= General::getSqlConditionClause('b.code',$svalue);
 					break;
                 case 'city_name':
-                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
 			}
 		}
@@ -142,7 +142,7 @@ class WorkList extends CListPageModel
 					'log_time'=>$record['log_time'].$dayStr,
 					'work_type'=>$costNumList[$record['work_type']],
 					'status'=>$colorList["status"],
-                    'city'=>CGeneral::getCityName($record["city"]),
+                    'city'=>CGeneral::getCityName($record["s_city"]),
 					'style'=>$colorList["style"],
 				);
 			}

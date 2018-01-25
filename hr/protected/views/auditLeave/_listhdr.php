@@ -16,7 +16,7 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('a.city'),'#',$this->createOrderLink('auditLeave-list','a.city'))
+		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('b.city'),'#',$this->createOrderLink('auditLeave-list','b.city'))
 			;
 		?>
 	</th>

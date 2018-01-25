@@ -50,7 +50,7 @@ class LeaveList extends CListPageModel
         $lcuId = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
-		$sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code 
+		$sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
               from hr_employee_leave a LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where a.id!=0 
 			";
@@ -59,8 +59,8 @@ class LeaveList extends CListPageModel
 				where a.id!=0 
 			";
         if(Yii::app()->user->validFunction('ZR04')){
-            $sql1.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
-            $sql2.=" and ((a.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
+            $sql1.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
+            $sql2.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
         }else{
             $sql1.=" and (a.employee_id='$employee_id' or a.lcu='$lcuId') ";
             $sql2.=" and (a.employee_id='$employee_id' or a.lcu='$lcuId') ";
@@ -82,7 +82,7 @@ class LeaveList extends CListPageModel
                     $clause .= General::getSqlConditionClause('b.code',$svalue);
                     break;
                 case 'city_name':
-                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
 			}
 		}
@@ -122,7 +122,7 @@ class LeaveList extends CListPageModel
 					'log_time'=>$record['log_time']."天",
 					'vacation_id'=>VacationForm::getVacationNameToId($record['vacation_id']),
 					'status'=>$colorList["status"],
-                    'city'=>CGeneral::getCityName($record["city"]),
+                    'city'=>CGeneral::getCityName($record["s_city"]),
 					'style'=>$colorList["style"],
 				);
 			}

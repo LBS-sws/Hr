@@ -35,7 +35,7 @@ class AuditLeaveList extends CListPageModel
     public function retrieveDataByPage($pageNum=1)
     {
         $city_allow = Yii::app()->user->city_allow();
-        $sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code 
+        $sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city
               from hr_employee_leave a LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where a.status !=0
 			";
@@ -44,11 +44,11 @@ class AuditLeaveList extends CListPageModel
 				where a.status !=0 
 			";
         if($this->only ==1 ){
-            $sql1.=" AND a.z_index =0 AND a.city in ($city_allow) ";
-            $sql2.=" AND a.z_index =0 AND a.city in ($city_allow) ";
+            $sql1.=" AND a.z_index =0 AND b.city in ($city_allow) ";
+            $sql2.=" AND a.z_index =0 AND b.city in ($city_allow) ";
         }elseif($this->only ==3 ){
-            $sql1.=" AND a.z_index =3 AND a.city in ($city_allow) ";
-            $sql2.=" AND a.z_index =3 AND a.city in ($city_allow) ";
+            $sql1.=" AND a.z_index =3 AND b.city in ($city_allow) ";
+            $sql2.=" AND a.z_index =3 AND b.city in ($city_allow) ";
         }else{
             $sql1.=" AND a.z_index =1 ";
             $sql2.=" AND a.z_index =1 ";
@@ -70,7 +70,7 @@ class AuditLeaveList extends CListPageModel
                     $clause .= General::getSqlConditionClause('b.code',$svalue);
                     break;
                 case 'city_name':
-                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
             }
         }
@@ -102,7 +102,7 @@ class AuditLeaveList extends CListPageModel
                     'log_time'=>$record['log_time']."天",
                     'vacation_id'=>VacationForm::getVacationNameToId($record['vacation_id']),
                     'status'=>$colorList["status"],
-                    'city'=>CGeneral::getCityName($record["city"]),
+                    'city'=>CGeneral::getCityName($record["s_city"]),
                     'style'=>$colorList["style"],
                 );
             }

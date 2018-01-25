@@ -1,6 +1,6 @@
 <?php
 if (empty($model->id)&&$model->scenario == "edit"){
-    $this->redirect(Yii::app()->createUrl('auditLeave/index'));
+    $this->redirect(Yii::app()->createUrl('auditLeave/index',array("only"=>$model->only)));
 }
 $this->pageTitle=Yii::app()->name . ' - Leave Form';
 ?>
