@@ -39,7 +39,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
 
         <?php if ($model->scenario!='view'&&$model->status!='3'): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
-                'submit'=>Yii::app()->createUrl('auditWork/audit')));
+                'submit'=>Yii::app()->createUrl('auditWork/audit',array("only"=>$model->only))));
             ?>
             <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','Rejected'), array(
                 'name'=>'btn88','id'=>'btn88','data-toggle'=>'modal','data-target'=>'#jectdialog'));
@@ -138,7 +138,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                 'form'=>$form,
                 'model'=>$model,
                 'rejectName'=>"reject_cause",
-                'submit'=>Yii::app()->createUrl('auditWork/reject'),
+                'submit'=>Yii::app()->createUrl('auditWork/reject',array("only"=>$model->only)),
             ));
             ?>
 		</div>
@@ -217,7 +217,7 @@ $('#bool_cost').on('change',function(){
 if($model->only == 2){
     Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 }
-$js = Script::genDeleteData(Yii::app()->createUrl('work/delete'));
+$js = Script::genDeleteData(Yii::app()->createUrl('work/delete',array("only"=>$model->only)));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();

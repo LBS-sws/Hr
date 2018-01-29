@@ -50,7 +50,7 @@ class LeaveController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZA06');
+        return Yii::app()->user->validRWFunction('ZA06');
     }
 
     public static function allowReadOnly() {

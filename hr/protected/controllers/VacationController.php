@@ -42,7 +42,7 @@ class VacationController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZC04');
+        return Yii::app()->user->validRWFunction('ZC04');
     }
 
     public static function allowReadOnly() {

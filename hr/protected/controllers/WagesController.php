@@ -46,7 +46,7 @@ class WagesController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZA03');
+        return Yii::app()->user->validRWFunction('ZA03');
     }
 
     public static function allowReadOnly() {

@@ -42,7 +42,7 @@ class MakeWagesController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZA04');
+        return Yii::app()->user->validRWFunction('ZA04');
     }
 
     public static function allowReadOnly() {

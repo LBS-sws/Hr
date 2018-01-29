@@ -41,7 +41,7 @@ class HistoryController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZE03');
+        return Yii::app()->user->validRWFunction('ZE03');
     }
 
     public static function allowReadOnly() {

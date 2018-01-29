@@ -42,7 +42,7 @@ class WordController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZD01');
+        return Yii::app()->user->validRWFunction('ZD01');
     }
 
     public static function allowReadOnly() {

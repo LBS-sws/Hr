@@ -32,8 +32,12 @@ class AuditWorkController extends Controller
                 'expression'=>array('AuditWorkController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload'),
+                'actions'=>array('index','view'),
                 'expression'=>array('AuditWorkController','allowReadOnly'),
+            ),
+            array('allow',
+                'actions'=>array('fileDownload'),
+                'expression'=>array('AuditWorkController','allowRead'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
@@ -59,6 +63,10 @@ class AuditWorkController extends Controller
         }else{
             return Yii::app()->user->validFunction('ZE05');
         }
+    }
+
+    public static function allowRead() {
+        return true;
     }
 
     public function actionIndex($pageNum=0,$only = 1){
@@ -126,11 +134,11 @@ class AuditWorkController extends Controller
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('auditWork/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('auditWork/edit',array('index'=>$model->id,'only'=>$model->only)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->redirect(Yii::app()->createUrl('auditWork/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('auditWork/edit',array('index'=>$model->id,'only'=>$model->only)));
             }
         }
     }

@@ -28,12 +28,16 @@ class AuditLeaveController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','reject','audit','Fileupload','FileRemove'),
+                'actions'=>array('reject','audit','Fileupload','FileRemove'),
                 'expression'=>array('AuditLeaveController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload'),
+                'actions'=>array('index','view','edit'),
                 'expression'=>array('AuditLeaveController','allowReadOnly'),
+            ),
+            array('allow',
+                'actions'=>array('fileDownload'),
+                'expression'=>array('AuditWorkController','allowRead'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
@@ -59,6 +63,10 @@ class AuditLeaveController extends Controller
         }else{
             return Yii::app()->user->validFunction('ZE06');
         }
+    }
+
+    public static function allowRead() {
+        return true;
     }
 
     public function actionIndex($pageNum=0,$only = 1){
@@ -126,11 +134,11 @@ class AuditLeaveController extends Controller
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('auditLeave/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('auditLeave/edit',array('index'=>$model->id,'only'=>$model->only)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->redirect(Yii::app()->createUrl('auditLeave/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('auditLeave/edit',array('index'=>$model->id,'only'=>$model->only)));
             }
         }
     }

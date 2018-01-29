@@ -50,7 +50,7 @@ class WorkController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZA05');
+        return Yii::app()->user->validRWFunction('ZA05');
     }
 
     public static function allowReadOnly() {

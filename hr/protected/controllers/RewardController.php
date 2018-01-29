@@ -35,7 +35,7 @@ class RewardController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validFunction('ZA07');
+        return Yii::app()->user->validRWFunction('ZA07');
     }
 
     public static function allowReadOnly() {

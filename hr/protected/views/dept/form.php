@@ -1,6 +1,6 @@
 <?php
 if (empty($model->id)&&$model->scenario != "new"){
-    $this->redirect(Yii::app()->createUrl('dept/index'));
+    $this->redirect(Yii::app()->createUrl('dept/index',array("type"=>$model->type)));
 }
 $this->pageTitle=Yii::app()->name . ' - Dept Form';
 ?>
@@ -40,7 +40,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
 
         <?php if ($model->scenario!='view'): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-                'submit'=>Yii::app()->createUrl('dept/save')));
+                'submit'=>Yii::app()->createUrl('dept/save',array("type"=>$model->type))));
             ?>
             <?php if ($model->scenario=='edit'): ?>
                 <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
@@ -118,7 +118,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
-$js = Script::genDeleteData(Yii::app()->createUrl('dept/delete'));
+$js = Script::genDeleteData(Yii::app()->createUrl('dept/delete',array("type"=>$model->type)));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
