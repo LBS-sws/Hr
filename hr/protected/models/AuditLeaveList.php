@@ -27,6 +27,8 @@ class AuditLeaveList extends CListPageModel
     public function getAcc(){
         if($this->only == 1){
             return "ZE06";
+        }else if ($this->only == 3){
+            return "ZA09";
         }else{
             return "ZG05";
         }
