@@ -89,6 +89,10 @@ return array(
                 'access'=>'ZE06',
                 'url'=>'/auditLeave/index?only=1',
             ),
+            'Staff appraisal'=>array(
+                'access'=>'ZE07',
+                'url'=>'/assess/index',
+            ),
 		),
 	),
     //審核模塊

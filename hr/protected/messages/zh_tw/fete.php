@@ -83,5 +83,26 @@ return array(
     'Where Year'=>'哪年適用',
     'Year'=>'年',
     'Cumulative Day'=>'累積天數',
+
+    //2018-01-30
+    'Evaluation list'=>'評估列表',
+    'Evaluation Form'=>'評估表單',
+    'Evaluation Time'=>'評估日期',
+    'work_type'=>'工種',
+    'service effect'=>'服務效果',
+    'service process'=>'服務流程',
+    'carefully'=>'細心度',
+    'judge'=>'判斷力',
+    'deal'=>'處理能力',
+    'connect'=>'溝通能力',
+    'obey'=>'服從度',
+    'leadership'=>'領導力',
+    'character'=>'性格',
+    'assess'=>'評估',
+    'email bool'=>'是否已經發送郵件',
+    'been sent'=>'已發送',
+    'not sent'=>'未發送',
+    'sent email'=>'發送郵件',
+    'recipient'=>'收件人',
 );
 ?>

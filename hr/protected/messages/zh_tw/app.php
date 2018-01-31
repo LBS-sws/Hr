@@ -116,6 +116,7 @@ return array(
     'Work overtime and leave after the review is cancelled'=>'取消審核后的加班、請假',
     'salary deduction is shown'=>'工資扣減顯示',
     'cumulative annual leave'=>'累積年假配置',
+    'Staff appraisal'=>'員工評估',
     //沈超添加结束
 );
 ?>
