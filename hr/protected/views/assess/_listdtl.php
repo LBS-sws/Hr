@@ -8,7 +8,7 @@
         </th>
     <?php endif; ?>
 
-	<td><?php echo $this->needHrefButton('ZE07', 'assess/edit', 'edit', array('index'=>$this->record['id'])); ?></td>
+    <td><?php echo $this->drawEditButton('ZE07', 'assess/edit', 'assess/view', array('index'=>$this->record['id'])); ?></td>
 
     <td><?php echo $this->record['employee_code']; ?></td>
     <td><?php echo $this->record['employee_name']; ?></td>

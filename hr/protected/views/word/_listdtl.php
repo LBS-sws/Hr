@@ -1,7 +1,7 @@
 <tr class='clickable-row' data-href='<?php echo $this->getLink('ZD01', 'word/edit', 'word/view', array('index'=>$this->record['id']));?>'>
 
 
-	<td><?php echo $this->needHrefButton('ZD01', 'word/edit', 'edit', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->needHrefButton('ZD01', 'word/edit','word/view', array('index'=>$this->record['id'])); ?></td>
 
 
 

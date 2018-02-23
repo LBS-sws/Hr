@@ -32,7 +32,7 @@ class AssessForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-            'work_type'=>Yii::t('fete','work_type'),
+            'work_type'=>Yii::t('contract','Leader'),
             'employee_id'=>Yii::t('contract','Employee Name'),
             'city'=>Yii::t('contract','City'),
             'email_bool'=>Yii::t('fete','email bool'),

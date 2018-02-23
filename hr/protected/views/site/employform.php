@@ -109,6 +109,9 @@
             <?php echo $form->textField($model, 'user_card_date',
                 array('class'=>'form-control pull-right','readonly'=>($readonly),));
             ?>
+            <span class="input-group-btn">
+                <button class="btn btn-default" id="changqi" type="button">长期</button>
+            </span>
         </div>
     </div>
 </div>
@@ -564,5 +567,9 @@ if (!empty($contractNum)){
             $('#bigImgDiv').html("<img src='"+imgSrc+"' height='"+new_height+"px' width='"+new_width+"px'>");
             $('#bigImgDiv').modal('show');
         });
+
+        $("#changqi").on("click",function () {
+            $(this).parents(".input-group:first").find("input").val("2999/12/31");
+        })
     })
 </script>

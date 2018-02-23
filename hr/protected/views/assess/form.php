@@ -93,79 +93,79 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
                 <?php echo $form->labelEx($model,'work_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'work_type',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>(true),"id"=>"work_type")
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'service_effect',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'service_effect',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'service_effect',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'service_process',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'service_process',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'service_process',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'carefully',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'carefully',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'carefully',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'judge',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'judge',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'judge',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'deal',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'deal',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'deal',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'connects',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'connects',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'connects',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'obey',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'obey',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'obey',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'leadership',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'leadership',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'leadership',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'characters',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'characters',
-                        array('readonly'=>($model->scenario=='view'))
+                    <?php echo $form->numberField($model, 'characters',
+                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
                     ); ?>
                 </div>
             </div>
@@ -207,10 +207,29 @@ $js = "
                 success: function(data){
                     if(data.status == 1){
                         var staffList = data.staffList;
+                        $('#work_type').val('');
                         $('#staff').html('<option></option>');
                         $.each(staffList,function(i,n){
                             $('#staff').append('<option value=\"'+i+'\">'+n+'</option');
                         });
+                    }
+                }
+            });
+        }
+    });
+    
+    $('#staff').on('change',function(){
+        if($(this).val() != ''){
+            $.ajax({
+                type: 'post',
+                url: '".Yii::app()->createUrl('assess/ajaxStaff')."',
+                data: {staff:$(this).val()},
+                dataType: 'json',
+                success: function(data){
+                    if(data.status == 1){
+                        var staffList = data.staffList;
+                        $('#city').val(staffList.city);
+                        $('#work_type').val(staffList.work_type);
                     }
                 }
             });

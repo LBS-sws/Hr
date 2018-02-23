@@ -93,6 +93,10 @@ return array(
                 'access'=>'ZE07',
                 'url'=>'/assess/index',
             ),
+            'Pennants List'=>array(
+                'access'=>'ZE08',
+                'url'=>'/prize/index',
+            ),
 		),
 	),
     //審核模塊
@@ -126,6 +130,10 @@ return array(
             'Reward Audit'=>array(
                 'access'=>'ZG06',
                 'url'=>'/auditReward/index',
+            ),
+            'Pennants Audit'=>array(
+                'access'=>'ZG07',
+                'url'=>'/auditPrize/index',
             ),
 		),
 	),

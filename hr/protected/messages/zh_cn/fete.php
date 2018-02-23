@@ -104,5 +104,20 @@ return array(
     'not sent'=>'未发送',
     'sent email'=>'发送邮件',
     'recipient'=>'收件人',
+
+    //锦旗
+    'Pennants Form'=>'锦旗表单',
+    'cleaner'=>'清洁',
+    'cleaner and exterminators'=>'清洁灭虫',
+    'exterminators'=>'灭虫',
+    'prize date'=>'嘉许日期',
+    'prize num'=>'参与人数',
+    'prize pro'=>'嘉许项目',
+    'customer name'=>'客户名称',
+    'contact'=>'联络人',
+    'contact phone'=>'联络人电话',
+    'contact position'=>'联络人职位',
+    'testimonials'=>'表扬信（独照）',
+    'Picture with customers'=>'与客户合照',
 );
 ?>

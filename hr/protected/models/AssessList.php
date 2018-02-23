@@ -16,7 +16,7 @@ class AssessList extends CListPageModel
 	public function attributeLabels()
 	{
 		return array(
-			'work_type'=>Yii::t('fete','work_type'),
+			'work_type'=>Yii::t('contract','Leader'),
 			'employee_name'=>Yii::t('contract','Employee Name'),
 			'employee_code'=>Yii::t('contract','Employee Code'),
 			'service_effect'=>Yii::t('fete','service effect'),
@@ -62,7 +62,7 @@ class AssessList extends CListPageModel
 	{
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
-		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
+		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city,b.position 
                 from hr_assess a LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where a.id!=0 
 			";
@@ -115,7 +115,7 @@ class AssessList extends CListPageModel
 					'id'=>$record['id'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],
-					'work_type'=>$record['work_type'],
+					'work_type'=>DeptForm::getDeptToId($record['position']),
 					'service_effect'=>$record['service_effect'],
 					'lcd'=>date("Y-m-d",strtotime($record['lcd'])),
 					'status'=>$colorList["status"],
@@ -174,16 +174,18 @@ class AssessList extends CListPageModel
         $checkId = implode(",",$this->checkBoxSent);
         $uid = Yii::app()->user->id;
         $connection = Yii::app()->db;
-        $rows = $connection->createCommand()->select("a.*,b.name as employee_name,b.code AS employee_code,b.city AS s_city")
+        $rows = $connection->createCommand()->select("a.*,b.name as employee_name,b.code AS employee_code,b.city AS s_city,b.position")
             ->from("hr_assess a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.id in ($checkId)")->queryAll();
         if($rows){
+            $message = "";
+            $email_title = "技术员评估 - ";
             foreach ($rows as $row){
                 $message = "<p>员工编号：".$row["employee_code"]."</p>";
                 $message .= "<p>员工名字：".$row["employee_name"]."</p>";
                 $message .= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
-                $message .= "<p>工种：".$row["work_type"]."</p>";
+                $message .= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
                 $message .= "<p>服务效果：".$row["service_effect"]."</p>";
                 $message .= "<p>服务流程：".$row["service_process"]."</p>";
                 $message .= "<p>细心度：".$row["carefully"]."</p>";
@@ -194,17 +196,21 @@ class AssessList extends CListPageModel
                 $message .= "<p>领导力：".$row["leadership"]."</p>";
                 $message .= "<p>性格：".$row["characters"]."</p>";
                 $message .= "<p>评估：".$row["assess"]."</p>";
-                $connection->createCommand()->insert("swoper$suffix.swo_email_queue", array(
-                    'request_dt'=>date('Y-m-d H:i:s'),
-                    'from_addr'=>$from_addr,
-                    'to_addr'=>$to_addr,
-                    'subject'=>"员工评估 - ".$row["employee_name"],//郵件主題
-                    'description'=>"员工评估 - ".$row["employee_name"],//郵件副題
-                    'message'=>$message,//郵件內容（html）
-                    'status'=>"P",
-                    'lcu'=>$uid,
-                ));
+                $message .="<p>&nbsp;</p>";
+                $message .="<p>------------------------------------------</p>";
+                $message .="<p>&nbsp;</p>";
+                $email_title.=$row["employee_name"]."、";
             }
+            $connection->createCommand()->insert("swoper$suffix.swo_email_queue", array(
+                'request_dt'=>date('Y-m-d H:i:s'),
+                'from_addr'=>$from_addr,
+                'to_addr'=>$to_addr,
+                'subject'=>$email_title,//郵件主題
+                'description'=>$email_title,//郵件副題
+                'message'=>$message,//郵件內容（html）
+                'status'=>"P",
+                'lcu'=>$uid,
+            ));
             Yii::app()->db->createCommand()->update('hr_assess', array(
                 'email_bool'=>1,
                 'email_list'=>$to_addr,
