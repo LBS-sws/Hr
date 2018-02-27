@@ -64,6 +64,8 @@ return array(
 	'Transaction Type'=>'交易类别',
 	'Account'=>'账户',
 
+	'Staff List'=>'员工名册',
+	
     //沈超添加开始
     'Contract'=>'合同',
     'Contract Word'=>'合同文档',
