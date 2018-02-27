@@ -48,8 +48,8 @@
 <div class="form-group">
     <?php echo $form->labelEx($model,'customer_name',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-5">
-        <?php echo $form->textField($model, 'customer_name',
-            array('readonly'=>($model->getInputBool()))
+        <?php echo $form->dropDownList($model, 'customer_name',PrizeForm::getCustomerList(),
+            array('disabled'=>($model->getInputBool()),'id'=>"customer_name")
         ); ?>
     </div>
 </div>
@@ -57,7 +57,7 @@
     <?php echo $form->labelEx($model,'contact',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'contact',
-            array('readonly'=>($model->getInputBool()))
+            array('readonly'=>($model->getInputBool()),'id'=>"cont_name")
         ); ?>
     </div>
 </div>
@@ -65,7 +65,7 @@
     <?php echo $form->labelEx($model,'phone',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'phone',
-            array('readonly'=>($model->getInputBool()))
+            array('readonly'=>($model->getInputBool()),'id'=>"cont_phone")
         ); ?>
     </div>
 </div>

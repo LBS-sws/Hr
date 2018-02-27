@@ -58,6 +58,15 @@ class AssessForm extends CFormModel
 		return array(
 			array('id,employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,connects,obey,leadership,characters,assess','safe'),
             array('employee_id','required'),
+            array('service_effect','numerical',"min"=>0,"max"=>10),
+            array('service_process','numerical',"min"=>0,"max"=>10),
+            array('carefully','numerical',"min"=>0,"max"=>10),
+            array('judge','numerical',"min"=>0,"max"=>10),
+            array('deal','numerical',"min"=>0,"max"=>10),
+            array('connects','numerical',"min"=>0,"max"=>10),
+            array('obey','numerical',"min"=>0,"max"=>10),
+            array('leadership','numerical',"min"=>0,"max"=>10),
+            array('characters','numerical',"min"=>0,"max"=>10),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}

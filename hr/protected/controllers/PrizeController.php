@@ -35,6 +35,10 @@ class PrizeController extends Controller
                 'actions'=>array('index','view'),
                 'expression'=>array('PrizeController','allowReadOnly'),
             ),
+            array('allow',
+                'actions'=>array('AjaxCity','ajaxCustomer'),
+                'expression'=>array('PrizeController','allowWrite'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
@@ -73,6 +77,8 @@ class PrizeController extends Controller
     public function actionNew()
     {
         $model = new PrizeForm('new');
+        $model->prize_date = date("Y-m-d");
+        $model->prize_num = 1;
         $this->render('form',array('model'=>$model,));
     }
 
@@ -189,4 +195,30 @@ class PrizeController extends Controller
         }
     }
 
+    public function actionAjaxCity() {
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $city = $_POST['city'];
+            $staffList = AssessForm::getEmployeeList($city);
+            $customerList = PrizeForm::getCustomerList($city);
+            unset($staffList[""]);
+            unset($customerList[""]);
+            echo CJSON::encode(array("status"=>1,"staffList"=>$staffList,"customerList"=>$customerList));
+        }else{
+            $this->redirect(Yii::app()->createUrl(''));
+        }
+    }
+
+    public function actionAjaxCustomer() {
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $code = $_POST['code'];
+            $customerList = PrizeForm::getCustomerToCode($code);
+            if(!empty($customerList)){
+                echo CJSON::encode(array("status"=>1,"customerList"=>$customerList));
+            }else{
+                echo CJSON::encode(array("status"=>0));
+            }
+        }else{
+            $this->redirect(Yii::app()->createUrl(''));
+        }
+    }
 }

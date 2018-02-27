@@ -252,4 +252,37 @@ class PrizeForm extends CFormModel
         }
         return false;
     }
+
+    //獲取客戶列表
+    public function getCustomerList($city=''){
+        $suffix = Yii::app()->params['envSuffix'];
+        $city_allow = Yii::app()->user->city_allow();
+        $sql = "select * from swoper$suffix.swo_company WHERE code !=''";
+        if(!empty($city)){
+            $sql.=" AND city='$city'";
+        }else{
+            $sql.=" AND city in ($city_allow)";
+        }
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        $arr = array(
+            ""=>"",
+        );
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["code"]]=$row["code"]." - ".$row["name"];
+            }
+        }
+        return $arr;
+    }
+
+    //根據編號獲取單個客戶信息
+    public function getCustomerToCode($code){
+        $suffix = Yii::app()->params['envSuffix'];
+        $sql = "select * from swoper$suffix.swo_company WHERE code ='$code'";
+        $rows = Yii::app()->db->createCommand($sql)->queryRow();
+        if($rows){
+            return $rows;
+        }
+        return "";
+    }
 }

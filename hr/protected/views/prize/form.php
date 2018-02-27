@@ -86,16 +86,38 @@ $js = "
         if($(this).val() != ''){
             $.ajax({
                 type: 'post',
-                url: '".Yii::app()->createUrl('assess/ajaxCity')."',
+                url: '".Yii::app()->createUrl('prize/ajaxCity')."',
                 data: {city:$(this).val()},
                 dataType: 'json',
                 success: function(data){
                     if(data.status == 1){
                         var staffList = data.staffList;
+                        var customerList = data.customerList;
                         $('#staff').html('<option></option>');
                         $.each(staffList,function(i,n){
                             $('#staff').append('<option value=\"'+i+'\">'+n+'</option');
                         });
+                        $('#customer_name').html('<option></option>');
+                        $.each(customerList,function(i,n){
+                            $('#customer_name').append('<option value=\"'+i+'\">'+n+'</option');
+                        });
+                    }
+                }
+            });
+        }
+    });
+    $('#customer_name').on('change',function(){
+        if($(this).val() != ''){
+            $.ajax({
+                type: 'post',
+                url: '".Yii::app()->createUrl('prize/ajaxCustomer')."',
+                data: {code:$(this).val()},
+                dataType: 'json',
+                success: function(data){
+                    if(data.status == 1){
+                        var customerList = data.customerList;
+                        $('#cont_name').val(customerList.cont_name);
+                        $('#cont_phone').val(customerList.cont_phone);
                     }
                 }
             });
