@@ -97,10 +97,7 @@ $js = "
                         $.each(staffList,function(i,n){
                             $('#staff').append('<option value=\"'+i+'\">'+n+'</option');
                         });
-                        $('#customer_name').html('<option></option>');
-                        $.each(customerList,function(i,n){
-                            $('#customer_name').append('<option value=\"'+i+'\">'+n+'</option');
-                        });
+
                     }
                 }
             });

@@ -199,9 +199,10 @@ class PrizeController extends Controller
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
             $city = $_POST['city'];
             $staffList = AssessForm::getEmployeeList($city);
-            $customerList = PrizeForm::getCustomerList($city);
+            $customerList = "";
+            //$customerList = PrizeForm::getCustomerList($city);
             unset($staffList[""]);
-            unset($customerList[""]);
+            //unset($customerList[""]);
             echo CJSON::encode(array("status"=>1,"staffList"=>$staffList,"customerList"=>$customerList));
         }else{
             $this->redirect(Yii::app()->createUrl(''));
