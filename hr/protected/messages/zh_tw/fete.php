@@ -113,6 +113,7 @@ return array(
     'prize date'=>'嘉許日期',
     'prize num'=>'參與人數',
     'prize pro'=>'嘉許項目',
+    'customer code'=>'客戶編號',
     'customer name'=>'客戶名稱',
     'contact'=>'聯絡人',
     'contact phone'=>'聯絡人電話',

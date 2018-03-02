@@ -152,5 +152,10 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/ajaxFile
 
 <?php $this->endWidget(); ?>
 
+<?php
+$this->renderPartial('//site/customerdialog',array(
+    'model'=>$model,
+));
+?>
 </div><!-- form -->
 

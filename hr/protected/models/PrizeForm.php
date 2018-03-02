@@ -8,6 +8,7 @@ class PrizeForm extends CFormModel
 	public $city;
 	public $prize_num;
 	public $prize_pro;
+	public $customer_dis;
 	public $customer_name;
 	public $contact;
 	public $phone;
@@ -47,7 +48,7 @@ class PrizeForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,contact,phone,posi,photo1,photo2,remark,status','safe'),
+			array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status','safe'),
             array('prize_date','required'),
             array('prize_num','required'),
             array('employee_id','required'),
@@ -74,6 +75,7 @@ class PrizeForm extends CFormModel
                 $this->city = $row['s_city'];
                 $this->prize_num = $row['prize_num'];
                 $this->prize_pro = $row['prize_pro'];
+                $this->customer_dis = $this->getCustomerNameToId($row['customer_name']);
                 $this->customer_name = $row['customer_name'];
                 $this->contact = $row['contact'];
                 $this->phone = $row['phone'];
@@ -254,25 +256,14 @@ class PrizeForm extends CFormModel
     }
 
     //獲取客戶列表
-    public function getCustomerList($city=''){
+    public function getCustomerNameToId($id){
         $suffix = Yii::app()->params['envSuffix'];
-        $city_allow = Yii::app()->user->city_allow();
-        $sql = "select * from swoper$suffix.swo_company WHERE code !=''";
-        if(!empty($city)){
-            $sql.=" AND city='$city'";
-        }else{
-            $sql.=" AND city in ($city_allow)";
-        }
-        $rows = Yii::app()->db->createCommand($sql)->queryAll();
-        $arr = array(
-            ""=>"",
-        );
+        $sql = "select name from swoper$suffix.swo_company WHERE id ='$id'";
+        $rows = Yii::app()->db->createCommand($sql)->queryRow();
         if($rows){
-            foreach ($rows as $row){
-                $arr[$row["code"]]=$row["code"]." - ".$row["name"];
-            }
+            return $rows["name"];
         }
-        return $arr;
+        return $id;
     }
 
     //根據編號獲取單個客戶信息

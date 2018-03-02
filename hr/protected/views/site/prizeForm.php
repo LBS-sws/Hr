@@ -46,11 +46,26 @@
     </div>
 </div>
 <div class="form-group">
+    <?php echo $form->hiddenField($model, 'customer_name',array("id"=>"customer_name")); ?>
     <?php echo $form->labelEx($model,'customer_name',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-5">
-        <?php echo $form->dropDownList($model, 'customer_name',PrizeForm::getCustomerList(),
-            array('disabled'=>($model->getInputBool()),'id'=>"customer_name")
-        ); ?>
+        <?php if ($model->getInputBool()): ?>
+            <?php echo $form->textField($model, 'customer_dis',
+                array('readonly'=>(true),'id'=>"customer_dis")
+            ); ?>
+        <?php else: ?>
+        <div class="input-group">
+            <?php echo $form->textField($model, 'customer_dis',
+                array('readonly'=>(true),'id'=>"customer_dis")
+            ); ?>
+            <span class="input-group-btn">
+                <?php echo TbHtml::button(Yii::t('dialog','Select'), array(
+                        'name'=>'customer_btn','id'=>'customer_btn','data-toggle'=>'modal','data-target'=>'#customerdialog',)
+                );
+                ?>
+            </span>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 <div class="form-group">

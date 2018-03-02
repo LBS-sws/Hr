@@ -28,7 +28,7 @@ class PrizeController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','delete','save','audit','uploadImg'),
+                'actions'=>array('new','edit','delete','save','audit','uploadImg','AjaxCustomer'),
                 'expression'=>array('PrizeController','allowReadWrite'),
             ),
             array('allow',
@@ -36,7 +36,7 @@ class PrizeController extends Controller
                 'expression'=>array('PrizeController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('AjaxCity','ajaxCustomer'),
+                'actions'=>array('AjaxCity'),
                 'expression'=>array('PrizeController','allowWrite'),
             ),
             array('deny',  // deny all users
@@ -211,13 +211,16 @@ class PrizeController extends Controller
 
     public function actionAjaxCustomer() {
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
-            $code = $_POST['code'];
-            $customerList = PrizeForm::getCustomerToCode($code);
-            if(!empty($customerList)){
-                echo CJSON::encode(array("status"=>1,"customerList"=>$customerList));
-            }else{
-                echo CJSON::encode(array("status"=>0));
-            }
+            $model = new CustomerList;
+            $model->search_code = $_POST['search_code'];
+            $model->search_name = $_POST['search_name'];
+            $pageNum=$_POST['pageNum'];
+            $model->noOfItem = 5;
+            $model->determinePageNum($pageNum);
+            $model->retrieveDataByPage($model->pageNum);
+            $pageHtml =  TbHtml::pagination($model->getPageList(), array('class'=>'pagination pagination-sm no-margin'));
+            $pageHtml.= "<div class='pull-right'>".Yii::t('misc','Record')."：<span>".$model->totalRow."</span></div>";
+            echo CJSON::encode(array("status"=>1,"attr"=>$model->attr,"pageHtml"=>$pageHtml));
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }
