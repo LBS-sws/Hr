@@ -120,5 +120,12 @@ return array(
     'contact position'=>'聯絡人職位',
     'testimonials'=>'表揚信（獨照）',
     'Picture with customers'=>'與客戶合照',
+
+    'Audit index'=>'審核層級',
+    'one index'=>'一層',
+    'two index'=>'二層',
+    'three index'=>'三層',
+
+    'apply for time'=>'申請時間',
 );
 ?>

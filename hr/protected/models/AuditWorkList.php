@@ -36,24 +36,26 @@ class AuditWorkList extends CListPageModel
 
     public function retrieveDataByPage($pageNum=1)
     {
+        $staff_id = BindingForm::getEmployeeIdToUsername();
         $city_allow = Yii::app()->user->city_allow();
+        $city = Yii::app()->user->city();
         $sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
-                where a.status !=0
+                where a.status !=0 and b.id !=$staff_id 
 			";
         $sql2 = "select count(a.id)
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
-				where a.status !=0
+				where a.status !=0 and b.id !=$staff_id 
 			";
         if($this->only ==1 ){
-            $sql1.=" AND a.z_index =0 AND b.city in ($city_allow) ";
-            $sql2.=" AND a.z_index =0 AND b.city in ($city_allow) ";
+            $sql1.=" AND a.z_index =0 AND b.city = '$city' ";
+            $sql2.=" AND a.z_index =0 AND b.city = '$city' ";
         }elseif($this->only ==3){
-            $sql1.=" AND a.z_index =3 AND b.city in ($city_allow) ";
-            $sql2.=" AND a.z_index =3 AND b.city in ($city_allow) ";
+            $sql1.=" AND a.z_index =3 AND b.city = '$city' ";
+            $sql2.=" AND a.z_index =3 AND b.city = '$city' ";
         }else{
-            $sql1.=" AND a.z_index =1 ";
-            $sql2.=" AND a.z_index =1 ";
+            $sql1.=" AND a.z_index =1 AND b.city in ($city_allow) ";
+            $sql2.=" AND a.z_index =1 AND b.city in ($city_allow) ";
         }
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {

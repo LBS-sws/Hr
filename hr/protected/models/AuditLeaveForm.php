@@ -24,6 +24,7 @@ class AuditLeaveForm extends CFormModel
     public $area_lcd;
     public $head_lcu;
     public $head_lcd;
+    public $lcd;
     public $staff_type;//員工的辦公類型
     public $reject_cause;
     public $cost_num;//請假的工資倍率
@@ -65,6 +66,7 @@ class AuditLeaveForm extends CFormModel
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
+            'lcd'=>Yii::t('fete','apply for time'),
         );
     }
 
@@ -74,7 +76,8 @@ class AuditLeaveForm extends CFormModel
     public function rules()
     {
         return array(
-            array('id,leave_code,employee_id,vacation_id,status,leave_cause,start_time,start_time_lg,city,end_time,,end_time_lg,log_time,only,audit_remark,staff_type,employee_name','safe'),
+            array('id,leave_code,employee_id,vacation_id,status,leave_cause,start_time,start_time_lg,city,end_time,,end_time_lg,log_time,only,audit_remark,
+            staff_type,employee_name,lcd','safe'),
             array('reject_cause','required',"on"=>"reject"),
             array('vacation_id','required','on'=>array("audit")),
             array('leave_cause','required','on'=>array("audit")),
@@ -128,12 +131,14 @@ class AuditLeaveForm extends CFormModel
     public function retrieveData($index) {
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
+        $city = Yii::app()->user->city();
+        $staff_id = BindingForm::getEmployeeIdToUsername();
         if($this->only == 2){
-            $sql = "a.id=:id";
+            $sql = "a.id=:id and b.city in ($city_allow) and b.id !=$staff_id";
         }else{
-            $sql = "a.id=:id and b.city in ($city_allow)";
+            $sql = "a.id=:id and b.city = '$city' and b.id !=$staff_id";
         }
-        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,b.city as s_city,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
             ->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where($sql,array(":id"=>$index))->queryAll();
@@ -155,13 +160,14 @@ class AuditLeaveForm extends CFormModel
                 $this->start_time_lg = $row['start_time_lg'];
                 $this->end_time_lg = $row['end_time_lg'];
                 $this->status = $row['status'];
-                $this->city = $row['city'];
+                $this->city = $row['s_city'];
                 $this->user_lcu = $row['user_lcu'];
                 $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
+                $this->lcd = $row['lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['leave'] = $row['leavedoc'];
@@ -193,13 +199,13 @@ class AuditLeaveForm extends CFormModel
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
-                if($this->only == 1){
+                if($this->only == 1){ //地區審核
                     $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                }elseif($this->only == 3){
-                    $this->only = 0;
+                }elseif($this->only == 3){ //領導審核
+                    $z_index = AuditConfigForm::getCityAuditToCode($this->city);
+                    $this->only = $z_index==2?1:0;
                     $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
-                }else{
-                    //總部審核
+                }else{ //總部審核
                     $this->resetLeaveCost();//計算員工的工資
                     $sql.="vacation_id = :vacation_id, 
 							leave_cause = :leave_cause, 

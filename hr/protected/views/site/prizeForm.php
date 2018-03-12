@@ -16,6 +16,14 @@
     </div>
 </div>
 <div class="form-group">
+    <?php echo $form->labelEx($model,'work_type',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'work_type',
+            array('readonly'=>(true),"id"=>"work_type")
+        ); ?>
+    </div>
+</div>
+<div class="form-group">
     <?php echo $form->labelEx($model,'prize_date',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <div class="input-group">

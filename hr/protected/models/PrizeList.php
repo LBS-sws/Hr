@@ -19,7 +19,7 @@ class PrizeList extends CListPageModel
 			'prize_pro'=>Yii::t('fete','prize pro'),
 			'contact'=>Yii::t('fete','contact'),
 			'phone'=>Yii::t('fete','contact phone'),
-			'position'=>Yii::t('fete','contact position'),
+			'position'=>Yii::t('contract','Leader'),
 			'employee_name'=>Yii::t('contract','Employee Name'),
 			'employee_code'=>Yii::t('contract','Employee Code'),
 			'city'=>Yii::t('contract','City'),
@@ -38,7 +38,7 @@ class PrizeList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
+		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.position,b.city AS s_city 
                 from hr_prize a LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where a.id!=0 AND b.city IN ($city_allow) 
 			";
@@ -96,6 +96,7 @@ class PrizeList extends CListPageModel
 					'prize_num'=>$record['prize_num'],
 					'customer_name'=>$record['customer_name'],
 					'contact'=>$record['contact'],
+					'position'=>DeptForm::getDeptToId($record['position']),
 					'phone'=>$record['phone'],
 					'prize_date'=>date("Y-m-d",strtotime($record['prize_date'])),
 					'status'=>$colorList["status"],

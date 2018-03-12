@@ -93,6 +93,16 @@
         </div>
     </div>
 </div>
+<?php if (!empty($model->lcd)): ?>
+    <div class="form-group">
+        <?php echo $form->labelEx($model,'lcd',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'lcd',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+    </div>
+<?php endif; ?>
 <div class="form-group">
     <?php echo TbHtml::label($model->getAttributeLabel("leave_cause").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-6">

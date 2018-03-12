@@ -103,6 +103,24 @@ $js = "
             });
         }
     });
+    
+    $('#staff').on('change',function(){
+        if($(this).val() != ''){
+            $.ajax({
+                type: 'post',
+                url: '".Yii::app()->createUrl('assess/ajaxStaff')."',
+                data: {staff:$(this).val()},
+                dataType: 'json',
+                success: function(data){
+                    if(data.status == 1){
+                        var staffList = data.staffList;
+                        $('#city').val(staffList.city);
+                        $('#work_type').val(staffList.work_type);
+                    }
+                }
+            });
+        }
+    });
     $('#customer_name').on('change',function(){
         if($(this).val() != ''){
             $.ajax({

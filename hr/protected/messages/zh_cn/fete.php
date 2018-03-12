@@ -120,5 +120,12 @@ return array(
     'contact position'=>'联络人职位',
     'testimonials'=>'表扬信（独照）',
     'Picture with customers'=>'与客户合照',
+
+    'Audit index'=>'审核层级',
+    'one index'=>'一层',
+    'two index'=>'二层',
+    'three index'=>'三层',
+
+    'apply for time'=>'申请时间',
 );
 ?>

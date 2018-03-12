@@ -3,7 +3,7 @@
     array('index'=>$this->record['id'],'type'=>$this->model->type));?>'>
 
 
-    <td><?php echo $this->needHrefButton($this->record['acc'], 'auditHoliday/edit', 'auditHoliday/view', array('index'=>$this->record['id'],'type'=>$this->model->type)); ?></td>
+    <td><?php echo $this->drawEditButton($this->record['acc'], 'auditHoliday/edit', 'auditHoliday/view', array('index'=>$this->record['id'],'type'=>$this->model->type)); ?></td>
 
 
 

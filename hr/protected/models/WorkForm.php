@@ -16,6 +16,7 @@ class WorkForm extends CFormModel
 	public $log_time;
 	public $z_index;
 	public $status;
+	public $city;
     public $audit_remark;
     public $user_lcu;
     public $user_lcd;
@@ -27,6 +28,7 @@ class WorkForm extends CFormModel
 	public $cost_num;//節假日的工資倍率
 	public $audit = false;//是否需要審核
     public $wage;//合約工資
+    public $lcd;
 
 
     public $no_of_attm = array(
@@ -62,6 +64,7 @@ class WorkForm extends CFormModel
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
+            'lcd'=>Yii::t('fete','apply for time'),
 		);
 	}
 
@@ -71,7 +74,7 @@ class WorkForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,hours,hours_end','safe'),
+			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,hours,hours_end,lcd,city','safe'),
             array('work_type','required','on'=>array("new","edit","audit")),
             array('work_type','validateWorkType','on'=>array("new","edit","audit")),
             array('work_cause','required','on'=>array("new","edit","audit")),
@@ -128,12 +131,12 @@ class WorkForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $uid = $this->getEmployeeIdToUser();
         if(Yii::app()->user->validFunction('ZR03')){
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
                 ->from("hr_employee_work a")
                 ->leftJoin("hr_employee b","a.employee_id = b.id")
                 ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
         }else{
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
                 ->from("hr_employee_work a")
                 ->leftJoin("hr_employee b","a.employee_id = b.id")
                 ->where("a.id=:id and a.employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
@@ -147,6 +150,7 @@ class WorkForm extends CFormModel
                 $this->work_type = $row['work_type'];
                 $this->work_cause = $row['work_cause'];
                 $this->work_address = $row['work_address'];
+                $this->city = $row['s_city'];
                 if ($this->work_type == 2){
                     $this->start_time = date("Y/m/d",strtotime($row['start_time']));
                     $this->end_time = date("Y/m/d",strtotime($row['end_time']));
@@ -164,6 +168,7 @@ class WorkForm extends CFormModel
                 $this->area_lcu = $row['area_lcu'];
                 $this->work_cost = $row['work_cost'];
                 $this->area_lcd = $row['area_lcd'];
+                $this->lcd = $row['lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
                 $this->audit_remark = $row['audit_remark'];
@@ -199,19 +204,28 @@ class WorkForm extends CFormModel
 
     //獲取假期的倍率
     public function getMuplite(){
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
-            ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')",
-                array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
-        if($rows){
-            if($rows["cost_num"] == 1){
-                $this->cost_num = 3;
-            }else{
-                $this->cost_num = 2;
-            }
-            return $this->cost_num;
-        }else{
-            return 2;
+        switch ($this->work_type){
+            case 2:
+                $city = Yii::app()->user->city();
+                $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
+                    ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')",
+                        array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
+                if($rows){
+                    if($rows["cost_num"] == 1){
+                        $this->cost_num = 3;
+                    }else{
+                        $this->cost_num = 2;
+                    }
+                    return $this->cost_num;
+                }else{
+                    return "1.5";
+                }
+                break;
+            case 1:
+                return 2;
+                break;
+            default:
+                return 1.5;
         }
     }
 	public function saveData()
@@ -254,7 +268,7 @@ class WorkForm extends CFormModel
                 $sql = "insert into hr_employee_work(
 							employee_id,work_type,work_cause, work_address, start_time, end_time, log_time, work_cost, city, status, z_index, lcu
 						) values (
-							:employee_id,:work_type,:work_cause, :work_address, :start_time, :end_time, :log_time, :work_cost, :city, :status, 3, :lcu
+							:employee_id,:work_type,:work_cause, :work_address, :start_time, :end_time, :log_time, :work_cost, :city, :status, :z_index, :lcu
 						)";
                 break;
             case 'edit':
@@ -269,6 +283,8 @@ class WorkForm extends CFormModel
 							city = :city, 
 							status = :status, 
 							reject_cause = '', 
+							z_index = :z_index,
+							lcd = :lcd,
 							luu = :luu
 						where id = :id
 						";
@@ -305,7 +321,14 @@ class WorkForm extends CFormModel
             $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
+        if (strpos($sql,':z_index')!==false){
+            $z_index = AuditConfigForm::getCityAuditToCode($city);
+            $this->z_index = $z_index==1?1:3;
+            $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
+        }
 
+        if (strpos($sql,':lcd')!==false)
+            $command->bindParam(':lcd',date('Y-m-d H:i:s'),PDO::PARAM_STR);
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)
@@ -332,17 +355,24 @@ class WorkForm extends CFormModel
         }
         $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
         $wage = floatval($employeeList["wage"]);
-        if($this->work_type == 2){
-            if($this->cost_num == 1){
-                $this->cost_num = 3;
-            }else{
-                $this->cost_num = 2;
-            }
-            $this->work_cost = ($wage/21.76)*intval($this->log_time)*intval($this->cost_num);
-        }else{
-            $this->work_cost = ($wage/(21.76*8))*intval($this->log_time)*1.5;
-            $this->start_time .=" ".$this->hours;
-            $this->end_time .=" ".$this->hours_end;
+        switch ($this->work_type){
+            case 2:
+                if($this->cost_num == 1){
+                    $this->cost_num = 3;
+                }else{
+                    $this->cost_num = 2;
+                }
+                $this->work_cost = ($wage/21.75)*intval($this->log_time)*intval($this->cost_num);
+                break;
+            case 1:
+                $this->work_cost = ($wage/(21.75*8))*intval($this->log_time)*2;
+                $this->start_time .=" ".$this->hours;
+                $this->end_time .=" ".$this->hours_end;
+                break;
+            default:
+                $this->work_cost = ($wage/(21.75*8))*intval($this->log_time)*1.5;
+                $this->start_time .=" ".$this->hours;
+                $this->end_time .=" ".$this->hours_end;
         }
     }
 

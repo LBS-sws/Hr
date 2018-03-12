@@ -111,8 +111,14 @@ echo $form->hiddenField($model,'orderType');
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-dismiss="modal" type="button">×</button>
-                <h4 class="modal-title"><?php echo Yii::t('contract','Email');?></h4></div><div class="modal-body"><p></p>
+                <h4 class="modal-title"><?php echo Yii::t('contract','Email');?></h4></div>
+            <div class="modal-body">
                 <div>
+                    <input id="emailNameSearch" type="text" class="form-control" placeholder="用戶名稱">
+                </div>
+                <p></p>
+                <div>
+
                     <?php echo $form->checkBoxList($model, 'test',$model->getEmailList(),array("class"=>"check_dev")); ?>
                 </div>
             </div>
@@ -126,7 +132,22 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+$emailJSON = $model->getEmailList();
+$emailJSON = empty($emailJSON)?"''":json_encode($emailJSON);
 $js = "
+EMAIL_JSON =$emailJSON;
+$('#emailNameSearch').keyup(function(){
+    var search = $(this).val();
+    if(EMAIL_JSON == ''){
+        return false;
+    }
+    $('#AssessList_test').html('');
+    $.each(EMAIL_JSON,function(key,value){
+        if(value.indexOf(search)>=0||search == ''){
+            $('#AssessList_test').append('<div class=\'checkbox\'><label><input class=\'check_dev\' value=\''+key+'\' type=\'checkbox\' name=\'AssessList[test][]\'>'+value+'</label></div>');
+        }
+    });
+});
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 $('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 $('.checkBoxSent').on('click',function(e){

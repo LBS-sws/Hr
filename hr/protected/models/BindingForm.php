@@ -106,6 +106,18 @@ class BindingForm extends CFormModel
         return $arr;
     }
 
+    public function getEmployeeIdToUsername($username=""){
+	    if(empty($username)){
+            $username = Yii::app()->user->id;
+        }
+        $rows = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")
+            ->where("user_id=:user_id", array(':user_id'=>$username))->queryRow();
+        if($rows){
+            return $rows["employee_id"];
+        }
+	    return 0;
+    }
+
     //公司刪除時必須沒有員工
 	public function validateDelete(){
 /*        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")

@@ -14,6 +14,7 @@ class BindingList extends CListPageModel
 			'employee_name'=>Yii::t('contract','Employee Name'),
 			'city'=>Yii::t('contract','City'),
 			'user_name'=>Yii::t('contract','Account number'),
+            'city_name'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -22,28 +23,26 @@ class BindingList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select * from hr_binding 
-                where city IN ($city_allow) 
+		$sql1 = "select a.id,a.user_name,b.name,b.city from hr_binding a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id
+                where b.city IN ($city_allow) 
 			";
-		$sql2 = "select count(id)
-				from hr_company 
-				where city IN ($city_allow) 
+        $sql2 = "select count(a.id) from hr_binding a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id
+                where b.city IN ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
-				case 'name':
-					$clause .= General::getSqlConditionClause('name',$svalue);
+				case 'employee_name':
+					$clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
-				case 'head':
-					$clause .= General::getSqlConditionClause('head',$svalue);
-					break;
-				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
-					break;
-				case 'agent':
-					$clause .= General::getSqlConditionClause('agent',$svalue);
+                case 'city_name':
+                    $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
+				case 'user_name':
+					$clause .= General::getSqlConditionClause('a.user_name',$svalue);
 					break;
 			}
 		}
@@ -68,7 +67,7 @@ class BindingList extends CListPageModel
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'employee_name'=>$record['employee_name'],
+					'employee_name'=>$record['name'],
                     'city'=>CGeneral::getCityName($record["city"]),
 					'user_name'=>$record['user_name'],
 				);

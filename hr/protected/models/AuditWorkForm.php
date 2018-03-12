@@ -7,6 +7,7 @@ class AuditWorkForm extends CFormModel
     public $employee_id;
     public $employee_name;
     public $work_type;
+    public $city;
     public $work_cause;//加班原因
     public $work_cost;//加班費用
     public $work_address;
@@ -25,6 +26,7 @@ class AuditWorkForm extends CFormModel
     public $head_lcu;
     public $head_lcd;
     public $reject_cause;
+    public $lcd;
     public $cost_num;//節假日的工資倍率
     public $wage;//合約工資
     public $only = 1;//  3：領導審核   1：地區審核  2：總部審核
@@ -66,6 +68,7 @@ class AuditWorkForm extends CFormModel
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
+            'lcd'=>Yii::t('fete','apply for time'),
         );
     }
 
@@ -75,7 +78,7 @@ class AuditWorkForm extends CFormModel
     public function rules()
     {
         return array(
-            array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name,bool_cost','safe'),
+            array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name,bool_cost,city,lcd','safe'),
             array('work_type','required','on'=>array("audit")),
             array('work_type','validateWorkType','on'=>array("audit")),
             array('work_cause','required','on'=>array("audit")),
@@ -131,13 +134,15 @@ class AuditWorkForm extends CFormModel
 
     public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
+        $city = Yii::app()->user->city();
+        $staff_id = BindingForm::getEmployeeIdToUsername();
         $suffix = Yii::app()->params['envSuffix'];
         if($this->only == 2){
-            $sql = "a.id=:id";
+            $sql = "a.id=:id and b.city in ($city_allow) and b.id !=$staff_id";
         }else{
-            $sql = "a.id=:id and b.city in ($city_allow)";
+            $sql = "a.id=:id and b.city = '$city' and b.id !=$staff_id";
         }
-        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.city AS s_city,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
             ->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where($sql,array(":id"=>$index))->queryAll();
@@ -152,6 +157,7 @@ class AuditWorkForm extends CFormModel
                 $this->work_cause = $row['work_cause'];
                 $this->work_address = $row['work_address'];
                 $this->work_cost = $row['work_cost'];
+                $this->city = $row['s_city'];
                 if ($this->work_type == 2){
                     $this->start_time = date("Y/m/d",strtotime($row['start_time']));
                     $this->end_time = date("Y/m/d",strtotime($row['end_time']));
@@ -170,6 +176,7 @@ class AuditWorkForm extends CFormModel
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
+                $this->lcd = $row['lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['workem'] = $row['workemdoc'];
@@ -204,7 +211,8 @@ class AuditWorkForm extends CFormModel
                 if($this->only == 1){
                     $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
                 }elseif($this->only == 3){
-                    $this->only = 0;
+                    $z_index = AuditConfigForm::getCityAuditToCode($this->city);
+                    $this->only = $z_index==2?1:0;
                     $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
                 }else{
                     //總部審核
@@ -297,17 +305,24 @@ class AuditWorkForm extends CFormModel
             $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
             $wage = floatval($employeeList["wage"]);
         }
-        if($this->work_type == 2){
-            if($this->cost_num == 1){
-                $this->cost_num = 3;
-            }else{
-                $this->cost_num = 2;
-            }
-            $this->work_cost = ($wage/21.76)*intval($this->log_time)*intval($this->cost_num);
-        }else{
-            $this->work_cost = ($wage/(21.76*8))*intval($this->log_time)*1.5;
-            $this->start_time .=" ".$this->hours;
-            $this->end_time .=" ".$this->hours_end;
+        switch ($this->work_type){
+            case 2:
+                if($this->cost_num == 1){
+                    $this->cost_num = 3;
+                }else{
+                    $this->cost_num = 2;
+                }
+                $this->work_cost = ($wage/21.75)*intval($this->log_time)*intval($this->cost_num);
+                break;
+            case 1:
+                $this->work_cost = ($wage/(21.75*8))*intval($this->log_time)*2;
+                $this->start_time .=" ".$this->hours;
+                $this->end_time .=" ".$this->hours_end;
+                break;
+            default:
+                $this->work_cost = ($wage/(21.75*8))*intval($this->log_time)*1.5;
+                $this->start_time .=" ".$this->hours;
+                $this->end_time .=" ".$this->hours_end;
         }
     }
 
@@ -327,19 +342,28 @@ class AuditWorkForm extends CFormModel
 
     //獲取假期的倍率
     public function getMuplite(){
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
-            ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')",
-                array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
-        if($rows){
-            if($rows["cost_num"] == 1){
-                $this->cost_num = 3;
-            }else{
-                $this->cost_num = 2;
-            }
-            return $this->cost_num;
-        }else{
-            return 2;
+        switch ($this->work_type){
+            case 2:
+                $city = Yii::app()->user->city();
+                $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
+                    ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')",
+                        array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
+                if($rows){
+                    if($rows["cost_num"] == 1){
+                        $this->cost_num = 3;
+                    }else{
+                        $this->cost_num = 2;
+                    }
+                    return $this->cost_num;
+                }else{
+                    return "1.5";
+                }
+                break;
+            case 1:
+                return 2;
+                break;
+            default:
+                return 1.5;
         }
     }
 

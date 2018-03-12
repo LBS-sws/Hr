@@ -36,9 +36,7 @@ $this->pageTitle=Yii::app()->name . ' - Binding';
         </div></div>
     <?php
     $search = array(
-        'name',
-        'head',
-        'agent',
+        'employee_name',
     );
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
    $this->widget('ext.layout.ListPageWidget', array(

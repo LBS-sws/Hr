@@ -135,25 +135,19 @@ class LookupController extends Controller
 //		$suffix = Yii::app()->params['envSuffix'];
 		$suffix = '_w';
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
-
-		$sql = "select id, concat(name, ' (', code, ')') as value from swoper$suffix.swo_staff
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
-				and (leave_dt is null or leave_dt=0 or leave_dt > now()) ";
-		$result1 = Yii::app()->db->createCommand($sql)->queryAll();
-
-		$sql = "select id, concat(name, ' (', code, ')',' ".Yii::t('app','(Resign)')."') as value from swoper$suffix.swo_staff
-				where (code like '%".$searchx."%' or name like '%".$searchx."%') and city='".$city."'
-				and  leave_dt is not null and leave_dt<>0 and leave_dt <= now() ";
-		$result2 = Yii::app()->db->createCommand($sql)->queryAll();
-		
-		$records = array_merge($result1, $result2);
+		$sql ="b.name like '%$searchx%' and b.city in ($city_allow)";
+        $records = Yii::app()->db->createCommand()->select("b.*")
+            ->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("b.name like '%$searchx%' and b.city in ($city_allow)")->queryAll();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$result[] = array(
 						'id'=>$record['id'],
-						'value'=>$record['value'],
+						'value'=>$record['name'],
 					);
 			}
 		}
@@ -246,4 +240,5 @@ class LookupController extends Controller
 //		echo CHtml::tag( date('Y-m-d H:i:s'));
 //		Yii::app()->end();
 //	}
+
 }

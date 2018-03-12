@@ -41,7 +41,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                 <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                     'submit'=>Yii::app()->createUrl('leave/save')));
                 ?>
-                <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
+                <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','For Audit'), array(
                     'submit'=>Yii::app()->createUrl('leave/audit')));
                 ?>
             <?php endif ?>

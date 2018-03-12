@@ -4,6 +4,7 @@ class PrizeForm extends CFormModel
 {
 	public $id;
 	public $employee_id;
+    public $work_type;
 	public $prize_date;
 	public $city;
 	public $prize_num;
@@ -23,6 +24,7 @@ class PrizeForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
+            'work_type'=>Yii::t('contract','Leader'),
             'prize_date'=>Yii::t('fete','prize date'),
             'prize_num'=>Yii::t('fete','prize num'),
             'prize_pro'=>Yii::t('fete','prize pro'),
@@ -48,7 +50,7 @@ class PrizeForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status','safe'),
+			array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status,work_type','safe'),
             array('prize_date','required'),
             array('prize_num','required'),
             array('employee_id','required'),
@@ -63,7 +65,7 @@ class PrizeForm extends CFormModel
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
-        $rows = Yii::app()->db->createCommand()->select("a.*,b.name as employee_name,b.code AS employee_code,b.city AS s_city")
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.name as employee_name,b.position,b.code AS employee_code,b.city AS s_city")
             ->from("hr_prize a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
@@ -72,6 +74,7 @@ class PrizeForm extends CFormModel
                 $this->id = $row['id'];
                 $this->employee_id = $row['employee_id'];
                 $this->prize_date = $row['prize_date'];
+                $this->work_type = DeptForm::getDeptToId($row['position']);
                 $this->city = $row['s_city'];
                 $this->prize_num = $row['prize_num'];
                 $this->prize_pro = $row['prize_pro'];

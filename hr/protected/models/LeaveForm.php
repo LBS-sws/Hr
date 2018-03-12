@@ -25,6 +25,7 @@ class LeaveForm extends CFormModel
 	public $reject_cause;
 	public $vacation_list;//倍率
 	public $city;
+	public $lcd;
 	public $audit = false;//是否需要審核
     public $wage;//合約工資
     public $staff_type;//員工的辦公類型
@@ -64,6 +65,7 @@ class LeaveForm extends CFormModel
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
+            'lcd'=>Yii::t('fete','apply for time'),
 		);
 	}
 
@@ -73,7 +75,7 @@ class LeaveForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,leave_code,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time','safe'),
+			array('id,leave_code,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd','safe'),
             array('employee_id','validateUser','on'=>array("new","edit","audit")),
             array('vacation_id','required','on'=>array("new","edit","audit")),
             array('leave_cause','required','on'=>array("new","edit","audit")),
@@ -217,12 +219,12 @@ class LeaveForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $uid = $this->getEmployeeIdToUser();
         if(Yii::app()->user->validFunction('ZR03')){
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
                 ->from("hr_employee_leave a")
                 ->leftJoin("hr_employee b","a.employee_id = b.id")
                 ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
         }else{
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
+            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
                 ->from("hr_employee_leave a")
                 ->leftJoin("hr_employee b","a.employee_id = b.id")
                 ->where("a.id=:id and (a.employee_id=:employee_id or a.lcu =:lcu)",
@@ -252,9 +254,10 @@ class LeaveForm extends CFormModel
                 $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
+                $this->lcd = $row['lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
-                $this->city = $row['city'];
+                $this->city = $row['s_city'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->leave_cost = $row['leave_cost'];
@@ -340,9 +343,9 @@ class LeaveForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_employee_leave(
-							employee_id,vacation_id,leave_cause, start_time_lg, end_time_lg, start_time, end_time, log_time, leave_cost, city, status, lcu
+							employee_id,vacation_id,leave_cause, start_time_lg, end_time_lg, start_time, end_time, log_time, leave_cost, city, z_index, status, lcu
 						) values (
-							:employee_id,:vacation_id,:leave_cause, :start_time_lg, :end_time_lg, :start_time, :end_time, :log_time, :leave_cost, :city, :status, :lcu
+							:employee_id,:vacation_id,:leave_cause, :start_time_lg, :end_time_lg, :start_time, :end_time, :log_time, :leave_cost, :city, :z_index, :status, :lcu
 						)";
                 break;
             case 'edit':
@@ -357,6 +360,8 @@ class LeaveForm extends CFormModel
 							end_time = :end_time, 
 							log_time = :log_time, 
 							city = :city, 
+							z_index = :z_index, 
+							lcd = :lcd, 
 							status = :status, 
 							reject_cause = '', 
 							luu = :luu
@@ -398,7 +403,14 @@ class LeaveForm extends CFormModel
             $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
+        if (strpos($sql,':z_index')!==false){
+            $z_index = AuditConfigForm::getCityAuditToCode($this->city);
+            $this->z_index = $z_index==1?1:3;
+            $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
+        }
 
+        if (strpos($sql,':lcd')!==false)
+            $command->bindParam(':lcd',date('Y-m-d H:i:s'),PDO::PARAM_STR);
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)

@@ -1,6 +1,6 @@
 <tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('ZE03', 'employee/edit', 'employee/view', array('index'=>$this->record['id']));?>'>
 
-	<td><?php echo $this->needHrefButton('ZE03', 'employee/edit',  'employee/view', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->drawEditButton('ZE03', 'employee/edit',  'employee/view', array('index'=>$this->record['id'])); ?></td>
 
 
 

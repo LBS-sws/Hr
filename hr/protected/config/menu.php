@@ -169,15 +169,31 @@ return array(
 				'access'=>'ZC06',
 				'url'=>'/rewardCon/index',
 			),
+			'Audit Config'=>array(
+				'access'=>'ZC08',
+				'url'=>'/AuditConfig/index',
+			),
 		),
 	),
 	'Report'=>array(
-		'access'=>'ZY',
+		'access'=>'YB',
 		'items'=>array(
 			'Staff List'=>array(
-				'access'=>'ZB01',
+				'access'=>'YB04',
 				'url'=>'#',
 				'hidden'=>true,
+			),
+			'Overtime records List'=>array(
+				'access'=>'YB02',
+                'url'=>'/report/overtimelist',
+			),
+			'Leave record List'=>array(
+				'access'=>'YB03',
+                'url'=>'/report/leavelist',
+			),
+			'Report Manager'=>array(
+				'access'=>'YB01',
+                'url'=>'/queue/index',
 			),
 		),
 	),

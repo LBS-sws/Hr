@@ -121,6 +121,9 @@ return array(
     'Staff appraisal'=>'技术员评估',
     'Pennants List'=>'锦旗列表',
     'Pennants Audit'=>'锦旗审核',
+    'Overtime records List'=>'加班记录报表',
+    'Leave record List'=>'请假记录报表',
+    'Audit Config'=>'请假、加班审核配置',
     //沈超添加结束
 );
 ?>
