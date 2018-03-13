@@ -18,6 +18,8 @@ class AuditPrizeForm extends CFormModel
     public $photo2;
     public $status;
     public $remark;
+    public $prize_type;
+    public $type_num;
     public $reject_remark;
 
     public function attributeLabels()
@@ -40,6 +42,9 @@ class AuditPrizeForm extends CFormModel
             'status'=>Yii::t('contract','Status'),
             'remark'=>Yii::t('contract','Remark'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
+            'type_num'=>Yii::t('fete','type number'),
+            'type_num_ex'=>Yii::t('fete','A commendatory letter is equal to two flags'),
+            'prize_type'=>Yii::t('fete','prize type'),
         );
     }
 
@@ -49,7 +54,8 @@ class AuditPrizeForm extends CFormModel
     public function rules()
     {
         return array(
-            array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status,work_type,reject_remark','safe'),
+            array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status,
+            work_type,type_num,prize_type,reject_remark','safe'),
             array('reject_remark','required',"on"=>"reject"),
         );
     }
@@ -78,6 +84,8 @@ class AuditPrizeForm extends CFormModel
                 $this->posi = $row['posi'];
                 $this->photo1 = $row['photo1'];
                 $this->photo2 = $row['photo2'];
+                $this->type_num = $row['type_num'];
+                $this->prize_type = $row['prize_type'];
                 $this->status = $row['status'];
                 $this->remark = $row['remark'];
                 $this->reject_remark = $row['reject_remark'];

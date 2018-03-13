@@ -186,6 +186,18 @@ class AuditWorkForm extends CFormModel
         return true;
     }
 
+    //驗證員工是不是經理級別的審核流程
+    public function validateManagerToEmployeeId($employeeId = ""){
+        $rows = Yii::app()->db->createCommand()->select("b.manager")->from("hr_employee a")
+            ->leftJoin("hr_dept b","b.id = a.position")->where("a.id=$employeeId")->queryRow();
+        if($rows){
+            if(!empty($rows["manager"])){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function saveData()
     {
         $connection = Yii::app()->db;
@@ -208,11 +220,13 @@ class AuditWorkForm extends CFormModel
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
+                $this->z_index = $this->only;
                 if($this->only == 1){
                     $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
                 }elseif($this->only == 3){
                     $z_index = AuditConfigForm::getCityAuditToCode($this->city);
-                    $this->only = $z_index==2?1:0;
+                    $bool = $this->validateManagerToEmployeeId($this->employee_name);
+                    $this->z_index = ($z_index==2||$bool)?1:0;
                     $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
                 }else{
                     //總部審核
@@ -261,7 +275,7 @@ class AuditWorkForm extends CFormModel
         if (strpos($sql,':audit_remark')!==false)
             $command->bindParam(':audit_remark',$this->audit_remark,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false)
-            $command->bindParam(':z_index',$this->only,PDO::PARAM_STR);
+            $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
 
         if (strpos($sql,':work_type')!==false)
             $command->bindParam(':work_type',$this->work_type,PDO::PARAM_STR);
@@ -293,7 +307,6 @@ class AuditWorkForm extends CFormModel
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
-        $this->only = empty($this->only)?3:$this->only;
         return true;
     }
 

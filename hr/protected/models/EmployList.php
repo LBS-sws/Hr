@@ -103,6 +103,10 @@ class EmployList extends CListPageModel
     public function getStaffTypeList(){
         return array(""=>"","Office"=>Yii::t("staff","Office"),"Sales"=>Yii::t("staff","Sales"),"Technician"=>Yii::t("staff","Technician"),"Others"=>Yii::t("staff","Others"));
     }
+    //經理級別
+    public function getManagerList(){
+        return array(Yii::t("misc","No"),Yii::t("misc","Yes"));
+    }
 
     //獲取員工續約的次數
     public function getContractNumber($staff_id){

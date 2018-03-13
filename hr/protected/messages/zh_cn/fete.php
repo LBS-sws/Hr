@@ -127,5 +127,11 @@ return array(
     'three index'=>'三层',
 
     'apply for time'=>'申请时间',
+    'Manager level audit'=>'经理级别审核',
+    'prize'=>'锦旗',
+    'testimonial'=>'表扬信',
+    'A commendatory letter is equal to two flags'=>'1封表扬信等于2面锦旗',
+    'prize type'=>'客户奖励',
+    'type number'=>'锦旗总数',
 );
 ?>

@@ -40,7 +40,7 @@
 <div class="form-group">
     <?php echo $form->labelEx($model,'prize_num',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
-        <?php echo $form->textField($model, 'prize_num',
+        <?php echo $form->numberField($model, 'prize_num',
             array('readonly'=>($model->getInputBool()))
         ); ?>
     </div>
@@ -52,6 +52,23 @@
             array('disabled'=>($model->getInputBool()))
         ); ?>
     </div>
+</div>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'prize_type',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->dropDownList($model, 'prize_type',array(Yii::t("fete","testimonial"),Yii::t("fete","prize")),
+            array('disabled'=>($model->getInputBool()))
+        ); ?>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'type_num',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->numberField($model, 'type_num',
+            array('readonly'=>($model->getInputBool()))
+        ); ?>
+    </div>
+    <?php echo $form->labelEx($model,'type_num_ex',array('class'=>"col-sm-2 control-label text-warning")); ?>
 </div>
 <div class="form-group">
     <?php echo $form->hiddenField($model, 'customer_name',array("id"=>"customer_name")); ?>

@@ -15,6 +15,7 @@ class DeptForm extends CFormModel
 	public $dept_id=1;
 	public $type;
 	public $dept_class;
+	public $manager;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -29,6 +30,7 @@ class DeptForm extends CFormModel
 			'z_index'=>Yii::t('contract','Level'),
             'dept_id'=>Yii::t('contract','in department'),
             'dept_class'=>Yii::t('contract','Job category'),
+            'manager'=>Yii::t('fete','Manager level audit'),
 		);
 	}
 
@@ -39,7 +41,7 @@ class DeptForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, dept_id, type, dept_class','safe'),
+            array('id, name, z_index, dept_id, type, dept_class, manager','safe'),
 			array('name','required'),
 			array('city','validateCity'),
 			array('name','validateName'),
@@ -206,6 +208,7 @@ class DeptForm extends CFormModel
                 $this->type = $row['type'];
                 $this->dept_id = $row['dept_id'];
                 $this->dept_class = $row['dept_class'];
+                $this->manager = $row['manager'];
 				break;
 			}
 		}
@@ -238,9 +241,9 @@ class DeptForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
-							name, type, z_index, dept_id, city, dept_class, lcu
+							name, type, z_index, dept_id, city, dept_class, manager, lcu
 						) values (
-							:name, :type, :z_index, :dept_id, :city, :dept_class, :lcu
+							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :lcu
 						)";
 				break;
 			case 'edit':
@@ -251,6 +254,7 @@ class DeptForm extends CFormModel
 							z_index = :z_index,
 							dept_id = :dept_id,
 							dept_class = :dept_class,
+							manager = :manager,
 							luu = :luu 
 						where id = :id
 						";
@@ -270,6 +274,8 @@ class DeptForm extends CFormModel
 			$command->bindParam(':type',$this->type,PDO::PARAM_INT);
 		if (strpos($sql,':dept_class')!==false)
 			$command->bindParam(':dept_class',$this->dept_class,PDO::PARAM_STR);
+		if (strpos($sql,':manager')!==false)
+			$command->bindParam(':manager',$this->manager,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);

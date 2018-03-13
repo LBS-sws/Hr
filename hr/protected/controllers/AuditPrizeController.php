@@ -72,7 +72,7 @@ class AuditPrizeController extends Controller
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
-				$this->render('form',array('model'=>$model,));
+                $this->redirect(Yii::app()->createUrl('auditPrize/edit',array('index'=>$model->id)));
 			}
 		}
 	}
@@ -89,7 +89,7 @@ class AuditPrizeController extends Controller
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
-				$this->render('form',array('model'=>$model,));
+                $this->redirect(Yii::app()->createUrl('auditPrize/edit',array('index'=>$model->id)));
 			}
 		}
 	}

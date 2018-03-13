@@ -199,11 +199,13 @@ class AuditLeaveForm extends CFormModel
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
+                $this->z_index = $this->only;
                 if($this->only == 1){ //地區審核
                     $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
                 }elseif($this->only == 3){ //領導審核
                     $z_index = AuditConfigForm::getCityAuditToCode($this->city);
-                    $this->only = $z_index==2?1:0;
+                    $bool = AuditWorkForm::validateManagerToEmployeeId($this->employee_name);
+                    $this->z_index = ($z_index==2||$bool)?1:0;
                     $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
                 }else{ //總部審核
                     $this->resetLeaveCost();//計算員工的工資
@@ -252,7 +254,7 @@ class AuditLeaveForm extends CFormModel
         if (strpos($sql,':reject_cause')!==false)
             $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false)
-            $command->bindParam(':z_index',$this->only,PDO::PARAM_STR);
+            $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
         /*總部審核start*/
         if (strpos($sql,':vacation_id')!==false)
             $command->bindParam(':vacation_id',$this->vacation_id,PDO::PARAM_STR);
@@ -288,7 +290,6 @@ class AuditLeaveForm extends CFormModel
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
 
-        $this->only = empty($this->only)?3:$this->only;
         return true;
     }
 

@@ -18,6 +18,8 @@ class PrizeForm extends CFormModel
 	public $photo2;
 	public $status;
 	public $remark;
+	public $prize_type;
+	public $type_num;
 	public $reject_remark;
 	public $audit = false;
 
@@ -41,6 +43,9 @@ class PrizeForm extends CFormModel
             'status'=>Yii::t('contract','Status'),
             'remark'=>Yii::t('contract','Remark'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
+            'type_num'=>Yii::t('fete','type number'),
+            'type_num_ex'=>Yii::t('fete','A commendatory letter is equal to two flags'),
+            'prize_type'=>Yii::t('fete','prize type'),
 		);
 	}
 
@@ -50,10 +55,16 @@ class PrizeForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status,work_type','safe'),
+			array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status,
+			work_type,type_num,prize_type','safe'),
             array('prize_date','required'),
             array('prize_num','required'),
             array('employee_id','required'),
+            array('prize_type','required'),
+            array('type_num','required'),
+            array('prize_type', 'in', 'range' => array(0, 1)),
+            array('type_num', 'numerical', 'min'=>1, 'integerOnly'=>true),
+            array('prize_num', 'numerical', 'min'=>1, 'integerOnly'=>true),
             array('photo1','required'),
             array('photo2','required'),
             array('contact','required'),
@@ -85,6 +96,8 @@ class PrizeForm extends CFormModel
                 $this->posi = $row['posi'];
                 $this->photo1 = $row['photo1'];
                 $this->photo2 = $row['photo2'];
+                $this->type_num = $row['type_num'];
+                $this->prize_type = $row['prize_type'];
                 $this->status = $row['status'];
                 $this->remark = $row['remark'];
                 $this->reject_remark = $row['reject_remark'];
@@ -121,9 +134,9 @@ class PrizeForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_prize(
-							employee_id,prize_date,city,prize_num,prize_pro,customer_name,contact,phone,posi,photo1,photo2,remark, status, lcu
+							employee_id,prize_date,city,prize_num,prize_pro,customer_name,contact,phone,posi,photo1,photo2,remark, status, prize_type, type_num, lcu
 						) values (
-							:employee_id,:prize_date,:city,:prize_num,:prize_pro,:customer_name,:contact,:phone,:posi,:photo1,:photo2,:remark, :status, :lcu
+							:employee_id,:prize_date,:city,:prize_num,:prize_pro,:customer_name,:contact,:phone,:posi,:photo1,:photo2,:remark, :status, :prize_type, :type_num, :lcu
 						)";
                 break;
             case 'edit':
@@ -138,6 +151,8 @@ class PrizeForm extends CFormModel
 							posi = :posi, 
 							photo1 = :photo1, 
 							photo2 = :photo2, 
+							type_num = :type_num, 
+							prize_type = :prize_type, 
 							remark = :remark, 
 							status = :status, 
 							luu = :luu
@@ -174,6 +189,10 @@ class PrizeForm extends CFormModel
             $command->bindParam(':photo1',$this->photo1,PDO::PARAM_STR);
         if (strpos($sql,':photo2')!==false)
             $command->bindParam(':photo2',$this->photo2,PDO::PARAM_STR);
+        if (strpos($sql,':prize_type')!==false)
+            $command->bindParam(':prize_type',$this->prize_type,PDO::PARAM_INT);
+        if (strpos($sql,':type_num')!==false)
+            $command->bindParam(':type_num',$this->type_num,PDO::PARAM_INT);
         if (strpos($sql,':remark')!==false)
             $command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
         if (strpos($sql,':status')!==false){
