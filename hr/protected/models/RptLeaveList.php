@@ -9,6 +9,7 @@ class RptLeaveList extends CReport {
 			'start_time'=>array('label'=>Yii::t('contract','Start Time'),'width'=>20,'align'=>'L'),
 			'end_time'=>array('label'=>Yii::t('contract','End Time'),'width'=>20,'align'=>'L'),
 			'log_time'=>array('label'=>Yii::t('fete','Log Date'),'width'=>15,'align'=>'L'),
+            'lcd'=>array('label'=>Yii::t('fete','apply for time'),'width'=>15,'align'=>'L'),
 		);
 	}
 	
@@ -63,6 +64,7 @@ class RptLeaveList extends CReport {
                 $temp['start_time'] = date("Y/m/d",strtotime($row['start_time']));
                 $temp['end_time'] = date("Y/m/d",strtotime($row['end_time']));
 				$temp['log_time'] = $row['log_time']."天";
+                $temp['lcd'] = $row['lcd'];
 				$this->data[] = $temp;
 			}
 		}

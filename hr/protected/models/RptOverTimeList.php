@@ -9,6 +9,7 @@ class RptOverTimeList extends CReport {
 			'start_time'=>array('label'=>Yii::t('contract','Start Time'),'width'=>20,'align'=>'L'),
 			'end_time'=>array('label'=>Yii::t('contract','End Time'),'width'=>20,'align'=>'L'),
 			'log_time'=>array('label'=>Yii::t('fete','Log Date'),'width'=>15,'align'=>'L'),
+			'lcd'=>array('label'=>Yii::t('fete','apply for time'),'width'=>15,'align'=>'L'),
 		);
 	}
 	
@@ -71,6 +72,7 @@ class RptOverTimeList extends CReport {
 				$temp['employee_name'] = $row['employee_name'];
 				$temp['work_type'] = $costNumList[$row['work_type']];
 				$temp['log_time'] = $row['log_time'].$dayStr;
+                $temp['lcd'] = $row[$row['lcd']];
 				$this->data[] = $temp;
 			}
 		}
