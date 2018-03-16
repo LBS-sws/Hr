@@ -124,6 +124,9 @@ return array(
     'Overtime records List'=>'加班记录报表',
     'Leave record List'=>'请假记录报表',
     'Audit Config'=>'请假、加班审核配置',
+    'City index'=>'城市等级配置',
+    'Pennants ex List'=>'锦旗明细报表',
+    'Pennants cumulative List'=>'锦旗累积报表',
     //沈超添加结束
 );
 ?>

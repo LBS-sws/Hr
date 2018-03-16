@@ -133,5 +133,10 @@ return array(
     'A commendatory letter is equal to two flags'=>'1封表揚信等於2面錦旗',
     'prize type'=>'客戶獎勵',
     'type number'=>'錦旗總數',
+
+    'level'=>'等级',
+    'professional'=>'專業組',
+    'preliminary'=>'初階組',
+    'Month'=>'月份',
 );
 ?>

@@ -126,6 +126,7 @@ return array(
     'Overtime records List'=>'加班記錄報表',
     'Leave record List'=>'請假記錄報表',
     'Audit Config'=>'請假、加班審核配置',
+    'City index'=>'城市等級配置',
     //沈超添加结束
 );
 ?>

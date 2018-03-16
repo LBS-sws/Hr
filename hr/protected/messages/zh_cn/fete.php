@@ -133,5 +133,14 @@ return array(
     'A commendatory letter is equal to two flags'=>'1封表扬信等于2面锦旗',
     'prize type'=>'客户奖励',
     'type number'=>'锦旗总数',
+
+    'level'=>'等级',
+    'professional'=>'专业组',
+    'preliminary'=>'初阶组',
+    'Month'=>'月份',
+
+    'Personal subtotal'=>'个人小计',
+    'total'=>'总计',
+    'ranking'=>'排名',
 );
 ?>

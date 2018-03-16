@@ -173,6 +173,10 @@ return array(
 				'access'=>'ZC08',
 				'url'=>'/AuditConfig/index',
 			),
+			'City index'=>array(
+				'access'=>'ZC09',
+				'url'=>'/city/index',
+			),
 		),
 	),
 	'Report'=>array(
@@ -190,6 +194,14 @@ return array(
 			'Leave record List'=>array(
 				'access'=>'YB03',
                 'url'=>'/report/leavelist',
+			),
+			'Pennants ex List'=>array(
+				'access'=>'YB05',
+                'url'=>'/report/pennantexlist',
+			),
+			'Pennants cumulative List'=>array(
+				'access'=>'YB06',
+                'url'=>'/report/pennantculist',
 			),
 			'Report Manager'=>array(
 				'access'=>'YB01',

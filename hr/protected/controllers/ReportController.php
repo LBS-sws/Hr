@@ -4,6 +4,8 @@ class ReportController extends Controller
 	protected static $actions = array(
         'salessummary'=>'YB04',
         'overtimelist'=>'YB02',
+        'pennantexlist'=>'YB05',
+        'pennantculist'=>'YB06',
         'leavelist'=>'YB03',
     );
 	
@@ -74,6 +76,38 @@ class ReportController extends Controller
             }
         }
         $this->render('form_y03',array('model'=>$model));
+    }
+
+    public function actionPennantexlist() {
+        $model = new ReportY05Form;
+        if (isset($_POST['ReportY05Form'])) {
+            $model->attributes = $_POST['ReportY05Form'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('form_y05',array('model'=>$model));
+    }
+
+    public function actionPennantculist() {
+        $model = new ReportY05Form;
+        $model->id = 'RptPennantCuList';
+        $model->name = Yii::t('app','Pennants cumulative List');
+        if (isset($_POST['ReportY05Form'])) {
+            $model->attributes = $_POST['ReportY05Form'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('form_y05',array('model'=>$model));
     }
 
 	public static function allowExecute() {
