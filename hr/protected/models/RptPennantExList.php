@@ -26,8 +26,8 @@ class RptPennantExList extends CReport {
 	}
 
 	public function retrieveData() {
-		$year = $this->criteria['year'];
-		$month = intval($this->criteria['month']);
+		$year = $this->criteria['YEAR'];
+		$month = intval($this->criteria['MONTH']);
 		$city = $this->criteria['CITY'];
 		$staff_id = $this->criteria['STAFFS'];
 		

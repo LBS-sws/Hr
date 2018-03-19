@@ -28,7 +28,7 @@ class CityController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','save','test'),
+                'actions'=>array('edit','save'),
                 'expression'=>array('CityController','allowReadWrite'),
             ),
             array('allow',
@@ -104,7 +104,7 @@ class CityController extends Controller
         }
     }
 
-    public function actionTest(){
+/*    public function actionTest(){
         $test = new RptPennantCuList();
         $test->criteria = array(
             "year"=>"2018",
@@ -114,5 +114,5 @@ class CityController extends Controller
         );
         $test->retrieveData();
         var_dump($test->data);
-    }
+    }*/
 }
