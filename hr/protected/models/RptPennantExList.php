@@ -19,7 +19,7 @@ class RptPennantExList extends CReport {
 	public function genReport() {
 		$this->retrieveData();
 		$this->title = $this->getReportName();
-		$this->subtitle = Yii::t('report','Year').':'.$this->criteria['year'].' - '.$this->criteria['month'].' / '
+		$this->subtitle = Yii::t('report','Year').':'.$this->criteria['YEAR'].' - '.$this->criteria['MONTH'].' / '
 			.Yii::t('report','Staffs').':'.$this->criteria['STAFFSDESC']
 			;
 		return $this->exportExcel();
