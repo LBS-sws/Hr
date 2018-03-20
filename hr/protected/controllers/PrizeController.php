@@ -36,7 +36,7 @@ class PrizeController extends Controller
                 'expression'=>array('PrizeController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('AjaxCity'),
+                'actions'=>array('AjaxCity','printImage'),
                 'expression'=>array('PrizeController','allowWrite'),
             ),
             array('deny',  // deny all users
@@ -54,7 +54,7 @@ class PrizeController extends Controller
     }
 
     public static function allowWrite() {
-        return true;
+        return !empty(Yii::app()->user->id);
     }
 
     public function actionIndex($pageNum=0){
@@ -175,10 +175,14 @@ class PrizeController extends Controller
             $path =Yii::app()->basePath."/../upload/images/";
             if (!file_exists($path)){
                 mkdir($path);
+                $myfile = fopen($path."index.php", "w");
+                fclose($myfile);
             }
             $path.=$city."/";
             if (!file_exists($path)){
                 mkdir($path);
+                $myfile = fopen($path."index.php", "w");
+                fclose($myfile);
             }
             $url = "upload/images/".$city."/".date("YmdHsi").".".$img->getExtensionName();
             $model->file = $img->getName();
@@ -223,6 +227,28 @@ class PrizeController extends Controller
             echo CJSON::encode(array("status"=>1,"attr"=>$model->attr,"pageHtml"=>$pageHtml));
         }else{
             $this->redirect(Yii::app()->createUrl(''));
+        }
+    }
+
+    public function actionPrintImage($id = 0,$str="") {
+        $rows = Yii::app()->db->createCommand()->select("$str")
+            ->from("hr_prize")->where("id=:id",array(":id"=>$id))->queryRow();
+        if($rows){
+            if(empty($rows[$str])){
+                return "";
+            }else{
+                $n = new imgdata;
+                $path = Yii::app()->basePath.$rows[$str];
+                if (file_exists($path)) {
+                    $n -> getdir($path);
+                    $n -> img2data();
+                    $n -> data2img();
+                } else {
+                    echo "";
+                }
+            }
+        }else{
+            return "";
         }
     }
 }

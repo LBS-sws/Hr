@@ -65,7 +65,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
     <div class="box box-info">
         <div class="box-body" style="position: relative">
             <?php if (!empty($model->image_user)): ?>
-                <img src="<?php echo $model->image_user;?>" width="150px" style="position: absolute;right: 5px;top: 5px;z-index: 2;">
+                <img src="<?php echo Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_user"));?>" width="150px" style="position: absolute;right: 5px;top: 5px;z-index: 2;">
             <?php endif; ?>
 
             <?php echo $form->hiddenField($model, 'scenario'); ?>

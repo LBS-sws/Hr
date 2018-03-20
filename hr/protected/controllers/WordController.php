@@ -116,6 +116,12 @@ class WordController extends Controller
             if ($model->validate()) {
                 if(empty($model->docx_url)){
                     $docx = CUploadedFile::getInstance($model,'file');
+                    $path = Yii::app()->basePath."/../upload/contract/";
+                    if (!file_exists($path)){
+                        mkdir ($path);
+                        $myfile = fopen($path."index.php", "w");
+                        fclose($myfile);
+                    }
                     $model->docx_url = 'upload/contract/'.date("YmdHis").".docx";
                     $docx->saveAs($model->docx_url);
                 }

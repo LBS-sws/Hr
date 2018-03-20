@@ -35,7 +35,7 @@ class EmployController extends Controller
                 'expression'=>array('EmployController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('generate','addDate'),
+                'actions'=>array('generate','addDate','printImage'),
                 'expression'=>array('EmployController','allowWrite'),
             ),
             array('deny',  // deny all users
@@ -52,7 +52,7 @@ class EmployController extends Controller
     }
 
     public static function allowWrite() {
-        return true;
+        return !empty(Yii::app()->user->id);
     }
 
     public function actionIndex($pageNum=0){
@@ -196,10 +196,14 @@ class EmployController extends Controller
             $path =Yii::app()->basePath."/../upload/images/";
             if (!file_exists($path)){
                 mkdir($path);
+                $myfile = fopen($path."index.php", "w");
+                fclose($myfile);
             }
             $path.=$city."/";
             if (!file_exists($path)){
                 mkdir($path);
+                $myfile = fopen($path."index.php", "w");
+                fclose($myfile);
             }
             $url = "upload/images/".$city."/".date("YmdHsi").".".$img->getExtensionName();
             $model->file = $img->getName();
@@ -284,6 +288,35 @@ class EmployController extends Controller
             }
         } else {
             throw new CHttpException(404,'Record not found.');
+        }
+    }
+
+
+    public function actionPrintImage($id = 0,$staff = 0,$str="") {
+        if (empty($staff)||empty($id)){
+            $id = empty($id)?$staff:$id;
+            $rows = Yii::app()->db->createCommand()->select("$str")
+                ->from("hr_employee")->where("id=:id",array(":id"=>$id))->queryRow();
+        }else{
+            $rows = Yii::app()->db->createCommand()->select("$str")
+                ->from("hr_employee_operate")->where("id=:id",array(":id"=>$id))->queryRow();
+        }
+        if($rows){
+            if(empty($rows[$str])){
+                return "";
+            }else{
+                $n = new imgdata;
+                $path = Yii::app()->basePath.$rows[$str];
+                if (file_exists($path)) {
+                    $n -> getdir($path);
+                    $n -> img2data();
+                    $n -> data2img();
+                } else {
+                    echo "";
+                }
+            }
+        }else{
+            return "";
         }
     }
 }

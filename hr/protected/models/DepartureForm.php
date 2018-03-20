@@ -8,6 +8,7 @@
 class DepartureForm extends CFormModel
 {
 	/* User Fields */
+    public $employee_id=0;
 	public $id;
 	public $name;
 	public $city;

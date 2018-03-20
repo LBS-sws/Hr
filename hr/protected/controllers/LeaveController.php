@@ -58,7 +58,7 @@ class LeaveController extends Controller
     }
 
     public static function allowWrite() {
-        return true;
+        return !empty(Yii::app()->user->id);
     }
 
     public static function allowCancelled() {

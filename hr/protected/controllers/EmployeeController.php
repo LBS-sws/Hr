@@ -52,7 +52,7 @@ class EmployeeController extends Controller
     }
 
     public static function allowWrite() {
-        return true;
+        return !empty(Yii::app()->user->id);
     }
 
     public function actionIndex($pageNum=0){

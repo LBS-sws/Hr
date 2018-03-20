@@ -80,7 +80,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 	<div class="box box-info">
         <div class="box-body" style="position: relative">
             <?php if (!empty($model->image_user)): ?>
-                <img src="<?php echo $model->image_user;?>" width="150px" style="position: absolute;right: 5px;top: 5px;z-index: 2;">
+                <img src="<?php echo Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_user"));?>" width="150px" style="position: absolute;right: 5px;top: 5px;z-index: 2;">
             <?php endif; ?>
 
             <?php echo $form->hiddenField($model, 'scenario'); ?>
@@ -176,11 +176,6 @@ $('#EmployForm_test_type').on('change',function(){
         $(this).parents('.form-group:first').find('input').val('');
         $(this).parents('.fileImgShow').parents('.form-group:first').find('input[type=\"file\"]').show();
         $(this).parents('.fileImgShow').remove();
-    });
-    $('.fileImgShow').each(function(){
-        var url = $(this).find('img:first').attr('src');
-        $(this).parent('div').children('input[type=\"hidden\"]').val(url);
-        $(this).parent('div').children('input[type=\"file\"]').removeClass('hide').hide();
     });
     
     //時間計算

@@ -67,10 +67,14 @@ class Agreement {
         $path = Yii::app()->basePath."/../upload/agreement/";
         if (!file_exists($path)){
             mkdir ($path);
+            $myfile = fopen($path."index.php", "w");
+            fclose($myfile);
         }
         $path = $path.$city."/";
         if (!file_exists($path)){
             mkdir ($path);
+            $myfile = fopen($path."index.php", "w");
+            fclose($myfile);
         }
         $this->_tempFileName = $path.time().".docx";
         $this->_path = $path;

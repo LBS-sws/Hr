@@ -50,6 +50,9 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
 
     <div class="box box-info">
         <div class="box-body">
+            <?php if (!empty($model->image_user)): ?>
+                <img src="<?php echo Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_user"));?>" width="150px" style="position: absolute;right: 5px;top: 5px;z-index: 2;">
+            <?php endif; ?>
             <?php echo $form->hiddenField($model, 'scenario'); ?>
             <?php echo $form->hiddenField($model, 'id'); ?>
             <?php echo $form->hiddenField($model, 'city'); ?>
@@ -150,11 +153,6 @@ $('#DepartureForm_test_type').on('change',function(){
         $(this).parents('.form-group').next('div.test-div').slideUp(100);
     }
 }).trigger('change');
-    $('.fileImgShow').each(function(){
-        var url = $(this).find('img:first').attr('src');
-        $(this).parent('div').children('input[type=\"hidden\"]').val(url);
-        $(this).parent('div').children('input[type=\"file\"]').removeClass('hide').hide();
-    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

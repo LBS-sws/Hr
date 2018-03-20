@@ -448,14 +448,13 @@ if (!empty($contractNum)){
             if(empty($model->image_user)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->image_user."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_user"))."'></div>";
             }
         }else{
             if(!empty($model->image_user)){
-                echo $form->fileField($model, 'image_user',
-                    array('readonly'=>($readonly),"class"=>"file-update form-control hide")
-                );
-                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_user."'></div>
+                echo TbHtml::fileField('image_user',"",array("class"=>"file-update form-control","style"=>"display:none"));
+                echo $form->hiddenField($model, 'image_user');
+                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_user"))."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
             }else{
                 echo $form->fileField($model, 'image_user',
@@ -474,14 +473,13 @@ if (!empty($contractNum)){
             if(empty($model->image_code)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->image_code."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_code"))."'></div>";
             }
         }else{
             if(!empty($model->image_code)){
-                echo $form->fileField($model, 'image_code',
-                    array('readonly'=>($readonly),"class"=>"file-update form-control hide")
-                );
-                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_code."'></div>
+                echo TbHtml::fileField('image_code',"",array("class"=>"file-update form-control","style"=>"display:none"));
+                echo $form->hiddenField($model, 'image_code');
+                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_code"))."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
             }else{
                 echo $form->fileField($model, 'image_code',
@@ -500,14 +498,13 @@ if (!empty($contractNum)){
             if(empty($model->image_work)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->image_work."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_work"))."'></div>";
             }
         }else{
             if(!empty($model->image_work)){
-                echo $form->fileField($model, 'image_work',
-                    array('readonly'=>($readonly),"class"=>"file-update form-control hide")
-                );
-                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_work."'></div>
+                echo TbHtml::fileField('image_work',"",array("class"=>"file-update form-control","style"=>"display:none"));
+                echo $form->hiddenField($model, 'image_work');
+                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_work"))."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
             }else{
                 echo $form->fileField($model, 'image_work',
@@ -526,14 +523,13 @@ if (!empty($contractNum)){
             if(empty($model->image_other)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img height='80px' class='openBigImg' src='".$model->image_other."'></div>";
+                echo "<div class='form-control-static'><img height='80px' class='openBigImg' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_other"))."'></div>";
             }
         }else{
             if(!empty($model->image_other)){
-                echo $form->fileField($model, 'image_other',
-                    array('readonly'=>($readonly),"class"=>"file-update form-control hide")
-                );
-                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->image_other."'></div>
+                echo TbHtml::fileField('image_other',"",array("class"=>"file-update form-control","style"=>"display:none"));
+                echo $form->hiddenField($model, 'image_other');
+                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".Yii::app()->createUrl('employ/printImage',array("id"=>$model->id,"staff"=>$model->employee_id,"str"=>"image_other"))."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
             }else{
                 echo $form->fileField($model, 'image_other',

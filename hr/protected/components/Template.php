@@ -67,6 +67,8 @@ class Template {
         $path = Yii::app()->basePath."/../upload/staff/";
         if (!file_exists($path)){
             mkdir ($path);
+            $myfile = fopen($path."index.php", "w");
+            fclose($myfile);
         }
         if(empty($city)){
             $city = Yii::app()->user->city();
@@ -74,6 +76,8 @@ class Template {
         $path = $path.$city."/";
         if (!file_exists($path)){
             mkdir ($path);
+            $myfile = fopen($path."index.php", "w");
+            fclose($myfile);
         }
         $this->_tempFileName = $path.time().".docx";
         $this->_path = $path;

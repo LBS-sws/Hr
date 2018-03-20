@@ -146,11 +146,6 @@ $js = "
         $(this).parents('.fileImgShow').parents('.form-group:first').find('input[type=\"file\"]').show();
         $(this).parents('.fileImgShow').remove();
     });
-    $('.fileImgShow').each(function(){
-        var url = $(this).find('img:first').attr('src');
-        $(this).parent('div').children('input[type=\"hidden\"]').val(url);
-        $(this).parent('div').children('input[type=\"file\"]').removeClass('hide').hide();
-    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 if ($model->scenario!='view') {

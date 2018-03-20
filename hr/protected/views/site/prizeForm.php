@@ -125,14 +125,13 @@
             if(empty($model->photo1)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->photo1."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".Yii::app()->createUrl('prize/printImage',array("id"=>$model->id,"str"=>"photo1"))."'></div>";
             }
         }else{
             if(!empty($model->photo1)){
-                echo $form->fileField($model, 'photo1',
-                    array('readonly'=>($model->getInputBool()),"class"=>"file-update form-control hide")
-                );
-                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->photo1."'></div>
+                echo TbHtml::fileField('photo1',"",array("class"=>"file-update form-control","style"=>"display:none"));
+                echo $form->hiddenField($model, 'photo1');
+                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".Yii::app()->createUrl('prize/printImage',array("id"=>$model->id,"str"=>"photo1"))."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
             }else{
                 echo $form->fileField($model, 'photo1',
@@ -151,14 +150,13 @@
             if(empty($model->photo2)){
                 echo "<div class='form-control-static'>無</div>";
             }else{
-                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".$model->photo2."'></div>";
+                echo "<div class='form-control-static'><img class='openBigImg' height='80px' src='".Yii::app()->createUrl('prize/printImage',array("id"=>$model->id,"str"=>"photo2"))."'></div>";
             }
         }else{
             if(!empty($model->photo2)){
-                echo $form->fileField($model, 'photo2',
-                    array('readonly'=>($model->getInputBool()),"class"=>"file-update form-control hide")
-                );
-                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".$model->photo2."'></div>
+                echo TbHtml::fileField('photo2',"",array("class"=>"file-update form-control","style"=>"display:none"));
+                echo $form->hiddenField($model, 'photo2');
+                echo "<div class='media fileImgShow'><div class='media-left'><img height='80px' src='".Yii::app()->createUrl('prize/printImage',array("id"=>$model->id,"str"=>"photo2"))."'></div>
                         <div class='media-body media-bottom'><a>".Yii::t("contract","update")."</a></div></div>";
             }else{
                 echo $form->fileField($model, 'photo2',
