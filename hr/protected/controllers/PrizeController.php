@@ -235,6 +235,7 @@ class PrizeController extends Controller
             ->from("hr_prize")->where("id=:id",array(":id"=>$id))->queryRow();
         if($rows){
             if(empty($rows[$str])){
+                echo "圖片不存在";
                 return "";
             }else{
                 $n = new imgdata;
@@ -244,10 +245,12 @@ class PrizeController extends Controller
                     $n -> img2data();
                     $n -> data2img();
                 } else {
-                    echo "";
+                    echo "地址不存在";
+                    return "";
                 }
             }
         }else{
+            echo "沒找到圖片";
             return "";
         }
     }
