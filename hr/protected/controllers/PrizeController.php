@@ -239,7 +239,7 @@ class PrizeController extends Controller
                 return false;
             }else{
                 $n = new imgdata;
-                $path = Yii::app()->basePath."/aaa/".$rows[$str];
+                $path = "protected/controllers/".$rows[$str];
                 if (file_exists($path)) {
                     $n -> getdir($path);
                     $n -> img2data();
