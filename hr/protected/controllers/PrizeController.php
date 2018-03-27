@@ -239,13 +239,13 @@ class PrizeController extends Controller
                 return false;
             }else{
                 $n = new imgdata;
-                $path = Yii::app()->basePath."/".$rows[$str];
+                $path = Yii::app()->basePath."/aaa/".$rows[$str];
                 if (file_exists($path)) {
                     $n -> getdir($path);
                     $n -> img2data();
                     $n -> data2img();
                 } else {
-                    echo "地址不存在";
+                    echo "地址不存在".$path;
                     return false;
                 }
             }
