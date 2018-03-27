@@ -236,7 +236,7 @@ class PrizeController extends Controller
         if($rows){
             if(empty($rows[$str])){
                 echo "圖片不存在";
-                return "";
+                return false;
             }else{
                 $n = new imgdata;
                 $path = Yii::app()->basePath.$rows[$str];
@@ -246,12 +246,12 @@ class PrizeController extends Controller
                     $n -> data2img();
                 } else {
                     echo "地址不存在";
-                    return "";
+                    return false;
                 }
             }
         }else{
             echo "沒找到圖片";
-            return "";
+            return false;
         }
     }
 }
