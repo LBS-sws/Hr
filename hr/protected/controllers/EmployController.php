@@ -303,20 +303,23 @@ class EmployController extends Controller
         }
         if($rows){
             if(empty($rows[$str])){
-                return "";
+                echo "圖片不存在";
+                return false;
             }else{
                 $n = new imgdata;
-                $path = Yii::app()->basePath.$rows[$str];
+                $path = Yii::app()->basePath."/".$rows[$str];
                 if (file_exists($path)) {
                     $n -> getdir($path);
                     $n -> img2data();
                     $n -> data2img();
                 } else {
-                    echo "";
+                    echo "地址不存在";
+                    return false;
                 }
             }
         }else{
-            return "";
+            echo "沒找到圖片";
+            return false;
         }
     }
 }
