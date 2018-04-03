@@ -141,7 +141,7 @@ class PrizeList extends CListPageModel
             case 3:
                 return array(
                     "status"=>Yii::t("contract","audit"),//審核通過
-                    "style"=>" text-yellow"
+                    "style"=>" text-success"
                 );
         }
         return array(
