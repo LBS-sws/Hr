@@ -70,6 +70,7 @@ class RptPennantCuList extends CReport {
 				order by b.city desc, a.lcd
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
+		var_dump(count($rows));
 		if (count($rows) > 0) {
 		    $arrList = array();
 		    $prizeList = array(
@@ -89,17 +90,18 @@ class RptPennantCuList extends CReport {
                     $arrList[$row["s_city"]]["total"] += intval($row['type_num']);
                 }
 			    if(!array_key_exists($row["employee_id"],$arrList[$row["s_city"]]["detail"])){
-                    $arrList[$row["s_city"]]["detail"]["employee_id"]["employee_id"] = $row["employee_name"];
-                    $arrList[$row["s_city"]]["detail"]["employee_id"]["cleaner"] = 0;
-                    $arrList[$row["s_city"]]["detail"]["employee_id"]["exterminators"] = 0;
-                    $arrList[$row["s_city"]]["detail"]["employee_id"]["cae"] = 0;
-                    $arrList[$row["s_city"]]["detail"]["employee_id"][$key] = intval($row['type_num']);
-                    $arrList[$row["s_city"]]["detail"]["employee_id"]["subtotal"] = intval($row['type_num']);
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]]["employee_id"] = $row["employee_name"];
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]]["cleaner"] = 0;
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]]["exterminators"] = 0;
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]]["cae"] = 0;
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]][$key] = intval($row['type_num']);
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]]["subtotal"] = intval($row['type_num']);
                 }else{
-                    $arrList[$row["s_city"]]["detail"]["employee_id"][$key] += intval($row['type_num']);
-                    $arrList[$row["s_city"]]["detail"]["employee_id"]["subtotal"] += intval($row['type_num']);
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]][$key] += intval($row['type_num']);
+                    $arrList[$row["s_city"]]["detail"][$row["employee_id"]]["subtotal"] += intval($row['type_num']);
                 }
 			}
+
 			foreach ($arrList as &$preList){
                 foreach ($arrList as &$nextList){
                     if(intval($preList["total"])>intval($nextList["total"])){
