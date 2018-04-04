@@ -70,7 +70,6 @@ class RptPennantCuList extends CReport {
 				order by b.city desc, a.lcd
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
-		var_dump(count($rows));
 		if (count($rows) > 0) {
 		    $arrList = array();
 		    $prizeList = array(
