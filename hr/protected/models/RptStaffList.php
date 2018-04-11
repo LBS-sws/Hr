@@ -209,7 +209,7 @@ class RptStaffList extends CReport {
 		$city = $this->criteria['CITY'];
 		$date = $this->criteria['TARGET_DT'];
 		
-		$users = $this->getUsersWithRight($city,'ZB01');
+		$users = $this->getUsersWithRight($city,'YB04');
 
 		$to = General::getEmailByUserIdArray($users);
 		$to = General::dedupToEmailList($to);
