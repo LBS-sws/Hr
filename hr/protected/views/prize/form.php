@@ -48,7 +48,7 @@ $this->pageTitle=Yii::app()->name . ' - Prize Form';
                 <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                     'submit'=>Yii::app()->createUrl('prize/save')));
                 ?>
-                <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
+                <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','For Audit'), array(
                     'submit'=>Yii::app()->createUrl('prize/audit')));
                 ?>
             <?php endif ?>
@@ -93,6 +93,7 @@ $js = "
                     if(data.status == 1){
                         var staffList = data.staffList;
                         var customerList = data.customerList;
+                        $('#staffNum').val(data.staffNum);
                         $('#staff').html('<option></option>');
                         $.each(staffList,function(i,n){
                             $('#staff').append('<option value=\"'+i+'\">'+n+'</option');

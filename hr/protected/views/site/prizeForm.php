@@ -41,7 +41,7 @@
     <?php echo $form->labelEx($model,'prize_num',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->numberField($model, 'prize_num',
-            array('readonly'=>($model->getInputBool()))
+            array('readonly'=>($model->getInputBool()),"id"=>"staffNum")
         ); ?>
     </div>
 </div>

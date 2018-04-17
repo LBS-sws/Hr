@@ -65,6 +65,7 @@ class PrizeForm extends CFormModel
             array('prize_type', 'in', 'range' => array(0, 1)),
             array('type_num', 'numerical', 'min'=>1, 'integerOnly'=>true),
             array('prize_num', 'numerical', 'min'=>1, 'integerOnly'=>true),
+            array('phone','required'),
             array('photo1','required'),
             array('photo2','required'),
             array('contact','required'),

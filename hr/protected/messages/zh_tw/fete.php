@@ -138,5 +138,6 @@ return array(
     'professional'=>'專業組',
     'preliminary'=>'初階組',
     'Month'=>'月份',
+    'technician'=>'技術員',
 );
 ?>
