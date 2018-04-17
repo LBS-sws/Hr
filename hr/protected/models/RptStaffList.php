@@ -235,8 +235,8 @@ class RptStaffList extends CReport {
 		$rtn = array();
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select a.username, b.city from security$suffix.sec_user_access a, security$suffix.sec_user b
-				where a.a_read_only like '%$right%' or a.a_read_write like '%$right%'
-				and a.username=b.username and b.status='A'
+				where (a.a_read_only like '%$right%' or a.a_read_write like '%$right%')
+				and a.username=b.username and b.status='A' and a.system_id='hr'
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (!empty($rows)) {
