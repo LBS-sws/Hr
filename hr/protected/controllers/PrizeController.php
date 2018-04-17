@@ -204,10 +204,11 @@ class PrizeController extends Controller
             $city = $_POST['city'];
             $staffList = AssessForm::getEmployeeList($city);
             $customerList = "";
+            $staffNum = AssessForm::getPrizeStaffNum($city);;//參與人數
             //$customerList = PrizeForm::getCustomerList($city);
             unset($staffList[""]);
             //unset($customerList[""]);
-            echo CJSON::encode(array("status"=>1,"staffList"=>$staffList,"customerList"=>$customerList));
+            echo CJSON::encode(array("status"=>1,"staffList"=>$staffList,"customerList"=>$customerList,"staffNum"=>$staffNum));
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }

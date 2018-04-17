@@ -142,5 +142,6 @@ return array(
     'Personal subtotal'=>'个人小计',
     'total'=>'总计',
     'ranking'=>'排名',
+    'technician'=>'技术员',
 );
 ?>

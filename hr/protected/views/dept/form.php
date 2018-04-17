@@ -119,6 +119,16 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                     </div>
                 </div>
             <?php endif; ?>
+            <?php if ($model->type==1): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'technician',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'technician',EmployList::getManagerList(),
+                            array('disabled'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 
 		</div>
 	</div>

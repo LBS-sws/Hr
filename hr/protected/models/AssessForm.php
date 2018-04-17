@@ -269,6 +269,19 @@ class AssessForm extends CFormModel
         }
         return $arr;
     }
+    //獲取員工列表
+    public function getPrizeStaffNum($city=""){
+        if(empty($city)){
+            return "";
+        }
+        //entry_time
+        $date = date("Y/m/d");
+        $date = date('Y/m/d', strtotime("$date -3 month"));;
+        $rows = Yii::app()->db->createCommand()->select("count(*)")->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("a.city=:city and a.staff_status=0 and a.entry_time<='$date' and b.technician=1",array(":city"=>$city))->queryScalar();
+        return $rows;
+    }
 
 	//判斷輸入框能否修改
 	public function getInputBool(){
