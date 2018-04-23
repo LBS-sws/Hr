@@ -182,7 +182,7 @@ class AssessList extends CListPageModel
             $message = "";
             $email_title = "技术员评估 - ";
             foreach ($rows as $row){
-                $message = "<p>员工编号：".$row["employee_code"]."</p>";
+                $message .= "<p>员工编号：".$row["employee_code"]."</p>";
                 $message .= "<p>员工名字：".$row["employee_name"]."</p>";
                 $message .= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
                 $message .= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
