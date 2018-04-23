@@ -139,5 +139,8 @@ return array(
     'preliminary'=>'初階組',
     'Month'=>'月份',
     'technician'=>'技術員',
+
+    //2018-04-23
+    'staff type'=>'工种',
 );
 ?>

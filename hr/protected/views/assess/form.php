@@ -98,6 +98,14 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'staff_type',PrizeList::getPrizeList(),
+                        array('disabled'=>($model->getInputBool()))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'service_effect',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->numberField($model, 'service_effect',
@@ -163,9 +171,9 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'characters',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'characters',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                <div class="col-sm-5">
+                    <?php echo $form->textArea($model, 'characters',
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>

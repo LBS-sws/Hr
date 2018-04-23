@@ -60,6 +60,7 @@ class AssessList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+        $uid = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
 		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city,b.position 
@@ -70,6 +71,11 @@ class AssessList extends CListPageModel
                 from hr_assess a LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where a.id!=0 
 			";
+		if(!Yii::app()->user->validFunction('ZR08')){
+		    //沒有所有評估列表權限只顯示自己錄入的評估
+            $sql1.=" and a.lcu = '$uid' ";
+            $sql2.=" and a.lcu = '$uid' ";
+        }
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
@@ -181,11 +187,17 @@ class AssessList extends CListPageModel
         if($rows){
             $message = "";
             $email_title = "技术员评估 - ";
+            $staffTypeList = PrizeList::getPrizeList();
             foreach ($rows as $row){
                 $message .= "<p>员工编号：".$row["employee_code"]."</p>";
                 $message .= "<p>员工名字：".$row["employee_name"]."</p>";
                 $message .= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
                 $message .= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
+                if(array_key_exists($row["staff_type"],$staffTypeList)){
+                    $message .= "<p>工种：".$staffTypeList[$row["staff_type"]]."</p>";
+                }else{
+                    $message .= "<p>工种：</p>";
+                }
                 $message .= "<p>服务效果：".$row["service_effect"]."</p>";
                 $message .= "<p>服务流程：".$row["service_process"]."</p>";
                 $message .= "<p>细心度：".$row["carefully"]."</p>";

@@ -127,6 +127,7 @@ return array(
     'City index'=>'城市等级配置',
     'Pennants ex List'=>'锦旗明细报表',
     'Pennants cumulative List'=>'锦旗累积报表',
+    'All evaluation lists'=>'所有评估列表',
     //沈超添加结束
 );
 ?>

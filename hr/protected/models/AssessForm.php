@@ -16,6 +16,7 @@ class AssessForm extends CFormModel
 	public $leadership;
 	public $characters;
 	public $assess;
+	public $staff_type;//工種
 
 
     public $no_of_attm = array(
@@ -47,6 +48,7 @@ class AssessForm extends CFormModel
             'leadership'=>Yii::t('fete','leadership'),
             'characters'=>Yii::t('fete','character'),
             'assess'=>Yii::t('fete','assess'),
+            'staff_type'=>Yii::t('fete','staff type'),
 		);
 	}
 
@@ -56,8 +58,9 @@ class AssessForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,connects,obey,leadership,characters,assess','safe'),
+			array('id,employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,connects,obey,leadership,characters,assess,staff_type','safe'),
             array('employee_id','required'),
+            array('staff_type','required'),
             array('service_effect','numerical',"min"=>0,"max"=>10),
             array('service_process','numerical',"min"=>0,"max"=>10),
             array('carefully','numerical',"min"=>0,"max"=>10),
@@ -66,7 +69,7 @@ class AssessForm extends CFormModel
             array('connects','numerical',"min"=>0,"max"=>10),
             array('obey','numerical',"min"=>0,"max"=>10),
             array('leadership','numerical',"min"=>0,"max"=>10),
-            array('characters','numerical',"min"=>0,"max"=>10),
+            //array('characters','numerical',"min"=>0,"max"=>10),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
@@ -108,6 +111,7 @@ class AssessForm extends CFormModel
                 $this->obey = $row['obey'];
                 $this->leadership = $row['leadership'];
                 $this->characters = $row['characters'];
+                $this->staff_type = $row['staff_type'];
                 $this->assess = $row['assess'];
                 $this->no_of_attm['assess'] = $row['assessdoc'];
                 break;
@@ -156,9 +160,9 @@ class AssessForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_assess(
-							employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,obey,leadership,assess,characters,connects, lcu
+							employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,obey,leadership,assess,characters,staff_type,connects, lcu
 						) values (
-							:employee_id,:work_type,:city,:service_effect,:service_process,:carefully,:judge,:deal,:obey,:leadership,:assess,:characters,:connects, :lcu
+							:employee_id,:work_type,:city,:service_effect,:service_process,:carefully,:judge,:deal,:obey,:leadership,:assess,:characters,:staff_type,:connects, :lcu
 						)";
                 break;
             case 'edit':
@@ -174,6 +178,7 @@ class AssessForm extends CFormModel
 							obey = :obey, 
 							leadership = :leadership, 
 							characters = :characters, 
+							staff_type = :staff_type, 
 							assess = :assess, 
 							luu = :luu
 						where id = :id
@@ -211,6 +216,8 @@ class AssessForm extends CFormModel
             $command->bindParam(':leadership',$this->leadership,PDO::PARAM_STR);
         if (strpos($sql,':characters')!==false)
             $command->bindParam(':characters',$this->characters,PDO::PARAM_STR);
+        if (strpos($sql,':staff_type')!==false)
+            $command->bindParam(':staff_type',$this->staff_type,PDO::PARAM_STR);
         if (strpos($sql,':assess')!==false)
             $command->bindParam(':assess',$this->assess,PDO::PARAM_STR);
 

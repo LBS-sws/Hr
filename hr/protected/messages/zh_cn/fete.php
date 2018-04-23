@@ -143,5 +143,8 @@ return array(
     'total'=>'总计',
     'ranking'=>'排名',
     'technician'=>'技术员',
+
+    //2018-04-23
+    'staff type'=>'工种',
 );
 ?>

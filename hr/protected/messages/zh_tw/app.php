@@ -127,6 +127,7 @@ return array(
     'Leave record List'=>'請假記錄報表',
     'Audit Config'=>'請假、加班審核配置',
     'City index'=>'城市等級配置',
+    'All evaluation lists'=>'所有評估列表',
     //沈超添加结束
 );
 ?>

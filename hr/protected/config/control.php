@@ -8,4 +8,5 @@ return array(
 	'Work overtime and leave after the review is cancelled'=>array('access'=>'ZR05',),//取消審核后的加班、請假
 	'Generation ask for leave'=>array('access'=>'ZR06',),//代請假
 	'salary deduction is shown'=>array('access'=>'ZR07',),//工資扣減顯示
+	'All evaluation lists'=>array('access'=>'ZR08',),//所有評估列表
 );
