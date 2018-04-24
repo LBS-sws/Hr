@@ -15,6 +15,7 @@
     <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['work_type']; ?></td>
     <td><?php echo $this->record['service_effect']; ?></td>
+    <td><?php echo $this->record['lcu']; ?></td>
     <td><?php echo $this->record['lcd']; ?></td>
     <td><?php echo $this->record['status']; ?></td>
 </tr>

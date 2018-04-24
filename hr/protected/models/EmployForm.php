@@ -641,9 +641,24 @@ class EmployForm extends CFormModel
                 "lcu"=>$uid,
                 "lcd"=>date('Y-m-d H:i:s'),
             ));
+
+            //發送郵件
+            $this->sendEmail();
         }
         return true;
 	}
+
+	private function sendEmail(){
+        $description="员工录入 - ".$this->name;
+        $subject="员工录入 - ".$this->name;
+        $message="<p>员工编号：".$this->code."</p>";
+        $message.="<p>员工姓名：".$this->name."</p>";
+        $message.="<p>员工所在城市：".Yii::app()->user->city_name()."</p>";
+        $message.="<p>员工入职日期：".$this->entry_time."</p>";
+        $email = new Email($subject,$message,$description);
+        $email->addEmailToPrefix("ZG01");
+        $email->sent();
+    }
 
 	private function lenStr(){
         $code = strval($this->id);

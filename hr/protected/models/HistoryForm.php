@@ -515,8 +515,26 @@ class HistoryForm extends CFormModel
         }
         //記錄
         Yii::app()->db->createCommand()->insert('hr_employee_history',$his_arr);
+
+        //發送郵件
+        $this->sendEmail($row,$his_arr);
 	}
 
+
+	//發送郵件
+    private function sendEmail($row,$his_arr){
+        if($row){
+            $description=Yii::t("contract",$his_arr["status"])." - ".$row["name"];
+            $subject=Yii::t("contract",$his_arr["status"])." - ".$row["name"];
+            $message="<p>员工编号：".$row["code"]."</p>";
+            $message.="<p>员工姓名：".$row["name"]."</p>";
+            $message.="<p>要求审核日期：".date('Y-m-d H:i:s')."</p>";
+            $message.="<p>操作备注：".$row["update_remark"]."</p>";
+            $email = new Email($subject,$message,$description);
+            $email->addEmailToPrefix("ZG02");
+            $email->sent();
+        }
+    }
 
     protected function updateDocman(&$connection, $doctype) {
         $docidx = strtolower($doctype);

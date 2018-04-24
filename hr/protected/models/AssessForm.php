@@ -61,14 +61,14 @@ class AssessForm extends CFormModel
 			array('id,employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,connects,obey,leadership,characters,assess,staff_type','safe'),
             array('employee_id','required'),
             array('staff_type','required'),
-            array('service_effect','numerical',"min"=>0,"max"=>10),
-            array('service_process','numerical',"min"=>0,"max"=>10),
-            array('carefully','numerical',"min"=>0,"max"=>10),
-            array('judge','numerical',"min"=>0,"max"=>10),
-            array('deal','numerical',"min"=>0,"max"=>10),
-            array('connects','numerical',"min"=>0,"max"=>10),
-            array('obey','numerical',"min"=>0,"max"=>10),
-            array('leadership','numerical',"min"=>0,"max"=>10),
+            array('service_effect','validateNumber'),
+            array('service_process','validateNumber'),
+            array('carefully','validateNumber'),
+            array('judge','validateNumber'),
+            array('deal','validateNumber'),
+            array('connects','validateNumber'),
+            array('obey','validateNumber'),
+            array('leadership','validateNumber'),
             //array('characters','numerical',"min"=>0,"max"=>10),
             array('files, removeFileId, docMasterId','safe'),
 		);
@@ -85,6 +85,50 @@ class AssessForm extends CFormModel
                     $message = Yii::t('fete','Start time cannot be greater than end time');
                     $this->addError($attribute,$message);
                 }
+            }
+        }
+    }
+    public function validateNumber($attribute, $params){
+        $value = $this[$attribute];
+        $labels = $this->getAttributeLabel($attribute);
+        if(empty($value)&&$value !== 0&&$value !== '0'){
+            return true;
+        }
+        if($this->staff_type == 3){
+            $arr = explode('/',$value);
+            if(count($arr)>2){
+                $message = $labels."格式不正確";
+                $this->addError($attribute,$message);
+            }else{
+                foreach ($arr as $str){
+                    if (!is_numeric($str)){
+                        $message = $labels."只能是數字";
+                        $this->addError($attribute,$message);
+                    }else if (intval($str) != floatval($str)){
+                        $message = $labels."只能是整數";
+                        $this->addError($attribute,$message);
+                    }else if (intval($str)<1){
+                        $message = $labels."不能小于1";
+                        $this->addError($attribute,$message);
+                    }else if (intval($str)>10){
+                        $message = $labels."不能大于10";
+                        $this->addError($attribute,$message);
+                    }
+                }
+            }
+        }else{
+            if (!is_numeric($value)){
+                $message = $labels."只能是數字";
+                $this->addError($attribute,$message);
+            }else if (intval($value) != floatval($value)){
+                $message = $labels."只能是整數";
+                $this->addError($attribute,$message);
+            }else if (intval($value)<1){
+                $message = $labels."不能小于1";
+                $this->addError($attribute,$message);
+            }else if (intval($value)>10){
+                $message = $labels."不能大于10";
+                $this->addError($attribute,$message);
             }
         }
     }

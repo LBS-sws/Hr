@@ -78,6 +78,7 @@ class EmployeeList extends CListPageModel
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 			    $arr = $this->returnStaffStatus($record["test_type"],$record["test_start_time"],$record["test_end_time"],$record["staff_status"]);
+                $arr = $this->resetStatus($arr,$record);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
@@ -97,6 +98,29 @@ class EmployeeList extends CListPageModel
 		$session['employee_01'] = $this->getCriteria();
 		return true;
 	}
+
+	//2018-04-24後期修改（原因：員工合同期限快到期時的顏色修改)
+	private function resetStatus($list,$record){
+        if($list["status"] == Yii::t("contract","formal staff")){
+            if($record["fix_time"]=="fixation"){
+                $date = date("Y-m-d");
+                $firstday = date("Y-m-d",strtotime($record["end_time"]));
+                $lastday = date("Y-m-d",strtotime("$firstday -1 week"));
+                if(strtotime($firstday) <= strtotime($date)){
+                    return array(
+                        "status"=>Yii::t("contract","contract expire"),
+                        "style"=>"text-danger"
+                    );//合同到期
+                }else if(strtotime($lastday) <= strtotime($date)){
+                    return array(
+                        "status"=>Yii::t("contract","contract is about to expire"),
+                        "style"=>"text-warning"
+                    );//合同即將過期
+                }
+            }
+        }
+        return $list;
+    }
 
 	public function returnStaffStatus($testType,$start_time,$end_time,$staff_status=0){
 	    $date = date("Y-m-d");

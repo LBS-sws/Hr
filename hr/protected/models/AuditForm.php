@@ -328,8 +328,34 @@ class AuditForm extends CFormModel
             "lcu"=>$uid,
             "lcd"=>date('Y-m-d H:i:s'),
         ));
+
+        $this->sendEmail();
         return true;
 	}
+
+    private function sendEmail(){
+        $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
+            ->where("id=:id",array(":id"=>$this->id))->queryRow();
+        if($row){
+            if ($this->getScenario() == "audit"){
+                $description="员工审核 - ".$row["name"]."（通过）";
+                $subject="员工审核 - ".$row["name"]."（通过）";
+            }else{
+                $description="员工审核 - ".$row["name"]."（拒绝）";
+                $subject="员工审核 - ".$row["name"]."（拒绝）";
+            }
+            $message="<p>员工编号：".$row["code"]."</p>";
+            $message.="<p>员工姓名：".$row["name"]."</p>";
+            $message.="<p>员工入职日期：".$row["entry_time"]."</p>";
+            $message.="<p>审核日期：".date('Y-m-d H:i:s')."</p>";
+            if ($this->getScenario() == "reject"){
+                $message.="<p>拒绝原因：".$this->ject_remark."</p>";
+            }
+            $email = new Email($subject,$message,$description);
+            $email->addEmailToLcu($row["lcu"]);
+            $email->sent();
+        }
+    }
 
     public function setAttachment(){
         $str = $this->attachment;

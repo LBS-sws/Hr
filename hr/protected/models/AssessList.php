@@ -26,6 +26,7 @@ class AssessList extends CListPageModel
 			'email_bool'=>Yii::t('fete','email bool'),
 			'email_list'=>Yii::t('fete','recipient'),
 			'checkBoxSent'=>Yii::t('contract','Employee'),
+			'lcu'=>Yii::t('fete','evaluator'),
 		);
 	}
 
@@ -127,6 +128,7 @@ class AssessList extends CListPageModel
 					'status'=>$colorList["status"],
                     'city'=>CGeneral::getCityName($record["s_city"]),
 					'style'=>$colorList["style"],
+					'lcu'=>$this->getDisNameToUsername($record["lcu"]),
 				);
 			}
 		}
@@ -134,6 +136,18 @@ class AssessList extends CListPageModel
 		$session['assess_01'] = $this->getCriteria();
 		return true;
 	}
+
+    //獲取用戶暱稱
+    private function getDisNameToUsername($username){
+        $suffix = Yii::app()->params['envSuffix'];
+        $disName = Yii::app()->db->createCommand()->select("disp_name")->from("security$suffix.sec_user")
+            ->where("username=:username",array(":username"=>$username))->queryRow();
+        if($disName){
+            return $disName["disp_name"];
+        }else{
+            return $username;
+        }
+    }
 
     //根據狀態獲取顏色
     public function statusToColor($status){

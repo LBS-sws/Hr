@@ -108,64 +108,64 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'service_effect',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'service_effect',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'service_effect',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'service_process',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'service_process',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'service_process',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'carefully',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'carefully',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'carefully',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'judge',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'judge',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'judge',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'deal',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'deal',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'deal',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'connects',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'connects',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'connects',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'obey',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'obey',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'obey',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'leadership',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->numberField($model, 'leadership',
-                        array('readonly'=>($model->scenario=='view'),"min"=>0,"max"=>10,"maxlength"=>2)
+                    <?php echo $form->textField($model, 'leadership',
+                        array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
             </div>

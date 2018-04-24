@@ -307,5 +307,9 @@ return array(
     'Taxpayer number'=>'纳税人识别号',
     'Please handle the documents of the contract salary'=>'请同时手动处理【合同工资组成部分】文件',
     'You do not have salary change authority, please save the contact leader'=>'您没有工资修改权限，请保存后联系领导',
+
+    //2018-04-24
+    'contract expire'=>'合同到期',
+    'contract is about to expire'=>'合同即将到期',
 );
 ?>
