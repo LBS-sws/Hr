@@ -475,6 +475,7 @@ class HistoryForm extends CFormModel
         $row['employee_id'] = $this->employee_id;
         $row['update_remark'] = $this->update_remark;
         $row['change_city'] = $this->change_city;
+        $row['attachment'] = 0;//後期修改（員工合同過期后是否已發送郵件 0：未發送  1：已發送）
         if($this->scenario == "view" && $this->staff_status == 3){
             unset($row['operation']);
             Yii::app()->db->createCommand()->update('hr_employee_operate', $row, 'id=:id', array(':id'=>$this->id));
@@ -569,6 +570,8 @@ class HistoryForm extends CFormModel
             }
         }
     }
+
+    //該方法後期已刪除
     public function setAttachment(){
         $str = $this->attachment;
         if(empty($str)){

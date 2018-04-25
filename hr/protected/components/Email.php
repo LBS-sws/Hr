@@ -29,6 +29,10 @@ class Email {
         return $this->to_addr;
     }
 
+    public function resetToAddr(){
+        $this->to_addr = array();
+    }
+
     //添加收信人
     public function addToAddrEmail($list){
         if(!is_array($list)){
@@ -56,7 +60,46 @@ class Email {
             ->queryAll();
         if($rs){
             foreach ($rs as $row){
-                $this->to_addr[] = $row["email"];
+                if(!in_array($row["email"],$this->to_addr)){
+                    $this->to_addr[] = $row["email"];
+                }
+            }
+        }
+    }
+
+    //添加收信人(根據權限）
+    public function addEmailToPrefixAndCity($str,$city){
+        $suffix = Yii::app()->params['envSuffix'];
+        $systemId = Yii::app()->params['systemId'];
+        //$city = Yii::app()->user->city();
+        $cityList = $this->getAllCityToMinCity($city);
+        if(count($cityList)>1){
+            $cityList = "'".implode("','",$cityList)."'";
+            $sql = " and b.city in ($cityList) ";
+        }else{
+            $sql = " and b.city = '$city' ";
+        }
+        if(!is_array($str)){
+            $likeSql = " and a.a_read_write like '%$str%'";
+        }else{
+            $likeSql =" and (";
+            foreach ($str as $key =>$item){
+                if($key != 0){
+                    $likeSql.=" or ";
+                }
+                $likeSql .= "a.a_read_write like '%$item%'";
+            }
+            $likeSql .=")";
+        }
+        $rs = Yii::app()->db->createCommand()->select("b.email")->from("security$suffix.sec_user_access a")
+            ->leftJoin("security$suffix.sec_user b","a.username=b.username")
+            ->where("a.system_id='$systemId' $likeSql $sql and b.email != ''")
+            ->queryAll();
+        if($rs){
+            foreach ($rs as $row){
+                if(!in_array($row["email"],$this->to_addr)){
+                    $this->to_addr[] = $row["email"];
+                }
             }
         }
     }
@@ -68,14 +111,18 @@ class Email {
             ->where("username=:username",array(":username"=>$lcu))
             ->queryRow();
         if($email){
-            $this->to_addr[] = $email["email"];
+            if(!in_array($email["email"],$this->to_addr)){
+                $this->to_addr[] = $email["email"];
+            }
         }
     }
 
     //發送郵件
-    public function sent(){
+    public function sent($uid=""){
         $to_addr = empty($this->to_addr)?json_encode(array("it@lbsgroup.com.hk")):json_encode($this->to_addr);
-        $uid = Yii::app()->user->id;
+        if(empty($uid)){
+            $uid = Yii::app()->user->id;
+        }
         $from_addr = Yii::app()->params['adminEmail'];
         $suffix = Yii::app()->params['envSuffix'];
         $aaa = Yii::app()->db->createCommand()->insert("swoper$suffix.swo_email_queue", array(
