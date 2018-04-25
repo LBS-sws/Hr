@@ -107,8 +107,8 @@ class AssessForm extends CFormModel
                     }else if (intval($str) != floatval($str)){
                         $message = $labels."只能是整數";
                         $this->addError($attribute,$message);
-                    }else if (intval($str)<1){
-                        $message = $labels."不能小于1";
+                    }else if (intval($str)<0){
+                        $message = $labels."不能小于0";
                         $this->addError($attribute,$message);
                     }else if (intval($str)>10){
                         $message = $labels."不能大于10";
@@ -123,8 +123,8 @@ class AssessForm extends CFormModel
             }else if (intval($value) != floatval($value)){
                 $message = $labels."只能是整數";
                 $this->addError($attribute,$message);
-            }else if (intval($value)<1){
-                $message = $labels."不能小于1";
+            }else if (intval($value)<0){
+                $message = $labels."不能小于0";
                 $this->addError($attribute,$message);
             }else if (intval($value)>10){
                 $message = $labels."不能大于10";
