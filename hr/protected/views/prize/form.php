@@ -67,6 +67,16 @@ $this->pageTitle=Yii::app()->name . ' - Prize Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 
+            <?php if ($model->status == 2): ?>
+                <div class="form-group has-error">
+                    <?php echo $form->labelEx($model,'reject_remark',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-6">
+                        <?php echo $form->textArea($model, 'reject_remark',
+                            array('readonly'=>true,'rows'=>4)
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <?php
             $this->renderPartial('//site/prizeForm',array('model'=>$model,
                 'form'=>$form,
