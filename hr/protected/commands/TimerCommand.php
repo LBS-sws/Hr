@@ -5,7 +5,7 @@ class TimerCommand extends CConsoleCommand {
 	    $email = new Email();
 	    $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
-        $lastday = date("Y/m/d",strtotime("$firstday +1 week"));
+        $lastday = date("Y/m/d",strtotime("$firstday +1 month"));
         $sql = "staff_status=0 and (attachment='' or attachment=0 or attachment is null) and end_time >= '$firstday' and end_time <='$lastday'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
