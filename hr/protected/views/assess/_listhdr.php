@@ -24,6 +24,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('staff_type').$this->drawOrderArrow('a.staff_type'),'#',$this->createOrderLink('assess-list','a.staff_type'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('service_effect').$this->drawOrderArrow('a.service_effect'),'#',$this->createOrderLink('assess-list','a.service_effect'))
 			;
 		?>

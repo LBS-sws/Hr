@@ -36,7 +36,7 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('status').$this->drawOrderArrow('test_end_time'),'#',$this->createOrderLink('employee-list','test_end_time'))
+		<?php echo TbHtml::link($this->getLabelName('status').$this->drawOrderArrow('z_index'),'#',$this->createOrderLink('employee-list','z_index'))
 			;
 		?>
 	</th>

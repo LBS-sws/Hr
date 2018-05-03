@@ -47,6 +47,8 @@ $this->pageTitle=Yii::app()->name . ' - Assess';
     $search = array(
         'employee_code',
         'employee_name',
+        'lcu',
+        'staff_type',
     );
     $search_add_html="";
     $modelName = get_class($model);

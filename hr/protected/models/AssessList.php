@@ -27,6 +27,7 @@ class AssessList extends CListPageModel
 			'email_list'=>Yii::t('fete','recipient'),
 			'checkBoxSent'=>Yii::t('contract','Employee'),
 			'lcu'=>Yii::t('fete','evaluator'),
+            'staff_type'=>Yii::t('fete','staff type'),
 		);
 	}
 
@@ -61,15 +62,18 @@ class AssessList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+        $suffix = Yii::app()->params['envSuffix'];
         $uid = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
-		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city,b.position 
+		$sql1 = "select a.*,d.disp_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city,b.position 
                 from hr_assess a LEFT JOIN hr_employee b ON a.employee_id = b.id
+                LEFT JOIN security$suffix.sec_user d ON a.lcu = d.username
                 where a.id!=0 
 			";
 		$sql2 = "select count(a.id)
                 from hr_assess a LEFT JOIN hr_employee b ON a.employee_id = b.id
+                LEFT JOIN security$suffix.sec_user d ON a.lcu = d.username
                 where a.id!=0 
 			";
 		if(!Yii::app()->user->validFunction('ZR08')){
@@ -83,6 +87,13 @@ class AssessList extends CListPageModel
 			switch ($this->searchField) {
 				case 'employee_name':
 					$clause .= General::getSqlConditionClause('b.name',$svalue);
+					break;
+				case 'lcu':
+					$clause .= General::getSqlConditionClause('d.disp_name',$svalue);
+					break;
+				case 'staff_type':
+				    $staffTypeSearch = $this->staffTypeSearchLike($svalue);
+					$clause .= " and a.staff_type in $staffTypeSearch";
 					break;
 				case 'employee_code':
 					$clause .= General::getSqlConditionClause('b.code',$svalue);
@@ -116,6 +127,7 @@ class AssessList extends CListPageModel
 
 		$this->attr = array();
 		if (count($records) > 0) {
+		    $staffType = PrizeList::getPrizeList();
 			foreach ($records as $k=>$record) {
 			    $colorList = $this->statusToColor($record['email_bool']);
 				$this->attr[] = array(
@@ -124,11 +136,12 @@ class AssessList extends CListPageModel
 					'employee_code'=>$record['employee_code'],
 					'work_type'=>DeptForm::getDeptToId($record['position']),
 					'service_effect'=>$record['service_effect'],
+					'staff_type'=>$staffType[$record['staff_type']],
+					'lcu'=>$record['disp_name'],
 					'lcd'=>date("Y-m-d",strtotime($record['lcd'])),
 					'status'=>$colorList["status"],
                     'city'=>CGeneral::getCityName($record["s_city"]),
 					'style'=>$colorList["style"],
-					'lcu'=>$this->getDisNameToUsername($record["lcu"]),
 				);
 			}
 		}
@@ -136,6 +149,22 @@ class AssessList extends CListPageModel
 		$session['assess_01'] = $this->getCriteria();
 		return true;
 	}
+
+    //工種的模糊查詢
+    private function staffTypeSearchLike($str){
+        $staffType = PrizeList::getPrizeList();
+        $arr = array();
+        foreach ($staffType as $key=> $item){
+            if (strpos($item,$str)!==false){
+                array_push($arr,$key);
+            }
+        }
+        if(empty($arr)){
+            return "('')";
+        }else{
+            return "(".implode(",",$arr).")";
+        }
+    }
 
     //獲取用戶暱稱
     private function getDisNameToUsername($username){
