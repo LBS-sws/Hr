@@ -207,7 +207,8 @@ class AssessList extends CListPageModel
         $arr = array();
         if($rows){
             foreach ($rows as $row){
-                $arr[$row["email"]]=$row["disp_name"];
+                $key = $row["username"]."!".$row["email"];
+                $arr[$key]=$row["disp_name"];
             }
         }
         return $arr;

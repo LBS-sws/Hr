@@ -160,7 +160,9 @@ $('#dev_ok').on('click',function(){
     var list = $('.check_dev').is(':checked');
     var value = '';
     $('.check_dev:checked').each(function(){
-        value+=$(this).val()+';';
+        var email=$(this).val();
+        email = email.split('!');
+        value+=email[1]+';';
     });
     $('#email_list').val(value);
     $('#email_check').modal('hide');
