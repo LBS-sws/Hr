@@ -202,7 +202,7 @@ class AssessList extends CListPageModel
     //獲取郵箱列表
     public function getEmailList(){
         $form = 'security'.Yii::app()->params['envSuffix'].'.sec_user';
-        $sql = "select * from $form WHERE email != '' AND status='A'";
+        $sql = "select * from $form WHERE email != '' AND status='A' ORDER BY city DESC ";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         $arr = array();
         if($rows){
