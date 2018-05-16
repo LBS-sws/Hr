@@ -17,6 +17,7 @@ class AssessForm extends CFormModel
 	public $characters;
 	public $assess;
 	public $staff_type;//工種
+	public $overall_effect;//整體效果
 
 
     public $no_of_attm = array(
@@ -49,6 +50,7 @@ class AssessForm extends CFormModel
             'characters'=>Yii::t('fete','character'),
             'assess'=>Yii::t('fete','assess'),
             'staff_type'=>Yii::t('fete','staff type'),
+            'overall_effect'=>Yii::t('fete','overall effect'),
 		);
 	}
 
@@ -58,7 +60,7 @@ class AssessForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,connects,obey,leadership,characters,assess,staff_type','safe'),
+			array('id,employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,connects,obey,leadership,characters,assess,staff_type,overall_effect','safe'),
             array('employee_id','required'),
             array('staff_type','required'),
             array('service_effect','validateNumber'),
@@ -69,6 +71,7 @@ class AssessForm extends CFormModel
             array('connects','validateNumber'),
             array('obey','validateNumber'),
             array('leadership','validateNumber'),
+            array('overall_effect','validateNumber'),
             //array('characters','numerical',"min"=>0,"max"=>10),
             array('files, removeFileId, docMasterId','safe'),
 		);
@@ -157,6 +160,7 @@ class AssessForm extends CFormModel
                 $this->characters = $row['characters'];
                 $this->staff_type = $row['staff_type'];
                 $this->assess = $row['assess'];
+                $this->overall_effect = $row['overall_effect'];
                 $this->no_of_attm['assess'] = $row['assessdoc'];
                 break;
 			}
@@ -204,9 +208,9 @@ class AssessForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_assess(
-							employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,obey,leadership,assess,characters,staff_type,connects, lcu
+							employee_id,work_type,city,service_effect,service_process,carefully,judge,deal,obey,leadership,assess,characters,staff_type,connects,overall_effect, lcu
 						) values (
-							:employee_id,:work_type,:city,:service_effect,:service_process,:carefully,:judge,:deal,:obey,:leadership,:assess,:characters,:staff_type,:connects, :lcu
+							:employee_id,:work_type,:city,:service_effect,:service_process,:carefully,:judge,:deal,:obey,:leadership,:assess,:characters,:staff_type,:connects,:overall_effect, :lcu
 						)";
                 break;
             case 'edit':
@@ -224,6 +228,7 @@ class AssessForm extends CFormModel
 							characters = :characters, 
 							staff_type = :staff_type, 
 							assess = :assess, 
+							overall_effect = :overall_effect, 
 							luu = :luu
 						where id = :id
 						";
@@ -264,6 +269,8 @@ class AssessForm extends CFormModel
             $command->bindParam(':staff_type',$this->staff_type,PDO::PARAM_STR);
         if (strpos($sql,':assess')!==false)
             $command->bindParam(':assess',$this->assess,PDO::PARAM_STR);
+        if (strpos($sql,':overall_effect')!==false)
+            $command->bindParam(':overall_effect',$this->overall_effect,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);

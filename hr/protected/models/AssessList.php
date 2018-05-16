@@ -167,7 +167,7 @@ class AssessList extends CListPageModel
     }
 
     //獲取用戶暱稱
-    private function getDisNameToUsername($username){
+    public function getDisNameToUsername($username){
         $suffix = Yii::app()->params['envSuffix'];
         $disName = Yii::app()->db->createCommand()->select("disp_name")->from("security$suffix.sec_user")
             ->where("username=:username",array(":username"=>$username))->queryRow();
@@ -242,6 +242,7 @@ class AssessList extends CListPageModel
                 }else{
                     $message .= "<p>工种：</p>";
                 }
+                $message .= "<p>整体效果：".$row["overall_effect"]."</p>";
                 $message .= "<p>服务效果：".$row["service_effect"]."</p>";
                 $message .= "<p>服务流程：".$row["service_process"]."</p>";
                 $message .= "<p>细心度：".$row["carefully"]."</p>";
@@ -252,6 +253,7 @@ class AssessList extends CListPageModel
                 $message .= "<p>领导力：".$row["leadership"]."</p>";
                 $message .= "<p>性格：".$row["characters"]."</p>";
                 $message .= "<p>评估：".$row["assess"]."</p>";
+                $message .= "<p>评估人：".$this->getDisNameToUsername($row["lcu"])."</p>";
                 $message .="<p>&nbsp;</p>";
                 $message .="<p>------------------------------------------</p>";
                 $message .="<p>&nbsp;</p>";

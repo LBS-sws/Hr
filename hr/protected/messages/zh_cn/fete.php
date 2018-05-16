@@ -149,5 +149,6 @@ return array(
 
     //2018-04-24
     'evaluator'=>'评估人',
+    'overall effect'=>'整体效果',
 );
 ?>

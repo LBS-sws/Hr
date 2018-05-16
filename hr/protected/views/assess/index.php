@@ -138,6 +138,7 @@ $emailJSON = $model->getEmailList();
 $emailJSON = empty($emailJSON)?"''":json_encode($emailJSON);
 $js = "
 EMAIL_JSON =$emailJSON;
+EMAIL_LIST=';';//郵箱列表
 $('#emailNameSearch').keyup(function(){
     var search = $(this).val();
     if(EMAIL_JSON == ''){
@@ -145,8 +146,15 @@ $('#emailNameSearch').keyup(function(){
     }
     $('#AssessList_test').html('');
     $.each(EMAIL_JSON,function(key,value){
+        var email = key;
+        email = email.split('!');
+        email = ';'+email[1]+';';
         if(value.indexOf(search)>=0||search == ''){
-            $('#AssessList_test').append('<div class=\'checkbox\'><label><input class=\'check_dev\' value=\''+key+'\' type=\'checkbox\' name=\'AssessList[test][]\'>'+value+'</label></div>');
+            if(EMAIL_LIST.indexOf(email)>=0){
+                $('#AssessList_test').append('<div class=\'checkbox\'><label><input checked class=\'check_dev\' value=\''+key+'\' type=\'checkbox\' name=\'AssessList[test][]\'>'+value+'</label></div>');
+            }else{
+                $('#AssessList_test').append('<div class=\'checkbox\'><label><input class=\'check_dev\' value=\''+key+'\' type=\'checkbox\' name=\'AssessList[test][]\'>'+value+'</label></div>');
+            }
         }
     });
 });
@@ -155,17 +163,22 @@ $('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_c
 $('.checkBoxSent').on('click',function(e){
     e.stopPropagation();
 });
-
 $('#dev_ok').on('click',function(){
-    var list = $('.check_dev').is(':checked');
-    var value = '';
-    $('.check_dev:checked').each(function(){
-        var email=$(this).val();
-        email = email.split('!');
-        value+=email[1]+';';
-    });
-    $('#email_list').val(value);
+    if(EMAIL_LIST==';'){
+        $('#email_list').val('');
+    }else{
+        $('#email_list').val(EMAIL_LIST.slice(1));
+    }
     $('#email_check').modal('hide');
+});
+$('#email_check').delegate('.check_dev','click',function(){
+    var email=$(this).val();
+    email = email.split('!');
+    email = email[1]+';';
+    EMAIL_LIST=EMAIL_LIST.split(';'+email).join(';');
+    if($(this).is(':checked')){
+        EMAIL_LIST+=email;
+    }
 });
 $('#send_email').on('click',function() {
 	var elm=$('#send_email');

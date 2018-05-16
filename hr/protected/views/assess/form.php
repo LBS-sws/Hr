@@ -106,6 +106,14 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'overall_effect',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'overall_effect',
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'service_effect',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'service_effect',
