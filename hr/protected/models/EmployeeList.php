@@ -105,7 +105,7 @@ class EmployeeList extends CListPageModel
             if($record["fix_time"]=="fixation"){
                 $date = date("Y-m-d");
                 $firstday = date("Y-m-d",strtotime($record["end_time"]));
-                $lastday = date("Y-m-d",strtotime("$firstday -1 week"));
+                $lastday = date("Y-m-d",strtotime("$firstday -1 month"));
                 if(strtotime($firstday) <= strtotime($date)){
                     return array(
                         "status"=>Yii::t("contract","contract expire"),
