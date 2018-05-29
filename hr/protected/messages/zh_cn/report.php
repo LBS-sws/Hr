@@ -34,6 +34,7 @@ return array(
 	'Leave/Change Reason'=>'离职/调职原因',
 	'Remarks'=>'备注',
 	'Staffs'=>'员工',
+	'Staff No.'=>'员工编号',
 
 );
 ?>
