@@ -37,6 +37,39 @@ class TimerCommand extends CConsoleCommand {
             $command->reset();
             $command->update('hr_employee', array("attachment"=>1),$sql);
         }
+
+
+        $this->signedContract();
 	}
+
+	//員工錄入后2周提示是否簽署合同
+	private function signedContract(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstDay = date("Y/m/d");
+        $firstDay = date("Y/m/d",strtotime("$firstDay - 2 week"));
+        $sql = "staff_status=0 and signed_bool=0 and DATE_FORMAT(entry_time,'%Y/%m/%d') ='$firstDay'";
+        $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="员工合同签约提醒 - ".$row["name"];
+                $subject="员工合同签约提醒 - ".$row["name"];
+                $message="<p>员工编号：".$row["code"]."</p>";
+                $message.="<p>员工姓名：".$row["name"]."</p>";
+                $message.="<p>员工入职日期：".$row["entry_time"]."</p>";
+                $message.="<p>温馨提示：员工是否已签合同？如已签请尽快把已签字合同上传到员工附近处，如未签请尽快处理 </p>";
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addEmailToPrefixAndCity("ZE01",$row["city"]);
+                $email->addEmailToCity($row["city"]);
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+            $command->reset();
+            $command->update('hr_employee', array("signed_bool"=>1),$sql);
+        }
+    }
 }
 ?>

@@ -67,6 +67,22 @@ class Email {
         }
     }
 
+    //添加收信人(地區老總）
+    public function addEmailToCity($city){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rs = Yii::app()->db->createCommand()->select("b.email")->from("security$suffix.sec_city a")
+            ->leftJoin("security$suffix.sec_user b","a.incharge=b.username")
+            ->where("a.code='$city' and b.email != ''")
+            ->queryRow();
+        if($rs){
+            if(!empty($rs["email"])){
+                if(!in_array($rs["email"],$this->to_addr)){
+                    $this->to_addr[] = $rs["email"];
+                }
+            }
+        }
+    }
+
     //添加收信人(根據權限）
     public function addEmailToPrefixAndCity($str,$city){
         $suffix = Yii::app()->params['envSuffix'];
