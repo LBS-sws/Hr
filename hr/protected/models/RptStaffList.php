@@ -2,6 +2,7 @@
 class RptStaffList extends CReport {
 	protected function fields() {
 		return array(
+			'code'=>array('label'=>Yii::t('report','Staff No.'),'width'=>15,'align'=>'L'),
 			'name'=>array('label'=>Yii::t('report','Name'),'width'=>25,'align'=>'L'),
 			'gender'=>array('label'=>Yii::t('report','Gender'),'width'=>10,'align'=>'C'),
 			'position'=>array('label'=>Yii::t('report','Position'),'width'=>25,'align'=>'L'),
@@ -69,6 +70,7 @@ class RptStaffList extends CReport {
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$temp = array();
+				$temp['code'] = $row['code'];
 				$temp['name'] = $row['name'];
 				$temp['gender'] = Yii::t('contract',$row['sex']);
 				$temp['position'] = $row['job_title'];
