@@ -6,18 +6,18 @@ class TimerCommand extends CConsoleCommand {
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
         $lastday = date("Y/m/d",strtotime("$firstday + 1 month"));
-        $sql = "staff_status=0 and (attachment='' or attachment=0 or attachment is null) and fix_time='fixation' and DATE_FORMAT(end_time,'%Y/%m/%d') >='$firstday' and DATE_FORMAT(end_time,'%Y/%m/%d') <='$lastday'";
+        $sql = "staff_status=0 and (attachment='' or attachment=0 or attachment is null) and fix_time='fixation' and replace(end_time,'-', '/') >='$firstday' and replace(end_time,'-', '/') <='$lastday'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         $command->reset();
-        $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and test_type=1 and DATE_FORMAT(test_start_time,'%Y/%m/%d') <= '$firstday' and DATE_FORMAT(test_end_time,'%Y/%m/%d') >='$firstday'");//試用期
+        $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') <= '$firstday' and replace(test_end_time,'-', '/') >='$firstday'");//試用期
         $command->reset();
-        $command->update('hr_employee', array("z_index"=>2),"staff_status=0 and test_type=1 and DATE_FORMAT(test_start_time,'%Y/%m/%d') >= '$firstday'");//未入職
+        $command->update('hr_employee', array("z_index"=>2),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') >= '$firstday'");//未入職
         $command->reset();
-        $command->update('hr_employee', array("z_index"=>1),"staff_status=0 and (test_type=0 or DATE_FORMAT(test_end_time,'%Y/%m/%d') <='$firstday')");//正式員工
+        $command->update('hr_employee', array("z_index"=>1),"staff_status=0 and (test_type=0 or replace(test_end_time,'-', '/') <='$firstday')");//正式員工
         $command->reset();
-        $command->update('hr_employee', array("z_index"=>4),"staff_status=0 and fix_time='fixation' and DATE_FORMAT(end_time,'%Y/%m/%d') >='$firstday' and DATE_FORMAT(end_time,'%Y/%m/%d') <='$lastday'");//合同即將過期
+        $command->update('hr_employee', array("z_index"=>4),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') >='$firstday' and replace(end_time,'-', '/') <='$lastday'");//合同即將過期
         $command->reset();
-        $command->update('hr_employee', array("z_index"=>5),"staff_status=0 and fix_time='fixation' and DATE_FORMAT(end_time,'%Y/%m/%d') <'$firstday'");//合同過期
+        $command->update('hr_employee', array("z_index"=>5),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
         if($rows){
             foreach ($rows as $row){
                 $description="员工合同即将到期 - ".$row["name"];
@@ -49,7 +49,7 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $firstDay = date("Y/m/d");
         $firstDay = date("Y/m/d",strtotime("$firstDay - 2 week"));
-        $sql = "staff_status=0 and signed_bool=0 and DATE_FORMAT(entry_time,'%Y/%m/%d') ='$firstDay'";
+        $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
