@@ -2,7 +2,14 @@
 class TimerCommand extends CConsoleCommand {
 	
 	public function run() {
-        echo "start:";
+        $city = "SH";
+        $email = new Email();
+        $email->addEmailToPrefixAndCity("ZE01",$city);
+        $email->addEmailToCity($city);
+        var_dump($email->getToAddr());
+
+
+/*        echo "start:";
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
@@ -46,7 +53,7 @@ class TimerCommand extends CConsoleCommand {
 
 
         $this->signedContract();
-        echo "end";
+        echo "end";*/
 	}
 
 	//員工錄入后2周提示是否簽署合同
