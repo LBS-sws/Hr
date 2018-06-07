@@ -57,6 +57,7 @@ class TimerCommand extends CConsoleCommand {
         $firstDay = date("Y/m/d");
         $firstDay = date("Y/m/d",strtotime("$firstDay - 15 day"));
         $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
+        echo "sql_where:$sql<br>";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
@@ -75,7 +76,8 @@ class TimerCommand extends CConsoleCommand {
                 $email->resetToAddr();
             }
             $command->reset();
-            $command->update('hr_employee', array("signed_bool"=>1),$sql);
+            $aaa=$command->update('hr_employee', array("signed_bool"=>1),$sql);
+            echo "簽署合同:$aaa<br>";
         }
     }
 }
