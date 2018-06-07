@@ -56,8 +56,7 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $firstDay = date("Y/m/d");
         $firstDay = date("Y/m/d",strtotime("$firstDay - 15 day"));
-        $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
-        echo "sql_where:$sql<br>";
+        $sql = "staff_status=0 and replace(entry_time,'-', '/') ='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
@@ -72,6 +71,8 @@ class TimerCommand extends CConsoleCommand {
                 $email->setSubject($subject);
                 $email->addEmailToPrefixAndCity("ZE01",$row["city"]);
                 $email->addEmailToCity($row["city"]);
+                var_dump($row["city"]);
+                var_dump($email->getToAddr());
                 $email->sent("系统生成");
                 $email->resetToAddr();
             }
