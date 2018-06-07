@@ -73,12 +73,15 @@ class TimerCommand extends CConsoleCommand {
                 $email->addEmailToCity($row["city"]);
                 var_dump($row["city"]);
                 var_dump($email->getToAddr());
-                $email->sent("系统生成");
-                $email->resetToAddr();
+                //$email->sent("系统生成");
+                $test = new Email();
+                $test->addEmailToPrefixAndCity("ZE01","FZ");
+                $test->addEmailToCity("FZ");
+                var_dump($test->getToAddr());
+                //$email->resetToAddr();
             }
             $command->reset();
             $aaa=$command->update('hr_employee', array("signed_bool"=>1),$sql);
-            echo "簽署合同:$aaa<br>";
         }
     }
 }

@@ -86,6 +86,7 @@ class Email {
     //添加收信人(根據權限）
     public function addEmailToPrefixAndCity($str,$city){
         $suffix = Yii::app()->params['envSuffix'];
+        var_dump($suffix);
         $systemId = Yii::app()->params['systemId'];
         //$city = Yii::app()->user->city();
         $cityList = $this->getAllCityToMinCity($city);
