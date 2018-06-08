@@ -2,14 +2,7 @@
 class TimerCommand extends CConsoleCommand {
 	
 	public function run() {
-        $city = "SH";
-        $email = new Email();
-        $email->addEmailToPrefixAndCity("ZE01",$city);
-        $email->addEmailToCity($city);
-        var_dump($email->getToAddr());
-
-
-/*        echo "start:";
+        echo "start:";
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
@@ -53,7 +46,7 @@ class TimerCommand extends CConsoleCommand {
 
 
         $this->signedContract();
-        echo "end";*/
+        echo "end";
 	}
 
 	//員工錄入后2周提示是否簽署合同
@@ -62,8 +55,8 @@ class TimerCommand extends CConsoleCommand {
         $command = Yii::app()->db->createCommand();
         $command->reset();
         $firstDay = date("Y/m/d");
-        $firstDay = date("Y/m/d",strtotime("$firstDay - 15 day"));
-        $sql = "staff_status=0 and replace(entry_time,'-', '/') ='$firstDay'";
+        $firstDay = date("Y/m/d",strtotime("$firstDay - 16 day"));
+        $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
@@ -78,17 +71,11 @@ class TimerCommand extends CConsoleCommand {
                 $email->setSubject($subject);
                 $email->addEmailToPrefixAndCity("ZE01",$row["city"]);
                 $email->addEmailToCity($row["city"]);
-                var_dump($row["city"]);
-                var_dump($email->getToAddr());
-                //$email->sent("系统生成");
-                $test = new Email();
-                $test->addEmailToPrefixAndCity("ZE01","FZ");
-                $test->addEmailToCity("FZ");
-                var_dump($test->getToAddr());
-                //$email->resetToAddr();
+                $email->sent("系统生成");
+                $email->resetToAddr();
             }
             $command->reset();
-            $aaa=$command->update('hr_employee', array("signed_bool"=>1),$sql);
+            $command->update('hr_employee', array("signed_bool"=>1),$sql);
         }
     }
 }

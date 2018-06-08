@@ -111,7 +111,6 @@ class Email {
             ->leftJoin("security$suffix.sec_user b","a.username=b.username")
             ->where("a.system_id='$systemId' $likeSql $sql and b.email != ''")
             ->queryAll();
-        var_dump($rs);
         if($rs){
             foreach ($rs as $row){
                 if(!in_array($row["email"],$this->to_addr)){
