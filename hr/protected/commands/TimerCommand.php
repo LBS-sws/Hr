@@ -55,7 +55,7 @@ class TimerCommand extends CConsoleCommand {
         $command = Yii::app()->db->createCommand();
         $command->reset();
         $firstDay = date("Y/m/d");
-        $firstDay = date("Y/m/d",strtotime("$firstDay - 16 day"));
+        $firstDay = date("Y/m/d",strtotime("$firstDay - 13 day"));
         $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
