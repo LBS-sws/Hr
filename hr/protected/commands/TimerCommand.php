@@ -10,19 +10,19 @@ class TimerCommand extends CConsoleCommand {
         $sql = "staff_status=0 and (attachment='' or attachment=0 or attachment is null) and fix_time='fixation' and replace(end_time,'-', '/') >='$firstday' and replace(end_time,'-', '/') <='$lastday'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         $command->reset();
-        $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') <= '$firstday' and replace(test_end_time,'-', '/') >='$firstday'");//試用期
+        $aaa = $command->update('hr_employee', array("z_index"=>2),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') <= '$firstday' and replace(test_end_time,'-', '/') >='$firstday'");//試用期
         $command->reset();
         echo "試用期:$aaa<br>";
-        $aaa = $command->update('hr_employee', array("z_index"=>2),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') >= '$firstday'");//未入職
+        $aaa = $command->update('hr_employee', array("z_index"=>1),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') >= '$firstday'");//未入職
         $command->reset();
         echo "未入職:$aaa<br>";
-        $aaa = $command->update('hr_employee', array("z_index"=>1),"staff_status=0 and (test_type=0 or replace(test_end_time,'-', '/') <='$firstday')");//正式員工
+        $aaa = $command->update('hr_employee', array("z_index"=>5),"staff_status=0 and (test_type=0 or replace(test_end_time,'-', '/') <='$firstday')");//正式員工
         $command->reset();
         echo "正式員工:$aaa<br>";
         $aaa = $command->update('hr_employee', array("z_index"=>4),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') >='$firstday' and replace(end_time,'-', '/') <='$lastday'");//合同即將過期
         $command->reset();
         echo "合同即將過期:$aaa<br>";
-        $aaa = $command->update('hr_employee', array("z_index"=>5),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
+        $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
         echo "合同過期:$aaa<br>";
         if($rows){
             foreach ($rows as $row){
