@@ -8,6 +8,12 @@
  */
 class AuditLeaveController extends Controller
 {
+    protected static $assList=array(
+        1=>"ZA09",
+        2=>"ZE06",
+        3=>"ZG05",
+        4=>"ZC11",
+    );
 
     public function filters()
     {
@@ -46,23 +52,27 @@ class AuditLeaveController extends Controller
     }
 
     public static function allowReadWrite() {
-        if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
-            return Yii::app()->user->validRWFunction('ZG05');
-        }else if (array_key_exists("only",$_GET) && $_GET["only"] == 3){
-            return Yii::app()->user->validRWFunction('ZA09');
+        if(array_key_exists("only",$_GET)){
+            $only = $_GET["only"];
+            if(!in_array($only,array(1,2,3,4))){
+                $only = 1;
+            }
         }else{
-            return Yii::app()->user->validRWFunction('ZE06');
+            $only = 1;
         }
+        return Yii::app()->user->validRWFunction(self::$assList[$only]);
     }
 
     public static function allowReadOnly() {
-        if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
-            return Yii::app()->user->validFunction('ZG05');
-        }else if (array_key_exists("only",$_GET) && $_GET["only"] == 3){
-            return Yii::app()->user->validFunction('ZA09');
+        if(array_key_exists("only",$_GET)){
+            $only = $_GET["only"];
+            if(!in_array($only,array(1,2,3,4))){
+                $only = 1;
+            }
         }else{
-            return Yii::app()->user->validFunction('ZE06');
+            $only = 1;
         }
+        return Yii::app()->user->validFunction(self::$assList[$only]);
     }
 
     public static function allowRead() {
@@ -89,6 +99,9 @@ class AuditLeaveController extends Controller
     public function actionEdit($index,$only = 1)
     {
         $model = new AuditLeaveForm('edit');
+        if(!in_array($only,array(1,2,3,4))){
+            $only = 1;
+        }
         $model->only = $only;
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
@@ -100,6 +113,9 @@ class AuditLeaveController extends Controller
     public function actionView($index,$only = 1)
     {
         $model = new AuditLeaveForm('view');
+        if(!in_array($only,array(1,2,3,4))){
+            $only = 1;
+        }
         $model->only = $only;
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');

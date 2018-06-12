@@ -24,6 +24,8 @@ class WorkForm extends CFormModel
 	public $area_lcd;
 	public $head_lcu;
 	public $head_lcd;
+    public $you_lcu;
+    public $you_lcd;
 	public $reject_cause;
 	public $cost_num;//節假日的工資倍率
 	public $audit = false;//是否需要審核
@@ -61,6 +63,8 @@ class WorkForm extends CFormModel
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','head lcu'),
             'head_lcd'=>Yii::t('fete','head lcd'),
+            'you_lcu'=>Yii::t('fete','you lcu'),
+            'you_lcd'=>Yii::t('fete','you lcd'),
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
@@ -171,6 +175,8 @@ class WorkForm extends CFormModel
                 $this->lcd = $row['lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
+                $this->you_lcu = $row['you_lcu'];
+                $this->you_lcd = $row['you_lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['workem'] = $row['workemdoc'];
@@ -322,8 +328,8 @@ class WorkForm extends CFormModel
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false){
-            $z_index = AuditConfigForm::getCityAuditToCode($city);
-            $this->z_index = $z_index==1?1:3;
+            $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id);
+            $this->z_index = $z_index;
             $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
         }
 

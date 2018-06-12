@@ -24,13 +24,15 @@ class AuditLeaveForm extends CFormModel
     public $area_lcd;
     public $head_lcu;
     public $head_lcd;
+    public $you_lcu;
+    public $you_lcd;
     public $lcd;
     public $staff_type;//員工的辦公類型
     public $reject_cause;
     public $cost_num;//請假的工資倍率
     public $wage;//合約工資
     public $vacation_list;//倍率
-    public $only = 1;//1：地區審核  2：總部審核
+    public $only = 1;//1:部門審核、2：主管、3：總監、4：你
 
 
     public $no_of_attm = array(
@@ -63,6 +65,8 @@ class AuditLeaveForm extends CFormModel
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','head lcu'),
             'head_lcd'=>Yii::t('fete','head lcd'),
+            'you_lcu'=>Yii::t('fete','you lcu'),
+            'you_lcd'=>Yii::t('fete','you lcd'),
             'audit_remark'=>Yii::t('fete','Audit Remark'),
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
@@ -132,11 +136,26 @@ class AuditLeaveForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
-        $staff_id = BindingForm::getEmployeeIdToUsername();
-        if($this->only == 2){
-            $sql = "a.id=:id and b.city in ($city_allow) and b.id !=$staff_id";
+        $only = $this->only;
+        $staffList = BindingForm::getEmployeeListToUsername();
+        if(!empty($staffList)){
+            $staff_id = $staffList["id"];
+            $department = $staffList["department"];//部門
         }else{
-            $sql = "a.id=:id and b.city = '$city' and b.id !=$staff_id";
+            $staff_id = 0;
+            $department = 0;
+        }
+        $sql = " a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only";
+        switch ($only){
+            case 1: //部門審核
+                $sql.=" AND b.department = '$department' ";
+                break;
+            case 2: //主管
+                $sql.=" AND b.city = '$city' ";
+                break;
+            case 3: //總監
+                $sql.=" AND b.city in ($city_allow) ";
+                break;
         }
         $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,b.city as s_city,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
             ->from("hr_employee_leave a")
@@ -167,6 +186,8 @@ class AuditLeaveForm extends CFormModel
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
+                $this->you_lcu = $row['you_lcu'];
+                $this->you_lcd = $row['you_lcd'];
                 $this->lcd = $row['lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
@@ -193,21 +214,42 @@ class AuditLeaveForm extends CFormModel
 
     protected function saveGoods(&$connection) {
         $sql = '';
+        $only = intval($this->only);
+        $staffList = BindingForm::getEmployeeListToEmployeeId($this->employee_name);
+        if(!empty($staffList)){
+            $manager= $staffList["c_manager"];
+        }
+        $auditSql = "";//申請人如果是經理、主管會直接完成申請
+        switch ($only){
+            case 1: //部門
+                $clause="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
+                break;
+            case 2: //主管
+                $clause="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
+                if (!empty($manager)){
+                    $auditSql = "status = 4,";
+                }
+                break;
+            case 3: //總監
+                $clause="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
+                if (!empty($manager)){
+                    $auditSql = "status = 4,";
+                }
+                break;
+            case 4: //你
+                $clause="you_lcu = :you_lcu, you_lcd = :you_lcd, ";
+                break;
+            default:
+                throw new CHttpException(404,'數據異常');
+                return false;
+        }
         switch ($this->scenario) {
             case 'audit':
                 $sql = "update hr_employee_leave set
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
-                $this->z_index = $this->only;
-                if($this->only == 1){ //地區審核
-                    $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                }elseif($this->only == 3){ //領導審核
-                    $z_index = AuditConfigForm::getCityAuditToCode($this->city);
-                    $bool = AuditWorkForm::validateManagerToEmployeeId($this->employee_name);
-                    $this->z_index = ($z_index==2||$bool)?1:0;
-                    $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
-                }else{ //總部審核
+                if($only==4){
                     $this->resetLeaveCost();//計算員工的工資
                     $sql.="vacation_id = :vacation_id, 
 							leave_cause = :leave_cause, 
@@ -216,10 +258,12 @@ class AuditLeaveForm extends CFormModel
 							end_time_lg = :end_time_lg, 
 							start_time = :start_time, 
 							end_time = :end_time, 
-							log_time = :log_time, ";
-                    $sql.="status = 4, head_lcu = :head_lcu, head_lcd = :head_lcd, ";
+							log_time = :log_time,
+							status = 4, ";
+                }else{
+                    $only++;
                 }
-                $sql.="luu = :luu
+                $sql.=$clause.$auditSql."luu = :luu
 						where id = :id";
                 break;
             case 'reject':
@@ -228,14 +272,7 @@ class AuditLeaveForm extends CFormModel
 							reject_cause = :reject_cause, 
 							audit_remark = :audit_remark, 
 							";
-                if($this->only == 1){
-                    $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                }elseif($this->only == 3){
-                    $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
-                }else{
-                    $sql.="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
-                }
-                $sql.="luu = :luu
+                $sql.=$clause."luu = :luu
 						where id = :id";
                 break;
         }
@@ -254,7 +291,7 @@ class AuditLeaveForm extends CFormModel
         if (strpos($sql,':reject_cause')!==false)
             $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false)
-            $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
+            $command->bindParam(':z_index',$only,PDO::PARAM_STR);
         /*總部審核start*/
         if (strpos($sql,':vacation_id')!==false)
             $command->bindParam(':vacation_id',$this->vacation_id,PDO::PARAM_STR);
@@ -286,6 +323,10 @@ class AuditLeaveForm extends CFormModel
             $command->bindParam(':head_lcu',$uid,PDO::PARAM_STR);
         if (strpos($sql,':head_lcd')!==false)
             $command->bindParam(':head_lcd',date("Y-m-d"),PDO::PARAM_STR);
+        if (strpos($sql,':you_lcu')!==false)
+            $command->bindParam(':you_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':you_lcd')!==false)
+            $command->bindParam(':you_lcd',date("Y-m-d"),PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
@@ -320,7 +361,7 @@ class AuditLeaveForm extends CFormModel
     }
     //判斷輸入框能否修改
     public function getInputBool(){
-        if($this->only == 2&&$this->getScenario()!='view'){
+        if($this->only == 4&&$this->getScenario()!='view'){
             return false;
         }else{
             return true;

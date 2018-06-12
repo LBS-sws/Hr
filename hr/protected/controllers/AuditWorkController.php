@@ -8,6 +8,12 @@
  */
 class AuditWorkController extends Controller
 {
+    protected static $assList=array(
+        1=>"ZA08",
+        2=>"ZE05",
+        3=>"ZG04",
+        4=>"ZC10",
+    );
 
     public function filters()
     {
@@ -46,23 +52,27 @@ class AuditWorkController extends Controller
     }
 
     public static function allowReadWrite() {
-        if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
-            return Yii::app()->user->validRWFunction('ZG04');
-        }elseif(array_key_exists("only",$_GET) && $_GET["only"] == 3){
-            return Yii::app()->user->validRWFunction('ZA08');
+        if(array_key_exists("only",$_GET)){
+            $only = $_GET["only"];
+            if(!in_array($only,array(1,2,3,4))){
+                $only = 1;
+            }
         }else{
-            return Yii::app()->user->validRWFunction('ZE05');
+            $only = 1;
         }
+        return Yii::app()->user->validRWFunction(self::$assList[$only]);
     }
 
     public static function allowReadOnly() {
-        if(array_key_exists("only",$_GET) && $_GET["only"] == 2){
-            return Yii::app()->user->validFunction('ZG04');
-        }elseif(array_key_exists("only",$_GET) && $_GET["only"] == 3){
-            return Yii::app()->user->validFunction('ZA08');
+        if(array_key_exists("only",$_GET)){
+            $only = $_GET["only"];
+            if(!in_array($only,array(1,2,3,4))){
+                $only = 1;
+            }
         }else{
-            return Yii::app()->user->validFunction('ZE05');
+            $only = 1;
         }
+        return Yii::app()->user->validFunction(self::$assList[$only]);
     }
 
     public static function allowRead() {
@@ -89,6 +99,9 @@ class AuditWorkController extends Controller
     public function actionEdit($index,$only = 1)
     {
         $model = new AuditWorkForm('edit');
+        if(!in_array($only,array(1,2,3,4))){
+            $only = 1;
+        }
         $model->only = $only;
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
@@ -100,6 +113,9 @@ class AuditWorkController extends Controller
     public function actionView($index,$only = 1)
     {
         $model = new AuditWorkForm('view');
+        if(!in_array($only,array(1,2,3,4))){
+            $only = 1;
+        }
         $model->only = $only;
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');

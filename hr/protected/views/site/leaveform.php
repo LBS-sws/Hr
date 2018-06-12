@@ -161,3 +161,19 @@
         </div>
     </div>
 <?php endif; ?>
+<?php if (!empty($model->you_lcu)): ?>
+    <div class="form-group">
+        <?php echo $form->labelEx($model,'you_lcu',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'you_lcu',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+        <?php echo $form->labelEx($model,'you_lcd',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'you_lcd',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+    </div>
+<?php endif; ?>

@@ -2,6 +2,13 @@
 
 class AuditLeaveList extends CListPageModel
 {
+    protected static $assList=array(
+        1=>"ZA09",
+        2=>"ZE06",
+        3=>"ZG05",
+        4=>"ZC11",
+    );
+
     public $only = 1;//1：地區審核  2：總部審核
     /**
      * Declares customized attribute labels.
@@ -25,37 +32,45 @@ class AuditLeaveList extends CListPageModel
     }
 
     public function getAcc(){
-        if($this->only == 1){
-            return "ZE06";
-        }else if ($this->only == 3){
-            return "ZA09";
-        }else{
-            return "ZG05";
-        }
+        return self::$assList[$this->only];
     }
 
     public function retrieveDataByPage($pageNum=1)
     {
-        $staff_id = BindingForm::getEmployeeIdToUsername();
+        $staffList = BindingForm::getEmployeeListToUsername();
+        if(!empty($staffList)){
+            $staff_id = $staffList["id"];
+            $department = $staffList["department"];//部門
+        }else{
+            $staff_id = 0;
+            $department = 0;
+        }
+        $only = $this->only;
         $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
         $sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city
-              from hr_employee_leave a LEFT JOIN hr_employee b ON a.employee_id = b.id
-                where a.status !=0 and b.id !=$staff_id 
+              from hr_employee_leave a 
+              LEFT JOIN hr_employee b ON a.employee_id = b.id
+              where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
 			";
         $sql2 = "select count(a.id)
-				from hr_employee_leave a LEFT JOIN hr_employee b ON a.employee_id = b.id
-				where a.status !=0 and b.id !=$staff_id 
+				from hr_employee_leave a 
+				LEFT JOIN hr_employee b ON a.employee_id = b.id
+				where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
 			";
-        if($this->only ==1 ){ //地區審核
-            $sql1.=" AND a.z_index =0 AND b.city = '$city' ";
-            $sql2.=" AND a.z_index =0 AND b.city = '$city' ";
-        }elseif($this->only ==3 ){//領導審核
-            $sql1.=" AND a.z_index =3 AND b.city = '$city' ";
-            $sql2.=" AND a.z_index =3 AND b.city = '$city' ";
-        }else{ //總部審核
-            $sql1.=" AND a.z_index =1 AND b.city in ($city_allow) ";
-            $sql2.=" AND a.z_index =1 AND b.city in ($city_allow) ";
+        switch ($only){
+            case 1: //部門審核
+                $sql1.=" AND b.department = '$department' ";
+                $sql2.=" AND b.department = '$department' ";
+                break;
+            case 2: //主管
+                $sql1.=" AND b.city = '$city' ";
+                $sql2.=" AND b.city = '$city' ";
+                break;
+            case 3: //總監
+                $sql1.=" AND b.city in ($city_allow) ";
+                $sql2.=" AND b.city in ($city_allow) ";
+                break;
         }
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {

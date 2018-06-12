@@ -31,12 +31,14 @@ return array(
     'Working days'=>'工作日',
     'Weekend off'=>'周末休息日',
     'Statutory leave day'=>'法定休假日',
-    'user lcu'=>'领导审核人',
-    'user lcd'=>'领导审核时间',
-    'area lcu'=>'地区审核人',
-    'area lcd'=>'地区审核时间',
-    'head lcu'=>'总部审核人',
-    'head lcd'=>'总部审核时间',
+    'user lcu'=>'部门经理',
+    'user lcd'=>'部门经理审核时间',
+    'area lcu'=>'地区主管',
+    'area lcd'=>'地区主管审核时间',
+    'head lcu'=>'地区总监',
+    'head lcd'=>'总监审核时间',
+    'you lcu'=>'你',
+    'you lcd'=>'你审核时间',
 
     'This time period is not a legal holiday, please contact the administrator'=>'该时间段不是法定节假日，请与管理员联系',
     'This time period is not a weekend'=>'该时间段不是周末',
@@ -127,7 +129,7 @@ return array(
     'three index'=>'三层',
 
     'apply for time'=>'申请时间',
-    'Manager level audit'=>'经理级别审核',
+    'Manager level audit'=>'审核级别',
     'prize'=>'锦旗',
     'testimonial'=>'表扬信',
     'A commendatory letter is equal to two flags'=>'1封表扬信等于2面锦旗',
@@ -150,5 +152,12 @@ return array(
     //2018-04-24
     'evaluator'=>'评估人',
     'overall effect'=>'整体效果',
+
+    //2018-06-09
+    'none'=>'无',
+    'handle'=>'部门经理',
+    'charge'=>'地区主管',
+    'director'=>'总监',
+    'you'=>'你',
 );
 ?>

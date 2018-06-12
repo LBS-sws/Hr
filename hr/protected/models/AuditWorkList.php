@@ -2,6 +2,13 @@
 
 class AuditWorkList extends CListPageModel
 {
+    protected static $assList=array(
+        1=>"ZA08",
+        2=>"ZE05",
+        3=>"ZG04",
+        4=>"ZC10",
+    );
+
     public $only = 1;//1：地區審核  2：總部審核
     /**
      * Declares customized attribute labels.
@@ -25,37 +32,46 @@ class AuditWorkList extends CListPageModel
     }
 
     public function getAcc(){
-        if($this->only == 1){
-            return "ZE05";
-        }elseif($this->only == 3){
-            return "ZA08";
-        }else{
-            return "ZG04";
+        if(!in_array($this->only,array(1,2,3,4))){
+            $this->only = 1;
         }
+        return self::$assList[$this->only];
     }
 
     public function retrieveDataByPage($pageNum=1)
     {
-        $staff_id = BindingForm::getEmployeeIdToUsername();
+        $staffList = BindingForm::getEmployeeListToUsername();
+        if(!empty($staffList)){
+            $staff_id = $staffList["id"];
+            $department = $staffList["department"];//部門
+        }else{
+            $staff_id = 0;
+            $department = 0;
+        }
+        $only = $this->only;
         $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
         $sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
-                where a.status !=0 and b.id !=$staff_id 
+                where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
 			";
         $sql2 = "select count(a.id)
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
-				where a.status !=0 and b.id !=$staff_id 
+				where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
 			";
-        if($this->only ==1 ){
-            $sql1.=" AND a.z_index =0 AND b.city = '$city' ";
-            $sql2.=" AND a.z_index =0 AND b.city = '$city' ";
-        }elseif($this->only ==3){
-            $sql1.=" AND a.z_index =3 AND b.city = '$city' ";
-            $sql2.=" AND a.z_index =3 AND b.city = '$city' ";
-        }else{
-            $sql1.=" AND a.z_index =1 AND b.city in ($city_allow) ";
-            $sql2.=" AND a.z_index =1 AND b.city in ($city_allow) ";
+        switch ($only){
+            case 1: //部門審核
+                $sql1.=" AND b.department = '$department' ";
+                $sql2.=" AND b.department = '$department' ";
+                break;
+            case 2: //主管
+                $sql1.=" AND b.city = '$city' ";
+                $sql2.=" AND b.city = '$city' ";
+                break;
+            case 3: //總監
+                $sql1.=" AND b.city in ($city_allow) ";
+                $sql2.=" AND b.city in ($city_allow) ";
+                break;
         }
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {

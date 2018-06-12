@@ -31,11 +31,11 @@ return array(
             'audit for work overtime'=>array(
                 'access'=>'ZA08',
                 //'url'=>'/employer/index',
-                'url'=>'/auditWork/index?only=3',
+                'url'=>'/auditWork/index?only=1',
             ),
             'audit for leave'=>array(
                 'access'=>'ZA09',
-                'url'=>'/auditLeave/index?only=3',
+                'url'=>'/auditLeave/index?only=1',
             ),
 		),
 	),
@@ -83,11 +83,11 @@ return array(
 			),
             'audit for work overtime'=>array(
                 'access'=>'ZE05',
-                'url'=>'/auditWork/index?only=1',
+                'url'=>'/auditWork/index?only=2',
             ),
             'audit for leave'=>array(
                 'access'=>'ZE06',
-                'url'=>'/auditLeave/index?only=1',
+                'url'=>'/auditLeave/index?only=2',
             ),
             'Staff appraisal'=>array(
                 'access'=>'ZE07',
@@ -121,11 +121,11 @@ return array(
             'audit for work overtime'=>array(
                 'access'=>'ZG04',
                 //'url'=>'/employer/index',
-                'url'=>'/auditWork/index?only=2',
+                'url'=>'/auditWork/index?only=3',
             ),
             'audit for leave'=>array(
                 'access'=>'ZG05',
-                'url'=>'/auditLeave/index?only=2',
+                'url'=>'/auditLeave/index?only=3',
             ),
             'Reward Audit'=>array(
                 'access'=>'ZG06',
@@ -169,14 +169,22 @@ return array(
 				'access'=>'ZC06',
 				'url'=>'/rewardCon/index',
 			),
-			'Audit Config'=>array(
+/*			'Audit Config'=>array(
 				'access'=>'ZC08',
 				'url'=>'/AuditConfig/index',
-			),
+			),*/
 			'City index'=>array(
 				'access'=>'ZC09',
 				'url'=>'/city/index',
 			),
+            'audit for work overtime'=>array(
+                'access'=>'ZC10',
+                'url'=>'/auditWork/index?only=4',
+            ),
+            'audit for leave'=>array(
+                'access'=>'ZC11',
+                'url'=>'/auditLeave/index?only=4',
+            ),
 		),
 	),
 	'Report'=>array(

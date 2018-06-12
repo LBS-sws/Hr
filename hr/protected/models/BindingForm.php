@@ -118,6 +118,30 @@ class BindingForm extends CFormModel
 	    return 0;
     }
 
+    public function getEmployeeListToUsername($username=""){
+	    if(empty($username)){
+            $username = Yii::app()->user->id;
+        }
+        $rows = Yii::app()->db->createCommand()->select("b.*,c.manager as c_manager")->from("hr_binding a")
+            ->leftJoin("hr_employee b","b.id = a.employee_id")
+            ->leftJoin("hr_dept c","c.id = b.position")
+            ->where("a.user_id=:user_id", array(':user_id'=>$username))->queryRow();
+        if($rows){
+            return $rows;
+        }
+	    return array();
+    }
+
+    public function getEmployeeListToEmployeeId($employee_id){
+        $rows = Yii::app()->db->createCommand()->select("a.*,c.manager as c_manager")->from("hr_employee a")
+            ->leftJoin("hr_dept c","c.id = a.position")
+            ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();
+        if($rows){
+            return $rows;
+        }
+	    return array();
+    }
+
     //公司刪除時必須沒有員工
 	public function validateDelete(){
 /*        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")

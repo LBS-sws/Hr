@@ -25,11 +25,13 @@ class AuditWorkForm extends CFormModel
     public $area_lcd;
     public $head_lcu;
     public $head_lcd;
+    public $you_lcu;
+    public $you_lcd;
     public $reject_cause;
     public $lcd;
     public $cost_num;//節假日的工資倍率
     public $wage;//合約工資
-    public $only = 1;//  3：領導審核   1：地區審核  2：總部審核
+    public $only = 1;//1:部門審核、2：主管、3：總監、4：你
     public $bool_cost = 1;//是否支付加班費用  1：支付  0：不支付
 
 
@@ -63,6 +65,8 @@ class AuditWorkForm extends CFormModel
             'area_lcu'=>Yii::t('fete','area lcu'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','head lcu'),
+            'you_lcu'=>Yii::t('fete','you lcu'),
+            'you_lcd'=>Yii::t('fete','you lcd'),
             'bool_cost'=>Yii::t('fete','Bool Work Cost'),
             'head_lcd'=>Yii::t('fete','Bool Work Cost'),
             'audit_remark'=>Yii::t('fete','Audit Remark'),
@@ -135,12 +139,27 @@ class AuditWorkForm extends CFormModel
     public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
-        $staff_id = BindingForm::getEmployeeIdToUsername();
         $suffix = Yii::app()->params['envSuffix'];
-        if($this->only == 2){
-            $sql = "a.id=:id and b.city in ($city_allow) and b.id !=$staff_id";
+        $only = $this->only;
+        $staffList = BindingForm::getEmployeeListToUsername();
+        if(!empty($staffList)){
+            $staff_id = $staffList["id"];
+            $department = $staffList["department"];//部門
         }else{
-            $sql = "a.id=:id and b.city = '$city' and b.id !=$staff_id";
+            $staff_id = 0;
+            $department = 0;
+        }
+        $sql = " a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only";
+        switch ($only){
+            case 1: //部門審核
+                $sql.=" AND b.department = '$department' ";
+                break;
+            case 2: //主管
+                $sql.=" AND b.city = '$city' ";
+                break;
+            case 3: //總監
+                $sql.=" AND b.city in ($city_allow) ";
+                break;
         }
         $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.city AS s_city,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
             ->from("hr_employee_work a")
@@ -176,6 +195,8 @@ class AuditWorkForm extends CFormModel
                 $this->area_lcd = $row['area_lcd'];
                 $this->head_lcu = $row['head_lcu'];
                 $this->head_lcd = $row['head_lcd'];
+                $this->you_lcu = $row['you_lcu'];
+                $this->you_lcd = $row['you_lcd'];
                 $this->lcd = $row['lcd'];
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
@@ -214,22 +235,42 @@ class AuditWorkForm extends CFormModel
 
     protected function saveGoods(&$connection) {
         $sql = '';
+        $only = intval($this->only);
+        $staffList = BindingForm::getEmployeeListToEmployeeId($this->employee_name);
+        if(!empty($staffList)){
+            $manager= $staffList["c_manager"];
+        }
+        $auditSql = "";//申請人如果是經理、主管會直接完成申請
+        switch ($only){
+            case 1: //部門
+                $clause="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
+                break;
+            case 2: //主管
+                $clause="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
+                if (!empty($manager)){
+                    $auditSql = "status = 4,";
+                }
+                break;
+            case 3: //總監
+                $clause="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
+                if (!empty($manager)){
+                    $auditSql = "status = 4,";
+                }
+                break;
+            case 4: //你
+                $clause="you_lcu = :you_lcu, you_lcd = :you_lcd, ";
+                break;
+            default:
+                throw new CHttpException(404,'數據異常');
+                return false;
+        }
         switch ($this->scenario) {
             case 'audit':
                 $sql = "update hr_employee_work set
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
-                $this->z_index = $this->only;
-                if($this->only == 1){
-                    $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                }elseif($this->only == 3){
-                    $z_index = AuditConfigForm::getCityAuditToCode($this->city);
-                    $bool = $this->validateManagerToEmployeeId($this->employee_name);
-                    $this->z_index = ($z_index==2||$bool)?1:0;
-                    $sql.="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
-                }else{
-                    //總部審核
+                if($only==4){
                     $this->resetWorkCost();//計算員工的工資
                     $sql.="work_type = :work_type, 
 							work_cause = :work_cause, 
@@ -237,10 +278,12 @@ class AuditWorkForm extends CFormModel
 							work_cost = :work_cost, 
 							start_time = :start_time, 
 							end_time = :end_time, 
-							log_time = :log_time, ";
-                    $sql.="status = 4, head_lcu = :head_lcu, head_lcd = :head_lcd, ";
+							log_time = :log_time,
+							status = 4, ";
+                }else{
+                    $only++;
                 }
-                $sql.="luu = :luu
+                $sql.=$clause.$auditSql."luu = :luu
 						where id = :id";
                 break;
             case 'reject':
@@ -249,14 +292,7 @@ class AuditWorkForm extends CFormModel
 							reject_cause = :reject_cause, 
 							audit_remark = :audit_remark, 
 							";
-                if($this->only == 1){
-                    $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                }elseif($this->only == 3){
-                    $sql.="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                }else{
-                    $sql.="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
-                }
-                $sql.="luu = :luu
+                $sql.=$clause."luu = :luu
 						where id = :id";
                 break;
         }
@@ -275,7 +311,7 @@ class AuditWorkForm extends CFormModel
         if (strpos($sql,':audit_remark')!==false)
             $command->bindParam(':audit_remark',$this->audit_remark,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false)
-            $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
+            $command->bindParam(':z_index',$only,PDO::PARAM_STR);
 
         if (strpos($sql,':work_type')!==false)
             $command->bindParam(':work_type',$this->work_type,PDO::PARAM_STR);
@@ -304,6 +340,10 @@ class AuditWorkForm extends CFormModel
             $command->bindParam(':head_lcu',$uid,PDO::PARAM_STR);
         if (strpos($sql,':head_lcd')!==false)
             $command->bindParam(':head_lcd',date("Y-m-d"),PDO::PARAM_STR);
+        if (strpos($sql,':you_lcu')!==false)
+            $command->bindParam(':you_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':you_lcd')!==false)
+            $command->bindParam(':you_lcd',date("Y-m-d"),PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();

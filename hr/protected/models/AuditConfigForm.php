@@ -42,7 +42,25 @@ class AuditConfigForm extends CFormModel
         }
     }
 
-	public function getCityAuditToCode($city) {
+	public function getCityAuditToCode($employee_id) {
+        $staffList = Yii::app()->db->createCommand()->select("a.*,c.manager as c_manager")->from("hr_employee a")
+            ->leftJoin("hr_dept c","c.id = a.position")
+            ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();
+        if($staffList){
+            $manager = $staffList["c_manager"];
+            if(!empty($manager)){
+                $manager = intval($manager);
+                if(in_array($manager,array(1,2,3,4))){
+                    $manager++;
+                    $manager = $manager>=4?3:$manager;
+                    return $manager;
+                }
+            }
+        }
+
+        return 1;
+/*
+        //判斷城市的審核層級開始
         if(empty($city)){
             $city = Yii::app()->user->city();
         }
@@ -54,7 +72,8 @@ class AuditConfigForm extends CFormModel
                 return $audit_index;
             }
         }
-        return 3;
+        //判斷城市的審核層級結束
+        */
 	}
 
 	public function retrieveData($index) {
