@@ -106,12 +106,12 @@ class EmployeeList extends CListPageModel
                 $date = date("Y-m-d");
                 $firstday = date("Y-m-d",strtotime($record["end_time"]));
                 $lastday = date("Y-m-d",strtotime("$firstday -1 month"));
-                if(strtotime($firstday) <= strtotime($date)){
+                if(strtotime($firstday) < strtotime($date)){
                     return array(
                         "status"=>Yii::t("contract","contract expire"),
                         "style"=>"text-danger"
                     );//合同到期
-                }else if(strtotime($lastday) <= strtotime($date)){
+                }else if(strtotime($lastday) < strtotime($date)){
                     return array(
                         "status"=>Yii::t("contract","contract is about to expire"),
                         "style"=>"text-warning"
