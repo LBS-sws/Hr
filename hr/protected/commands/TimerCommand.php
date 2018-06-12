@@ -59,7 +59,6 @@ class TimerCommand extends CConsoleCommand {
         $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         echo "合同過期:$sql<br>";
-        var_dump($rows);
         if($rows){
             foreach ($rows as $row){
                 $description="员工合同签约提醒 - ".$row["name"];
@@ -67,7 +66,7 @@ class TimerCommand extends CConsoleCommand {
                 $message="<p>员工编号：".$row["code"]."</p>";
                 $message.="<p>员工姓名：".$row["name"]."</p>";
                 $message.="<p>员工入职日期：".$row["entry_time"]."</p>";
-                $message.="<p>温馨提示：员工是否已签合同？如已签请尽快把已签字合同上传到员工附近处，如未签请尽快处理 </p>";
+                $message.="<p>温馨提示：员工是否已签合同？如已签请尽快把已签字合同上传到员工附件处，如未签请尽快处理 </p>";
                 $email->setDescription($description);
                 $email->setMessage($message);
                 $email->setSubject($subject);
