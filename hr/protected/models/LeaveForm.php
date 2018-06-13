@@ -410,7 +410,7 @@ class LeaveForm extends CFormModel
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false){
-            $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id);
+            $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id,1);
             $this->z_index = $z_index;
             $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
         }

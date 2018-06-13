@@ -42,7 +42,7 @@ class AuditConfigForm extends CFormModel
         }
     }
 
-	public function getCityAuditToCode($employee_id) {
+	public function getCityAuditToCode($employee_id,$auditType="") {
         $staffList = Yii::app()->db->createCommand()->select("a.*,c.manager as c_manager")->from("hr_employee a")
             ->leftJoin("hr_dept c","c.id = a.position")
             ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();
@@ -53,28 +53,90 @@ class AuditConfigForm extends CFormModel
                 if(in_array($manager,array(1,2,3,4))){
                     $manager++;
                     $manager = $manager>=4?3:$manager;
-                    return $manager;
+                }
+            }else{
+                $manager = 1;
+            }
+
+            //後續添加
+            $assList = AuditConfigForm::getAccessAndCity($staffList["city"],$staffList["department"],$auditType);
+            for($i = $manager;$i<=count($assList);$i++){
+                if($assList[$i]){
+                    $manager = $i;
+                    break;
                 }
             }
+
+            return $manager;
         }
 
         return 1;
-/*
-        //判斷城市的審核層級開始
-        if(empty($city)){
-            $city = Yii::app()->user->city();
-        }
-		$rows = Yii::app()->db->createCommand()->select("audit_index")
-            ->from("hr_audit_con")->where("city=:city",array(":city"=>$city))->queryRow();
-		if($rows){
-		    $audit_index = intval($rows["audit_index"]);
-		    if(in_array($audit_index,array(1,2,3))){
-                return $audit_index;
+	}
+    //判斷審核人是否空缺
+    public function getAccessAndCity($city,$department,$auditType=""){
+        $systemId = Yii::app()->params['systemId'];
+        $suffix = Yii::app()->params['envSuffix'];
+        $command = Yii::app()->db->createCommand();
+        if(empty($auditType)){ //加班
+            $workOne = $command->select("a.user_id")->from("hr_binding a")
+                ->leftJoin("hr_employee d","d.id = a.employee_id")
+                ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
+                ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
+                ->where("b.status='A' and c.system_id='$systemId' and c.a_read_write like '%ZA08%' and d.department='$department'")
+                ->queryAll();
+            if($workOne){
+                $workOne = array_column($workOne, 'user_id');
+            }
+            $command->reset();
+            $workTwo = $command->select("a.username")->from("security$suffix.sec_user a")
+                ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
+                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZE05%' and a.city=:city",
+                    array(':city'=>$city))->queryAll();
+            if($workTwo){
+                $workTwo = array_column($workTwo, 'username');
+            }
+            $boolOne=true;
+            $boolTwo=true;
+            if((!$workOne)||($workOne==$workTwo)){
+                $boolOne = false;
+            }
+            if(!$workTwo){
+                $boolTwo = false;
+            }
+        }else{ //請假
+            $leaveOne = $command->select("a.user_id")->from("hr_binding a")
+                ->leftJoin("hr_employee d","d.id = a.employee_id")
+                ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
+                ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
+                ->where("b.status='A' and c.system_id='$systemId' and c.a_read_write like '%ZA09%' and d.department='$department'")->queryAll();
+            if($leaveOne){
+                $leaveOne = array_column($leaveOne, 'user_id');
+            }
+            $command->reset();
+            $leaveTwo = $command->select("a.username")->from("security$suffix.sec_user a")
+                ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
+                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZE06%' and a.city=:city",
+                    array(':city'=>$city))->queryAll();
+            if($leaveTwo){
+                $leaveTwo = array_column($leaveTwo, 'username');
+            }
+            $boolOne=true;
+            $boolTwo=true;
+            if((!$leaveOne)||($leaveOne==$leaveTwo)){
+                $boolOne = false;
+            }
+            if(!$leaveTwo){
+                $boolTwo = false;
             }
         }
-        //判斷城市的審核層級結束
-        */
-	}
+
+        return array(
+            1=>$boolOne,
+            2=>$boolTwo,
+            3=>true,
+            4=>true,
+        );
+    }
 
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
