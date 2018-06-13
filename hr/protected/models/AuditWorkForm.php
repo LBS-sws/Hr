@@ -246,7 +246,7 @@ class AuditWorkForm extends CFormModel
         switch ($only){
             case 1: //部門
                 $clause="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
-                if(!empty($staffList)){
+/*                if(!empty($staffList)){
                     $workTwo = Yii::app()->db->createCommand()->select("a.username")->from("security$suffix.sec_user a")
                         ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
                         ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZE05%' and a.city=:city",
@@ -254,13 +254,11 @@ class AuditWorkForm extends CFormModel
                     if(!$workTwo){ //判斷主管是否存在
                         $only++;
                     }
-                }
+                }*/
                 break;
             case 2: //主管
                 $clause="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                if (!empty($manager)){
-                    $auditSql = "status = 4,";
-                }
+                $auditSql = "status = 4,";
                 break;
             case 3: //總監
                 $clause="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
