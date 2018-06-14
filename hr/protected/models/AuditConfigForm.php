@@ -42,6 +42,23 @@ class AuditConfigForm extends CFormModel
         }
     }
 
+    public function getManager($staff_id){
+        $staffList = Yii::app()->db->createCommand()->select("a.department,c.manager as c_manager")->from("hr_employee a")
+            ->leftJoin("hr_dept c","c.id = a.position")
+            ->where("a.id=:id", array(':id'=>$staff_id))->queryRow();
+        if($staffList){
+            return array(
+                "manager"=>$staffList["c_manager"],
+                "department"=>$staffList["department"],
+            );
+        }else{
+            return array(
+                "manager"=>0,
+                "department"=>0,
+            );
+        }
+    }
+
 	public function getCityAuditToCode($employee_id,$auditType="") {
         $staffList = Yii::app()->db->createCommand()->select("a.*,c.manager as c_manager")->from("hr_employee a")
             ->leftJoin("hr_dept c","c.id = a.position")
@@ -52,7 +69,7 @@ class AuditConfigForm extends CFormModel
                 $manager = intval($manager);
                 if(in_array($manager,array(1,2,3,4))){
                     $manager++;
-                    $manager = $manager>=4?3:$manager;
+                    $manager = $manager>=4?4:$manager;
                 }
             }else{
                 $manager = 1;
