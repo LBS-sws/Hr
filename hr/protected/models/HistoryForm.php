@@ -205,6 +205,8 @@ class HistoryForm extends CFormModel
 			array('end_time','validateEndTime'),
 			array('test_type','required'),
 			array('test_type','validateTestType'),
+            array('year_day','required'),
+            array('year_day', 'numerical', 'min'=>1, 'integerOnly'=>true),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}

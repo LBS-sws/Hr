@@ -228,6 +228,34 @@ $('#btnCancelData').on('click',function() {
 	var elm=$('#btnCancelData');
 	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('leave/cancel')."',{});
 });
+
+var ajaxBool = true;
+//顯示年假剩餘天數
+$('#leave_type,#start_time,#employee_id').on('change',function(){
+    if(ajaxBool){
+        ajaxBool = false;
+    }else{
+        ajaxBool = true;
+    }
+    $.ajax({
+        type: 'post',
+        url: '".Yii::app()->createUrl('leave/ajaxYearDay')."',
+        data: {'index':$('#employee_id').val(),'time':$('#start_time').val(),'leave_type':$('#leave_type').val()},
+        dataType: 'json',
+        success: function(data){
+            ajaxBool = true;
+            if(data.status == 1){
+                var html = data.html;
+                var parentDiv = $('#leave_type').parents('div.form-group:first');
+                if(parentDiv.find('div.yearDay').length > 0){
+                    parentDiv.find('div.yearDay').html(html);
+                }else{
+                    parentDiv.append('<div class=\"col-sm-7 yearDay\">'+html+'</div>');
+                }
+            }
+        }
+    });
+});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('leave/delete'));

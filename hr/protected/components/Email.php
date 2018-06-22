@@ -120,11 +120,89 @@ class Email {
         }
     }
 
+    //添加收信人(根據權限和單個城市）
+    public function addEmailToPrefixAndOnlyCity($str,$city){
+        $suffix = Yii::app()->params['envSuffix'];
+        $systemId = Yii::app()->params['systemId'];
+        //$city = Yii::app()->user->city();
+        $sql = " and b.city = '$city' ";
+        if(!is_array($str)){
+            $likeSql = " and a.a_read_write like '%$str%'";
+        }else{
+            $likeSql =" and (";
+            foreach ($str as $key =>$item){
+                if($key != 0){
+                    $likeSql.=" or ";
+                }
+                $likeSql .= "a.a_read_write like '%$item%'";
+            }
+            $likeSql .=")";
+        }
+        $rs = Yii::app()->db->createCommand()->select("b.email")->from("security$suffix.sec_user_access a")
+            ->leftJoin("security$suffix.sec_user b","a.username=b.username")
+            ->where("a.system_id='$systemId' $likeSql $sql and b.email != ''")
+            ->queryAll();
+        if($rs){
+            foreach ($rs as $row){
+                if(!in_array($row["email"],$this->to_addr)){
+                    $this->to_addr[] = $row["email"];
+                }
+            }
+        }
+    }
+
+    //添加收信人(根據權限和部門）
+    public function addEmailToPrefixAndPoi($str,$department){
+        $suffix = Yii::app()->params['envSuffix'];
+        $systemId = Yii::app()->params['systemId'];
+        //$city = Yii::app()->user->city();
+        $sql = " and d.department = '$department' ";
+        if(!is_array($str)){
+            $likeSql = " and a.a_read_write like '%$str%'";
+        }else{
+            $likeSql =" and (";
+            foreach ($str as $key =>$item){
+                if($key != 0){
+                    $likeSql.=" or ";
+                }
+                $likeSql .= "a.a_read_write like '%$item%'";
+            }
+            $likeSql .=")";
+        }
+        $rs = Yii::app()->db->createCommand()->select("b.email")->from("hr_binding e")
+            ->leftJoin("hr_employee d","d.id = e.employee_id")
+            ->leftJoin("security$suffix.sec_user_access a","a.username = e.user_id")
+            ->leftJoin("security$suffix.sec_user b","a.username=b.username")
+            ->where("a.system_id='$systemId' $likeSql $sql and b.email != ''")
+            ->queryAll();
+        if($rs){
+            foreach ($rs as $row){
+                if(!in_array($row["email"],$this->to_addr)){
+                    $this->to_addr[] = $row["email"];
+                }
+            }
+        }
+    }
+
     //添加收信人(lcu）
     public function addEmailToLcu($lcu){
         $suffix = Yii::app()->params['envSuffix'];
         $email = Yii::app()->db->createCommand()->select("email")->from("security$suffix.sec_user")
             ->where("username=:username",array(":username"=>$lcu))
+            ->queryRow();
+        if($email){
+            if(!in_array($email["email"],$this->to_addr)){
+                $this->to_addr[] = $email["email"];
+            }
+        }
+    }
+
+    //添加收信人(員工id）
+    public function addEmailToStaffId($staffId){
+        $suffix = Yii::app()->params['envSuffix'];
+        $email = Yii::app()->db->createCommand()->select("b.email")->from("hr_binding a")
+            ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
+            ->where("a.employee_id=:employee_id",array(":employee_id"=>$staffId))
             ->queryRow();
         if($email){
             if(!in_array($email["email"],$this->to_addr)){

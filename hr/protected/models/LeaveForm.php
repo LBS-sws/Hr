@@ -117,6 +117,15 @@ class LeaveForm extends CFormModel
             ->from("hr_vacation")->where("id='$id'")->queryRow();
         if($rows){
             $this->vacation_list = $rows;
+            if($rows["vaca_type"] == "E"){ //年假
+                $yearDay =YearDayForm::getSumDayToYear($this->employee_id,$this->start_time);
+                $leaveNum =LeaveForm::getLeaveNumToYear($this->employee_id,$this->start_time);
+                $leaveNum =$yearDay - floatval($leaveNum);
+                if(floatval($this->log_time) > $leaveNum){
+                    $message = Yii::t('fete','Log Date')."不能大于".$leaveNum."天";
+                    $this->addError($attribute,$message);
+                }
+            }
             if($rows["log_bool"]  == 1){
                 if(floatval($this->log_time) > floatval($rows["max_log"])){
                     $message = Yii::t('fete','Log Date')."不能大于".$rows["max_log"]."天";
@@ -201,14 +210,17 @@ class LeaveForm extends CFormModel
     }
 
     //某年累積的請假天數（僅年假)
-    public function getLeaveNumToYear($employee_id,$time){
-        if(empty($time)||empty($employee_id)){
+    public function getLeaveNumToYear($employee_id,$time=""){
+        if(empty($employee_id)){
             return 0;
+        }
+        if(empty($time)){
+            $time = date("Y-m-d H:i:s");
         }
         $year = date("Y",strtotime($time));
         $sql = "select sum(a.log_time) AS sumDay from hr_employee_leave a 
             LEFT JOIN hr_vacation b ON a.vacation_id = b.id
-            WHERE a.start_time>='$year-01-01 00:00:00'AND a.start_time<'$time' AND a.status=4 AND b.vaca_type='E' AND a.employee_id=$employee_id";
+            WHERE a.start_time>='$year-01-01 00:00:00'AND a.start_time<='$year-12-31 23:59:59' AND a.status=4 AND b.vaca_type='E' AND a.employee_id=$employee_id";
         $Sum = Yii::app()->db->createCommand($sql)->queryRow();
         if($Sum){
             return $Sum["sumDay"];
@@ -221,19 +233,10 @@ class LeaveForm extends CFormModel
         $lcuId = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
-        $uid = $this->getEmployeeIdToUser();
-        if(Yii::app()->user->validFunction('ZR03')){
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
-                ->from("hr_employee_leave a")
-                ->leftJoin("hr_employee b","a.employee_id = b.id")
-                ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
-        }else{
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
-                ->from("hr_employee_leave a")
-                ->leftJoin("hr_employee b","a.employee_id = b.id")
-                ->where("a.id=:id and (a.employee_id=:employee_id or a.lcu =:lcu)",
-                    array(":id"=>$index,":employee_id"=>$uid,":lcu"=>$lcuId))->queryAll();
-        }
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
+            ->from("hr_employee_leave a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
@@ -431,8 +434,48 @@ class LeaveForm extends CFormModel
                 'leave_code'=>"Q".$this->lenStr($this->id)
             ), 'id=:id', array(':id'=>$this->id));
         }
+
+        //發送郵件
+        $this->sendEmail();
 		return true;
 	}
+
+	protected function sendEmail(){
+        if($this->audit){
+            $assList=array(
+                1=>"ZA09",
+                2=>"ZE06",
+                3=>"ZG05",
+                4=>"ZC11",
+            );
+            $email = new Email();
+            $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
+                ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
+            $description="新的请假单 - ".$row["name"];
+            $subject="新的请假单 - ".$row["name"];
+            $message="<p>请假编号：".$this->leave_code."</p>";
+            $message.="<p>员工编号：".$row["code"]."</p>";
+            $message.="<p>员工姓名：".$row["name"]."</p>";
+            $message.="<p>请假时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."天)</p>";
+            $message.="<p>请假原因：".$this->leave_cause."</p>";
+            $email->setDescription($description);
+            $email->setMessage($message);
+            $email->setSubject($subject);
+            $assType = $assList[$this->z_index];
+            switch ($this->z_index){
+                case 1:
+                    $email->addEmailToPrefixAndPoi($assType,$row["department"]);
+                    break;
+                case 2:
+                    $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
+                    break;
+                default:
+                    $email->addEmailToPrefixAndCity($assType,$row["city"]);
+            }
+            $email->sent();
+        }
+    }
+
 
 	//獲取綁定員工的列表
     public function getBindEmployeeList(){

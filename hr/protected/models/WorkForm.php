@@ -133,18 +133,10 @@ class WorkForm extends CFormModel
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
-        $uid = $this->getEmployeeIdToUser();
-        if(Yii::app()->user->validFunction('ZR03')){
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
-                ->from("hr_employee_work a")
-                ->leftJoin("hr_employee b","a.employee_id = b.id")
-                ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
-        }else{
-            $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
-                ->from("hr_employee_work a")
-                ->leftJoin("hr_employee b","a.employee_id = b.id")
-                ->where("a.id=:id and a.employee_id=:employee_id",array(":id"=>$index,":employee_id"=>$uid))->queryAll();
-        }
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
+            ->from("hr_employee_work a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
@@ -349,8 +341,52 @@ class WorkForm extends CFormModel
                 'work_code'=>"J".$this->lenStr($this->id)
             ), 'id=:id', array(':id'=>$this->id));
         }
+
+        //發送郵件
+        $this->sendEmail();
 		return true;
 	}
+
+    protected function sendEmail(){
+        if($this->audit){
+            $assList=array(
+                1=>"ZA08",
+                2=>"ZE05",
+                3=>"ZG04",
+                4=>"ZC10",
+            );
+            $email = new Email();
+            $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
+                ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
+            if($this->work_type == 2){
+                $dayStr ="天";
+            }else{
+                $dayStr ="小時";
+            }
+            $description="新的加班单 - ".$row["name"];
+            $subject="新的加班单 - ".$row["name"];
+            $message="<p>加班编号：".$this->work_code."</p>";
+            $message.="<p>员工编号：".$row["code"]."</p>";
+            $message.="<p>员工姓名：".$row["name"]."</p>";
+            $message.="<p>加班时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."$dayStr)</p>";
+            $message.="<p>加班原因：".$this->work_cause."</p>";
+            $email->setDescription($description);
+            $email->setMessage($message);
+            $email->setSubject($subject);
+            $assType = $assList[$this->z_index];
+            switch ($this->z_index){
+                case 1:
+                    $email->addEmailToPrefixAndPoi($assType,$row["department"]);
+                    break;
+                case 2:
+                    $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
+                    break;
+                default:
+                    $email->addEmailToPrefixAndCity($assType,$row["city"]);
+            }
+            $email->sent();
+        }
+    }
 
 	//計算員工的加班費用
     public function resetWorkCost(){

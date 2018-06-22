@@ -83,15 +83,7 @@ class AuditWorkForm extends CFormModel
     {
         return array(
             array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name,bool_cost,city,lcd','safe'),
-            array('work_type','required','on'=>array("audit")),
-            array('work_type','validateWorkType','on'=>array("audit")),
-            array('work_cause','required','on'=>array("audit")),
-            array('work_address','required','on'=>array("audit")),
-            array('start_time','required','on'=>array("audit")),
-            array('end_time','required','on'=>array("audit")),
-            array('log_time','required','on'=>array("audit")),
-            array('end_time','validateTime','on'=>array("audit")),
-            array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>true,'on'=>array("audit")),
+
             array('reject_cause','required',"on"=>"reject"),
             array('files, removeFileId, docMasterId','safe'),
         );
@@ -262,12 +254,11 @@ class AuditWorkForm extends CFormModel
                 break;
             case 3: //總監
                 $clause="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
-                if (!empty($manager)){
-                    $auditSql = "status = 4,";
-                }
+                $auditSql = "status = 4,";
                 break;
             case 4: //你
                 $clause="you_lcu = :you_lcu, you_lcd = :you_lcd, ";
+                $auditSql = "status = 4,";
                 break;
             default:
                 throw new CHttpException(404,'數據異常');
@@ -279,17 +270,7 @@ class AuditWorkForm extends CFormModel
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
-                if($only==4){
-                    $this->resetWorkCost();//計算員工的工資
-                    $sql.="work_type = :work_type, 
-							work_cause = :work_cause, 
-							work_address = :work_address, 
-							work_cost = :work_cost, 
-							start_time = :start_time, 
-							end_time = :end_time, 
-							log_time = :log_time,
-							status = 4, ";
-                }else{
+                if($only!=4){
                     $only++;
                 }
                 $sql.=$clause.$auditSql."luu = :luu
@@ -319,8 +300,10 @@ class AuditWorkForm extends CFormModel
             $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
         if (strpos($sql,':audit_remark')!==false)
             $command->bindParam(':audit_remark',$this->audit_remark,PDO::PARAM_STR);
-        if (strpos($sql,':z_index')!==false)
+        if (strpos($sql,':z_index')!==false){
             $command->bindParam(':z_index',$only,PDO::PARAM_STR);
+            $this->z_index = $only;
+        }
 
         if (strpos($sql,':work_type')!==false)
             $command->bindParam(':work_type',$this->work_type,PDO::PARAM_STR);
@@ -356,7 +339,41 @@ class AuditWorkForm extends CFormModel
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
+
+
+        //發送郵件
+        $this->sendEmail();
         return true;
+    }
+
+    protected function sendEmail(){
+        $email = new Email();
+        $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
+            ->where('id=:id', array(':id'=>$this->employee_name))->queryRow();
+        $message="<p>加班编号：".$this->work_code."</p>";
+        $message.="<p>员工编号：".$row["code"]."</p>";
+        $message.="<p>员工姓名：".$row["name"]."</p>";
+        $message.="<p>加班时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."天)</p>";
+        if($this->scenario == "audit"){
+            if ($this->z_index == 2){
+                $description="加班二次审核 - ".$row["name"];
+                $subject="加班二次审核 - ".$row["name"];
+                $email->addEmailToPrefixAndOnlyCity("ZE05",$row["city"]);
+            }else{
+                $description="加班审核通过 - ".$row["name"];
+                $subject="加班审核通过 - ".$row["name"];
+                $email->addEmailToStaffId($row["id"]);
+            }
+        }else{
+            $description="加班被拒絕 - ".$row["name"];
+            $subject="加班被拒絕 - ".$row["name"];
+            $message.="<p>拒絕原因：".$this->reject_cause."</p>";
+            $email->addEmailToStaffId($row["id"]);
+        }
+        $email->setDescription($description);
+        $email->setMessage($message);
+        $email->setSubject($subject);
+        $email->sent();
     }
 
     //計算員工的加班費用
@@ -390,11 +407,12 @@ class AuditWorkForm extends CFormModel
 
     //判斷輸入框能否修改
     public function getInputBool(){
-        if($this->only == 2&&$this->getScenario()!='view'){
+        return true;
+/*        if($this->only == 2&&$this->getScenario()!='view'){
             return false;
         }else{
             return true;
-        }
+        }*/
     }
 
     //支付不支付列表

@@ -62,18 +62,29 @@ class YearDayForm extends CFormModel
     }
 
     //累積天數
-    public function getSumDayToYear($employee_id,$time){
-        if(empty($time)||empty($employee_id)){
+    public function getSumDayToYear($employee_id,$time=""){
+        if(empty($employee_id)){
             return 0;
+        }
+        if(empty($time)){
+            $time = date("Y/m/d");
+        }else{
+            $time = date("Y/m/d",strtotime($time));
         }
         $year = date("Y",strtotime($time));
+        $time = date("Y/m/d",strtotime("$time - 1 year"));
         $sql = "select sum(add_num) AS sumDay from hr_staff_year WHERE year=$year AND employee_id=$employee_id";
         $Sum = Yii::app()->db->createCommand($sql)->queryRow();
+        $sql = "SELECT year_day FROM hr_employee WHERE staff_status = 0 and replace(entry_time,'-','/')<='$time' AND id=$employee_id";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        $yearDay = 0;
         if($Sum){
-            return $Sum["sumDay"];
-        }else{
-            return 0;
+            $yearDay+=floatval($Sum["sumDay"]);
         }
+        if($row){
+            $yearDay+=floatval($row["year_day"]);
+        }
+        return $yearDay;
     }
     //刪除驗證
     public function deleteValidate(){

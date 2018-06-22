@@ -28,7 +28,7 @@ class LeaveController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','delete','save','audit','fileupload','fileRemove'),
+                'actions'=>array('new','edit','delete','save','audit','fileupload','fileRemove','ajaxYearDay'),
                 'expression'=>array('LeaveController','allowReadWrite'),
             ),
             array('allow',
@@ -273,6 +273,28 @@ class LeaveController extends Controller
             $pdf = new MyPDFTwo();
             $pdf->setPageToLeave($arr);
             $pdf->getOutput($arr["employee_name"]."".$arr["leave_code"]);
+        }
+    }
+
+    //计算年假
+    public function actionAjaxYearDay(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $index = $_POST["index"];
+            $time = $_POST["time"];
+            $leave_type = $_POST["leave_type"];
+            $model = new VacationForm();
+            $html = "";
+            if($model->retrieveData($leave_type)){
+                if($model->vaca_type == 'E'){
+                    $yearDay =YearDayForm::getSumDayToYear($index,$time);
+                    $leaveNum =LeaveForm::getLeaveNumToYear($index,$time);
+                    $leaveNum =$yearDay - floatval($leaveNum);
+                    $html = "<p class='form-control-static text-success'>年假剩余天数：".$leaveNum."</p>";
+                }
+            }
+            echo CJSON::encode(array("status"=>1,"html"=>$html));
+        }else{
+            $this->redirect(Yii::app()->createUrl(''));
         }
     }
 }
