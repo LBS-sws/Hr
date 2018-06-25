@@ -346,11 +346,19 @@ class AuditLeaveForm extends CFormModel
                 $subject="请假单审核通过 - ".$row["name"];
                 $email->addEmailToStaffId($row["id"]);
             }
+
+            if ($this->z_index == 3){ //普通員工的請假需要給總監發送郵件
+                $subjectOne = "员工请假通过通知 - ".$row["name"];
+                $emailOne = new Email($subjectOne,$message,$subjectOne);
+                $emailOne->addEmailToPrefixAndCity("ZG05",$row["city"]);
+                $emailOne->sent();
+            }
         }else{
             $description="请假单被拒絕 - ".$row["name"];
             $subject="请假单被拒絕 - ".$row["name"];
             $message.="<p>拒絕原因：".$this->reject_cause."</p>";
             $email->addEmailToStaffId($row["id"]);
+            $email->addEmailToPrefixAndCity("ZG05",$row["city"]);
         }
         $email->setDescription($description);
         $email->setMessage($message);
