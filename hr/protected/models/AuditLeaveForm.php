@@ -137,7 +137,7 @@ class AuditLeaveForm extends CFormModel
             $staff_id = 0;
             $department = 0;
         }
-        $sql = " a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only";
+        $sql = " a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only and a.id=:id";
         switch ($only){
             case 1: //部門審核
                 $sql.=" AND b.department = '$department' ";
