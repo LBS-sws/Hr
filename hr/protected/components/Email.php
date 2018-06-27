@@ -85,11 +85,13 @@ class Email {
 
     //添加收信人(只有地區總監收到）
     public function addEmailToOnlyCityBoss($city){
-        $uid = $this->getBossUidToMinCity($city);
+        $uidList = $this->getBossUidToMinCity($city);
         if(empty($city)){
             return "";
         }else{
-            $this->addEmailToLcu($uid);
+            foreach ($uidList as $uid){
+                $this->addEmailToLcu($uid);
+            }
         }
     }
 
@@ -262,28 +264,29 @@ class Email {
         return $cityList;
     }
 
-    //查找管轄某城市的boos城市（根據小城市查找大城市）
+    //查找管轄某城市的boos城市的負責人（根據小城市查找大城市）
     public function getBossUidToMinCity($minCity){
         if(empty($minCity)){
-            return "";
+            return array();
         }
-        $uid = "";
-        $arrList=array("华南","华西","华北","华东");
+        $userList = array();
+        if(is_array($minCity)){
+            $minCity = $minCity["region"];
+            $userList = array($minCity["incharge"]);
+        }
+        //$arrList=array("华南","华西","华北","华东");
         $suffix = Yii::app()->params['envSuffix'];
         $command = Yii::app()->db->createCommand();
         $rows = $command->select("*")->from("security$suffix.sec_city")
             ->where("code=:code",array(":code"=>$minCity))->queryAll();
         if($rows){
             foreach ($rows as $row){
-                if(in_array($row["name"],$arrList)){
-                    return $row["incharge"];
-                }else{
-                    Email::getBossUidToMinCity($row["region"]);
-                }
+                $foreachList = Email::getBossUidToMinCity($row);
+                $userList = array_merge($foreachList,$userList);
             }
         }
 
-        return $uid;
+        return $userList;
     }
 
     //查找某城市管轄下的所有城市（根據大城市查找小城市）
