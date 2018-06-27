@@ -82,7 +82,7 @@ class AuditWorkForm extends CFormModel
     public function rules()
     {
         return array(
-            array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name,bool_cost,city,lcd','safe'),
+            array('id,employee_id,work_code,work_type,work_address,status,work_cause,start_time,end_time,log_time,only,audit_remark,employee_name,bool_cost,city,lcd','safe'),
 
             array('reject_cause','required',"on"=>"reject"),
             array('files, removeFileId, docMasterId','safe'),
@@ -347,13 +347,18 @@ class AuditWorkForm extends CFormModel
     }
 
     protected function sendEmail(){
+        if($this->work_type == 2){
+            $dayStr ="天";
+        }else{
+            $dayStr ="小时";
+        }
         $email = new Email();
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
             ->where('id=:id', array(':id'=>$this->employee_name))->queryRow();
         $message="<p>加班编号：".$this->work_code."</p>";
         $message.="<p>员工编号：".$row["code"]."</p>";
         $message.="<p>员工姓名：".$row["name"]."</p>";
-        $message.="<p>加班时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."天)</p>";
+        $message.="<p>加班时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."$dayStr)</p>";
         if($this->scenario == "audit"){
             if ($this->z_index == 2){
                 $description="加班二次审核 - ".$row["name"];
