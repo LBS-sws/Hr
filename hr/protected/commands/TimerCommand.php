@@ -46,6 +46,8 @@ class TimerCommand extends CConsoleCommand {
 
 
         $this->signedContract();
+        $this->contractCitySendEmail();
+        $this->contractAgoSendEmail();
         echo "end";
 	}
 
@@ -58,7 +60,6 @@ class TimerCommand extends CConsoleCommand {
         $firstDay = date("Y/m/d",strtotime("$firstDay - 14 day"));
         $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
-        echo "合同過期:$sql<br>";
         if($rows){
             foreach ($rows as $row){
                 $description="员工合同签约提醒 - ".$row["name"];
@@ -77,6 +78,53 @@ class TimerCommand extends CConsoleCommand {
             }
             $command->reset();
             $command->update('hr_employee', array("signed_bool"=>1),$sql);
+        }
+    }
+
+    //員工合同10天將過期時給地區總監發送郵件
+    private function contractCitySendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday + 10 day"));
+        $sql = "staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') ='$firstday'";
+        $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="【紧急】".$row["name"]."的合同将于".date("Y年m月d日",strtotime($row["end_time"]))."到期,请记得安排续约";
+                $subject=$description;
+                $message=$description;
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addEmailToCity($row["city"]);
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+        }
+    }
+    //員工合同過期2周給饒總發送郵件
+    private function contractAgoSendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday - 14 day"));
+        $sql = "staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') ='$firstday'";
+        $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="【紧急】".$row["name"]."的合同于".date("Y年m月d日",strtotime($row["end_time"]))."已到期";
+                $subject=$description;
+                $message=$description;
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
         }
     }
 }
