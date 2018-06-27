@@ -66,12 +66,18 @@ class WorkList extends CListPageModel
         $manager = AuditConfigForm::getManager($employee_id);
 		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
+              LEFT JOIN hr_dept d ON b.position = d.id 
                 where a.id!=0 
 			";
 		$sql2 = "select count(a.id)
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
+              LEFT JOIN hr_dept d ON b.position = d.id 
                 where a.id!=0 
 			";
+        if(!Yii::app()->user->validFunction('ZR03')){
+            $sql1.=" and d.manager <= ".$manager["manager"];
+            $sql2.=" and d.manager <= ".$manager["manager"];
+        }
 		if(Yii::app()->user->validFunction('ZR03')||in_array($manager["manager"],array(2,3,4))){
             $sql1.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
             $sql2.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";

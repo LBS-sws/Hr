@@ -55,14 +55,16 @@ class LeaveList extends CListPageModel
               from hr_employee_leave a 
               LEFT JOIN hr_employee b ON a.employee_id = b.id 
               LEFT JOIN hr_dept d ON b.position = d.id 
-              where a.id!=0 and d.manager <= 
-			".$manager["manager"]." ";
+              where a.id!=0 ";
 		$sql2 = "select count(a.id)
 				from hr_employee_leave a 
 				LEFT JOIN hr_employee b ON a.employee_id = b.id 
                 LEFT JOIN hr_dept d ON b.position = d.id 
-				where a.id!=0 and d.manager <= 
-			".$manager["manager"]." ";
+				where a.id!=0 ";
+		if(!Yii::app()->user->validFunction('ZR04')){
+            $sql1.=" and d.manager <= ".$manager["manager"];
+            $sql2.=" and d.manager <= ".$manager["manager"];
+        }
         if(Yii::app()->user->validFunction('ZR04')||in_array($manager["manager"],array(2,3,4))){
             $sql1.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
             $sql2.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
