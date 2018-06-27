@@ -83,6 +83,16 @@ class Email {
         }
     }
 
+    //添加收信人(只有地區總監收到）
+    public function addEmailToOnlyCityBoss($city){
+        $uid = $this->getBossUidToMinCity($city);
+        if(empty($city)){
+            return "";
+        }else{
+            $this->addEmailToLcu($uid);
+        }
+    }
+
     //添加收信人(根據權限）
     public function addEmailToPrefixAndCity($str,$city){
         $suffix = Yii::app()->params['envSuffix'];
@@ -250,6 +260,30 @@ class Email {
         }
 
         return $cityList;
+    }
+
+    //查找管轄某城市的boos城市（根據小城市查找大城市）
+    public function getBossUidToMinCity($minCity){
+        if(empty($minCity)){
+            return "";
+        }
+        $uid = "";
+        $arrList=array("华南","华西","华北","华东");
+        $suffix = Yii::app()->params['envSuffix'];
+        $command = Yii::app()->db->createCommand();
+        $rows = $command->select("*")->from("security$suffix.sec_city")
+            ->where("code=:code",array(":code"=>$minCity))->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                if(in_array($row["name"],$arrList)){
+                    return $row["incharge"];
+                }else{
+                    Email::getBossUidToMinCity($row["region"]);
+                }
+            }
+        }
+
+        return $uid;
     }
 
     //查找某城市管轄下的所有城市（根據大城市查找小城市）

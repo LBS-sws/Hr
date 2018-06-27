@@ -81,13 +81,13 @@ class TimerCommand extends CConsoleCommand {
         }
     }
 
-    //員工合同10天將過期時給地區總監發送郵件
+    //員工合同7天將過期時給地區總監發送郵件
     private function contractCitySendEmail(){
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $command->reset();
         $firstday = date("Y/m/d");
-        $firstday = date("Y/m/d",strtotime("$firstday + 10 day"));
+        $firstday = date("Y/m/d",strtotime("$firstday + 7 day"));
         $sql = "staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') ='$firstday'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
@@ -98,19 +98,19 @@ class TimerCommand extends CConsoleCommand {
                 $email->setDescription($description);
                 $email->setMessage($message);
                 $email->setSubject($subject);
-                $email->addEmailToCity($row["city"]);
+                $email->addEmailToOnlyCityBoss($row["city"]);
                 $email->sent("系统生成");
                 $email->resetToAddr();
             }
         }
     }
-    //員工合同過期2周給饒總發送郵件
+    //員工合同過期10天給饒總發送郵件
     private function contractAgoSendEmail(){
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $command->reset();
         $firstday = date("Y/m/d");
-        $firstday = date("Y/m/d",strtotime("$firstday - 14 day"));
+        $firstday = date("Y/m/d",strtotime("$firstday - 10 day"));
         $sql = "staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') ='$firstday'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
