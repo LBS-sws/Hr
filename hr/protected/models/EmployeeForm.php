@@ -733,9 +733,9 @@ class EmployeeForm extends CFormModel
 
                         $word->setValue("companyname",$companyName["name"]);//公司名字
                         $word->setValue("staffname",$staff["now"]["name"]);//員工名字
-                        $word->setValue("agreementyears",date("Y",strtotime($list["effect_time"])));
-                        $word->setValue("agreementmonth",date("m",strtotime($list["effect_time"])));
-                        $word->setValue("agreementday",date("d",strtotime($list["effect_time"])));
+                        $word->setValue("agreementyears",date("Y",strtotime($staff["old"]["effect_time"])));
+                        $word->setValue("agreementmonth",date("m",strtotime($staff["old"]["effect_time"])));
+                        $word->setValue("agreementday",date("d",strtotime($staff["old"]["effect_time"])));
                         $fileName = date("YmdHis",strtotime($list["lcd"]));
                         $word->save($fileName);
                         //協議的地址格式：upload/agreement/所在地區/協議時間.docx
