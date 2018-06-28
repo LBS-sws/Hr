@@ -68,6 +68,7 @@ class EmployList extends CListPageModel
         }
         return array(
             ""=>"",
+            "salary"=>Yii::t("contract","salary"),
             "promotion"=>Yii::t("contract","promotion"),
             "transfer"=>Yii::t("contract","transfer"),
             "contract"=>Yii::t("contract","contract").$num

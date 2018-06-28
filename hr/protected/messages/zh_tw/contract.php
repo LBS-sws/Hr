@@ -306,5 +306,8 @@ return array(
     //2018-04-24
     'contract expire'=>'合同到期',
     'contract is about to expire'=>'合同即將到期',
+
+    //2018-04-24
+    'salary'=>'調薪',
 );
 ?>
