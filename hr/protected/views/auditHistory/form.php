@@ -83,6 +83,21 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                 </div>
             </div>
             <?php if ($model->operation=="change"): ?>
+
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'effect_time',array('class'=>"col-sm-2 control-label")); ?>
+
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'effect_time',
+                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'&&$model->staff_status!=3),));
+                            ?>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'opr_type',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">

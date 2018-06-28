@@ -681,7 +681,7 @@ class EmployeeForm extends CFormModel
     //檢查是否有補充協議
     public function staffHasAgreement(){
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_history")
-            ->where('employee_id=:employee_id and status in ("transfer","promotion")', array(':employee_id'=>$this->id))->order('lcd desc')->queryAll();
+            ->where('employee_id=:employee_id and status in ("transfer","promotion","salary")', array(':employee_id'=>$this->id))->order('lcd desc')->queryAll();
         $arr = array();
         if($rows){
             foreach ($rows as $row){
@@ -733,9 +733,9 @@ class EmployeeForm extends CFormModel
 
                         $word->setValue("companyname",$companyName["name"]);//公司名字
                         $word->setValue("staffname",$staff["now"]["name"]);//員工名字
-                        $word->setValue("agreementyears",date("Y",strtotime($list["lcd"])));
-                        $word->setValue("agreementmonth",date("m",strtotime($list["lcd"])));
-                        $word->setValue("agreementday",date("d",strtotime($list["lcd"])));
+                        $word->setValue("agreementyears",date("Y",strtotime($list["effect_time"])));
+                        $word->setValue("agreementmonth",date("m",strtotime($list["effect_time"])));
+                        $word->setValue("agreementday",date("d",strtotime($list["effect_time"])));
                         $fileName = date("YmdHis",strtotime($list["lcd"]));
                         $word->save($fileName);
                         //協議的地址格式：upload/agreement/所在地區/協議時間.docx

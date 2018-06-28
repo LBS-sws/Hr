@@ -79,6 +79,7 @@ class HistoryForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $change_city;//調職城市
     public $code_old;//員工編號（舊）
+    public $effect_time;//生效日期
     public $no_of_attm = array(
         'employee'=>0,
         'employ'=>0
@@ -165,6 +166,7 @@ class HistoryForm extends CFormModel
             'change_city'=>Yii::t('contract','Change City'),
             'change_city_old'=>Yii::t('contract','Staff City'),
             'code_old'=>Yii::t('contract','Code Old'),
+            'effect_time'=>Yii::t('contract','Effect Time'),
 		);
 	}
 
@@ -178,7 +180,7 @@ class HistoryForm extends CFormModel
             array('id,employee_id,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,user_card_date,emergency_user,emergency_phone,
              ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type, leave_reason, leave_time, code_old,
-              education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, change_city',
+              education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, effect_time, change_city',
                 'safe'),
 			array('update_remark','required'),
 			array('code','required'),
@@ -205,6 +207,7 @@ class HistoryForm extends CFormModel
 			array('end_time','validateEndTime'),
 			array('test_type','required'),
 			array('test_type','validateTestType'),
+            array('effect_time','required'),
             array('year_day','required'),
             array('year_day', 'numerical', 'min'=>1, 'integerOnly'=>true),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -350,6 +353,7 @@ class HistoryForm extends CFormModel
 			        $this->employee_id = $row['employee_id'];
                     $this->update_remark = $row['update_remark'];
                     $this->ject_remark = $row['ject_remark'];
+                    $this->effect_time = $row['effect_time'];
                 }else{
                     //$this->no_of_attm['employ'] = $row['employdoc'];
                     $this->employee_id = $row['id'];
@@ -473,6 +477,7 @@ class HistoryForm extends CFormModel
         $row['staff_status'] = $this->staff_status;
         $row['ject_remark'] = "";
         $row['operation'] = $this->scenario;
+        $row['effect_time'] = $this->effect_time;
         $row['opr_type'] = $this->opr_type;
         $row['employee_id'] = $this->employee_id;
         $row['update_remark'] = $this->update_remark;

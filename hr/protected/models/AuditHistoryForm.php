@@ -80,6 +80,7 @@ class AuditHistoryForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $change_city;//調職城市
     public $code_old;//員工編號（舊）
+    public $effect_time;//生效日期
     public $no_of_attm = array(
         'employee'=>0
     );
@@ -163,6 +164,7 @@ class AuditHistoryForm extends CFormModel
             'change_city'=>Yii::t('contract','Change City'),
             'change_city_old'=>Yii::t('contract','Staff City'),
             'code_old'=>Yii::t('contract','Code Old'),
+            'effect_time'=>Yii::t('contract','Effect Time'),
 		);
 	}
 
@@ -175,7 +177,7 @@ class AuditHistoryForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,employee_id,ject_remark,operation,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
-             ld_card, sb_card, jj_card,attachment,nation, household, empoyment_code, social_code, fix_time,change_city,
+             ld_card, sb_card, jj_card,attachment,nation, household, empoyment_code, social_code, fix_time,change_city,effect_time,
               education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other',
                 'safe'),
 			array('ject_remark','required',"on"=>"reject"),
@@ -315,6 +317,7 @@ class AuditHistoryForm extends CFormModel
                 $this->emergency_phone = $row['emergency_phone'];
                 $this->change_city = $row['change_city'];
                 $this->code_old = $row['code_old'];
+                $this->effect_time = $row['effect_time'];
 				break;
 			}
 		}

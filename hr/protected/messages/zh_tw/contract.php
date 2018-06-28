@@ -309,5 +309,6 @@ return array(
 
     //2018-04-24
     'salary'=>'調薪',
+    'Effect Time'=>'生效日期',
 );
 ?>
