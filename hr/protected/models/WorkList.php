@@ -59,6 +59,19 @@ class WorkList extends CListPageModel
         }
     }
 
+	//獲取當前用戶綁定的員工名字
+    public function getEmployeeId(){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("employee_id,employee_name")->from("hr_binding")
+            ->where('user_id=:user_id',
+                array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            return $rows["employee_id"];
+        }else{
+            return "";
+        }
+    }
+
 	public function retrieveDataByPage($pageNum=1)
 	{
         $city_allow = Yii::app()->user->city_allow();

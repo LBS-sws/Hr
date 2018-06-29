@@ -89,11 +89,11 @@ class LeaveController extends Controller
     public function actionNew()
     {
         $model = new LeaveForm('new');
-        $employeeName = WorkList::getEmployeeName();
-        if(empty($employeeName)){
+        $employeeId = WorkList::getEmployeeId();
+        if(empty($employeeId)){
             throw new CHttpException(404,Yii::t("contract",'The account has no binding staff, please contact the administrator'));
         }else{
-            $model->employee_id = $employeeName;
+            $model->employee_id = $employeeId;
         }
         $this->render('form',array('model'=>$model,));
     }
