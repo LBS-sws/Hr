@@ -157,8 +157,8 @@ class AuditLeaveForm extends CFormModel
             foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->leave_code = $row['leave_code'];
-                $this->employee_id = $row['employee_name'];
-                $this->employee_name = $row['employee_id'];
+                $this->employee_id = $row['employee_id'];
+                $this->employee_name = $row['employee_name'];
                 $this->staff_type = $row['staff_type'];
                 $this->wage = $row['wage'];
                 $this->vacation_id = $row['vacation_id'];
@@ -209,7 +209,7 @@ class AuditLeaveForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $sql = '';
         $only = intval($this->only);
-        $staffList = BindingForm::getEmployeeListToEmployeeId($this->employee_name);
+        $staffList = BindingForm::getEmployeeListToEmployeeId($this->employee_id);
         if(!empty($staffList)){
             $manager= $staffList["c_manager"];
         }
@@ -331,7 +331,7 @@ class AuditLeaveForm extends CFormModel
     protected function sendEmail(){
         $email = new Email();
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
-            ->where('id=:id', array(':id'=>$this->employee_name))->queryRow();
+            ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
         $message="<p>请假编号：".$this->leave_code."</p>";
         $message.="<p>员工编号：".$row["code"]."</p>";
         $message.="<p>员工姓名：".$row["name"]."</p>";
@@ -380,7 +380,7 @@ class AuditLeaveForm extends CFormModel
         }else{
             $this->end_time.=" 18:00:00";
         }
-        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
+        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
         $wage = floatval($employeeList["wage"]);
         $vacationList = $this->vacation_list;
         if($vacationList["sub_bool"] == 1){ //

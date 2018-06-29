@@ -241,11 +241,7 @@ class LeaveForm extends CFormModel
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->leave_code = $row['leave_code'];
-                if(Yii::app()->user->validFunction('ZR06')){
-                    $this->employee_id = $row['employee_id'];
-                }else{
-                    $this->employee_id = $row['employee_name'];
-                }
+                $this->employee_id = $row['employee_id'];
                 $this->wage = $row['wage'];
                 $this->staff_type = $row['staff_type'];
                 $this->vacation_id = $row['vacation_id'];
@@ -387,6 +383,7 @@ class LeaveForm extends CFormModel
             $this->employee_id = $employeeList["id"];
             $this->city = $employeeList["city"];
         }
+
         $this->resetLeaveCost();//計算員工的工資
 
         $command=$connection->createCommand($sql);
