@@ -90,17 +90,17 @@ class MyPDFTwo {
 
         $this->_PDF->SetFont('stsongstdlight', '', 12, '', true);
         $html = "备注：";
-        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $this->_PDF->writeHTMLCell(190, 5, 10,"", $html, 0, 1, 0, true, 'L', true);
         $html = "1. 表格必须填写完整、无遗漏。";
-        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $this->_PDF->writeHTMLCell(190, 5, 10,"", $html, 0, 1, 0, true, 'L', true);
         $html = "2. 一次性申请年假天数为3天（含）以上的，提前2周申请。";
-        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $this->_PDF->writeHTMLCell(190, 5, 10,"", $html, 0, 1, 0, true, 'L', true);
         $html = "3. 病假需提供二级以上医院出具的病假单，无病假单算事假处理。";
-        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
-        $html = "4. 请假流程：员工填写《员工请假单》→人事部审核→华东区营运总监或中国区营运总监签批→人事部存档";
-        $this->_PDF->writeHTMLCell(190, 10, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $this->_PDF->writeHTMLCell(190, 5, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $html = "4.请假流程：员工在LBS系统填写申请，由相关负责人审批（员工--部门经理；部门经理--地区负责人；地区负责人--地区总监；地区总监--中国区总监）完成后，由地区人事专员下载员工请假表单，并让相关人员手动签字，签字后的表单再上传至员工请假表单附件处";
+        $this->_PDF->writeHTMLCell(190, 13, 10,"", $html, 0, 1, 0, true, 'L', true);
         $html = "5. 该请假单适用于公司内的所有员工。";
-        $this->_PDF->writeHTMLCell(190, 6, 10,"", $html, 0, 1, 0, true, 'L', true);
+        $this->_PDF->writeHTMLCell(190, 5, 10,"", $html, 0, 1, 0, true, 'L', true);
 
         $html = "姓名";
         $this->_PDF->writeHTMLCell(25, 8, 10,47, $html, 0, 1, 0, true, 'C', true);
@@ -229,12 +229,12 @@ class MyPDFTwo {
         $this->_PDF->MultiCell(190,13,"",1);
         $this->_PDF->MultiCell(190,50,"",1);
         $this->_PDF->MultiCell(190,22,"",1);
-        $this->_PDF->MultiCell(190,22,"",1);
-        $this->_PDF->MultiCell(190,22,"",1);
-        $this->_PDF->MultiCell(190,33,"",1);
-        $this->_PDF->MultiCell(190,22,"",1);
+        $this->_PDF->MultiCell(190,32,"",1);
+        $this->_PDF->MultiCell(190,32,"",1);
+        $this->_PDF->MultiCell(190,35,"",1);
+        $this->_PDF->MultiCell(190,32,"",1);
         //竖线
-        $this->_PDF->Line(50,26,50,210);
+        $this->_PDF->Line(50,26,50,242);
         $this->_PDF->Line(78,26,78,39);
         $this->_PDF->Line(106,26,106,39);
         $this->_PDF->Line(134,26,134,39);
@@ -292,45 +292,45 @@ class MyPDFTwo {
 
         //加班地点及工作内容
         $html = "<p>加班地点</p><br><p>及工作内容</p>";
-        $this->_PDF->writeHTMLCell(40, 10, 10,115, $html, 0, 1, false, true, 'C', true);
+        $this->_PDF->writeHTMLCell(40, 10, 10,120, $html, 0, 1, false, true, 'C', true);
         $html = $arr["work_address"];
-        $this->_PDF->writeHTMLCell(148, 15, 51,115, $html, 0, 1, false, true, 'L', true);
+        $this->_PDF->writeHTMLCell(148, 25, 51,115, $html, 0, 1, false, true, 'L', true);
 
         //部门主管意见
         $html = "<p>部门主管</p><br><p>意见</p>";
-        $this->_PDF->writeHTMLCell(40, 10, 10,137, $html, 0, 1, false, true, 'C', true);
+        $this->_PDF->writeHTMLCell(40, 10, 10,153, $html, 0, 1, false, true, 'C', true);
         if(!empty($arr["user_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["user_lcd"]));
-            $this->_PDF->writeHTMLCell(148, 8, 51,150, $html, 0, 1, false, true, 'R', true);
+            $this->_PDF->writeHTMLCell(148, 8, 51,169, $html, 0, 1, false, true, 'R', true);
         }
 
         //部门主管意见
         $html = "<p>地区总经理/</p><br><p>地区主管</p><br><p>审批</p>";
-        $this->_PDF->writeHTMLCell(40, 10, 10,160, $html, 0, 1, false, true, 'C', true);
+        $this->_PDF->writeHTMLCell(40, 10, 10,181, $html, 0, 1, false, true, 'C', true);
         if(!empty($arr["area_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["area_lcd"]));
-            $this->_PDF->writeHTMLCell(148, 8, 51,183, $html, 0, 1, false, true, 'R', true);
+            $this->_PDF->writeHTMLCell(148, 8, 51,204, $html, 0, 1, false, true, 'R', true);
         }
 
-        //部门主管意见
-        $html = "<p>法定代表人</p><br><p>审核</p>";
-        $this->_PDF->writeHTMLCell(40, 10, 10,192, $html, 0, 1, false, true, 'C', true);
-        if(!empty($arr["head_lcd"])){
+        //法定代表人(後期刪除，改成員工簽字
+        $html = "<p>员工确认签</p><br><p>字</p>";
+        $this->_PDF->writeHTMLCell(40, 10, 10,220, $html, 0, 1, false, true, 'C', true);
+/*        if(!empty($arr["head_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["head_lcd"]));
             $this->_PDF->writeHTMLCell(148, 8, 51,205, $html, 0, 1, false, true, 'R', true);
-        }
+        }*/
 
 
         //底部文字
         $this->_PDF->SetFont('stsongstdlight', '', 12, '', true);
-        $html = "备注：1. 拟定于工作日加班的，每日不得超过3个小时且每月不得超过36个小时，拟定于周末休息日加班的，由部门主管或部门经理尽量安排补休；2. 请员工在加班日之前，提早至少一个工作日填写此申请表，并递交至所属部门主管、部门经理、地区总经理/地区主管及公司法定代表人签字后方可生效；3. 上表填写完毕后，影印件转交至公司人事部备案，原件交由公司法定代表人安排存档。";
-        $this->_PDF->writeHTMLCell(190, 22, 10,213, $html, 0, 1, 0, true, 'L', true);
+        $html = "备注：<br>1. 拟定于工作日加班的，每日不得超过3个小时且每月不得超过36个小时，拟定于周末休息日加班的，由部门主管或部门经理尽量安排补休；<br>2. 请员工在加班日之前，提早至少一个工作日填写此申请表，并递交至所属部门主管、部门经理、地区总经理/地区主管及公司法定代表人签字后方可生效；<br>3. 上表填写完毕后，由地区人事专员下载员工加班表单，并让相关人员手动签字，签字后的表单再上传至员工请加班单附件处";
+        $this->_PDF->writeHTMLCell(190, 22, 10,250, $html, 0, 1, 0, true, 'L', true);
         //底部表格
-        $this->_PDF->MultiCell(190,13,"",1);
+/*        $this->_PDF->MultiCell(190,13,"",1);
         $this->_PDF->MultiCell(190,16,"",1);
-        $this->_PDF->MultiCell(190,16,"",1);
+        $this->_PDF->MultiCell(190,16,"",1);*/
         // 34 29
-        $this->_PDF->Line(39,248,39,280);
+/*        $this->_PDF->Line(39,248,39,280);
         $this->_PDF->Line(73,248,73,264);
         $this->_PDF->Line(102,248,102,264);
         $this->_PDF->Line(136,248,136,264);
@@ -340,24 +340,17 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(190, 10, 12,240, $html, 0, 1, false, true, 'L', true);
         $html = "<p>所属地区</p>";
         $this->_PDF->writeHTMLCell(29, 10, 10,254, $html, 0, 1, false, true, 'C', true);
-/*        $html = "<p>所属地区</p>";
-        $this->_PDF->writeHTMLCell(29, 10, 39,254, $html, 0, 1, false, true, 'C', true);*/
         $html = "<p>员工编号</p>";
         $this->_PDF->writeHTMLCell(29, 10, 73,254, $html, 0, 1, false, true, 'C', true);
-/*        $html = "<p>员工编号</p>";
-        $this->_PDF->writeHTMLCell(29, 10, 102,254, $html, 0, 1, false, true, 'C', true);*/
         $html = "<p>文件编号</p>";
         $this->_PDF->writeHTMLCell(29, 10, 136,254, $html, 0, 1, false, true, 'C', true);
-/*        $html = "<p>文件编号</p>";
-        $this->_PDF->writeHTMLCell(29, 10, 165,254, $html, 0, 1, false, true, 'C', true);*/
         $html = "<p>备注</p>";
-        $this->_PDF->writeHTMLCell(29, 10, 10,270, $html, 0, 1, false, true, 'C', true);
-/*        $html = "<p>备注</p>";
-        $this->_PDF->writeHTMLCell(150, 10, 40,270, $html, 0, 1, false, true, 'L', true);*/
+        $this->_PDF->writeHTMLCell(29, 10, 10,270, $html, 0, 1, false, true, 'C', true);*/
     }
 
 	public function getOutput($str="docx") {//D
         $this->_PDF->Output($str.".pdf", 'D');
+        //$this->_PDF->Output($str.".pdf", 'I');
 	}
 }
 ?>

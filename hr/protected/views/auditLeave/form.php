@@ -73,7 +73,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                 'model'=>$model,
             ));
             ?>
-            <?php if (Yii::app()->user->validFunction('ZR07')||$model->only == 2): ?>
+            <?php if (Yii::app()->user->validFunction('ZR07')): ?>
             <legend>&nbsp;</legend>
             <div class="form-group text-danger">
                 <label class="col-sm-2 control-label">
