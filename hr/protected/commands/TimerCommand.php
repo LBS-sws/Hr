@@ -48,6 +48,15 @@ class TimerCommand extends CConsoleCommand {
         $this->signedContract();
         $this->contractCitySendEmail();
         $this->contractAgoSendEmail();
+
+        //加班、請假批准后的郵件提示（開始)
+        $this->leaveThreeSendEmail();
+        $this->leaveSevenSendEmail();
+        $this->leaveMoreSendEmail();
+        $this->workThreeSendEmail();
+        $this->workSevenSendEmail();
+        $this->workMoreSendEmail();
+        //加班、請假批准后的郵件提示（結束)
         echo "end";
 	}
 
@@ -118,6 +127,180 @@ class TimerCommand extends CConsoleCommand {
                 $description="【紧急】".$row["name"]."的合同于".date("Y年m月d日",strtotime($row["end_time"]))."已到期";
                 $subject=$description;
                 $message=$description;
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+        }
+    }
+
+    //加班附件提示(3天)
+    private function workThreeSendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday - 3 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="加班申请附件处还未上传文档 - ".$row["name"];
+                $subject="加班申请附件处还未上传文档 - ".$row["name"];
+                $message="<p>员工编号：".$row["code"]."</p>";
+                $message.="<p>员工姓名：".$row["name"]."</p>";
+                $message.="<p>加班编号：".$row["work_code"]."</p>";
+                $message.="<p>温馨提示：加班“批准”后3天，附件处还未上传文档。 </p>";
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addEmailToCity($row["s_city"]);
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+        }
+    }
+
+    //加班附件提示(7天)
+    private function workSevenSendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday - 7 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="加班申请附件处还未上传文档 - ".$row["name"];
+                $subject="加班申请附件处还未上传文档 - ".$row["name"];
+                $message="<p>员工编号：".$row["code"]."</p>";
+                $message.="<p>员工姓名：".$row["name"]."</p>";
+                $message.="<p>加班编号：".$row["work_code"]."</p>";
+                $message.="<p>温馨提示：加班“批准”后7天，附件处还未上传文档。 </p>";
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addEmailToOnlyCityBoss($row["s_city"]);
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+        }
+    }
+
+    //加班附件提示(15天)
+    private function workMoreSendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday - 15 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="加班申请附件处还未上传文档 - ".$row["name"];
+                $subject="加班申请附件处还未上传文档 - ".$row["name"];
+                $message="<p>员工编号：".$row["code"]."</p>";
+                $message.="<p>员工姓名：".$row["name"]."</p>";
+                $message.="<p>加班编号：".$row["work_code"]."</p>";
+                $message.="<p>温馨提示：加班“批准”后15天，附件处还未上传文档。 </p>";
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+        }
+    }
+
+    //請假附件提示(3天)
+    private function leaveThreeSendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday - 3 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="请假申请附件处还未上传文档 - ".$row["name"];
+                $subject="请假申请附件处还未上传文档 - ".$row["name"];
+                $message="<p>员工编号：".$row["code"]."</p>";
+                $message.="<p>员工姓名：".$row["name"]."</p>";
+                $message.="<p>请假编号：".$row["leave_code"]."</p>";
+                $message.="<p>温馨提示：请假“批准”后3天，附件处还未上传文档。 </p>";
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addEmailToCity($row["s_city"]);
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+        }
+    }
+
+    //請假附件提示(7天)
+    private function leaveSevenSendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday - 7 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="请假申请附件处还未上传文档 - ".$row["name"];
+                $subject="请假申请附件处还未上传文档 - ".$row["name"];
+                $message="<p>员工编号：".$row["code"]."</p>";
+                $message.="<p>员工姓名：".$row["name"]."</p>";
+                $message.="<p>请假编号：".$row["leave_code"]."</p>";
+                $message.="<p>温馨提示：请假“批准”后7天，附件处还未上传文档。 </p>";
+                $email->setDescription($description);
+                $email->setMessage($message);
+                $email->setSubject($subject);
+                $email->addEmailToOnlyCityBoss($row["s_city"]);
+                $email->sent("系统生成");
+                $email->resetToAddr();
+            }
+        }
+    }
+
+    //請假附件提示(15天)
+    private function leaveMoreSendEmail(){
+        $email = new Email();
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstday = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$firstday - 15 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $description="请假申请附件处还未上传文档 - ".$row["name"];
+                $subject="请假申请附件处还未上传文档 - ".$row["name"];
+                $message="<p>员工编号：".$row["code"]."</p>";
+                $message.="<p>员工姓名：".$row["name"]."</p>";
+                $message.="<p>请假编号：".$row["leave_code"]."</p>";
+                $message.="<p>温馨提示：请假“批准”后15天，附件处还未上传文档。 </p>";
                 $email->setDescription($description);
                 $email->setMessage($message);
                 $email->setSubject($subject);
