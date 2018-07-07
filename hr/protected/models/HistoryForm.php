@@ -209,10 +209,32 @@ class HistoryForm extends CFormModel
 			array('test_type','required'),
 			array('test_type','validateTestType'),
             array('year_day','required'),
-            array('year_day', 'numerical', 'min'=>1, 'integerOnly'=>true),
+            array('year_day', 'validateYearDay'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
+
+    public function validateYearDay($attribute, $params){
+        if(!empty($this->year_day)){
+            if(!is_numeric($this->year_day)){
+                $message = "年假只能为数字";
+                $this->addError($attribute,$message);
+            }elseif(floatval($this->year_day)<0){
+                $message = "年假不能小于0";
+                $this->addError($attribute,$message);
+            }else{
+                $year_day = strval($this->year_day);
+                $year_day = explode('.',$year_day);
+                if(count($year_day)===2){
+                    $year_day = end($year_day);
+                    if($year_day%5 !== 0){
+                        $message = "年假必须为0.5的倍数";
+                        $this->addError($attribute,$message);
+                    }
+                }
+            }
+        }
+    }
 
     public function validateEndTime($attribute, $params){
         if($this->fix_time == "fixation"){
