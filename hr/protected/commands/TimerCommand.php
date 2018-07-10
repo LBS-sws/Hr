@@ -150,18 +150,20 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $description="加班申请附件处还未上传文档 - ".$row["name"];
-                $subject="加班申请附件处还未上传文档 - ".$row["name"];
-                $message="<p>员工编号：".$row["code"]."</p>";
-                $message.="<p>员工姓名：".$row["name"]."</p>";
-                $message.="<p>加班编号：".$row["work_code"]."</p>";
-                $message.="<p>温馨提示：加班“批准”后3天，附件处还未上传文档。 </p>";
-                $email->setDescription($description);
-                $email->setMessage($message);
-                $email->setSubject($subject);
-                $email->addEmailToCity($row["s_city"]);
-                $email->sent("系统生成");
-                $email->resetToAddr();
+                if ($this->docmanSearch("WORKEM", $row["id"], $firstday)) {
+                    $description = "加班申请附件处还未上传文档 - " . $row["name"];
+                    $subject = "加班申请附件处还未上传文档 - " . $row["name"];
+                    $message = "<p>员工编号：" . $row["code"] . "</p>";
+                    $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>加班编号：" . $row["work_code"] . "</p>";
+                    $message .= "<p>温馨提示：加班“批准”后3天，附件处还未上传文档。 </p>";
+                    $email->setDescription($description);
+                    $email->setMessage($message);
+                    $email->setSubject($subject);
+                    $email->addEmailToCity($row["s_city"]);
+                    $email->sent("系统生成");
+                    $email->resetToAddr();
+                }
             }
         }
     }
@@ -178,19 +180,21 @@ class TimerCommand extends CConsoleCommand {
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
         if($rows){
-            foreach ($rows as $row){
-                $description="加班申请附件处还未上传文档 - ".$row["name"];
-                $subject="加班申请附件处还未上传文档 - ".$row["name"];
-                $message="<p>员工编号：".$row["code"]."</p>";
-                $message.="<p>员工姓名：".$row["name"]."</p>";
-                $message.="<p>加班编号：".$row["work_code"]."</p>";
-                $message.="<p>温馨提示：加班“批准”后7天，附件处还未上传文档。 </p>";
-                $email->setDescription($description);
-                $email->setMessage($message);
-                $email->setSubject($subject);
-                $email->addEmailToOnlyCityBoss($row["s_city"]);
-                $email->sent("系统生成");
-                $email->resetToAddr();
+            foreach ($rows as $row) {
+                if ($this->docmanSearch("WORKEM", $row["id"], $firstday)) {
+                    $description = "加班申请附件处还未上传文档 - " . $row["name"];
+                    $subject = "加班申请附件处还未上传文档 - " . $row["name"];
+                    $message = "<p>员工编号：" . $row["code"] . "</p>";
+                    $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>加班编号：" . $row["work_code"] . "</p>";
+                    $message .= "<p>温馨提示：加班“批准”后7天，附件处还未上传文档。 </p>";
+                    $email->setDescription($description);
+                    $email->setMessage($message);
+                    $email->setSubject($subject);
+                    $email->addEmailToOnlyCityBoss($row["s_city"]);
+                    $email->sent("系统生成");
+                    $email->resetToAddr();
+                }
             }
         }
     }
@@ -208,18 +212,20 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $description="加班申请附件处还未上传文档 - ".$row["name"];
-                $subject="加班申请附件处还未上传文档 - ".$row["name"];
-                $message="<p>员工编号：".$row["code"]."</p>";
-                $message.="<p>员工姓名：".$row["name"]."</p>";
-                $message.="<p>加班编号：".$row["work_code"]."</p>";
-                $message.="<p>温馨提示：加班“批准”后15天，附件处还未上传文档。 </p>";
-                $email->setDescription($description);
-                $email->setMessage($message);
-                $email->setSubject($subject);
-                $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
-                $email->sent("系统生成");
-                $email->resetToAddr();
+                if($this->docmanSearch("WORKEM",$row["id"],$firstday)) {
+                    $description = "加班申请附件处还未上传文档 - " . $row["name"];
+                    $subject = "加班申请附件处还未上传文档 - " . $row["name"];
+                    $message = "<p>员工编号：" . $row["code"] . "</p>";
+                    $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>加班编号：" . $row["work_code"] . "</p>";
+                    $message .= "<p>温馨提示：加班“批准”后15天，附件处还未上传文档。 </p>";
+                    $email->setDescription($description);
+                    $email->setMessage($message);
+                    $email->setSubject($subject);
+                    $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                    $email->sent("系统生成");
+                    $email->resetToAddr();
+                }
             }
         }
     }
@@ -237,18 +243,20 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $description="请假申请附件处还未上传文档 - ".$row["name"];
-                $subject="请假申请附件处还未上传文档 - ".$row["name"];
-                $message="<p>员工编号：".$row["code"]."</p>";
-                $message.="<p>员工姓名：".$row["name"]."</p>";
-                $message.="<p>请假编号：".$row["leave_code"]."</p>";
-                $message.="<p>温馨提示：请假“批准”后3天，附件处还未上传文档。 </p>";
-                $email->setDescription($description);
-                $email->setMessage($message);
-                $email->setSubject($subject);
-                $email->addEmailToCity($row["s_city"]);
-                $email->sent("系统生成");
-                $email->resetToAddr();
+                if($this->docmanSearch("LEAVE",$row["id"],$firstday)) {
+                    $description = "请假申请附件处还未上传文档 - " . $row["name"];
+                    $subject = "请假申请附件处还未上传文档 - " . $row["name"];
+                    $message = "<p>员工编号：" . $row["code"] . "</p>";
+                    $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>请假编号：" . $row["leave_code"] . "</p>";
+                    $message .= "<p>温馨提示：请假“批准”后3天，附件处还未上传文档。 </p>";
+                    $email->setDescription($description);
+                    $email->setMessage($message);
+                    $email->setSubject($subject);
+                    $email->addEmailToCity($row["s_city"]);
+                    $email->sent("系统生成");
+                    $email->resetToAddr();
+                }
             }
         }
     }
@@ -266,18 +274,20 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $description="请假申请附件处还未上传文档 - ".$row["name"];
-                $subject="请假申请附件处还未上传文档 - ".$row["name"];
-                $message="<p>员工编号：".$row["code"]."</p>";
-                $message.="<p>员工姓名：".$row["name"]."</p>";
-                $message.="<p>请假编号：".$row["leave_code"]."</p>";
-                $message.="<p>温馨提示：请假“批准”后7天，附件处还未上传文档。 </p>";
-                $email->setDescription($description);
-                $email->setMessage($message);
-                $email->setSubject($subject);
-                $email->addEmailToOnlyCityBoss($row["s_city"]);
-                $email->sent("系统生成");
-                $email->resetToAddr();
+                if($this->docmanSearch("LEAVE",$row["id"],$firstday)) {
+                    $description = "请假申请附件处还未上传文档 - " . $row["name"];
+                    $subject = "请假申请附件处还未上传文档 - " . $row["name"];
+                    $message = "<p>员工编号：" . $row["code"] . "</p>";
+                    $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>请假编号：" . $row["leave_code"] . "</p>";
+                    $message .= "<p>温馨提示：请假“批准”后7天，附件处还未上传文档。 </p>";
+                    $email->setDescription($description);
+                    $email->setMessage($message);
+                    $email->setSubject($subject);
+                    $email->addEmailToOnlyCityBoss($row["s_city"]);
+                    $email->sent("系统生成");
+                    $email->resetToAddr();
+                }
             }
         }
     }
@@ -295,20 +305,36 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $description="请假申请附件处还未上传文档 - ".$row["name"];
-                $subject="请假申请附件处还未上传文档 - ".$row["name"];
-                $message="<p>员工编号：".$row["code"]."</p>";
-                $message.="<p>员工姓名：".$row["name"]."</p>";
-                $message.="<p>请假编号：".$row["leave_code"]."</p>";
-                $message.="<p>温馨提示：请假“批准”后15天，附件处还未上传文档。 </p>";
-                $email->setDescription($description);
-                $email->setMessage($message);
-                $email->setSubject($subject);
-                $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
-                $email->sent("系统生成");
-                $email->resetToAddr();
+                if($this->docmanSearch("LEAVE",$row["id"],$firstday)){
+                    $description="请假申请附件处还未上传文档 - ".$row["name"];
+                    $subject="请假申请附件处还未上传文档 - ".$row["name"];
+                    $message="<p>员工编号：".$row["code"]."</p>";
+                    $message.="<p>员工姓名：".$row["name"]."</p>";
+                    $message.="<p>请假编号：".$row["leave_code"]."</p>";
+                    $message.="<p>温馨提示：请假“批准”后15天，附件处还未上传文档。 </p>";
+                    $email->setDescription($description);
+                    $email->setMessage($message);
+                    $email->setSubject($subject);
+                    $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                    $email->sent("系统生成");
+                    $email->resetToAddr();
+                }
             }
         }
+    }
+
+    //請假、加班附件查詢
+    private function docmanSearch($docType,$id,$date){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("b.lcd")->from("docman$suffix.dm_master a")
+            ->leftJoin("docman$suffix.dm_file b","b.mast_id = a.id")
+            ->where("a.doc_type_code='$docType' and a.doc_id = '$id' and date_format(b.lcd,'%Y/%m/%d') > '$date'")->queryRow();
+        if($rows){
+            return false;//不需要發送郵件
+        }else{
+            return true;//需要發送郵件
+        }
+
     }
 }
 ?>
