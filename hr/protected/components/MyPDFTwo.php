@@ -149,9 +149,9 @@ class MyPDFTwo {
             }
             $sumDay=$sumDay + floatval($arr["sumDay"]) - floatval($arr["leaveNum"]);*/
             $sumDay=floatval($arr["sumDay"]) - floatval($arr["leaveNum"]);
-            $html = $sumDay."天";
+            $html = $sumDay+floatval($arr["log_time"])."天";
             $this->_PDF->writeHTMLCell(98, 6, 101,186, $html, 0, 1, 0, true, 'C', true);
-            $html = $sumDay-floatval($arr["log_time"])."天";
+            $html = $sumDay."天";
             $this->_PDF->writeHTMLCell(98, 6, 101,196, $html, 0, 1, 0, true, 'C', true);
         }
 
