@@ -135,7 +135,7 @@ class MyPDFTwo {
 
         $sumDay = 0;
         if($arr["vaca_type"] == "E"){
-            $zero1=strtotime ($arr["entry_time"]." 00:00:00");  //入職時間
+/*            $zero1=strtotime ($arr["entry_time"]." 00:00:00");  //入職時間
             $zero2=strtotime ($arr["start_time"]);  //請假開始時間
             $guonian=floor(($zero2-$zero1)/(60*60*24*365));
             if($guonian<1){
@@ -147,7 +147,8 @@ class MyPDFTwo {
             }else{
                 $sumDay = 15;
             }
-            $sumDay=$sumDay + floatval($arr["sumDay"]) - floatval($arr["leaveNum"]);
+            $sumDay=$sumDay + floatval($arr["sumDay"]) - floatval($arr["leaveNum"]);*/
+            $sumDay=floatval($arr["sumDay"]) - floatval($arr["leaveNum"]);
             $html = $sumDay."天";
             $this->_PDF->writeHTMLCell(98, 6, 101,186, $html, 0, 1, 0, true, 'C', true);
             $html = $sumDay-floatval($arr["log_time"])."天";
