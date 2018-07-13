@@ -26,7 +26,6 @@ $this->pageTitle=Yii::app()->name . ' - auditLeave';
     <?php
     $search = array(
         'leave_code',
-        'employee_code',
         'employee_name',
         'city_name',
     );

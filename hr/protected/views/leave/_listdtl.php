@@ -6,7 +6,7 @@
 
 
     <td><?php echo $this->record['leave_code']; ?></td>
-    <td><?php echo $this->record['employee_code']; ?></td>
+    <td><?php echo $this->record['lcd']; ?></td>
     <td><?php echo $this->record['employee_name']; ?></td>
     <?php if (Yii::app()->user->validFunction('ZR04')): ?>
         <td><?php echo $this->record['city']; ?></td>

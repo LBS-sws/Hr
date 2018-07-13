@@ -323,7 +323,7 @@ class TimerCommand extends CConsoleCommand {
         }
     }
 
-    //請假、加班附件查詢
+    //請假、加班附件變更查詢
     private function docmanSearch($docType,$id,$date){
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()->select("b.lcd")->from("docman$suffix.dm_master a")

@@ -37,7 +37,6 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
     <?php
     $search = array(
         'leave_code',
-        'employee_code',
         'employee_name',
     );
     $search_add_html="";

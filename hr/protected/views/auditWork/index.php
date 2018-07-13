@@ -26,7 +26,6 @@ $this->pageTitle=Yii::app()->name . ' - auditWork';
     <?php
     $search = array(
         'work_code',
-        'employee_code',
         'employee_name',
         'city_name',
     );

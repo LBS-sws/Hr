@@ -6,7 +6,7 @@
 		?>
 	</th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('employee_code').$this->drawOrderArrow('b.code'),'#',$this->createOrderLink('leave-list','b.code'))
+        <?php echo TbHtml::link($this->getLabelName('lcd').$this->drawOrderArrow('a.lcd'),'#',$this->createOrderLink('leave-list','a.lcd'))
         ;
         ?>
     </th>

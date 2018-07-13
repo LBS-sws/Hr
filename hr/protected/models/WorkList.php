@@ -23,6 +23,7 @@ class WorkList extends CListPageModel
 			'status'=>Yii::t('contract','Status'),
 			'city'=>Yii::t('contract','City'),
 			'city_name'=>Yii::t('contract','City'),
+            'lcd'=>Yii::t('fete','apply for time'),
 		);
 	}
 
@@ -162,6 +163,7 @@ class WorkList extends CListPageModel
 					'employee_code'=>$record['employee_code'],
 					'start_time'=>$record['start_time'],
 					'end_time'=>$record['end_time'],
+                    'lcd'=>CGeneral::toDateTime($record['lcd']),
 					'log_time'=>$record['log_time'].$dayStr,
 					'work_type'=>$costNumList[$record['work_type']],
 					'status'=>$colorList["status"],

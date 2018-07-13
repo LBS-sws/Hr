@@ -4,7 +4,7 @@
 	<td><?php echo $this->drawEditButton($this->model->getAcc(), 'auditLeave/edit','auditLeave/view', array('index'=>$this->record['id'],'only'=>$this->model->only)); ?></td>
 
     <td><?php echo $this->record['leave_code']; ?></td>
-    <td><?php echo $this->record['employee_code']; ?></td>
+    <td><?php echo $this->record['lcd']; ?></td>
     <td><?php echo $this->record['employee_name']; ?></td>
     <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['vacation_id']; ?></td>

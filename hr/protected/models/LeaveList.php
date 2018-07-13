@@ -23,6 +23,7 @@ class LeaveList extends CListPageModel
 			'status'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
             'city_name'=>Yii::t('contract','City'),
+            'lcd'=>Yii::t('fete','apply for time'),
 		);
 	}
 
@@ -127,6 +128,7 @@ class LeaveList extends CListPageModel
 					'leave_code'=>$record['leave_code'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],
+					'lcd'=>CGeneral::toDateTime($record['lcd']),
 					'start_time'=>date("Y/m/d",strtotime($record['start_time'])),
 					'end_time'=>date("Y/m/d",strtotime($record['end_time'])),
 					'log_time'=>$record['log_time']."天",

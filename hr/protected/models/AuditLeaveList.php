@@ -28,6 +28,7 @@ class AuditLeaveList extends CListPageModel
             'status'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
             'city_name'=>Yii::t('contract','City'),
+            'lcd'=>Yii::t('fete','apply for time'),
         );
     }
 
@@ -121,6 +122,7 @@ class AuditLeaveList extends CListPageModel
                     'log_time'=>$record['log_time']."天",
                     'vacation_id'=>VacationForm::getVacationNameToId($record['vacation_id']),
                     'status'=>$colorList["status"],
+                    'lcd'=>CGeneral::toDateTime($record['lcd']),
                     'city'=>CGeneral::getCityName($record["s_city"]),
                     'style'=>$colorList["style"],
                 );

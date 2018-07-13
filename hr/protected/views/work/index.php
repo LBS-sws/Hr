@@ -37,7 +37,6 @@ $this->pageTitle=Yii::app()->name . ' - Work';
     <?php
     $search = array(
         'work_code',
-        'employee_code',
         'employee_name',
     );
     $search_add_html="";

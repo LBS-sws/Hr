@@ -28,6 +28,7 @@ class AuditWorkList extends CListPageModel
             'status'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
             'city_name'=>Yii::t('contract','City'),
+            'lcd'=>Yii::t('fete','apply for time'),
         );
     }
 
@@ -126,6 +127,7 @@ class AuditWorkList extends CListPageModel
                     'employee_name'=>$record['employee_name'],
                     'start_time'=>$record['start_time'],
                     'end_time'=>$record['end_time'],
+                    'lcd'=>CGeneral::toDateTime($record['lcd']),
                     'log_time'=>$record['log_time'].$dayStr,
                     'work_type'=>$costNumList[$record['work_type']],
                     'status'=>$colorList["status"],
