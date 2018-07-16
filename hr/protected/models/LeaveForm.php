@@ -505,8 +505,10 @@ class LeaveForm extends CFormModel
             $this->status = 0;
         }
         $startTime = strtotime($this->start_time);
+        $weekStart = getdate($startTime);
         $startPm = $this->start_time_lg;
         $endTime = strtotime($this->end_time);
+        $weekEnd = getdate($endTime);
         $endPm = $this->end_time_lg;
         $day = ($endTime-$startTime)/(60*60*24);
         if($startPm != $endPm){
@@ -515,6 +517,10 @@ class LeaveForm extends CFormModel
             }
         }else{
             $day+=0.5;
+        }
+        if(in_array($weekStart["wday"],array(0,6))||in_array($weekEnd["wday"],array(0,6))||$day>=6||$weekStart["wday"]>$weekEnd["wday"]){
+            //允許修改時間
+            $day = $this->log_time;
         }
         $this->log_time = $day;
         if($startPm == "AM"){

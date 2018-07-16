@@ -191,13 +191,16 @@ $('#start_time').on('change',function(){
     }
 });
 $('#start_time,#end_time,#start_time_lg,#end_time_lg').on('change',function(){
+    $('#log_time').attr('readonly',true);
     var start_day = $('#start_time').val();
     var end_day = $('#end_time').val();
     var start_hour = $('#start_time_lg').val();
     var end_hour = $('#end_time_lg').val();
     if(start_day!=''&&end_day!=''){
         var d1 = new Date(start_day);
+        var week1 = d1.getDay();
         var d2 = new Date(end_day);
+        var week2 = d2.getDay();
         d1 = d1.getTime();
         d2 = d2.getTime();
         if(d1<=d2){
@@ -212,6 +215,9 @@ $('#start_time,#end_time,#start_time_lg,#end_time_lg').on('change',function(){
             }
             if(hours>0){
                 $('#log_time').val(hours);
+                if(week1 === 0 || week1 === 6 || week2 === 0 || week2 === 6 || hours >= 6 || week1 > week2){
+                    $('#log_time').attr('readonly',false);
+                }
             }else{
                 $('#log_time').val('');
             }
@@ -228,6 +234,7 @@ $('#btnCancelData').on('click',function() {
 	var elm=$('#btnCancelData');
 	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('leave/cancel')."',{});
 });
+
 
 var ajaxBool = true;
 //顯示年假剩餘天數
