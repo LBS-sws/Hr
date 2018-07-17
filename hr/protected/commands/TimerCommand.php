@@ -150,7 +150,7 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                if ($this->docmanSearch("WORKEM", $row["id"], $firstday)) {
+                if ($this->docmanSearch("WORKEM", $row["id"], $row["lud"])) {
                     $description = "加班申请附件处还未上传文档 - " . $row["name"];
                     $subject = "加班申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
@@ -181,7 +181,7 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row) {
-                if ($this->docmanSearch("WORKEM", $row["id"], $firstday)) {
+                if ($this->docmanSearch("WORKEM", $row["id"], $row["lud"])) {
                     $description = "加班申请附件处还未上传文档 - " . $row["name"];
                     $subject = "加班申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
@@ -212,7 +212,7 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                if($this->docmanSearch("WORKEM",$row["id"],$firstday)) {
+                if($this->docmanSearch("WORKEM",$row["id"],$row["lud"])) {
                     $description = "加班申请附件处还未上传文档 - " . $row["name"];
                     $subject = "加班申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
@@ -243,7 +243,7 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                if($this->docmanSearch("LEAVE",$row["id"],$firstday)) {
+                if($this->docmanSearch("LEAVE",$row["id"],$row["lud"])) {
                     $description = "请假申请附件处还未上传文档 - " . $row["name"];
                     $subject = "请假申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
@@ -274,7 +274,7 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                if($this->docmanSearch("LEAVE",$row["id"],$firstday)) {
+                if($this->docmanSearch("LEAVE",$row["id"],$row["lud"])) {
                     $description = "请假申请附件处还未上传文档 - " . $row["name"];
                     $subject = "请假申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
@@ -305,7 +305,7 @@ class TimerCommand extends CConsoleCommand {
             ->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                if($this->docmanSearch("LEAVE",$row["id"],$firstday)){
+                if($this->docmanSearch("LEAVE",$row["id"],$row["lud"])){
                     $description="请假申请附件处还未上传文档 - ".$row["name"];
                     $subject="请假申请附件处还未上传文档 - ".$row["name"];
                     $message="<p>员工编号：".$row["code"]."</p>";
@@ -325,10 +325,11 @@ class TimerCommand extends CConsoleCommand {
 
     //請假、加班附件變更查詢
     private function docmanSearch($docType,$id,$date){
+        $date = date("Y/m/d H:i:s",strtotime($date));
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()->select("b.lcd")->from("docman$suffix.dm_master a")
             ->leftJoin("docman$suffix.dm_file b","b.mast_id = a.id")
-            ->where("a.doc_type_code='$docType' and a.doc_id = '$id' and date_format(b.lcd,'%Y/%m/%d') > '$date'")->queryRow();
+            ->where("a.doc_type_code='$docType' and a.doc_id = '$id' and date_format(b.lcd,'%Y/%m/%d %H:%i:%s') > '$date'")->queryRow();
         if($rows){
             return false;//不需要發送郵件
         }else{
