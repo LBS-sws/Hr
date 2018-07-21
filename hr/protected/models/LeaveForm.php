@@ -214,13 +214,27 @@ class LeaveForm extends CFormModel
         if(empty($employee_id)){
             return 0;
         }
+        $rows = Yii::app()->db->createCommand()->select("*")
+            ->from("hr_employee")->where("id=:id",array(":id"=>$employee_id))->queryRow();
+        if(!$rows){
+            return 0;
+        }
         if(empty($time)){
             $time = date("Y-m-d H:i:s");
         }
         $year = date("Y",strtotime($time));
+        $month = date("m",strtotime($rows["entry_time"]));
+        $day = date("d",strtotime($rows["entry_time"]));
+        if(date("m-d",strtotime($time))>date("m-d",strtotime($rows["entry_time"]))){
+            $start_time = "$year-$month-$day 00:00:00";
+            $end_time = (intval($year)+1)."-$month-$day 23:59:59";
+        }else{
+            $start_time = (intval($year)-1)."-$month-$day 00:00:00";
+            $end_time = "$year-$month-$day 23:59:59";
+        }
         $sql = "select sum(a.log_time) AS sumDay from hr_employee_leave a 
             LEFT JOIN hr_vacation b ON a.vacation_id = b.id
-            WHERE a.start_time>='$year-01-01 00:00:00'AND a.start_time<='$year-12-31 23:59:59' AND a.status=4 AND b.vaca_type='E' AND a.employee_id=$employee_id";
+            WHERE a.start_time>'$start_time'AND a.start_time<='$end_time' AND a.status=4 AND b.vaca_type='E' AND a.employee_id=$employee_id";
         $Sum = Yii::app()->db->createCommand($sql)->queryRow();
         if($Sum){
             return $Sum["sumDay"];
