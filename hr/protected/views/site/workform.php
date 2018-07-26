@@ -80,7 +80,7 @@
     <div class="col-sm-3">
         <div class="input-group">
             <?php echo $form->numberField($model, 'log_time',
-                array('readonly'=>(true),"id"=>"log_time")
+                array('readonly'=>($model->getInputBool()),"id"=>"log_time")
             ); ?>
             <span class="input-group-addon">天</span>
         </div>
