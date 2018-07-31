@@ -369,19 +369,19 @@ class AuditWorkForm extends CFormModel
                 $subject="加班审核通过 - ".$row["name"];
                 $email->addEmailToStaffId($row["id"]);
             }
-
+/*          總監說郵件太多，不想看郵件取消掉了
             if ($this->z_index == 3){ //普通員工的請假需要給總監發送郵件
                 $subjectOne = "员工加班通过通知 - ".$row["name"];
                 $emailOne = new Email($subjectOne,$message,$subjectOne);
                 $emailOne->addEmailToPrefixAndCity("ZG04",$row["city"]);
                 $emailOne->sent();
-            }
+            }*/
         }else{
             $description="加班被拒絕 - ".$row["name"];
             $subject="加班被拒絕 - ".$row["name"];
             $message.="<p>拒絕原因：".$this->reject_cause."</p>";
             $email->addEmailToStaffId($row["id"]);
-            $email->addEmailToPrefixAndCity("ZG04",$row["city"]);
+            //$email->addEmailToPrefixAndCity("ZG04",$row["city"]); 總監說郵件太多，不想看郵件取消掉了
         }
         $email->setDescription($description);
         $email->setMessage($message);

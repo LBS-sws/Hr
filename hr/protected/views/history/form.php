@@ -326,14 +326,6 @@ $('#HistoryForm_test_type').on('change',function(){
         }).trigger('change');
     }
     
-    //年齡計算
-    $('#HistoryForm_birth_time').on('change',function(){
-        var birth_time = $(this).val();
-        if(birth_time != ''){
-            var age = jsGetAge(birth_time);
-            $('#HistoryForm_age').val(age);
-        }
-    });
     $('.changeButton').on('change',function(){
         $('#HistoryForm_staff_type').val($(this).find('option:selected').data('dept'));
     });
@@ -361,7 +353,7 @@ Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_R
 if ($model->scenario!='view'||$model->staff_status == 3) {
     $js = Script::genDatePicker(array(
         'HistoryForm_leave_time',
-        'HistoryForm_birth_time',
+        'birth_time',
         'HistoryForm_entry_time',
         'HistoryForm_start_time',
         'HistoryForm_end_time',

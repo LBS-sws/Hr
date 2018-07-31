@@ -224,15 +224,6 @@ $('#EmployForm_test_type').on('change',function(){
         }).trigger('change');
     }
     
-    //年齡計算
-    $('#EmployForm_birth_time').on('change',function(){
-        var birth_time = $(this).val();
-        if(birth_time != ''){
-            var age = jsGetAge(birth_time);
-            $('#EmployForm_age').val(age);
-        }
-    });
-    
     $('#EmployForm_staff_id').on('change',function(){
         if($('#EmployForm_company_id').val() == ''){
             $('#EmployForm_company_id').val($(this).val());
@@ -259,7 +250,7 @@ $('#EmployForm_test_type').on('change',function(){
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 if ($model->scenario!='view') {
     $js = Script::genDatePicker(array(
-        'EmployForm_birth_time',
+        'birth_time',
         'EmployForm_entry_time',
         'EmployForm_start_time',
         'EmployForm_end_time',

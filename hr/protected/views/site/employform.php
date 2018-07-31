@@ -23,7 +23,7 @@
                 <i class="fa fa-calendar"></i>
             </div>
             <?php echo $form->textField($model, 'birth_time',
-                array('class'=>'form-control pull-right','readonly'=>($readonly),));
+                array('class'=>'form-control pull-right','readonly'=>($readonly),"id"=>"birth_time"));
             ?>
         </div>
     </div>
@@ -31,7 +31,7 @@
     <?php echo $form->labelEx($model,'age',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'age',
-            array('readonly'=>true)
+            array('readonly'=>true,"id"=>"age")
         ); ?>
     </div>
 </div>
@@ -567,5 +567,14 @@ if (!empty($contractNum)){
         $("#changqi").on("click",function () {
             $(this).parents(".input-group:first").find("input").val("2999/12/31");
         })
+
+        //年齡計算
+        $('#birth_time').on('change',function(){
+            var birth_time = $(this).val();
+            if(birth_time != ''){
+                var age = jsGetAge(birth_time);
+                $('#age').val(age);
+            }
+        }).trigger("change");
     })
 </script>

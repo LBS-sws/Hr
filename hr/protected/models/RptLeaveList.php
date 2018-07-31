@@ -10,6 +10,7 @@ class RptLeaveList extends CReport {
 			'end_time'=>array('label'=>Yii::t('contract','End Time'),'width'=>20,'align'=>'L'),
 			'log_time'=>array('label'=>Yii::t('fete','Log Date'),'width'=>15,'align'=>'L'),
             'lcd'=>array('label'=>Yii::t('fete','apply for time'),'width'=>15,'align'=>'L'),
+            'leave_cause'=>array('label'=>Yii::t('fete','Leave Cause'),'width'=>30,'align'=>'L'),
 		);
 	}
 	
@@ -57,6 +58,7 @@ class RptLeaveList extends CReport {
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$temp = array();
+				$temp['leave_cause'] = $row['leave_cause'];
 				$temp['leave_code'] = $row['leave_code'];
 				$temp['employee_code'] = $row['employee_code'];
 				$temp['employee_name'] = $row['employee_name'];
