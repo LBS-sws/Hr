@@ -156,6 +156,7 @@ class PrizeForm extends CFormModel
 							prize_type = :prize_type, 
 							remark = :remark, 
 							status = :status, 
+							lcd = :lcd, 
 							luu = :luu
 						where id = :id
 						";
@@ -205,6 +206,8 @@ class PrizeForm extends CFormModel
             $command->bindParam(':status',$this->status,PDO::PARAM_INT);
         }
 
+        if (strpos($sql,':lcd')!==false)
+            $command->bindParam(':lcd',date("Y-m-d H:i:s"),PDO::PARAM_STR);
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)
