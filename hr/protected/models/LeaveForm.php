@@ -209,6 +209,38 @@ class LeaveForm extends CFormModel
         }
     }
 
+    //獲取員工的簽名信息
+    public function getSignatureToStaffId($staff_id,$bool = true){
+        if($bool){
+            $row = Yii::app()->db->createCommand()->select("*")
+                ->from("hr_binding")->where("employee_id=:employee_id",array(":employee_id"=>$staff_id))->queryRow();
+        }else{
+            $row = array("user_id"=>$staff_id);
+        }
+        if($row){
+            $suffix = Yii::app()->params['envSuffix'];
+            $user_id = $row["user_id"];
+            $field_blob = Yii::app()->db->createCommand()->select("field_blob")
+                ->from("security$suffix.sec_user_info")->where("username=:username and field_id='signature'",array(":username"=>$user_id))->queryRow();
+            if($field_blob){
+                $field_blob = $field_blob["field_blob"];
+                $field_value = Yii::app()->db->createCommand()->select("field_value")
+                    ->from("security$suffix.sec_user_info")->where("username=:username and field_id='signature_file_type'",array(":username"=>$user_id))->queryRow();
+                if($field_value){
+                    $field_value = $field_value["field_value"];
+                    if(!empty($field_value)&&!empty($field_blob)){
+                        return array(
+                            "field_blob"=>$field_blob,
+                            //"field_blob"=>base64_decode($field_blob),
+                            "field_value"=>$field_value,
+                        );
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     //某年累積的請假天數（僅年假)
     public function getLeaveNumToYear($employee_id,$time=""){
         if(empty($employee_id)){

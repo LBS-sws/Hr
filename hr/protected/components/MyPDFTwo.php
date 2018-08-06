@@ -122,6 +122,23 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(25, 8, 65,59, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["posi_name"];
         $this->_PDF->writeHTMLCell(110, 8, 90,59, $html, 0, 1, 0, true, 'C', true);
+        $signature = LeaveForm::getSignatureToStaffId($arr["employee_id"]);
+        if($signature){
+            $im = imagecreatefromstring(base64_decode($signature["field_blob"]));
+            $path = "$suffix/../upload/";
+            if ($im !== false) {
+                echo 'image ok';
+                //header('Content-Type: image/png');
+                imagejpeg($im, $path . "test.jpg");
+                imagedestroy($im);
+                echo "<br /> image done";
+            }else {
+                echo 'An error occurred.';
+            }
+            //$this->_PDF->writeHTMLCell(0, 30, '', '', '<img src="' .$path . 'test.jpg"/>', 1, 1, 0, true, 'C', true);
+            $this->_PDF->Image($path.'test.jpg', 60, 153, 0,16);
+            unlink($path . "test.jpg");
+        }
 
         $html = "<p><b>休假类别：（请选择你申请的类别）</b></p>";
         $this->_PDF->writeHTMLCell(190, 9, 11,71, $html, 0, 1, 0, true, 'L', true);
@@ -303,6 +320,10 @@ class MyPDFTwo {
         if(!empty($arr["user_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["user_lcd"]));
             $this->_PDF->writeHTMLCell(148, 8, 51,169, $html, 0, 1, false, true, 'R', true);
+            $signature = WorkForm::getSignatureToStaffId($arr["user_lcu"],false);
+            if($signature){
+                $this->setSignature($signature, 80, 170, 0,25);
+            }
         }
 
         //部门主管意见
@@ -311,6 +332,10 @@ class MyPDFTwo {
         if(!empty($arr["area_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["area_lcd"]));
             $this->_PDF->writeHTMLCell(148, 8, 51,204, $html, 0, 1, false, true, 'R', true);
+            $signature = WorkForm::getSignatureToStaffId($arr["area_lcu"],false);
+            if($signature){
+                $this->setSignature($signature, 80, 182, 0,25);
+            }
         }
 
         //法定代表人(後期刪除，改成員工簽字
@@ -320,6 +345,10 @@ class MyPDFTwo {
             $html = date("Y年m月d日",strtotime($arr["head_lcd"]));
             $this->_PDF->writeHTMLCell(148, 8, 51,205, $html, 0, 1, false, true, 'R', true);
         }*/
+        $signature = WorkForm::getSignatureToStaffId($arr["employee_id"]);
+        if($signature){
+            $this->setSignature($signature, 80, 215, 0,25);
+        }
 
 
         //底部文字
@@ -349,8 +378,22 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(29, 10, 10,270, $html, 0, 1, false, true, 'C', true);*/
     }
 
+    private function setSignature($signature,$x,$y,$w,$h){
+        $suffix = Yii::app()->basePath;
+        $im = imagecreatefromstring(base64_decode($signature["field_blob"]));
+        $path = "$suffix/../upload/";
+        if ($im !== false) {
+            imagejpeg($im, $path . "test.jpg");
+            imagedestroy($im);
+        }
+        $this->_PDF->Image($path.'test.jpg',$x,$y,$w,$h);
+        unlink($path . "test.jpg");
+    }
+
 	public function getOutput($str="docx") {//D
+        ob_end_clean();
         $this->_PDF->Output($str.".pdf", 'D');
+        exit;
         //$this->_PDF->Output($str.".pdf", 'I');
 	}
 }
