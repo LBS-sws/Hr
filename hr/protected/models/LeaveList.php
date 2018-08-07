@@ -48,11 +48,13 @@ class LeaveList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+        $suffix = Yii::app()->params['envSuffix'];
         $lcuId = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
         $manager = AuditConfigForm::getManager($employee_id);
-		$sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
+        //,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
+		$sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city ,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
               from hr_employee_leave a 
               LEFT JOIN hr_employee b ON a.employee_id = b.id 
               LEFT JOIN hr_dept d ON b.position = d.id 
@@ -125,6 +127,7 @@ class LeaveList extends CListPageModel
 			    $colorList = $this->statusToColor($record['status']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
+					'leavedoc'=>$record['leavedoc'],
 					'leave_code'=>$record['leave_code'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],

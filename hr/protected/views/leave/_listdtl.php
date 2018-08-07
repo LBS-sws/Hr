@@ -16,4 +16,9 @@
     <td><?php echo $this->record['end_time']; ?></td>
     <td><?php echo $this->record['log_time']; ?></td>
     <td><?php echo $this->record['status']; ?></td>
+    <td>
+        <?php if (!empty($this->record['leavedoc'])): ?>
+            <span class="fa fa-paperclip"></span>
+        <?php endif; ?>
+    </td>
 </tr>
