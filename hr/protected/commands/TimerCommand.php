@@ -155,6 +155,7 @@ class TimerCommand extends CConsoleCommand {
                     $subject = "加班申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
                     $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>员工城市：" . CGeneral::getCityName($row["s_city"]) . "</p>";
                     $message .= "<p>加班编号：" . $row["work_code"] . "</p>";
                     $message .= "<p>温馨提示：加班“批准”后3天，附件处还未上传文档。 </p>";
                     $email->setDescription($description);
@@ -186,6 +187,7 @@ class TimerCommand extends CConsoleCommand {
                     $subject = "加班申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
                     $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>员工城市：" . CGeneral::getCityName($row["s_city"]) . "</p>";
                     $message .= "<p>加班编号：" . $row["work_code"] . "</p>";
                     $message .= "<p>温馨提示：加班“批准”后7天，附件处还未上传文档。 </p>";
                     $email->setDescription($description);
@@ -217,6 +219,7 @@ class TimerCommand extends CConsoleCommand {
                     $subject = "加班申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
                     $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>员工城市：" . CGeneral::getCityName($row["s_city"]) . "</p>";
                     $message .= "<p>加班编号：" . $row["work_code"] . "</p>";
                     $message .= "<p>温馨提示：加班“批准”后15天，附件处还未上传文档。 </p>";
                     $email->setDescription($description);
@@ -248,6 +251,7 @@ class TimerCommand extends CConsoleCommand {
                     $subject = "请假申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
                     $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>员工城市：" . CGeneral::getCityName($row["s_city"]) . "</p>";
                     $message .= "<p>请假编号：" . $row["leave_code"] . "</p>";
                     $message .= "<p>温馨提示：请假“批准”后3天，附件处还未上传文档。 </p>";
                     $email->setDescription($description);
@@ -279,6 +283,7 @@ class TimerCommand extends CConsoleCommand {
                     $subject = "请假申请附件处还未上传文档 - " . $row["name"];
                     $message = "<p>员工编号：" . $row["code"] . "</p>";
                     $message .= "<p>员工姓名：" . $row["name"] . "</p>";
+                    $message .= "<p>员工城市：" . CGeneral::getCityName($row["s_city"]) . "</p>";
                     $message .= "<p>请假编号：" . $row["leave_code"] . "</p>";
                     $message .= "<p>温馨提示：请假“批准”后7天，附件处还未上传文档。 </p>";
                     $email->setDescription($description);
@@ -310,6 +315,7 @@ class TimerCommand extends CConsoleCommand {
                     $subject="请假申请附件处还未上传文档 - ".$row["name"];
                     $message="<p>员工编号：".$row["code"]."</p>";
                     $message.="<p>员工姓名：".$row["name"]."</p>";
+                    $message .= "<p>员工城市：" . CGeneral::getCityName($row["s_city"]) . "</p>";
                     $message.="<p>请假编号：".$row["leave_code"]."</p>";
                     $message.="<p>温馨提示：请假“批准”后15天，附件处还未上传文档。 </p>";
                     $email->setDescription($description);
