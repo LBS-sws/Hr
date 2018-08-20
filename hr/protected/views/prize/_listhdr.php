@@ -36,6 +36,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('lcd').$this->drawOrderArrow('a.lcd'),'#',$this->createOrderLink('prize-list','a.lcd'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('prize_date').$this->drawOrderArrow('a.prize_date'),'#',$this->createOrderLink('prize-list','a.prize_date'))
 			;
 		?>

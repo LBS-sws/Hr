@@ -1,4 +1,14 @@
 
+<?php if ($model->scenario!='new'): ?>
+    <div class="form-group">
+        <?php echo $form->labelEx($model,'lcd',array('class'=>"col-sm-2 control-label")); ?>
+        <div class="col-sm-3">
+            <?php echo $form->textField($model, 'lcd',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+    </div>
+<?php endif ?>
 <div class="form-group">
     <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">

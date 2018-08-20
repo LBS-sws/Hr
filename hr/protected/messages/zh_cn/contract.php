@@ -173,7 +173,7 @@ return array(
     'Wages Name'=>'工资单组合名称',
     'Wages Type'=>'工资类别',
     'Wages Hour'=>'时间（小时）',
-    'Wages Sum'=>'提成（RMB）',
+    'Wages Sum'=>'实发工资',
     'Wages Time'=>'工资月份',
     'Wages Type max number is five'=>'工资类别最大数量为5',
     'Wages Type Name'=>'工资类别名称',
@@ -187,9 +187,10 @@ return array(
     'Commission wages'=>'提成计算',
 
     'Wages Status'=>'工资单状态',
-    'Wages Detail'=>'工资单詳情',
+    'Wages Detail'=>'工资单详情',
     'To be made'=>'待制作',
     'audited'=>'已审核',
+    'Wages List'=>'工资单列表',
     'Wages Group'=>'工资组合',
     'Wages History'=>'工资历史',
     'Produced, pending submission'=>'已制作，待提交',
@@ -315,5 +316,13 @@ return array(
     //2018-04-24
     'salary'=>'调薪',
     'Effect Time'=>'生效日期',
+
+    'Apply Time'=>'申请时间',
+    'Wage Name'=>'工资名称',
+    'Wage Number'=>'工资数值',
+    'wage list(Convenient)'=>'工资单（快捷操作）',
+    'The payroll is completed this month'=>'本月工资单全部完成',
+    'Staff to be produced'=>'待制作工资单的员工数量',
+    'Apply Date'=>'录入日期',
 );
 ?>

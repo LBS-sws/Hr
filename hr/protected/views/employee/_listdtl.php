@@ -12,4 +12,9 @@
 	<td><?php echo $this->record['entry_time']; ?></td>
 	<td><?php echo $this->record['company_id']; ?></td>
 	<td><?php echo $this->record['status']; ?></td>
+    <td>
+        <?php if (!empty($this->record['employdoc'])): ?>
+            <span class="fa fa-paperclip"></span>
+        <?php endif; ?>
+    </td>
 </tr>

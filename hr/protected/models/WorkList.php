@@ -134,7 +134,9 @@ class WorkList extends CListPageModel
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
-		}
+		}else{
+            $order .= " order by a.id desc ";
+        }
 
 		$sql = $sql2.$clause;
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();

@@ -134,7 +134,7 @@ class EmployList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
-		$sql1 = "select * from hr_employee
+		$sql1 = "select *,docman$suffix.countdoc('EMPLOY',id) as employdoc from hr_employee
                 where city='$city' AND staff_status != 0 AND staff_status != -1
 			";
 		$sql2 = "select count(id)
@@ -186,6 +186,7 @@ class EmployList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+					'employdoc'=>$record['employdoc'],
 					'code'=>$record['code'],
 					'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
@@ -198,7 +199,7 @@ class EmployList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['criteria_a07'] = $this->getCriteria();
+		$session['employ_01'] = $this->getCriteria();
 		return true;
 	}
 

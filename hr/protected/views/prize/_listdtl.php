@@ -9,6 +9,7 @@
     <td><?php echo $this->record['prize_pro']; ?></td>
     <td><?php echo $this->record['contact']; ?></td>
     <td><?php echo $this->record['phone']; ?></td>
+    <td><?php echo $this->record['lcd']; ?></td>
     <td><?php echo $this->record['prize_date']; ?></td>
     <td><?php echo $this->record['status']; ?></td>
 </tr>

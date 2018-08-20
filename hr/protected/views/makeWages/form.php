@@ -41,7 +41,7 @@ $this->pageTitle=Yii::app()->name . ' - MakeWages Form';
                 ?>
 
                 <?php if ($model->scenario!='view'): ?>
-                    <?php if ($model->scenario=='new' || $model->wages_status == 1 || $model->wages_status == 4): ?>
+                    <?php if ($model->scenario=='new' || $model->wages_status == 0 || $model->wages_status == 2): ?>
                         <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                             'submit'=>Yii::app()->createUrl('makeWages/save')));
                         ?>
@@ -49,21 +49,9 @@ $this->pageTitle=Yii::app()->name . ' - MakeWages Form';
                             'submit'=>Yii::app()->createUrl('makeWages/audit')));
                         ?>
                     <?php endif ?>
-                    <?php if ($model->wages_status == 3): ?>
-                        <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('contract','Finish'), array(
-                            'submit'=>Yii::app()->createUrl('makeWages/finish',array("index"=>$model->id))));
-                        ?>
-                    <?php endif ?>
                 <?php endif ?>
             </div>
 
-            <div class="btn-group pull-right" role="group">
-                <?php
-                    //流程
-                    echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('contract','Wages History'), array(
-                        'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
-                 ?>
-            </div>
         </div></div>
 
     <div class="box box-info">
@@ -72,14 +60,8 @@ $this->pageTitle=Yii::app()->name . ' - MakeWages Form';
             <?php echo $form->hiddenField($model, 'id'); ?>
             <?php echo $form->hiddenField($model, 'employee_id'); ?>
             <?php echo $form->hiddenField($model, 'wages_status'); ?>
-            <?php echo $form->hiddenField($model, 'wages_head'); ?>
-            <?php
-                if(!empty($model->wages_head)){
-                    $model->wages_head = explode(",",$model->wages_head);
-                }
-            ?>
 
-            <?php if ($model->wages_status == 4): ?>
+            <?php if ($model->wages_status == 2): ?>
             <div class="form-group has-error">
                 <?php echo $form->labelEx($model,'just_remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
@@ -91,98 +73,145 @@ $this->pageTitle=Yii::app()->name . ' - MakeWages Form';
             <?php endif ?>
 
             <div class="form-group">
-                <?php echo $form->labelEx($model,'time',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'time',
-                        array('readonly'=>true)
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'name',
-                        array('readonly'=>true)
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'code',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'code',
-                        array('readonly'=>true)
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
-                        array('readonly'=>(true))
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'phone',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'phone',
-                        array('readonly'=>true)
-                    ); ?>
-                </div>
-            </div>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'position',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'position',
+                <?php echo $form->labelEx($model,'wages_date',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->textField($model, 'wages_date',
                         array('readonly'=>true)
                     ); ?>
                 </div>
             </div>
 
             <div class="form-group">
-                <?php echo $form->labelEx($model,'wages_body',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-8">
-
-                    <?php if (!empty($model->wages_head)): ?>
-                        <table class="table table-bordered table-striped" id="WagesTable">
-                            <thead>
-                            <tr>
-                                <?php
-                                $tableBody = "";
-                                foreach ($model->wages_head as $key =>  $con_name){
-                                    $text = "";
-                                    if (!empty($model->wages_body[$key])){
-                                        $text = $model->wages_body[$key];
-                                    }
-                                    echo "<th>".$con_name."</th>";
-                                    $bool = ($model->wages_status == 2 ||$model->wages_status == 3||$model->wages_status === "0"||$model->scenario=='view');
-                                    $tableBody.="<td>".TbHtml::textField("MakeWagesForm[wages_body][]",$text,array('readonly'=>$bool))."</td>";
-                                }
-                                ?>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <?php echo $tableBody;?>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <?php else:?>
-                        <div class="form-control-static text-danger">該員工沒有工資單</div>
-                    <?php endif; ?>
-
+                <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'employee_id',$model->getEmployeeList(),
+                        array('readonly'=>($model->getOnly()),'id'=>"staff_id")
+                    ); ?>
                 </div>
             </div>
+            <div class="form-group" id="staff_detail">
+            </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'sum',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->numberField($model, 'sum',
+                        array('readonly'=>$model->getOnly(),'min'=>0)
+                    ); ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'wages_arr',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-7">
+                    <?php
+                    $addHtml = $model->getAddHtmlTr();
+                    $html = '<table class="table table-bordered table-striped">';
+                    $html .= '<thead><tr>';
+                    $html .= '<td>'.Yii::t("contract","Wage Name").'</td>';
+                    $html .= '<td>'.Yii::t("contract","Wage Number").'</td>';
+                    if(!$model->getOnly()){
+                        $html .= '<td width="5%"></td>';
+                    }
+                    $html .= '</tr></thead><tbody id="wage_body">';
+                    if(!empty($model->wages_arr)){
+                        $key=0;
+                        foreach ($model->wages_arr as $row){
+                            $key++;
+                            $html .= strtr($addHtml, array(":key" =>$key,":wage_name" =>$row[0],":wage_num" =>$row[1]));
+                            $html .= '</tr>';
+                        }
+
+                    }
+                    $html .= '</tbody>';
+                    if(!$model->getOnly()){
+                        $html.="<tfoot><tr><td colspan=\"2\"></td><td>";
+                        $html.=TbHtml::button(Yii::t('app','New'), array("id"=>"addWage",'color'=>TbHtml::BUTTON_COLOR_PRIMARY));
+                        $html.="</td></tr></tfoot>";
+                    }
+                    $html.='</table>';
+                    echo $html;
+                    ?>
+                </div>
+            </div>
+
+            <?php if (!$model->getOnly()): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'wages_body',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'wages_body',WagesForm::getWagesList(),
+                            array('readonly'=>($model->getOnly()),"id"=>"change_wage")
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif ?>
 
         </div>
     </div>
 </section>
 
 <?php
-$this->renderPartial('//site/wageslist',array('model'=>$model));
-?>
-<?php
+$js = "
+$('#change_wage').on('change',function(){
+    if($(this).val() != ''){
+        $.ajax({
+            type: 'post',
+            url: '".Yii::app()->createUrl('makeWages/ajaxChangeWages')."',
+            data: {
+                con_id:$(this).val(),
+            },
+            dataType: 'json',
+            success: function(data){
+                if(data.status == 1){
+                    $('#wage_body').html(data.html);
+                }else{
+                    $('#wage_body').html('');
+                }
+            }
+        });
+    }
+});
 
+$('#staff_id').on('change',function(){
+    if($(this).val() != ''){
+        $.ajax({
+            type: 'post',
+            url: '".Yii::app()->createUrl('makeWages/ajaxEmployeeHtml')."',
+            data: {
+                staff_id:$(this).val(),
+            },
+            dataType: 'json',
+            success: function(data){
+                if(data.status == 1){
+                    $('#staff_detail').html(data.html);
+                }else{
+                    $('#staff_detail').html('');
+                }
+            }
+        });
+    }else{
+        $('#staff_detail').html('');
+    }
+}).trigger('change');
+
+$('#addWage').on('click',function(){
+    var key = $('#wage_body>tr:last').data('key');
+    if(key == undefined){
+        key = 0;
+    }
+    key++;
+    html='$addHtml';
+    html=html.replace(/:key/g,key);
+    html=html.replace(/:wage_name/g,'');
+    html=html.replace(/:wage_num/g,'');
+    $('#wage_body').append(html);
+});
+
+$('#wage_body').delegate('.delWage','click',function(){
+    $(this).parents('tr:first').remove();
+});
+";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);

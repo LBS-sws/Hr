@@ -8,8 +8,8 @@
     <td><?php echo $this->record['code']; ?></td>
     <td><?php echo $this->record['name']; ?></td>
     <td><?php echo $this->record['city']; ?></td>
-    <td><?php echo $this->record['phone']; ?></td>
 	<td><?php echo $this->record['position']; ?></td>
-	<td><?php echo $this->record['company_id']; ?></td>
+	<td><?php echo $this->record['wages_date']; ?></td>
+	<td><?php echo $this->record['wages_arr']; ?></td>
 	<td><?php echo $this->record['staff_status']; ?></td>
 </tr>

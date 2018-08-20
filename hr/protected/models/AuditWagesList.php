@@ -13,12 +13,14 @@ class AuditWagesList extends CListPageModel
 			'id'=>Yii::t('contract','ID'),
 			'name'=>Yii::t('contract','Employee Name'),
 			'code'=>Yii::t('contract','Employee Code'),
-			'phone'=>Yii::t('contract','Employee Phone'),
+			'wages_arr'=>Yii::t('contract','Wages Detail'),
 			'position'=>Yii::t('contract','Position'),
 			'city'=>Yii::t('contract','City'),
+			'city_name'=>Yii::t('contract','City'),
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
 			'staff_status'=>Yii::t('contract','Wages Status'),
+            'wages_date'=>Yii::t('contract','Wages Time'),
 		);
 	}
 
@@ -27,25 +29,36 @@ class AuditWagesList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
-        $fastDate = date('Y-m-01', strtotime(date("Y-m-d")));
-        $lastDate = date('Y-m-d', strtotime("$fastDate +1 month -1 day"));
-		$sql1 = "select * from hr_employee_wages
-                where city IN ($city_allow) AND wages_status != 1 AND wages_status != 0 and lcd >='$fastDate' and lcd <='$lastDate'
+/*        $fastDate = date('Y-m-01', strtotime(date("Y-m-d")));
+        $lastDate = date('Y-m-d', strtotime("$fastDate +1 month -1 day"));*/
+		$sql1 = "select a.*,b.code,b.city AS s_city,b.name,b.position from hr_employee_wages a
+                LEFT JOIN hr_employee b ON a.employee_id = b.id 
+                where b.city IN ($city_allow) AND a.wages_status = 1 
 			";
-		$sql2 = "select count(id)
-				from hr_employee_wages 
-				where city IN ($city_allow) AND wages_status != 1 AND wages_status != 0 and lcd >='$fastDate' and lcd <='$lastDate'
+		$sql2 = "select count(*)
+				from hr_employee_wages a
+                LEFT JOIN hr_employee b ON a.employee_id = b.id 
+                where b.city IN ($city_allow) AND a.wages_status = 1 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
+				case 'code':
+					$clause .= General::getSqlConditionClause('b.code',$svalue);
+					break;
 				case 'name':
-					$clause .= General::getSqlConditionClause('name',$svalue);
+					$clause .= General::getSqlConditionClause('b.name',$svalue);
+					break;
+				case 'position':
+					$clause .= General::getSqlConditionClause('b.position',$svalue);
 					break;
 				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
+					$clause .= General::getSqlConditionClause('b.city',$svalue);
 					break;
+                case 'city_name':
+                    $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
 			}
 		}
 		
@@ -67,15 +80,14 @@ class AuditWagesList extends CListPageModel
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 			    $arr = $this->returnStaffStatus($record['wages_status']);
-			    $staff = EmployeeForm::getEmployeeOneToId($record['employee_id']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'name'=>$staff['name'],
-					'code'=>$staff['code'],
-					'position'=>DeptForm::getDeptToid($staff['position']),
-					'company_id'=>CompanyForm::getCompanyToId($staff['company_id'])["name"],
-					'phone'=>$staff['phone'],
-                    'city'=>CGeneral::getCityName($record["city"]),
+					'name'=>$record['name'],
+					'wages_date'=>date("Y-m",strtotime($record['wages_date'])),
+					'code'=>$record['code'],
+					'position'=>DeptForm::getDeptToid($record['position']),
+					'wages_arr'=>$this->getWagesList($record),
+                    'city'=>CGeneral::getCityName($record["s_city"]),
 					'staff_status'=>$arr["status"],
 					'style'=>$arr["style"],
 				);
@@ -86,14 +98,34 @@ class AuditWagesList extends CListPageModel
 		return true;
 	}
 
+	private function getWagesList($row){
+	    $html = Yii::t("contract","Wages Sum")."：".$row["sum"]."<br>";
+	    if(!empty($row["wages_arr"])){
+	        $wagesArr = unserialize($row["wages_arr"]);
+	        $key = 0;
+	        foreach ($wagesArr as $wage){
+                $key++;
+                $html .= $wage[0]."：".$wage[1];
+                if($key == 2){
+                    break;
+                }
+                $html .= "<br>";
+            }
+	        if(count($wagesArr)>3){
+                $html.="<br>...";
+            }
+        }
+        return $html;
+    }
+
 	public function returnStaffStatus($wages_status){
         switch ($wages_status){
-            case 2:
+            case 1:
                 return array(
                     "status"=>Yii::t("contract","pending approval"),
                     "style"=>" text-yellow"
                 );//已提交，待審核
-            case 3:
+/*            case 3:
                 return array(
                     "status"=>Yii::t("contract","Finish approval"),
                     "style"=>" text-success"
@@ -102,7 +134,7 @@ class AuditWagesList extends CListPageModel
                 return array(
                     "status"=>Yii::t("contract","Rejected"),
                     "style"=>" text-red"
-                );//已拒絕
+                );//已拒絕*/
             default:
                 return array(
                     "status"=>Yii::t("contract","Error"),

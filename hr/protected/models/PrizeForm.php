@@ -20,6 +20,7 @@ class PrizeForm extends CFormModel
 	public $remark;
 	public $prize_type;
 	public $type_num;
+	public $lcd;
 	public $reject_remark;
 	public $audit = false;
 
@@ -46,6 +47,7 @@ class PrizeForm extends CFormModel
             'type_num'=>Yii::t('fete','type number'),
             'type_num_ex'=>Yii::t('fete','A commendatory letter is equal to two flags'),
             'prize_type'=>Yii::t('fete','prize type'),
+            'lcd'=>Yii::t('contract','Apply Date'),
 		);
 	}
 
@@ -55,7 +57,7 @@ class PrizeForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status,
+			array('id,employee_id,lcd,prize_date,city,prize_num,prize_pro,customer_name,customer_dis,contact,phone,posi,photo1,photo2,remark,status,
 			work_type,type_num,prize_type','safe'),
             array('prize_date','required'),
             array('prize_num','required'),
@@ -102,6 +104,7 @@ class PrizeForm extends CFormModel
                 $this->status = $row['status'];
                 $this->remark = $row['remark'];
                 $this->reject_remark = $row['reject_remark'];
+                $this->lcd = date("Y-m-d",strtotime($row['lcd']));
                 break;
 			}
 		}

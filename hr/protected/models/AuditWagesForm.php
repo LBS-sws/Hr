@@ -7,19 +7,18 @@
  */
 class AuditWagesForm extends CFormModel
 {
-	/* User Fields */
-	public $id;
-	public $employee_id;
-	public $name;
-	public $code;
-	public $phone;
-	public $position;
-    public $time;
-    public $wages_head;
-    public $wages_body;
-    public $wages_status;
+    /* User Fields */
+    public $id;
+    public $employee_id;
+    public $staff_list;
+    public $wages_date;
+    public $apply_time;
+    public $wages_arr;
+    public $audit = 0;
+    public $wages_status; //0:草稿  1：發送 2：拒絕 3：完成
     public $just_remark;
-    public $historyList;
+    public $sum;
+    public $wages_body;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -27,18 +26,17 @@ class AuditWagesForm extends CFormModel
 	 */
 	public function attributeLabels()
 	{
-		return array(
-			'id'=>Yii::t('staff','Record ID'),
-            'name'=>Yii::t('contract','Employee Name'),
-            'code'=>Yii::t('contract','Employee Code'),
-            'phone'=>Yii::t('contract','Employee Phone'),
-            'position'=>Yii::t('contract','Position'),
-            'time'=>Yii::t('contract','Wages Time'),
-            'hour'=>Yii::t('contract','Wages Hour'),
+        return array(
+            'id'=>Yii::t('staff','Record ID'),
+            'employee_id'=>Yii::t('contract','Staff View'),
+            'wages_date'=>Yii::t('contract','Wages Time'),
+            'apply_time'=>Yii::t('contract','Apply Time'),
             'sum'=>Yii::t('contract','Wages Sum'),
-            'wages_body'=>Yii::t('contract','Wages Group'),
+            'city'=>Yii::t('contract','City'),
+            'wages_arr'=>Yii::t('contract','Wages Detail'),
+            'wages_body'=>Yii::t('contract','wage list(Convenient)'),
             'just_remark'=>Yii::t('contract','Rejected Remark'),
-		);
+        );
 	}
 
 	/**
@@ -48,7 +46,7 @@ class AuditWagesForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, employee_id, wages_status, name, code, phone, position, time, hour, sum, wages_head, wages_body, just_remark','safe'),
+            array('id, employee_id, wages_status, staff_list, sum, wages_date, wages_arr, just_remark','safe'),
 			array('just_remark','required',"on"=>"reject"),
 /*            array('license_time, organization_time','date','allowEmpty'=>true,
                 'format'=>array('yyyy/MM/dd','yyyy-MM-dd','yyyy/M/d'),
@@ -58,27 +56,19 @@ class AuditWagesForm extends CFormModel
 
 	public function retrieveData($index)
 	{
-        $city = Yii::app()->user->city();
-        $fastDate = date('Y-m-01', strtotime(date("Y-m-d")));
-        $lastDate = date('Y-m-d', strtotime("$fastDate +1 month -1 day"));
-        $records = Yii::app()->db->createCommand()->select()->from("hr_employee_wages")
-            ->where("id =:id and lcd >='$fastDate' and lcd <='$lastDate' AND wages_status != 1 AND wages_status != 0",array(":id"=>$index))->queryRow();
-		if ($records){
-            $staff = EmployeeForm::getEmployeeOneToId($records['employee_id']);
-            $this->employee_id = $staff['id'];
-            $this->name = $staff['name'];
-            $this->code = $staff['code'];
-            $this->phone = $staff['phone'];
-            $this->position = DeptForm::getDeptToid($staff['position']);
-
-            $this->id = $records["id"];
-            $this->time = date('Y-m', strtotime($records["lcd"]));
-            $this->wages_status = $records["wages_status"];
-            $this->wages_head = $records["wages_head"];
-            $this->just_remark = $records["just_remark"];
-            $this->wages_body = explode(",",$records["wages_body"]);
-            $this->historyList = MakeWagesForm::getHistoryList($this->employee_id);
-		}
+        $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee_wages")
+            ->where("id =:id",array(":id"=>$index))->queryRow();
+        if ($row){
+            $this->id = $row['id'];
+            $this->employee_id = $row['employee_id'];
+            $this->staff_list = EmployeeForm::getEmployeeOneToId($row['employee_id']);
+            $this->wages_arr = unserialize($row['wages_arr']);
+            $this->wages_date = date("Y-m",strtotime($row['wages_date']));
+            $this->wages_status = $row['wages_status'];
+            $this->just_remark = $row['just_remark'];
+            $this->sum = $row['sum'];
+            $this->apply_time = $row['apply_time'];
+        }
 		return true;
 	}
 	
@@ -100,7 +90,7 @@ class AuditWagesForm extends CFormModel
 	{
 		$sql = '';
         $city = Yii::app()->user->city();
-        $uid = Yii::app()->user->user_display_name();
+        $uid = Yii::app()->user->id;
 		switch ($this->scenario) {
 			case 'audit':
                 $sql = "update hr_employee_wages set
@@ -111,7 +101,7 @@ class AuditWagesForm extends CFormModel
                 break;
 			case 'reject':
 				$sql = "update hr_employee_wages set
-							wages_status = 4, 
+							wages_status = 2, 
 							just_remark = :just_remark, 
 							luu = :luu 
 						where id = :id

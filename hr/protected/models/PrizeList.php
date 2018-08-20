@@ -25,6 +25,7 @@ class PrizeList extends CListPageModel
 			'city'=>Yii::t('contract','City'),
 			'city_name'=>Yii::t('contract','City'),
 			'status'=>Yii::t('contract','Status'),
+			'lcd'=>Yii::t('contract','Apply Date'),
 		);
 	}
 
@@ -74,7 +75,9 @@ class PrizeList extends CListPageModel
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
-		}
+		}else{
+            $order .= " order by a.id desc ";
+        }
 
 		$sql = $sql2.$clause;
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
@@ -99,6 +102,7 @@ class PrizeList extends CListPageModel
 					'position'=>DeptForm::getDeptToId($record['position']),
 					'phone'=>$record['phone'],
 					'prize_date'=>date("Y-m-d",strtotime($record['prize_date'])),
+					'lcd'=>date("Y-m-d",strtotime($record['lcd'])),
 					'status'=>$colorList["status"],
                     'city'=>CGeneral::getCityName($record["s_city"]),
 					'style'=>$colorList["style"],

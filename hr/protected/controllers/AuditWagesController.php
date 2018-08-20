@@ -94,12 +94,11 @@ class AuditWagesController extends Controller
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('auditWages/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('auditWages/index'));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $model->historyList = MakeWagesForm::getHistoryList($model->employee_id);
-                $this->render('form',array('model'=>$model,));
+                $this->redirect(Yii::app()->createUrl('auditWages/edit',array('index'=>$model->id)));
             }
         }
     }
@@ -112,12 +111,11 @@ class AuditWagesController extends Controller
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('auditWages/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('auditWages/index'));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $model->historyList = MakeWagesForm::getHistoryList($model->employee_id);
-                $this->render('form',array('model'=>$model,));
+                $this->redirect(Yii::app()->createUrl('auditWages/edit',array('index'=>$model->id)));
             }
         }
     }

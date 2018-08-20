@@ -1,37 +1,32 @@
 <tr>
 	<th></th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('code').$this->drawOrderArrow('code'),'#',$this->createOrderLink('makeWages-list','code'))
+		<?php echo TbHtml::link($this->getLabelName('code').$this->drawOrderArrow('b.code'),'#',$this->createOrderLink('makeWages-list','b.code'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('name').$this->drawOrderArrow('name'),'#',$this->createOrderLink('makeWages-list','name'))
+		<?php echo TbHtml::link($this->getLabelName('name').$this->drawOrderArrow('b.name'),'#',$this->createOrderLink('makeWages-list','b.name'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('city'),'#',$this->createOrderLink('makeWages-list','city'))
+		<?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('b.city'),'#',$this->createOrderLink('makeWages-list','b.city'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('phone').$this->drawOrderArrow('phone'),'#',$this->createOrderLink('makeWages-list','phone'))
+		<?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('b.position'),'#',$this->createOrderLink('makeWages-list','b.position'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('position'),'#',$this->createOrderLink('makeWages-list','position'))
+		<?php echo TbHtml::link($this->getLabelName('wages_date').$this->drawOrderArrow('a.wages_date'),'#',$this->createOrderLink('makeWages-list','a.wages_date'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('company_id').$this->drawOrderArrow('company_id'),'#',$this->createOrderLink('makeWages-list','company_id'))
-			;
-		?>
-	</th>
-	<th>
-		<?php echo TbHtml::link($this->getLabelName('staff_status').$this->drawOrderArrow('staff_status'),'#',$this->createOrderLink('makeWages-list','staff_status'))
+		<?php echo TbHtml::link($this->getLabelName('staff_status').$this->drawOrderArrow('a.wages_status'),'#',$this->createOrderLink('makeWages-list','a.wages_status'))
 			;
 		?>
 	</th>

@@ -18,7 +18,9 @@ class MakeWagesList extends CListPageModel
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
 			'staff_status'=>Yii::t('contract','Wages Status'),
+            'city_name'=>Yii::t('contract','City'),
 			'city'=>Yii::t('contract','City'),
+            'wages_date'=>Yii::t('contract','Wages Time'),
 		);
 	}
 
@@ -26,36 +28,36 @@ class MakeWagesList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $lcuId = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select * from hr_employee
-                where city IN ($city_allow) AND staff_status = 0
+		$sql1 = "select a.*,b.name,b.code,b.position,b.city AS s_city from hr_employee_wages a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id
+                where b.city IN ($city_allow) AND ((a.wages_status = 0 AND a.lcu='$lcuId') or a.wages_status != 0)
 			";
-		$sql2 = "select count(id)
-				from hr_employee 
-				where city IN ($city_allow) AND staff_status = 0
+		$sql2 = "select count(a.id)
+				from hr_employee_wages a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id
+                where b.city IN ($city_allow) AND ((a.wages_status = 0 AND a.lcu='$lcuId') or a.wages_status != 0)
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
 				case 'name':
-					$clause .= General::getSqlConditionClause('name',$svalue);
+					$clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
 				case 'code':
-					$clause .= General::getSqlConditionClause('code',$svalue);
+					$clause .= General::getSqlConditionClause('b.code',$svalue);
 					break;
 				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
-					break;
-				case 'phone':
-					$clause .= General::getSqlConditionClause('phone',$svalue);
+					$clause .= General::getSqlConditionClause('b.city',$svalue);
 					break;
 				case 'position':
-					$clause .= General::getSqlConditionClause('phone',$svalue);
+					$clause .= General::getSqlConditionClause('b.position',$svalue);
 					break;
-				case 'company_id':
-					//$clause .= General::getSqlConditionClause('company_id',$svalue);
-					break;
+                case 'city_name':
+                    $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
 			}
 		}
 		
@@ -76,15 +78,14 @@ class MakeWagesList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-			    $arr = $this->returnStaffStatus($record['id']);
+			    $arr = $this->returnStaffStatus($record);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+					'wages_date'=>date("Y-m",strtotime($record['wages_date'])),
 					'code'=>$record['code'],
-                    'city'=>CGeneral::getCityName($record["city"]),
+                    'city'=>CGeneral::getCityName($record["s_city"]),
 					'position'=>DeptForm::getDeptToid($record['position']),
-					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
-					'phone'=>$record['phone'],
 					'staff_status'=>$arr["status"],
 					'style'=>$arr["style"],
 				);
@@ -95,45 +96,34 @@ class MakeWagesList extends CListPageModel
 		return true;
 	}
 
-	public function returnStaffStatus($staff_id){
-        $fastDate = date('Y-m-01', strtotime(date("Y-m-d")));
-        $lastDate = date('Y-m-d', strtotime("$fastDate +1 month -1 day"));
-        $records = Yii::app()->db->createCommand()->select("wages_status")->from("hr_employee_wages")
-            ->where("employee_id =:id and lcd >='$fastDate' and lcd <='$lastDate'",array(":id"=>$staff_id))->queryRow();
-        if($records){
-            switch ($records["wages_status"]){
-                case 0:
-                    return array(
-                        "status"=>Yii::t("contract","Finish"),
-                        "style"=>" text-primary"
-                    );//已完成
-                case 1:
-                    return array(
-                        "status"=>Yii::t("contract","Produced, pending submission"),
-                        "style"=>" "
-                    );//已製作，待提交
-                case 2:
-                    return array(
-                        "status"=>Yii::t("contract","Produced, pending audit"),
-                        "style"=>" text-success"
-                    );//已提交，待審核
-                case 3:
-                    return array(
-                        "status"=>Yii::t("contract","audited, pending finish"),
-                        "style"=>" text-yellow"
-                    );//已審核，待確認
-                case 4:
-                    return array(
-                        "status"=>Yii::t("contract","reject"),
-                        "style"=>" text-red"
-                    );//已拒絕
+	public function returnStaffStatus($record){
+        switch ($record["wages_status"]){
+            case 0:
+                return array(
+                    "status"=>Yii::t("contract","Produced, pending submission"),
+                    "style"=>" "
+                );//已製作，待提交
+            case 1:
+                return array(
+                    "status"=>Yii::t("contract","Produced, pending audit"),
+                    "style"=>" text-success"
+                );//已提交，待審核
+            case 2:
+                return array(
+                    "status"=>Yii::t("contract","reject"),
+                    "style"=>" text-red"
+                );//已拒絕
+            case 3:
+                return array(
+                    "status"=>Yii::t("contract","Finish"),
+                    "style"=>" text-primary"
+                );//已完成
+/*            case 4:
+                return array(
+                    "status"=>Yii::t("contract","audited, pending finish"),
+                    "style"=>" text-yellow"
+                );//已審核，待確認*/
 
-            }
-        }else{
-            return array(
-                "status"=>Yii::t("contract","To be made"),
-                "style"=>" text-danger"
-            );//未生成工資單
         }
     }
 }

@@ -168,12 +168,13 @@ return array(
     'woman'=>'女',
 
     'Add Wages Type'=>'添加工資單組合',
+    'Wages List'=>'工資單列表',
     'Wages Type List'=>'工資單組合列表',
     'Wages Type Form'=>'工資單組合表單',
     'Wages Name'=>'工資單組合名稱',
     'Wages Type'=>'工資類別',
     'Wages Hour'=>'時間（小時）',
-    'Wages Sum'=>'提成（RMB）',
+    'Wages Sum'=>'實發工資',
     'Wages Time'=>'工資月份',
     'Wages Type max number is five'=>'工資類別最大數量為5',
     'Wages Type Name'=>'工資類別名稱',
@@ -310,5 +311,13 @@ return array(
     //2018-04-24
     'salary'=>'調薪',
     'Effect Time'=>'生效日期',
+
+    'Apply Time'=>'申请时间',
+    'Wage Name'=>'工資名稱',
+    'Wage Number'=>'工資數值',
+    'wage list(Convenient)'=>'工資單（快捷操作）',
+    'The payroll is completed this month'=>'本月工資單已全部完成',
+    'Staff to be produced'=>'待製作工資單的員工數量',
+    'Apply Date'=>'錄入日期',
 );
 ?>
