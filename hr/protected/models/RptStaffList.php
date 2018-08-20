@@ -107,7 +107,7 @@ class RptStaffList extends CReport {
 		
 		$sql = "select a.id 
 				from hr_employee a 
-				where a.city='$city' and (a.leave_time >= '$dt' or a.leave_time is null)
+				where a.city='$city' and (convert(a.leave_time,datetime) >= '$dt' or a.leave_time is null)
 				order by a.id
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
