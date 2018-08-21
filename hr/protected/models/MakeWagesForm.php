@@ -104,7 +104,7 @@ class MakeWagesForm extends CFormModel
             $sql="and id not in(".implode(",",$rows).")";
         }
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where("city in ($city_allow) $sql")->queryAll();
+            ->where("city in ($city_allow) and staff_status = 0 $sql")->queryAll();
         if ($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["code"]." - ".$row["name"];
