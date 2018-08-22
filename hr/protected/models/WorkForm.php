@@ -87,7 +87,7 @@ class WorkForm extends CFormModel
             array('end_time','required','on'=>array("new","edit","audit")),
             array('log_time','required','on'=>array("new","edit","audit")),
             array('end_time','validateTime','on'=>array("new","edit","audit")),
-            array('log_time','numerical', 'min'=>1, 'max'=>8,'allowEmpty'=>true,'integerOnly'=>true,'on'=>array("new","edit","audit")),
+            array('log_time','numerical', 'min'=>1, 'max'=>8,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
@@ -437,15 +437,15 @@ class WorkForm extends CFormModel
                 }else{
                     $this->cost_num = 2;
                 }
-                $this->work_cost = ($wage/21.75)*intval($this->log_time)*intval($this->cost_num);
+                $this->work_cost = ($wage/21.75)*floatval($this->log_time)*intval($this->cost_num);
                 break;
             case 1:
-                $this->work_cost = ($wage/(21.75*8))*intval($this->log_time)*2;
+                $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*2;
                 $this->start_time .=" ".$this->hours;
                 $this->end_time .=" ".$this->hours_end;
                 break;
             default:
-                $this->work_cost = ($wage/(21.75*8))*intval($this->log_time)*1.5;
+                $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*1.5;
                 $this->start_time .=" ".$this->hours;
                 $this->end_time .=" ".$this->hours_end;
         }
