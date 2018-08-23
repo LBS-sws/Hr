@@ -87,7 +87,7 @@ class WorkForm extends CFormModel
             array('end_time','required','on'=>array("new","edit","audit")),
             array('log_time','required','on'=>array("new","edit","audit")),
             array('end_time','validateTime','on'=>array("new","edit","audit")),
-            array('log_time','numerical', 'min'=>1, 'max'=>8,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
+            array('log_time','numerical', 'min'=>0.5, 'max'=>8,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
