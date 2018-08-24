@@ -229,13 +229,16 @@ class WorkController extends Controller
         $model = new WorkForm();
         if (isset($_POST['WorkForm'])) {
             $model->attributes = $_POST['WorkForm'];
-
             $id = ($_POST['WorkForm']['scenario']=='new') ? 0 : $model->id;
             $docman = new DocMan($model->docType,$id,get_class($model));
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
             $docman->fileUpload();
-            echo $docman->genTableFileList(false);
+            if($_POST['WorkForm']['scenario']=='new'||$model->status == 0||$model->status == 3){
+                echo $docman->genTableFileList(false);
+            }else{
+                echo $docman->genTableFileList(false,false);
+            }
         } else {
             echo "NIL";
         }
@@ -245,11 +248,14 @@ class WorkController extends Controller
         $model = new WorkForm();
         if (isset($_POST['WorkForm'])) {
             $model->attributes = $_POST['WorkForm'];
-
             $docman = new DocMan($model->docType,$model->id,'WorkForm');
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
-            echo $docman->genTableFileList(false);
+            if($_POST['WorkForm']['scenario']=='new'||$model->status == 0||$model->status == 3){
+                echo $docman->genTableFileList(false);
+            }else{
+                echo $docman->genTableFileList(false,false);
+            }
         } else {
             echo "NIL";
         }

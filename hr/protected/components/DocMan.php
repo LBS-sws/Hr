@@ -385,7 +385,7 @@ class DocMan {
 		return $rtn;
 	}
 
-	public function genTableFileList($readonly) {
+	public function genTableFileList($readonly,$delBtn=true) {
 		$rtn = "";
 		$reccnt = 0;
 		$filelist = $this->retrieve();
@@ -404,6 +404,9 @@ class DocMan {
 				$y = $this->formId;
 				$vbutton = ($this->docId==0) ? "" : "<a href=\"#\" onclick=\"downloadFile$doctype($mid, $did, $id);return false;\" title=\"$title1\"><span class=\"fa fa-download\"></span></a>";
 				$dbutton = $readonly ? "" : "<a href=\"#\" onclick=\"removeFile$doctype($id);return false;\"><span class=\"fa fa-remove\" title=\"$title2\"></span></a>";
+				if(!$delBtn){
+                    $dbutton  = "";
+                }
 				$fname = $filerec['display_name'];
 				$ldate = $filerec['lcd'];
 				$rtn .= "<tr><td>$vbutton&nbsp;&nbsp;$dbutton</td><td>$fname</td><td>$ldate</td></tr>";

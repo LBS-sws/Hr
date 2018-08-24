@@ -29,7 +29,10 @@ if(get_class($model)=="HistoryForm"&&empty($model->id)){
         $doc->masterId = $model->docMasterId[strtolower($doc->docType)];
     }
 }
-echo $doc->genTableFileList($ronly);
+if(!isset($delBtn)){
+    $delBtn = true;
+}
+echo $doc->genTableFileList($ronly,$delBtn);
 ?>
 		</tbody>
 	</table>
