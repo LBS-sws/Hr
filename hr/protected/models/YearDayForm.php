@@ -28,7 +28,7 @@ class YearDayForm extends CFormModel
             array('add_num','required'),
             array('employee_id','numerical',"integerOnly"=>true),
             array('year','numerical',"integerOnly"=>true),
-            array('add_num','numerical',"integerOnly"=>true),
+            array('add_num','numerical',"integerOnly"=>false),
 		);
 	}
 
@@ -50,9 +50,11 @@ class YearDayForm extends CFormModel
 
     //獲取可以選擇的員工
     public function getEmployeeList(){
+        $city_allow = Yii::app()->user->city_allow();
 	    $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select("b.code,b.name,b.id")
-            ->from("hr_binding a")->leftJoin("hr_employee b","a.employee_id = b.id")->queryAll();
+            ->from("hr_binding a")->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("b.city in($city_allow)")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["code"]." - ".$row["name"];
