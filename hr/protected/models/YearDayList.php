@@ -22,12 +22,12 @@ class YearDayList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select a.*,b.code AS employee_code,b.name AS employee_name from hr_staff_year a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
-                where a.id>0 
+                where a.id>0 AND b.city IN ($city_allow) 
 			";
 		$sql2 = "select count(a.id)
 				from hr_staff_year a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
-                where a.id>0 
+                where a.id>0 AND b.city IN ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
