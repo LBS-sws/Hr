@@ -7,7 +7,7 @@ class TimerCommand extends CConsoleCommand {
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
         $lastday = date("Y/m/d",strtotime("$firstday + 1 month"));
-        $sql = "staff_status=0 and (attachment='' or attachment=0 or attachment is null) and fix_time='fixation' and replace(end_time,'-', '/') >='$firstday' and replace(end_time,'-', '/') <='$lastday'";
+        $sql = "staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') >='$firstday' and replace(end_time,'-', '/') <='$lastday'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         $command->reset();
         $aaa = $command->update('hr_employee', array("z_index"=>2),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') <= '$firstday' and replace(test_end_time,'-', '/') >='$firstday'");//試用期
@@ -41,7 +41,6 @@ class TimerCommand extends CConsoleCommand {
                 $email->resetToAddr();
             }
             $command->reset();
-            $command->update('hr_employee', array("attachment"=>1),$sql);
         }
 
 
@@ -67,26 +66,27 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $firstDay = date("Y/m/d");
         $firstDay = date("Y/m/d",strtotime("$firstDay - 14 day"));
-        $sql = "staff_status=0 and signed_bool=0 and replace(entry_time,'-', '/') ='$firstDay'";
+        $sql = "staff_status=0 and replace(entry_time,'-', '/') >='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $description="员工合同签约提醒 - ".$row["name"];
-                $subject="员工合同签约提醒 - ".$row["name"];
-                $message="<p>员工编号：".$row["code"]."</p>";
-                $message.="<p>员工姓名：".$row["name"]."</p>";
-                $message.="<p>员工入职日期：".$row["entry_time"]."</p>";
-                $message.="<p>温馨提示：员工是否已签合同？如已签请尽快把已签字合同上传到员工附件处，如未签请尽快处理 </p>";
-                $email->setDescription($description);
-                $email->setMessage($message);
-                $email->setSubject($subject);
-                $email->addEmailToPrefixAndCity("ZE01",$row["city"]);
-                $email->addEmailToCity($row["city"]);
-                $email->sent("系统生成");
-                $email->resetToAddr();
+                if($this->docmanSearch("EMPLOY",$row["id"],$row["lcd"])){
+                    $description="员工合同签约提醒 - ".$row["name"];
+                    $subject="员工合同签约提醒 - ".$row["name"];
+                    $message="<p>员工编号：".$row["code"]."</p>";
+                    $message.="<p>员工姓名：".$row["name"]."</p>";
+                    $message.="<p>员工入职日期：".$row["entry_time"]."</p>";
+                    $message.="<p>温馨提示：员工是否已签合同？如已签请尽快把已签字合同上传到员工附件处，如未签请尽快处理 </p>";
+                    $email->setDescription($description);
+                    $email->setMessage($message);
+                    $email->setSubject($subject);
+                    $email->addEmailToPrefixAndCity("ZE01",$row["city"]);
+                    $email->addEmailToCity($row["city"]);
+                    $email->sent("系统生成");
+                    $email->resetToAddr();
+                }
             }
             $command->reset();
-            $command->update('hr_employee', array("signed_bool"=>1),$sql);
         }
     }
 
@@ -142,9 +142,10 @@ class TimerCommand extends CConsoleCommand {
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $command->reset();
-        $firstday = date("Y/m/d");
-        $firstday = date("Y/m/d",strtotime("$firstday - 3 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $date = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$date - 3 day"));
+        $end = date("Y/m/d",strtotime("$date - 7 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$end'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -174,9 +175,10 @@ class TimerCommand extends CConsoleCommand {
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $command->reset();
-        $firstday = date("Y/m/d");
-        $firstday = date("Y/m/d",strtotime("$firstday - 7 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $date = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$date - 7 day"));
+        $endday = date("Y/m/d",strtotime("$date - 15 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$endday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -206,9 +208,9 @@ class TimerCommand extends CConsoleCommand {
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $command->reset();
-        $firstday = date("Y/m/d");
-        $firstday = date("Y/m/d",strtotime("$firstday - 15 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $date = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$date - 15 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -238,9 +240,10 @@ class TimerCommand extends CConsoleCommand {
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $command->reset();
-        $firstday = date("Y/m/d");
-        $firstday = date("Y/m/d",strtotime("$firstday - 3 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $date = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$date - 3 day"));
+        $endday = date("Y/m/d",strtotime("$date - 7 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$endday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -270,9 +273,10 @@ class TimerCommand extends CConsoleCommand {
         $email = new Email();
         $command = Yii::app()->db->createCommand();
         $command->reset();
-        $firstday = date("Y/m/d");
-        $firstday = date("Y/m/d",strtotime("$firstday - 7 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $date = date("Y/m/d");
+        $firstday = date("Y/m/d",strtotime("$date - 7 day"));
+        $endday = date("Y/m/d",strtotime("$date - 15 day"));
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$endday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -304,7 +308,7 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $firstday = date("Y/m/d");
         $firstday = date("Y/m/d",strtotime("$firstday - 15 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') = '$firstday'";
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();

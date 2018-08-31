@@ -124,20 +124,7 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(110, 8, 90,59, $html, 0, 1, 0, true, 'C', true);
         $signature = LeaveForm::getSignatureToStaffId($arr["employee_id"]);
         if($signature){
-            $im = imagecreatefromstring(base64_decode($signature["field_blob"]));
-            $path = "$suffix/../upload/";
-            if ($im !== false) {
-                echo 'image ok';
-                //header('Content-Type: image/png');
-                imagejpeg($im, $path . "test.jpg");
-                imagedestroy($im);
-                echo "<br /> image done";
-            }else {
-                echo 'An error occurred.';
-            }
-            //$this->_PDF->writeHTMLCell(0, 30, '', '', '<img src="' .$path . 'test.jpg"/>', 1, 1, 0, true, 'C', true);
-            $this->_PDF->Image($path.'test.jpg', 60, 153, 0,16);
-            unlink($path . "test.jpg");
+            $this->setSignature($signature, 60, 153, 0,16);
         }
 
         $html = "<p><b>休假类别：（请选择你申请的类别）</b></p>";
@@ -379,7 +366,7 @@ class MyPDFTwo {
     }
 
     private function setSignature($signature,$x,$y,$w,$h){
-        $suffix = Yii::app()->basePath;
+/*        $suffix = Yii::app()->basePath;
         $im = imagecreatefromstring(base64_decode($signature["field_blob"]));
         $path = "$suffix/../upload/";
         if ($im !== false) {
@@ -387,7 +374,7 @@ class MyPDFTwo {
             imagedestroy($im);
         }
         $this->_PDF->Image($path.'test.jpg',$x,$y,$w,$h);
-        unlink($path . "test.jpg");
+        unlink($path . "test.jpg");*/
     }
 
 	public function getOutput($str="docx") {//D
