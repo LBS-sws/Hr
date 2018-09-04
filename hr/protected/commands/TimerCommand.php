@@ -66,7 +66,7 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $firstDay = date("Y/m/d");
         $firstDay = date("Y/m/d",strtotime("$firstDay - 14 day"));
-        $sql = "staff_status=0 and replace(entry_time,'-', '/') >='$firstDay'";
+        $sql = "staff_status=0 and replace(entry_time,'-', '/') <='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
@@ -145,7 +145,7 @@ class TimerCommand extends CConsoleCommand {
         $date = date("Y/m/d");
         $firstday = date("Y/m/d",strtotime("$date - 3 day"));
         $end = date("Y/m/d",strtotime("$date - 7 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$end'";
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') <= '$firstday' and date_format(a.lud,'%Y/%m/%d') > '$end'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -178,7 +178,7 @@ class TimerCommand extends CConsoleCommand {
         $date = date("Y/m/d");
         $firstday = date("Y/m/d",strtotime("$date - 7 day"));
         $endday = date("Y/m/d",strtotime("$date - 15 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$endday'";
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') <= '$firstday' and date_format(a.lud,'%Y/%m/%d') > '$endday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -210,7 +210,7 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $date = date("Y/m/d");
         $firstday = date("Y/m/d",strtotime("$date - 15 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday'";
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') <= '$firstday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -243,7 +243,7 @@ class TimerCommand extends CConsoleCommand {
         $date = date("Y/m/d");
         $firstday = date("Y/m/d",strtotime("$date - 3 day"));
         $endday = date("Y/m/d",strtotime("$date - 7 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$endday'";
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') <= '$firstday' and date_format(a.lud,'%Y/%m/%d') > '$endday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -276,7 +276,7 @@ class TimerCommand extends CConsoleCommand {
         $date = date("Y/m/d");
         $firstday = date("Y/m/d",strtotime("$date - 7 day"));
         $endday = date("Y/m/d",strtotime("$date - 15 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday' and date_format(a.lud,'%Y/%m/%d') < '$endday'";
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') <= '$firstday' and date_format(a.lud,'%Y/%m/%d') > '$endday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
@@ -308,7 +308,7 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $firstday = date("Y/m/d");
         $firstday = date("Y/m/d",strtotime("$firstday - 15 day"));
-        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') >= '$firstday'";
+        $sql = "a.status=4 and date_format(a.lud,'%Y/%m/%d') <= '$firstday'";
         $rows = $command->select("a.*,b.code,b.name,b.city as s_city")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
