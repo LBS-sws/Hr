@@ -31,6 +31,7 @@ class WorkForm extends CFormModel
 	public $audit = false;//是否需要審核
     public $wage;//合約工資
     public $lcd;
+    public $addTime=array();//額外添加的加班時間段
 
 
     public $no_of_attm = array(
@@ -87,10 +88,23 @@ class WorkForm extends CFormModel
             array('end_time','required','on'=>array("new","edit","audit")),
             array('log_time','required','on'=>array("new","edit","audit")),
             array('end_time','validateTime','on'=>array("new","edit","audit")),
-            array('log_time','numerical', 'min'=>0.5, 'max'=>8,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
+            array('addTime','validateAddTime','on'=>array("new","edit","audit")),
+            array('addTime','validateLogTime','on'=>array("new","edit","audit")),
+            array('log_time','numerical', 'min'=>0.5,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
+    public function validateLogTime($attribute, $params){
+	    if(!empty($this->log_time)){
+	        if($this->work_type!=3){
+                if(floatval($this->log_time)>8){
+                    $message = "时间周期不能大于8";
+                    $this->addError($attribute,$message);
+                }
+            }
+        }
+    }
+
     public function validateTime($attribute, $params){
         if(!empty($this->end_time)&&!empty($this->start_time)){
             $date2 = strtotime($this->start_time);
@@ -119,13 +133,28 @@ class WorkForm extends CFormModel
                 $message = Yii::t('fete','This time period is not a legal holiday, please contact the administrator');
                 $this->addError($attribute,$message);
             }
-        }else if($this->work_type == 1){
+        }else if($this->work_type == 1||$this->work_type == 3){
 	        $week = date("w",strtotime($this->start_time));
             if($week == 6 || $week == 0){
                 //是週末
             }else{
                 $message = Yii::t('fete','This time period is not a weekend');
                 $this->addError($attribute,$message);
+            }
+        }
+    }
+
+
+    public function validateAddTime($attribute, $params){
+	    if($this->work_type == 3){
+	        foreach ($this->addTime as $time){
+                $week = date("w",strtotime($time["start_time"]));
+                if(!in_array($week,array(0,6))){
+                    //不是週末
+                    $message = Yii::t('fete','This time period is not a weekend');
+                    $this->addError($attribute,$message);
+                    return false;
+                }
             }
         }
     }
@@ -187,6 +216,7 @@ class WorkForm extends CFormModel
 			";
         $records = $connection->createCommand($sql)->queryRow();
         if($records){
+            $records["addTime"] = $this->getAddTimeListToWorkId($records["id"]);
             $company = CompanyForm::getCompanyToId($records["company_id"]);
             $records["company_name"]=$company["name"];
             $records["dept_name"]=DeptForm::getDeptToId($records["department"]);
@@ -375,10 +405,24 @@ class WorkForm extends CFormModel
             ), 'id=:id', array(':id'=>$this->id));
         }
 
+        $this->addWorkDateInfo();
         //發送郵件
         $this->sendEmail();
 		return true;
 	}
+
+	//添加額外時間段
+	private function addWorkDateInfo(){
+        Yii::app()->db->createCommand()->delete("hr_employee_word_info", "work_id=:work_id",array("work_id"=>$this->id));
+        foreach ($this->addTime as $row){
+            $columArray=array(
+                "work_id"=>$this->id,
+                "start_time"=>$row["start_time"]." ".$row["hours"].":00",
+                "end_time"=>$row["end_time"]." ".$row["hours_end"].":00"
+            );
+            Yii::app()->db->createCommand()->insert("hr_employee_word_info", $columArray);
+        }
+    }
 
     protected function sendEmail(){
         if($this->audit){
@@ -492,5 +536,83 @@ class WorkForm extends CFormModel
             return true;
         }
         return false;
+    }
+
+    private function getAddTimeListToWorkId($work_id){
+        $rows = Yii::app()->db->createCommand()->select("*")->from("hr_employee_word_info")
+            ->where('work_id=:work_id',
+                array(':work_id'=>$work_id))->queryAll();
+        if ($rows){
+            return $rows;
+        }
+	    return array();
+    }
+
+    private function getDateTimeInput($name1,$value1,$name2,$value2,$arr1=array(),$arr2=array()){
+        if(empty($value2)){
+            $value2 = "08:00";
+        }
+        $html="";
+        $html.='<div class="input-group"><div class="input-group-addon"><i class="fa fa-calendar"></i></div>';
+        $html.=TbHtml::textField($name1,$value1,$arr1);
+        $html.='<div class="input-group-btn" style="width: 100px;">';
+        $html.=TbHtml::dropDownList($name2,$value2,WorkList::getHoursList(),$arr2);
+        $html.='</div></div>';
+        return $html;
+    }
+	//
+	public function getWorkTimeHtmlToType($modelStr,$work_type,$index,$only=false){
+	    if(empty($modelStr)||!in_array($work_type,array(0,1,2,3))){
+	        return array("status"=>0);
+        }
+        $this->retrieveData($index);
+        $html = "";
+	    if($work_type==3){
+            $html.="<div class='form-group'><div class='col-sm-8 col-sm-offset-2'><table class='table table-bordered table-striped'><thead><tr>";
+            $html.="<th>".Yii::t('contract','Start Time')."</th>";
+            $html.="<th>".Yii::t('contract','End Time')."</th>";
+            $addTimeArr = $this->getAddTimeListToWorkId($index);
+            if(!$only){
+                $html.="<th></th>";
+            }
+            $html.="</tr></thead><tbody data-num='".count($addTimeArr)."'><tr>";
+            $html.="<td>".$this->getDateTimeInput($modelStr."[start_time]",$this->start_time,$modelStr."[hours]",$this->hours,array("readonly"=>$only,"class"=>"changeDateTime","id"=>"start_time"),array("readonly"=>$only,"class"=>"changeHours","id"=>"hours"))."</td>";
+            $html.="<td>".$this->getDateTimeInput($modelStr."[end_time]",$this->end_time,$modelStr."[hours_end]",$this->hours_end,array("readonly"=>$only,"class"=>"changeDateTime","id"=>"end_time"),array("readonly"=>$only,"class"=>"changeHours","id"=>"hours_end"))."</td>";
+            if(!$only){
+                $html.="<td>&nbsp;</td>";
+            }
+            $html.="</tr>";
+            foreach ($addTimeArr as $key=>$row){
+                $html.="<tr>";
+                $html.="<td>".$this->getDateTimeInput($modelStr."[addTime][$key][start_time]",date("Y/m/d",strtotime($row["start_time"])),$modelStr."[addTime][$key][hours]",date("H:i",strtotime($row["start_time"])),array("readonly"=>$only,"class"=>"changeDateTime"),array("readonly"=>$only,"class"=>"changeHours"))."</td>";
+                $html.="<td>".$this->getDateTimeInput($modelStr."[addTime][$key][end_time]",date("Y/m/d",strtotime($row["end_time"])),$modelStr."[addTime][$key][hours_end]",date("H:i",strtotime($row["end_time"])),array("readonly"=>$only,"class"=>"changeDateTime"),array("readonly"=>$only,"class"=>"changeHours"))."</td>";
+                if(!$only){
+                    $html.="<td>".TbHtml::button(Yii::t("dialog","Remove"),array("class"=>"btn btn-danger delWages"))."</td>";
+                }
+                $html.="</tr>";
+            }
+
+            $html.="<tr id='workTrModel' style='display: none;'>";
+            $html.="<td>".$this->getDateTimeInput("#start_time#","","#hours#","",array("readonly"=>$only,"class"=>"changeDateTime"),array("readonly"=>$only,"class"=>"changeHours"))."</td>";
+            $html.="<td>".$this->getDateTimeInput("#end_time#","","#hours_end#","",array("readonly"=>$only,"class"=>"changeDateTime"),array("readonly"=>$only,"class"=>"changeHours"))."</td>";
+            if(!$only){
+                $html.="<td>".TbHtml::button(Yii::t("dialog","Remove"),array("class"=>"btn btn-danger delWages"))."</td>";
+            }
+            $html.="</tr>";
+            if(!$only){
+                $html.="<tfoot><tr><td colspan='2'></td><td>".TbHtml::button(Yii::t("app","New"),array("class"=>"btn btn-primary","id"=>"addWorkTime"))."</td></tr></tfoot>";
+            }
+            $html.="</tbody></table></div></div>";
+        }else{
+            $html.='<div class="form-group"><label class="col-sm-2 control-label" for="">'.Yii::t('contract','Start Time').'<span class="required">*</span></label><div class="col-sm-4">';
+            $html.=$this->getDateTimeInput($modelStr."[start_time]",$this->start_time,$modelStr."[hours]",$this->hours,array("readonly"=>$only,"class"=>"changeDateTime","id"=>"start_time"),array("readonly"=>$only,"class"=>"changeHours","id"=>"hours"));
+            $html.='</div></div>';
+
+            $html.='<div class="form-group"><label class="col-sm-2 control-label" for="">'.Yii::t('contract','End Time').'<span class="required">*</span></label><div class="col-sm-4">';
+            $html.=$this->getDateTimeInput($modelStr."[end_time]",$this->end_time,$modelStr."[hours_end]",$this->hours_end,array("readonly"=>$only,"class"=>"changeDateTime","id"=>"end_time"),array("readonly"=>$only,"class"=>"changeHours","id"=>"hours_end"));
+            $html.='</div></div>';
+        }
+
+        return array("status"=>1,"html"=>$html);
     }
 }

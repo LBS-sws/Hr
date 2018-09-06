@@ -136,7 +136,8 @@ $this->renderPartial('//site/historylist',array('model'=>$model));
     'form'=>$form,
     'doctype'=>'EMPLOY',
     'header'=>Yii::t('misc','Attachment'),
-    'ronly'=>($model->scenario=='view'||($model->staff_status != 1)),
+    'ronly'=>(!Yii::app()->user->validFunction('ZE01')),
+    'delBtn'=>(false),
 ));
 ?>
 <?php
@@ -161,6 +162,7 @@ Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_R
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
+Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/wages.js?2", CClientScript::POS_END);
 /*
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/jquery-form.js", CClientScript::POS_END);
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/ajaxFile.js", CClientScript::POS_END);

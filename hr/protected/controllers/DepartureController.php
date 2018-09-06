@@ -28,6 +28,10 @@ class DepartureController extends Controller
     {
         return array(
             array('allow',
+                'actions'=>array('fileupload'),
+                'expression'=>array('DepartureController','allowReadWrite'),
+            ),
+            array('allow',
                 'actions'=>array('index','view','edit','fileDownload'),
                 'expression'=>array('DepartureController','allowReadOnly'),
             ),
@@ -39,6 +43,9 @@ class DepartureController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('ZE02');
+    }
+    public static function allowReadWrite() {
+        return Yii::app()->user->validRWFunction('ZE01');
     }
 
     public function actionIndex($pageNum=0){
@@ -91,6 +98,23 @@ class DepartureController extends Controller
             }
         } else {
             throw new CHttpException(404,'Record not found.');
+        }
+    }
+
+    //上傳附件
+    public function actionFileupload($doctype) {
+        $model = new DepartureForm();
+        if (isset($_POST['DepartureForm'])) {
+            $model->attributes = $_POST['DepartureForm'];
+
+            $id = ($_POST['DepartureForm']['scenario']=='new') ? 0 : $model->id;
+            $docman = new DocMan($model->docType,$id,get_class($model));
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+            $docman->fileUpload();
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
         }
     }
 }

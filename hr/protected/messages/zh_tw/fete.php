@@ -155,5 +155,7 @@ return array(
     'charge'=>'地區主管',
     'director'=>'總監',
     'you'=>'你',
+
+    'Regular overtime'=>'常規加班',
 );
 ?>

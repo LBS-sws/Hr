@@ -35,45 +35,8 @@
         ); ?>
     </div>
 </div>
-<div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("start_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-4">
-        <div class="input-group">
-            <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-            </div>
-            <?php echo $form->textField($model, 'start_time',
-                array('readonly'=>($model->getInputBool()),"id"=>"start_time")
-            ); ?>
-            <?php if (!empty($model->hours)): ?>
-                <div class="input-group-btn" style="width: 100px;">
-                    <?php echo $form->dropDownList($model, 'hours',WorkList::getHoursList(),
-                        array('readonly'=>($model->getInputBool()),"id"=>"hours","style"=>"border-left:0px;")
-                    ); ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
-<div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("end_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-4">
-        <div class="input-group">
-            <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-            </div>
-            <?php echo $form->textField($model, 'end_time',
-                array('readonly'=>($model->getInputBool()),"id"=>"end_time")
-            ); ?>
-            <?php if (!empty($model->hours)): ?>
-                <div class="input-group-btn" style="width: 100px;">
-                    <?php echo $form->dropDownList($model, 'hours_end',WorkList::getHoursList(),
-                        array('disabled'=>($model->getInputBool()),"id"=>"hours_end","style"=>"border-left:0px;")
-                    ); ?>
-                </div>
-            <?php endif; ?>
-        </div>
-    </div>
+<div id="work_time_div">
+
 </div>
 <div class="form-group">
     <?php echo TbHtml::label($model->getAttributeLabel("log_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
@@ -180,9 +143,9 @@
 <?php endif; ?>
 <script>
     $(function ($) {
-
         $('#work_type').on('change',function(){
-            if($(this).val()==2){
+            var value = $(this).val();
+            if(value==2){
                 $('#hours').hide();
                 $('#hours_end').hide();
                 $('#log_time').next('span').text('天');
@@ -191,7 +154,43 @@
                 $('#hours_end').show();
                 $('#log_time').next('span').text('小时');
             }
-            $('#start_time').trigger('change');
+            $.ajax({
+                type: 'post',
+                url: '<?php echo Yii::app()->createUrl('work/ajaxWorkType');?>',
+                data: {
+                    modelStr:'<?php echo get_class($model);?>',
+                    work_type:value,
+                    index:'<?php echo $model->id;?>',
+                    only:'<?php echo $model->getInputBool();?>',
+                },
+                dataType: 'json',
+                success: function(data){
+                    if(data.status == 1){
+                        $("#work_time_div").html(data.html);
+                        $('.changeDateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+                    }else{
+                        $("#work_time_div").html("");
+                    }
+                }
+            });
         }).trigger('change');
+
+        $('#work_time_div').delegate("#addWorkTime","click",function () {
+            var tBody = $("#work_time_div tbody:first");
+            var num = tBody.data("num");
+            tBody.data("num",num+1);
+            var html = $("#workTrModel").html();
+            html = html.replace(/#start_time#/g, "WorkForm[addTime]["+num+"][start_time]");
+            html = html.replace(/#hours#/g, "WorkForm[addTime]["+num+"][hours]");
+            html = html.replace(/#end_time#/g, "WorkForm[addTime]["+num+"][end_time]");
+            html = html.replace(/#hours_end#/g, "WorkForm[addTime]["+num+"][hours_end]");
+            html = "<tr>"+html+"</tr>";
+            tBody.append(html);
+            $('.changeDateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+        });
+
+        $('#work_time_div').delegate(".delWages","click",function () {
+            $(this).parents("tr:first").remove();
+        });
     })
 </script>

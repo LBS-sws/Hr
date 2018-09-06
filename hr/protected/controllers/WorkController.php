@@ -36,7 +36,7 @@ class WorkController extends Controller
                 'expression'=>array('WorkController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('addDate'),
+                'actions'=>array('addDate','ajaxWorkType'),
                 'expression'=>array('WorkController','allowWrite'),
             ),
             array('allow',
@@ -218,6 +218,21 @@ class WorkController extends Controller
                 $lastDate = date('Y/m/d H:i', strtotime("$startDate +$day hours"));
             }
             echo CJSON::encode(array("status"=>1,"lastDate"=>$lastDate));
+        }else{
+            $this->redirect(Yii::app()->createUrl(''));
+        }
+    }
+
+    //加班類型變換
+    public function actionAjaxWorkType(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new WorkForm();
+            $modelStr = $_POST['modelStr'];
+            $work_type = $_POST['work_type'];
+            $index = $_POST['index'];
+            $only = $_POST['only'];
+            $arr = $model->getWorkTimeHtmlToType($modelStr,$work_type,$index,$only);
+            echo CJSON::encode($arr);
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }

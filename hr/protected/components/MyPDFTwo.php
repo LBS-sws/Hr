@@ -232,12 +232,12 @@ class MyPDFTwo {
 
         //繪製表格
         $this->_PDF->MultiCell(190,13,"",1);
-        $this->_PDF->MultiCell(190,50,"",1);
+        $this->_PDF->MultiCell(190,58,"",1);
         $this->_PDF->MultiCell(190,22,"",1);
-        $this->_PDF->MultiCell(190,32,"",1);
-        $this->_PDF->MultiCell(190,32,"",1);
-        $this->_PDF->MultiCell(190,35,"",1);
-        $this->_PDF->MultiCell(190,32,"",1);
+        $this->_PDF->MultiCell(190,30,"",1);
+        $this->_PDF->MultiCell(190,30,"",1);
+        $this->_PDF->MultiCell(190,33,"",1);
+        $this->_PDF->MultiCell(190,30,"",1);
         //竖线
         $this->_PDF->Line(50,26,50,242);
         $this->_PDF->Line(78,26,78,39);
@@ -269,15 +269,32 @@ class MyPDFTwo {
         $html = "<p>□周末休息日：（年/月/日/时/分～年/月/日/时/分）</p>";
         $this->_PDF->writeHTMLCell(150, 8, 51,57, $html, 0, 1, false, true, 'L', true);
         $html = "<p>□法定休假日：（年/月/日～年/月/日）</p>";
-        $this->_PDF->writeHTMLCell(150, 8, 51,73, $html, 0, 1, false, true, 'L', true);
+        $this->_PDF->writeHTMLCell(150, 8, 51,81, $html, 0, 1, false, true, 'L', true);
         //加班時間隨動
         switch ($arr["work_type"]){
+            case 3: //常規加班
+                $arrAddTime = $arr["addTime"];
+                array_unshift($arrAddTime,array("start_time"=>$arr["start_time"],"end_time"=>$arr["end_time"]));
+                $timeHeight = 16;
+                $key=0;
+                $timeHtml="<p>";
+                foreach ($arrAddTime as $row){
+                    $key++;
+                    $timeHtml .= date("Y.m.d H:i",strtotime($row["start_time"]))."&nbsp;&nbsp;-&nbsp;&nbsp;".date("Y.m.d H:i",strtotime($row["end_time"]));
+                    if($key%2 == 0){
+                        $timeHtml .="<br>";
+                    }else{
+                        $timeHtml .="&nbsp;&nbsp;、&nbsp;&nbsp;";
+                    }
+                }
+                $timeHtml.="</p>";
+                break;
             case 1:
                 $timeHeight = 16;
                 $timeHtml = "<p>".date("Y年m月d日 H时i分",strtotime($arr["start_time"]))."&nbsp;&nbsp;～&nbsp;&nbsp;".date("Y年m月d日 H时i分",strtotime($arr["end_time"]))."</p>";
                 break;
             case 2:
-                $timeHeight = 32;
+                $timeHeight = 40;
                 $timeHtml = "<p>".date("Y年m月d日",strtotime($arr["start_time"]))."&nbsp;&nbsp;～&nbsp;&nbsp;".date("Y年m月d日",strtotime($arr["end_time"]))."</p>";
                 break;
             default:
@@ -287,26 +304,30 @@ class MyPDFTwo {
         $this->_PDF->SetFont('stsongstdlight', '', 18, '', true);
         $html = "√";
         $this->_PDF->writeHTMLCell(20, 20, 50,40+$timeHeight, $html, 0, 1, false, true, 'L', true);
-        $this->_PDF->SetFont('stsongstdlight', '', 14, '', true);
-        $this->_PDF->writeHTMLCell(140, 8, 60,49+$timeHeight, $timeHtml, 0, 1, false, true, 'L', true);
+        if($arr["work_type"] = 3){
+            $this->_PDF->SetFont('stsongstdlight', '', 12, '', true);
+        }else{
+            $this->_PDF->SetFont('stsongstdlight', '', 14, '', true);
+        }
+        $this->_PDF->writeHTMLCell(200, 8, 57,49+$timeHeight, $timeHtml, 0, 1, false, true, 'L', true);
         //加班事由
         $html = "加班事由";
-        $this->_PDF->writeHTMLCell(40, 10, 10,98, $html, 0, 1, false, true, 'C', true);
+        $this->_PDF->writeHTMLCell(40, 10, 10,106, $html, 0, 1, false, true, 'C', true);
         $html = $arr["work_cause"];
-        $this->_PDF->writeHTMLCell(148, 15, 51,93, $html, 0, 1, false, true, 'L', true);
+        $this->_PDF->writeHTMLCell(148, 15, 51,100, $html, 0, 1, false, true, 'L', true);
 
         //加班地点及工作内容
         $html = "<p>加班地点</p><br><p>及工作内容</p>";
-        $this->_PDF->writeHTMLCell(40, 10, 10,120, $html, 0, 1, false, true, 'C', true);
+        $this->_PDF->writeHTMLCell(40, 10, 10,127, $html, 0, 1, false, true, 'C', true);
         $html = $arr["work_address"];
-        $this->_PDF->writeHTMLCell(148, 25, 51,115, $html, 0, 1, false, true, 'L', true);
+        $this->_PDF->writeHTMLCell(148, 25, 51,122, $html, 0, 1, false, true, 'L', true);
 
         //部门主管意见
         $html = "<p>部门主管</p><br><p>意见</p>";
-        $this->_PDF->writeHTMLCell(40, 10, 10,153, $html, 0, 1, false, true, 'C', true);
+        $this->_PDF->writeHTMLCell(40, 10, 10,157, $html, 0, 1, false, true, 'C', true);
         if(!empty($arr["user_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["user_lcd"]));
-            $this->_PDF->writeHTMLCell(148, 8, 51,169, $html, 0, 1, false, true, 'R', true);
+            $this->_PDF->writeHTMLCell(148, 8, 51,171, $html, 0, 1, false, true, 'R', true);
             $signature = WorkForm::getSignatureToStaffId($arr["user_lcu"],false);
             if($signature){
                 $this->setSignature($signature, 80, 170, 0,25);
@@ -315,10 +336,10 @@ class MyPDFTwo {
 
         //部门主管意见
         $html = "<p>地区总经理/</p><br><p>地区主管</p><br><p>审批</p>";
-        $this->_PDF->writeHTMLCell(40, 10, 10,181, $html, 0, 1, false, true, 'C', true);
+        $this->_PDF->writeHTMLCell(40, 10, 10,184, $html, 0, 1, false, true, 'C', true);
         if(!empty($arr["area_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["area_lcd"]));
-            $this->_PDF->writeHTMLCell(148, 8, 51,204, $html, 0, 1, false, true, 'R', true);
+            $this->_PDF->writeHTMLCell(148, 8, 51,205, $html, 0, 1, false, true, 'R', true);
             $signature = WorkForm::getSignatureToStaffId($arr["area_lcu"],false);
             if($signature){
                 $this->setSignature($signature, 80, 182, 0,25);

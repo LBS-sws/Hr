@@ -183,7 +183,7 @@ class WorkList extends CListPageModel
 
 	//加班類型列表
     public function getWorkTypeList(){
-	    return array(Yii::t("fete","Working days"),Yii::t("fete","Weekend off"),Yii::t("fete","Statutory leave day"));
+	    return array(Yii::t("fete","Working days"),Yii::t("fete","Weekend off"),Yii::t("fete","Statutory leave day"),Yii::t("fete","Regular overtime"));
     }
 	//獲取小時列表
     public function getHoursList(){

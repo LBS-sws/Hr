@@ -183,15 +183,13 @@ $this->renderPartial('//site/canceldialog');
 Script::genFileUpload($model,$form->id,'WORKEM');
 
 $js = "
-$('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
-$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
-$('#start_time').on('change',function(){
+$('#work_time_div').delegate('#start_time','change',function(){
     if($('#end_time').val()==''){
         $('#end_time').val($(this).val());
         $('#end_time').trigger('change');
     }
 });
-$('#start_time,#end_time,#hours,#hours_end').on('change',function(){
+$('#work_time_div').delegate('#start_time,#end_time,#hours,#hours_end','change',function(){
     var start_day = $('#start_time').val();
     var end_day = $('#end_time').val();
     var start_hour = $('#hours').val();
