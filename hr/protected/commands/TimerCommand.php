@@ -66,7 +66,7 @@ class TimerCommand extends CConsoleCommand {
         $command->reset();
         $firstDay = date("Y/m/d");
         $firstDay = date("Y/m/d",strtotime("$firstDay - 14 day"));
-        $sql = "staff_status=0 and replace(entry_time,'-', '/') <='$firstDay'";
+        $sql = "staff_status=4 and replace(entry_time,'-', '/') <='$firstDay'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
             foreach ($rows as $row){
