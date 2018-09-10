@@ -520,8 +520,8 @@ class LeaveForm extends CFormModel
     }
 
 
-	//獲取綁定員工的列表
-    public function getBindEmployeeList($staff_id){
+	//獲取綁定員工的列表(解決地區變化問題$staff_id)
+    public function getBindEmployeeList($staff_id=0){
         $city_allow = Yii::app()->user->city_allow();
         $arr = array();
         $rows = Yii::app()->db->createCommand()->select("a.employee_id as id,b.name as name")->from("hr_binding a")

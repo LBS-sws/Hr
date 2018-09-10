@@ -58,6 +58,7 @@ class RptOverTimeList extends CReport {
 		if (count($rows) > 0) {
             $costNumList = WorkList::getWorkTypeList();
 			foreach ($rows as $row) {
+                $temp = array();
                 if($row['work_type'] == 2){
                     $temp['start_time'] = date("Y/m/d",strtotime($row['start_time']));
                     $temp['end_time'] = date("Y/m/d",strtotime($row['end_time']));
@@ -67,7 +68,6 @@ class RptOverTimeList extends CReport {
                     $temp['end_time'] = date("Y/m/d H:i:s",strtotime($row['end_time']));
                     $dayStr ="小時";
                 }
-				$temp = array();
 				$temp['work_cause'] = $row['work_cause'];
 				$temp['work_code'] = $row['work_code'];
 				$temp['employee_code'] = $row['employee_code'];
