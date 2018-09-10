@@ -74,7 +74,7 @@ class RptOverTimeList extends CReport {
 				$temp['employee_name'] = $row['employee_name'];
 				$temp['work_type'] = $costNumList[$row['work_type']];
 				$temp['log_time'] = $row['log_time'].$dayStr;
-                $temp['lcd'] = $row[$row['lcd']];
+                $temp['lcd'] = $row['lcd'];
 				$this->data[] = $temp;
 			}
 		}

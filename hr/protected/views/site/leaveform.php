@@ -23,7 +23,7 @@
     <div class="form-group">
         <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
         <div class="col-sm-4">
-            <?php echo $form->dropDownList($model, 'employee_id',LeaveForm::getBindEmployeeList(),
+            <?php echo $form->dropDownList($model, 'employee_id',LeaveForm::getBindEmployeeList($model->employee_id),
                 array('readonly'=>($model->getInputBool()),'id'=>'employee_id')
             ); ?>
         </div>
