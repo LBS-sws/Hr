@@ -11,6 +11,7 @@ class RptOverTimeList extends CReport {
 			'log_time'=>array('label'=>Yii::t('fete','Log Date'),'width'=>15,'align'=>'L'),
 			'lcd'=>array('label'=>Yii::t('fete','apply for time'),'width'=>15,'align'=>'L'),
 			'work_cause'=>array('label'=>Yii::t('fete','Work Cause'),'width'=>30,'align'=>'L'),
+			'work_address'=>array('label'=>Yii::t('fete','Work Address'),'width'=>30,'align'=>'L'),
 		);
 	}
 	
@@ -68,6 +69,7 @@ class RptOverTimeList extends CReport {
                     $temp['end_time'] = date("Y/m/d H:i:s",strtotime($row['end_time']));
                     $dayStr ="小時";
                 }
+				$temp['work_address'] = $row['work_address'];
 				$temp['work_cause'] = $row['work_cause'];
 				$temp['work_code'] = $row['work_code'];
 				$temp['employee_code'] = $row['employee_code'];
