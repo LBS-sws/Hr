@@ -96,7 +96,7 @@ class Email {
     }
 
     //添加收信人(根據權限）
-    public function addEmailToPrefixAndCity($str,$city){
+    public function addEmailToPrefixAndCity($str,$city,$notEmail=array()){
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
         //$city = Yii::app()->user->city();
@@ -125,7 +125,7 @@ class Email {
             ->queryAll();
         if($rs){
             foreach ($rs as $row){
-                if(!in_array($row["email"],$this->to_addr)){
+                if(!in_array($row["email"],$this->to_addr)&&!in_array($row["email"],$notEmail)){
                     $this->to_addr[] = $row["email"];
                 }
             }

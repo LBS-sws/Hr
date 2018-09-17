@@ -36,7 +36,7 @@ class TimerCommand extends CConsoleCommand {
                 $email->setDescription($description);
                 $email->setMessage($message);
                 $email->setSubject($subject);
-                $email->addEmailToPrefixAndCity(array("ZG02","ZE04"),$row["city"]);
+                $email->addEmailToPrefixAndCity(array("ZG02","ZE04"),$row["city"],array("joeyiu@lbsgroup.com.cn"));
                 $email->sent("系统生成");
                 $email->resetToAddr();
             }
