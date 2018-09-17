@@ -42,6 +42,20 @@ class Email {
         }
     }
 
+    //獲取繞生郵件
+    public function getJoeEmail(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rs = Yii::app()->db->createCommand()->select("b.email")->from("security$suffix.sec_city a")
+            ->leftJoin("security$suffix.sec_user b","a.incharge=b.username")
+            ->where("a.code = 'CN'")
+            ->queryRow();
+        if($rs){
+            return $rs["email"];
+        }else{
+            return "joeyiu@lbsgroup.com.cn";
+        }
+    }
+
     //添加收信人(根據權限）
     public function addEmailToPrefix($str){
         $suffix = Yii::app()->params['envSuffix'];

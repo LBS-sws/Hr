@@ -25,6 +25,7 @@ class TimerCommand extends CConsoleCommand {
         $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
         echo "合同過期:$aaa<br>";
         if($rows){
+            $joeEmail = $email->getJoeEmail();
             foreach ($rows as $row){
                 $description="员工合同即将到期 - ".$row["name"];
                 $subject="员工合同即将到期 - ".$row["name"];
@@ -36,7 +37,7 @@ class TimerCommand extends CConsoleCommand {
                 $email->setDescription($description);
                 $email->setMessage($message);
                 $email->setSubject($subject);
-                $email->addEmailToPrefixAndCity(array("ZG02","ZE04"),$row["city"],array("joeyiu@lbsgroup.com.cn"));
+                $email->addEmailToPrefixAndCity(array("ZG02","ZE04"),$row["city"],array($joeEmail));
                 $email->sent("系统生成");
                 $email->resetToAddr();
             }
@@ -123,6 +124,7 @@ class TimerCommand extends CConsoleCommand {
         $sql = "staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') ='$firstday'";
         $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
         if($rows){
+            $joeEmail = $email->getJoeEmail();
             foreach ($rows as $row){
                 $description="【紧急】".$row["name"]."的合同于".date("Y年m月d日",strtotime($row["end_time"]))."已到期";
                 $subject=$description;
@@ -130,7 +132,7 @@ class TimerCommand extends CConsoleCommand {
                 $email->setDescription($description);
                 $email->setMessage($message);
                 $email->setSubject($subject);
-                $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                $email->addToAddrEmail($joeEmail);
                 $email->sent("系统生成");
                 $email->resetToAddr();
             }
