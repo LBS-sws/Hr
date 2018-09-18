@@ -217,6 +217,7 @@ class TimerCommand extends CConsoleCommand {
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
         if($rows){
+            $joeEmail = $email->getJoeEmail();
             foreach ($rows as $row){
                 if($this->docmanSearch("WORKEM",$row["id"],$row["lud"])) {
                     $description = "加班申请附件处还未上传文档 - " . $row["name"];
@@ -229,7 +230,7 @@ class TimerCommand extends CConsoleCommand {
                     $email->setDescription($description);
                     $email->setMessage($message);
                     $email->setSubject($subject);
-                    $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                    $email->addToAddrEmail($joeEmail);
                     $email->sent("系统生成");
                     $email->resetToAddr();
                 }
@@ -315,6 +316,7 @@ class TimerCommand extends CConsoleCommand {
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where($sql)->queryAll();
         if($rows){
+            $joeEmail = $email->getJoeEmail();
             foreach ($rows as $row){
                 if($this->docmanSearch("LEAVE",$row["id"],$row["lud"])){
                     $description="请假申请附件处还未上传文档 - ".$row["name"];
@@ -327,7 +329,7 @@ class TimerCommand extends CConsoleCommand {
                     $email->setDescription($description);
                     $email->setMessage($message);
                     $email->setSubject($subject);
-                    $email->addToAddrEmail("joeyiu@lbsgroup.com.cn");
+                    $email->addToAddrEmail($joeEmail);
                     $email->sent("系统生成");
                     $email->resetToAddr();
                 }
