@@ -149,6 +149,7 @@ class WorkList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
+			    WorkList::resetWorkDate($record);
 			    $colorList = $this->statusToColor($record['status']);
                 if($record['work_type'] == 2){
                     $record['start_time'] = date("Y/m/d",strtotime($record['start_time']));
@@ -180,6 +181,25 @@ class WorkList extends CListPageModel
 		$session['work_01'] = $this->getCriteria();
 		return true;
 	}
+
+	public function resetWorkDate(&$record){
+        if($record["work_type"] == 3){
+            $start[] = $record['start_time'];
+            $end[] = $record['end_time'];
+            $rows = Yii::app()->db->createCommand()->select("*")->from("hr_employee_word_info")
+                ->where('work_id=:work_id',array(':work_id'=>$record["id"]))->queryAll();
+            if($rows){
+                foreach ($rows as $row){
+                    $start[] = $row['start_time'];
+                    $end[] = $row['end_time'];
+                }
+                sort($start);
+                rsort($end);
+            }
+            $record['start_time'] = reset($start);
+            $record['end_time'] = reset($end);
+        }
+    }
 
 	//加班類型列表
     public function getWorkTypeList(){

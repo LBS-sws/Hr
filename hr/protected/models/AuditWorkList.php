@@ -110,6 +110,7 @@ class AuditWorkList extends CListPageModel
         $this->attr = array();
         if (count($records) > 0) {
             foreach ($records as $k=>$record) {
+                WorkList::resetWorkDate($record);
                 $colorList = $this->statusToColor($record['status']);
                 if($record['work_type'] == 2){
                     $record['start_time'] = date("Y/m/d",strtotime($record['start_time']));
