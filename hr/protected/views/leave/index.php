@@ -38,6 +38,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
     $search = array(
         'leave_code',
         'employee_name',
+        'city_name',
     );
     $search_add_html="";
     $modelName = get_class($model);
