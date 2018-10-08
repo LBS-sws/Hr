@@ -8,7 +8,7 @@
     <td><?php echo $this->record['leave_code']; ?></td>
     <td><?php echo $this->record['lcd']; ?></td>
     <td><?php echo $this->record['employee_name']; ?></td>
-    <?php if (Yii::app()->user->validFunction('ZR04')): ?>
+    <?php if (Yii::app()->user->validFunction('ZR04')||!Yii::app()->user->isSingleCity()): ?>
         <td><?php echo $this->record['city']; ?></td>
     <?php endif; ?>
     <td><?php echo $this->record['vacation_id']; ?></td>

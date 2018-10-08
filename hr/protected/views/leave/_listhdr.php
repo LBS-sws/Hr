@@ -15,7 +15,7 @@
 			;
 		?>
 	</th>
-    <?php if (Yii::app()->user->validFunction('ZR04')): ?>
+    <?php if (Yii::app()->user->validFunction('ZR04')||!Yii::app()->user->isSingleCity()): ?>
         <th>
             <?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('b.city'),'#',$this->createOrderLink('leave-list','b.city'))
             ;
