@@ -97,6 +97,26 @@ class Email {
         }
     }
 
+    //
+    public function getEmailUserList($city_allow){
+        if(!empty($city_allow)){
+            $city_allow = implode(",",$city_allow);
+            $sql = "a.city in ($city_allow)";
+        }else{
+            return false;
+        }
+        $suffix = Yii::app()->params['envSuffix'];
+        $systemId = Yii::app()->params['systemId'];
+        $rs = Yii::app()->db->createCommand()->select("a.username,a.city,a.email,(CASE WHEN b.incharge = a.username THEN 1 ELSE 0 END) AS incharge,c.a_read_write")
+            ->from("security$suffix.sec_user a")
+            ->leftJoin("security$suffix.sec_city b","a.city = b.code")
+            ->leftJoin("security$suffix.sec_user_access c","a.username = c.username")
+            ->where("a.status = 'A' AND a.email != '' AND c.system_id = '$systemId' AND $sql")
+            ->order("a.city desc")
+            ->queryAll();
+        return $rs;
+    }
+
     //添加收信人(只有地區總監收到）
     public function addEmailToOnlyCityBoss($city){
         $uidList = $this->getBossUidToMinCity($city);
