@@ -43,7 +43,7 @@ class AuditLeaveController extends Controller
             ),
             array('allow',
                 'actions'=>array('fileDownload'),
-                'expression'=>array('AuditWorkController','allowRead'),
+                'expression'=>array('AuditLeaveController','allowRead'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
