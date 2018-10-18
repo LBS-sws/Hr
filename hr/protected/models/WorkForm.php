@@ -502,6 +502,7 @@ class WorkForm extends CFormModel
             $str.="0";
         }
         $str .= $code;
+        $this->work_code = $str;
         return $str;
     }
 

@@ -599,6 +599,7 @@ class LeaveForm extends CFormModel
             $str.="0";
         }
         $str .= $code;
+        $this->leave_code = $str;
         return $str;
     }
 

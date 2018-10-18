@@ -38,8 +38,10 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
     $search = array(
         'leave_code',
         'employee_name',
-        'city_name',
     );
+    if(Yii::app()->user->validFunction('ZR04')||!Yii::app()->user->isSingleCity()){
+        $search[] = 'city_name';
+    }
     $search_add_html="";
     $modelName = get_class($model);
     if (Yii::app()->user->validFunction('ZR04')){
