@@ -155,6 +155,43 @@ class DeptForm extends CFormModel
         }
         return $arr;
     }
+
+    //獲取職位列表
+	public function getDeptListToCity($dept_id,$city=''){
+	    $sql = "";
+	    if(!empty($dept_id)&&is_numeric($dept_id)){
+	        $sql = " or id='$dept_id'";
+        }
+        if(empty($city)){
+            $city = Yii::app()->user->city();
+        }
+	    $arr=array(""=>"");
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+            ->where("type='0' and city ='$city'$sql")->order("z_index desc")->queryAll();
+        if ($rows){
+            foreach ($rows as $row){
+                $arr[$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+
+    //獲取崗位列表
+	public function getPosiList($dept_id){
+	    $arr=array(""=>"");
+	    if(empty($dept_id)){
+	        return $arr;
+        }
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+            ->where("type='1' and dept_id =:dept_id",array(":dept_id"=>$dept_id))->order("z_index desc")->queryAll();
+        if ($rows){
+            foreach ($rows as $row){
+                $arr[$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+
     //獲取職位列表(僅職位)
     public function getDeptOneAllList(){
         $city = Yii::app()->user->city();

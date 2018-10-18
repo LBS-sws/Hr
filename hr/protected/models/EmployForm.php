@@ -260,11 +260,15 @@ class EmployForm extends CFormModel
     }
 
     //獲取可用公司
-    public function getCompanyToCity(){
+    public function getCompanyToCity($company_id){
+        $sql = "";
+	    if(!empty($company_id)&&is_numeric($company_id)){
+	        $sql = " or id='$company_id'";
+        }
 	    $arr = array(""=>"");
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
-            ->where('city=:city ', array(':city'=>$city))->queryAll();
+            ->where("city=:city$sql", array(':city'=>$city))->queryAll();
         if(count($rows)>0){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -272,12 +276,17 @@ class EmployForm extends CFormModel
         }
         return $arr;
     }
+
     //獲取可用合同
-    public function getContractToCity(){
+    public function getContractToCity($con_id){
+        $sql = "";
+        if(!empty($con_id)&&is_numeric($con_id)){
+            $sql = " or id='$con_id'";
+        }
 	    $arr = array(""=>"");
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
-            ->where('city=:city ', array(':city'=>$city))->queryAll();
+            ->where("city=:city$sql", array(':city'=>$city))->queryAll();
         if(count($rows)>0){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];

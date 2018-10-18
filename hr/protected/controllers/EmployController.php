@@ -35,7 +35,7 @@ class EmployController extends Controller
                 'expression'=>array('EmployController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('generate','addDate','printImage'),
+                'actions'=>array('generate','addDate','printImage','changeDepart'),
                 'expression'=>array('EmployController','allowWrite'),
             ),
             array('deny',  // deny all users
@@ -236,6 +236,33 @@ class EmployController extends Controller
             }
             $lastDate = date('Y-m-d', strtotime("$lastDate - 1 day"));
             echo CJSON::encode($lastDate);
+        }else{
+            $this->redirect(Yii::app()->createUrl('employ/index'));
+        }
+    }
+
+    //職位
+    public function actionChangeDepart(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $department = $_POST['department'];
+            $change_city = $_POST['change_city'];
+            $position = $_POST['position'];
+            $type = $_POST['type'];
+            $json = array("data"=>"","status"=>1);
+            $model = new DeptForm();
+            if($type=="department"){
+                $data = $model->getPosiList($department);
+                unset($data[""]);
+                $json["data"] = $data;
+            }elseif($type=="change_city"){
+                $data = $model->getDeptListToCity("",$change_city);
+                unset($data[""]);
+                $json["data"] = $data;
+            }else{
+                $model->retrieveData($position);
+                $json["data"] = $model->dept_class;
+            }
+            echo CJSON::encode($json);
         }else{
             $this->redirect(Yii::app()->createUrl('employ/index'));
         }

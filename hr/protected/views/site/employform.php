@@ -187,7 +187,7 @@
 <div class="form-group">
     <?php echo $form->labelEx($model,'staff_id',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
-        <?php echo $form->dropDownList($model, 'staff_id',$model->getCompanyToCity(),
+        <?php echo $form->dropDownList($model, 'staff_id',EmployForm::getCompanyToCity($model->staff_id),
             array('disabled'=>($readonly))
         ); ?>
     </div>
@@ -195,12 +195,18 @@
 <div class="form-group">
     <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
-        <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptAllList(0),
-            array('disabled'=>($readonly),"class"=>"depart")
+        <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptListToCity("",$model->city),
+            array('disabled'=>($readonly),"class"=>"","id"=>"department")
         ); ?>
     </div>
     <!--分割-->
     <?php echo $form->labelEx($model,'position',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->dropDownList($model, 'position',DeptForm::getPosiList($model->department),
+            array('disabled'=>($readonly),"class"=>"","id"=>"position")
+        ); ?>
+    </div>
+    <!--
     <div class="col-sm-3">
         <?php
         $model_class = get_class($model);
@@ -220,12 +226,13 @@
         echo "</select>";
         ?>
     </div>
+    -->
 </div>
 <div class="form-group">
     <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
-            array('readonly'=>(true))
+            array('readonly'=>(true),"id"=>"staff_type")
         ); ?>
     </div>
     <!--分割-->
@@ -332,14 +339,14 @@ if (!empty($contractNum)){
 <div class="form-group">
     <?php echo $form->labelEx($model,'company_id',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
-        <?php echo $form->dropDownList($model, 'company_id',$model->getCompanyToCity(),
+        <?php echo $form->dropDownList($model, 'company_id',EmployForm::getCompanyToCity($model->company_id),
             array('disabled'=>($readonly))
         ); ?>
     </div>
     <!--分割-->
     <?php echo $form->labelEx($model,'contract_id',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
-        <?php echo $form->dropDownList($model, 'contract_id',$model->getContractToCity(),
+        <?php echo $form->dropDownList($model, 'contract_id',EmployForm::getContractToCity($model->contract_id),
             array('disabled'=>($readonly))
         ); ?>
     </div>
@@ -576,5 +583,41 @@ if (!empty($contractNum)){
                 $('#age').val(age);
             }
         }).trigger("change");
+
+        <?php if (!$readonly): ?>
+        //職位-變化
+        $("#position,#department,#change_city").on("change",function () {
+            var type = $(this).attr("id");
+            $.ajax({
+                type: 'post',
+                url: '<?php echo Yii::app()->createUrl('employ/changeDepart');?>',
+                data: {
+                    department: $("#department").val(),
+                    position: $("#position").val(),
+                    change_city: $("#change_city").val(),
+                    type: type,
+                },
+                dataType: 'json',
+                success: function (data) {
+                    if(data.status == 1){
+                        var jsonList = data.data;
+                        if(type=="department"){
+                            $("#position").html("<option value=''></option>");
+                            for(var key in jsonList){
+                                $("#position").append("<option value='"+key+"'>"+jsonList[key]+"</option>");
+                            }
+                        }else if(type=="change_city"){
+                            $("#department,#position").html("<option value=''></option>");
+                            for(var key in jsonList){
+                                $("#department").append("<option value='"+key+"'>"+jsonList[key]+"</option>");
+                            }
+                        }else{
+                            $("#staff_type").val(jsonList);
+                        }
+                    }
+                }
+            });
+        });
+        <?php endif; ?>
     })
 </script>
