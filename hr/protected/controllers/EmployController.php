@@ -244,10 +244,14 @@ class EmployController extends Controller
     //職位
     public function actionChangeDepart(){
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
-            $department = $_POST['department'];
+            $department = Yii::app()->request->getPost('department',"");
+            $change_city = Yii::app()->request->getPost('change_city',"");
+            $position = Yii::app()->request->getPost('position',"");
+            $type = Yii::app()->request->getPost('type',"");
+/*            $department = $_POST['department'];
             $change_city = $_POST['change_city'];
             $position = $_POST['position'];
-            $type = $_POST['type'];
+            $type = $_POST['type'];*/
             $json = array("data"=>"","status"=>1);
             $model = new DeptForm();
             if($type=="department"){
