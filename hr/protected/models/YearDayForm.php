@@ -65,7 +65,7 @@ class YearDayForm extends CFormModel
 
     //累積天數
     public function getSumDayToYear($employee_id,$time=""){
-        if(empty($employee_id)){
+        if(empty($employee_id)||!is_numeric($employee_id)){
             return 0;
         }
         if(empty($time)){
@@ -74,17 +74,23 @@ class YearDayForm extends CFormModel
             $time = date("Y/m/d",strtotime($time));
         }
         $year = date("Y",strtotime($time));
+        $month = date("m/d",strtotime($time));
         $time = date("Y/m/d",strtotime("$time - 1 year"));
-        $sql = "select sum(add_num) AS sumDay from hr_staff_year WHERE year=$year AND employee_id=$employee_id";
-        $Sum = Yii::app()->db->createCommand($sql)->queryRow();
-        $sql = "SELECT year_day FROM hr_employee WHERE staff_status = 0 and replace(entry_time,'-','/')<='$time' AND id=$employee_id";
+        // and replace(entry_time,'-','/')<='$time'
+        $sql = "SELECT year_day,entry_time FROM hr_employee WHERE staff_status = 0 and replace(entry_time,'-','/')<='$time' AND id=$employee_id";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         $yearDay = 0;
-        if($Sum){
-            $yearDay+=floatval($Sum["sumDay"]);
-        }
         if($row){
             $yearDay+=floatval($row["year_day"]);
+            $entry_time = date("m/d",strtotime($row["entry_time"]));
+            if($entry_time>$month){
+                $year--;
+            }
+            $sql = "select sum(add_num) AS sumDay from hr_staff_year WHERE year=$year AND employee_id=$employee_id";
+            $Sum = Yii::app()->db->createCommand($sql)->queryRow();
+            if($Sum){
+                $yearDay+=floatval($Sum["sumDay"]);
+            }
         }
         return $yearDay;
     }

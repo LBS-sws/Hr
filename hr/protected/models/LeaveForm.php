@@ -266,7 +266,7 @@ class LeaveForm extends CFormModel
         }
         $sql = "select sum(a.log_time) AS sumDay from hr_employee_leave a 
             LEFT JOIN hr_vacation b ON a.vacation_id = b.id
-            WHERE a.start_time>'$start_time'AND a.start_time<='$end_time' AND a.status=4 AND b.vaca_type='E' AND a.employee_id=$employee_id";
+            WHERE a.start_time>'$start_time'AND a.start_time<='$end_time' AND a.status NOT IN (0,3) AND b.vaca_type='E' AND a.employee_id=$employee_id";
         $Sum = Yii::app()->db->createCommand($sql)->queryRow();
         if($Sum){
             return $Sum["sumDay"];
