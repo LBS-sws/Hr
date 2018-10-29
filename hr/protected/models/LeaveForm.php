@@ -266,7 +266,7 @@ class LeaveForm extends CFormModel
         }
         $statusSql = "a.status NOT IN (0,3)";
         if($endBool){
-            $end_time .= date("Y-m-d 23:59:59",strtotime($time));
+            $end_time = date("Y-m-d 23:59:59",strtotime($time));
             $statusSql = "a.status =  4";
         }
         $sql = "select sum(a.log_time) AS sumDay from hr_employee_leave a 
