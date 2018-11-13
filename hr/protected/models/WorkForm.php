@@ -88,7 +88,7 @@ class WorkForm extends CFormModel
             array('end_time','required','on'=>array("new","edit","audit")),
             array('log_time','required','on'=>array("new","edit","audit")),
             array('end_time','validateTime','on'=>array("new","edit","audit")),
-            array('addTime','validateAddTime','on'=>array("new","edit","audit")),
+            //array('addTime','validateAddTime','on'=>array("new","edit","audit")),
             array('addTime','validateLogTime','on'=>array("new","edit","audit")),
             array('log_time','numerical', 'min'=>0.5,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
@@ -133,7 +133,7 @@ class WorkForm extends CFormModel
                 $message = Yii::t('fete','This time period is not a legal holiday, please contact the administrator');
                 $this->addError($attribute,$message);
             }
-        }else if($this->work_type == 1||$this->work_type == 3){
+        }else if($this->work_type == 1){
 	        $week = date("w",strtotime($this->start_time));
             if($week == 6 || $week == 0){
                 //是週末
