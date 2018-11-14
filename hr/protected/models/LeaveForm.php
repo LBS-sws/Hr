@@ -160,25 +160,29 @@ class LeaveForm extends CFormModel
     public function validateEndTime($attribute, $params){
         if(!empty($this->start_time)&&!empty($this->end_time)){
             if($this->start_time_lg == "AM"){
-                $startTime = $this->start_time." 10:00:00";
+                $startTime = date("Y-m-d",strtotime($this->start_time))." 10:00:00";
             }else{
-                $startTime = $this->start_time." 14:00:00";
+                $startTime = date("Y-m-d",strtotime($this->start_time))." 14:00:00";
             }
             if($this->end_time_lg == "AM"){
-                $endTime = $this->end_time." 10:00:00";
+                $endTime = date("Y-m-d",strtotime($this->end_time))." 10:00:00";
             }else{
-                $endTime = $this->end_time." 14:00:00";
+                $endTime = date("Y-m-d",strtotime($this->end_time))." 14:00:00";
             }
-            $sql = "select leave_code from hr_employee_leave WHERE ((start_time<='$startTime' AND end_time >='$startTime') OR (start_time<='$endTime' AND end_time >='$endTime')) AND status=4 ";
+            $sql = "select leave_code from hr_employee_leave WHERE ((start_time>'$startTime' AND end_time <'$endTime') OR (start_time<='$startTime' AND end_time >='$startTime') OR (start_time<='$endTime' AND end_time >='$endTime')) ";
+            //var_dump($sql);die();
             if(Yii::app()->user->validFunction('ZR06')){
-                $sql.=" and employee_id=".$this->employee_id;
+                $sql.=" and employee_id='".$this->employee_id."'";
             }else{
-                $sql.=" and employee_id=".$this->getEmployeeIdToUser();;
+                $sql.=" and employee_id='".$this->getEmployeeIdToUser()."'";;
+            }
+            if(!empty($this->id)&&is_numeric($this->id)){
+                $sql.=" and id!=".$this->id;
             }
             $connection = Yii::app()->db;
             $rows = $connection->createCommand($sql)->queryRow();
             if($rows){
-                $message = Yii::t('fete','Part or part of the application has been approved.')."：".$rows["leave_code"];
+                $message = Yii::t('fete','A leave order has been issued during this period')."：".$rows["leave_code"];
                 $this->addError($attribute,$message);
             }
         }

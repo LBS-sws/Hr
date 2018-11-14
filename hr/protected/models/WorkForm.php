@@ -45,6 +45,9 @@ class WorkForm extends CFormModel
     public $removeFileId = array(
         'workem'=>0
     );
+
+    protected $timeList=array();
+
 	public function attributeLabels()
 	{
 		return array(
@@ -79,7 +82,7 @@ class WorkForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,hours,hours_end,lcd,city','safe'),
+			array('id,employee_id,work_type,work_address,status,work_cause,start_time,end_time,log_time,hours,hours_end,lcd,work_code,addTime,city','safe'),
             array('work_type','required','on'=>array("new","edit","audit")),
             array('work_type','validateWorkType','on'=>array("new","edit","audit")),
             array('work_cause','required','on'=>array("new","edit","audit")),
@@ -88,7 +91,6 @@ class WorkForm extends CFormModel
             array('end_time','required','on'=>array("new","edit","audit")),
             array('log_time','required','on'=>array("new","edit","audit")),
             array('end_time','validateTime','on'=>array("new","edit","audit")),
-            //array('addTime','validateAddTime','on'=>array("new","edit","audit")),
             array('addTime','validateLogTime','on'=>array("new","edit","audit")),
             array('log_time','numerical', 'min'=>0.5,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
@@ -101,6 +103,15 @@ class WorkForm extends CFormModel
                     $message = "时间周期不能大于8";
                     $this->addError($attribute,$message);
                 }
+            }else{
+                foreach ($this->addTime as $time){
+                    if($this->notRepeatTime($attribute,$time)){
+                        return false;
+                    }
+                }
+            }
+            if($this->notRepeatTime($attribute)){
+                return false;
             }
         }
     }
@@ -144,19 +155,66 @@ class WorkForm extends CFormModel
         }
     }
 
+    protected function foreachVaTimeList($startTime,$endTime){
+        if(!empty($this->timeList)){
+            foreach ($this->timeList as $list){
+                //(start_time>'$startTime' AND end_time <'$endTime') OR (start_time<='$startTime' AND end_time >='$startTime') OR (start_time<='$endTime' AND end_time >='$endTime')
+                if(($list["start_time"]>$startTime&&$list["end_time"]<$endTime)||($list["start_time"]<=$startTime&&$list["end_time"]>=$startTime)||($list["start_time"]<=$endTime&&$list["end_time"]>=$endTime)){
 
-    public function validateAddTime($attribute, $params){
-	    if($this->work_type == 3){
-	        foreach ($this->addTime as $time){
-                $week = date("w",strtotime($time["start_time"]));
-                if(!in_array($week,array(0,6))){
-                    //不是週末
-                    $message = Yii::t('fete','This time period is not a weekend');
-                    $this->addError($attribute,$message);
-                    return false;
+                    return true;
                 }
             }
         }
+        $this->timeList[] = array("start_time"=>$startTime,"end_time"=>$endTime);
+        return false;
+    }
+
+    protected function notRepeatTime($attribute,$list=""){
+        $time = !empty($list)?$list:$this->attributes;
+        if(!empty($time)){
+            if(empty($time["start_time"])||empty($time["hours"])||empty($time["end_time"])||empty($time["hours_end"])){
+                $message = "时间不能为空";
+                $this->addError($attribute,$message);
+                return false;
+            }
+            $startTime = date("Y-m-d H:i:s",strtotime($time["start_time"].$time["hours"]));
+            $endTime = date("Y-m-d H:i:s",strtotime($time["end_time"].$time["hours_end"]));
+            if($startTime>=$endTime){
+                $message = "开始时间不能小于结束时间";
+                $this->addError($attribute,$message);
+                return false;
+            }
+            if($this->foreachVaTimeList($startTime,$endTime)){
+                $message = "本加班单内的时间有重复";
+                $this->addError($attribute,$message);
+                return false;
+            }
+
+            $whereSql = "((a.start_time>'$startTime' AND a.end_time <'$endTime') OR (a.start_time<='$startTime' AND a.end_time >='$startTime') OR (a.start_time<='$endTime' AND a.end_time >='$endTime')) ";
+            //var_dump($sql);die();
+            $sql="";
+            $info_sql="";
+            if(!empty($this->id)&&is_numeric($this->id)){
+                $employeeId = $this->getEmployeeIdToUser();
+                $sql.=" and a.id!=".$this->id." and a.employee_id='$employeeId'";
+                $info_sql.=" and b.id!=".$this->id." and b.employee_id='$employeeId'";
+            }
+            $rows = Yii::app()->db->createCommand("select a.work_code from hr_employee_work a WHERE $whereSql $sql")->queryRow();
+            if($rows){
+                $message = Yii::t('fete','A work order has been issued during this period')."：".$rows["work_code"];
+                $this->addError($attribute,$message);
+                return false;
+            }
+            $rows = Yii::app()->db->createCommand("select b.work_code from hr_employee_word_info a LEFT JOIN hr_employee_work b ON a.work_id=b.id WHERE $whereSql $info_sql")->queryRow();
+            //Yii::app()->end();
+            if($rows){
+                $message = Yii::t('fete','A work order has been issued during this period')."：".$rows["work_code"];
+                $this->addError($attribute,$message);
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
 	public function retrieveData($index) {

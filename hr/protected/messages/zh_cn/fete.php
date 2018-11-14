@@ -71,6 +71,8 @@ return array(
 
     //2018-01-17
     'Part or part of the application has been approved.'=>'申请的假期有部分或部分已经审批过了',
+    'A leave order has been issued during this period'=>'该时间段已有请假单',
+    'A work order has been issued during this period'=>'该时间段已有加班单',
     'Vacation Type'=>'假期种类',
     'annual leave'=>'年休假',
     'Overtime, special accommodation'=>'加班调休、特别调休',
