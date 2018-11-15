@@ -45,7 +45,7 @@
             <?php echo $form->numberField($model, 'log_time',
                 array('readonly'=>($model->getInputBool()),"id"=>"log_time")
             ); ?>
-            <span class="input-group-addon">天</span>
+            <span class="input-group-addon"><?php echo Yii::t("contract","Hour");?></span>
         </div>
     </div>
 </div>
@@ -145,15 +145,6 @@
     $(function ($) {
         $('#work_type').on('change',function(){
             var value = $(this).val();
-            if(value==2){
-                $('#hours').hide();
-                $('#hours_end').hide();
-                $('#log_time').next('span').text('天');
-            }else{
-                $('#hours').show();
-                $('#hours_end').show();
-                $('#log_time').next('span').text('小时');
-            }
             $.ajax({
                 type: 'post',
                 url: '<?php echo Yii::app()->createUrl('work/ajaxWorkType');?>',

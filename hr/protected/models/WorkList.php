@@ -151,15 +151,9 @@ class WorkList extends CListPageModel
 			foreach ($records as $k=>$record) {
 			    WorkList::resetWorkDate($record);
 			    $colorList = $this->statusToColor($record['status']);
-                if($record['work_type'] == 2){
-                    $record['start_time'] = date("Y/m/d",strtotime($record['start_time']));
-                    $record['end_time'] = date("Y/m/d",strtotime($record['end_time']));
-                    $dayStr ="天";
-                }else{
-                    $record['start_time'] = date("Y/m/d H:i:s",strtotime($record['start_time']));
-                    $record['end_time'] = date("Y/m/d H:i:s",strtotime($record['end_time']));
-                    $dayStr ="小時";
-                }
+                $record['start_time'] = date("Y/m/d H:i:s",strtotime($record['start_time']));
+                $record['end_time'] = date("Y/m/d H:i:s",strtotime($record['end_time']));
+                $dayStr =Yii::t("contract","Hour");
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'workemdoc'=>$record['workemdoc'],

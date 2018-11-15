@@ -104,7 +104,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                         <div class="form-control-static col-sm-10">
                             1、工作日加班费= 员工合同约定月工资÷(21.75×8)×150%×加班小时数<br>
                             2、周末加班费= 员工合同约定月工资÷(21.75×8)×200%×加班小时数<br>
-                            3、法定节假日加班费= 员工合同约定月工资÷ 21.75×工资倍率×加班天数
+                            3、法定节假日加班费= 员工合同约定月工资÷(21.75×8)×工资倍率×加班小时数
                         </div>
                     </div>
                     <div class="form-group">
@@ -123,11 +123,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                         <div class="form-control-static col-sm-7">
                             <?php
                             echo $model->wage."÷";
-                            if($model->work_type == 2){
-                                echo "21.75"."×".$model->getMuplite()."×".$model->log_time;
-                            }else{
-                                echo "(21.75×8)×".$model->getMuplite()."×".$model->log_time;
-                            }
+                            echo "(21.75×8)×".$model->getMuplite()."×".$model->log_time;
                             echo " = ".$model->work_cost;
                             ?>
                         </div>
@@ -201,15 +197,10 @@ $('#work_time_div').delegate('#start_time,#end_time,#hours,#hours_end','change',
         d2 = d2.getTime();
         if(d1<=d2){
             var time = d2-d1;
-            if($('#work_type').val()==2){
-                var hours=time/(24*3600*1000); 
-                hours++;
-            }else{
-                var hours=time/(3600*1000); 
-                end_hour = end_hour=='00:00'?'24:00':end_hour;
-                var num = parseInt(end_hour,10)-parseInt(start_hour,10);
-                hours+=num;
-            }
+            var hours=time/(3600*1000); 
+            end_hour = end_hour=='00:00'?'24:00':end_hour;
+            var num = parseInt(end_hour,10)-parseInt(start_hour,10);
+            hours+=num;
             if(hours>0){
                 $('#log_time').val(hours);
             }else{

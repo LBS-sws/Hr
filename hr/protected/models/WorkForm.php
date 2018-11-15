@@ -98,7 +98,7 @@ class WorkForm extends CFormModel
 	}
     public function validateLogTime($attribute, $params){
 	    if(!empty($this->log_time)){
-	        if($this->work_type!=3){
+	        if(in_array($this->work_type,array(1,0))){
                 if(floatval($this->log_time)>8){
                     $message = "时间周期不能大于8";
                     $this->addError($attribute,$message);
@@ -234,15 +234,10 @@ class WorkForm extends CFormModel
                 $this->work_cause = $row['work_cause'];
                 $this->work_address = $row['work_address'];
                 $this->city = $row['s_city'];
-                if ($this->work_type == 2){
-                    $this->start_time = date("Y/m/d",strtotime($row['start_time']));
-                    $this->end_time = date("Y/m/d",strtotime($row['end_time']));
-                }else{
-                    $this->start_time = date("Y/m/d",strtotime($row['start_time']));
-                    $this->hours = date("H:i",strtotime($row['start_time']));
-                    $this->end_time = date("Y/m/d",strtotime($row['end_time']));
-                    $this->hours_end = date("H:i",strtotime($row['end_time']));
-                }
+                $this->start_time = date("Y/m/d",strtotime($row['start_time']));
+                $this->hours = date("H:i",strtotime($row['start_time']));
+                $this->end_time = date("Y/m/d",strtotime($row['end_time']));
+                $this->hours_end = date("H:i",strtotime($row['end_time']));
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
                 $this->status = $row['status'];
@@ -493,11 +488,7 @@ class WorkForm extends CFormModel
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
                 ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
-            if($this->work_type == 2){
-                $dayStr ="天";
-            }else{
-                $dayStr ="小時";
-            }
+            $dayStr ="小時";
             $description="新的加班单 - ".$row["name"];
             $subject="新的加班单 - ".$row["name"];
             $message="<p>加班编号：".$this->work_code."</p>";
@@ -539,18 +530,16 @@ class WorkForm extends CFormModel
                 }else{
                     $this->cost_num = 2;
                 }
-                $this->work_cost = ($wage/21.75)*floatval($this->log_time)*intval($this->cost_num);
+                $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*intval($this->cost_num);
                 break;
             case 1:
                 $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*2;
-                $this->start_time .=" ".$this->hours;
-                $this->end_time .=" ".$this->hours_end;
                 break;
             default:
                 $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*1.5;
-                $this->start_time .=" ".$this->hours;
-                $this->end_time .=" ".$this->hours_end;
         }
+        $this->start_time .=" ".$this->hours;
+        $this->end_time .=" ".$this->hours_end;
     }
 
     private function lenStr($id){

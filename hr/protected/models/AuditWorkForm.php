@@ -169,15 +169,10 @@ class AuditWorkForm extends CFormModel
                 $this->work_address = $row['work_address'];
                 $this->work_cost = $row['work_cost'];
                 $this->city = $row['s_city'];
-                if ($this->work_type == 2){
-                    $this->start_time = date("Y/m/d",strtotime($row['start_time']));
-                    $this->end_time = date("Y/m/d",strtotime($row['end_time']));
-                }else{
-                    $this->start_time = date("Y/m/d",strtotime($row['start_time']));
-                    $this->hours = date("H:i",strtotime($row['start_time']));
-                    $this->end_time = date("Y/m/d",strtotime($row['end_time']));
-                    $this->hours_end = date("H:i",strtotime($row['end_time']));
-                }
+                $this->start_time = date("Y/m/d",strtotime($row['start_time']));
+                $this->hours = date("H:i",strtotime($row['start_time']));
+                $this->end_time = date("Y/m/d",strtotime($row['end_time']));
+                $this->hours_end = date("H:i",strtotime($row['end_time']));
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
                 $this->status = $row['status'];
@@ -347,11 +342,7 @@ class AuditWorkForm extends CFormModel
     }
 
     protected function sendEmail(){
-        if($this->work_type == 2){
-            $dayStr ="天";
-        }else{
-            $dayStr ="小时";
-        }
+        $dayStr ="小时";
         $email = new Email();
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
             ->where('id=:id', array(':id'=>$this->employee_name))->queryRow();
@@ -404,18 +395,16 @@ class AuditWorkForm extends CFormModel
                 }else{
                     $this->cost_num = 2;
                 }
-                $this->work_cost = ($wage/21.75)*floatval($this->log_time)*intval($this->cost_num);
+                $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*intval($this->cost_num);
                 break;
             case 1:
                 $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*2;
-                $this->start_time .=" ".$this->hours;
-                $this->end_time .=" ".$this->hours_end;
                 break;
             default:
                 $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*1.5;
-                $this->start_time .=" ".$this->hours;
-                $this->end_time .=" ".$this->hours_end;
         }
+        $this->start_time .=" ".$this->hours;
+        $this->end_time .=" ".$this->hours_end;
     }
 
     //判斷輸入框能否修改

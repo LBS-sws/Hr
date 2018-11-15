@@ -93,7 +93,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                     <div class="form-control-static col-sm-10">
                         1、工作日加班费= 员工合同约定月工资÷(21.75×8)×150%×加班小时数<br>
                         2、周末加班费= 员工合同约定月工资÷(21.75×8)×200%×加班小时数<br>
-                        3、法定节假日加班费= 员工合同约定月工资÷ 21.75×工资倍率×加班天数
+                        3、法定节假日加班费= 员工合同约定月工资÷(21.75×8)×工资倍率×加班小时数
                     </div>
                 </div>
                 <div class="form-group">
@@ -112,11 +112,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
                     <div class="form-control-static col-sm-7">
                         <?php
                         echo $model->wage."÷";
-                        if($model->work_type == 2){
-                            echo "21.75"."×".$model->getMuplite()."×".$model->log_time;
-                        }else{
-                            echo "(21.75×8)×".$model->getMuplite()."×".$model->log_time;
-                        }
+                        echo "(21.75×8)×".$model->getMuplite()."×".$model->log_time;
                         echo " = ".$model->work_cost;
                         ?>
                     </div>
