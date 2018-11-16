@@ -308,7 +308,7 @@ class WorkController extends Controller
 
     public function actionResetWorkTime(){
         $endTime = "2018-11-15 23:36:24";
-        $num = Yii::app()->db->createCommand("update hr_employee_work set log_time=log_time*8,luu = 'resetWorkTime' where luu!='resetWorkTime' and work_type='2' and lcd<='$endTime'")->execute();
+        $num = Yii::app()->db->createCommand("update hr_employee_work set log_time=log_time*8,luu = 'resetWorkTime' where (luu!='resetWorkTime' OR luu IS NULL ) and work_type='2' and lcd<='$endTime'")->execute();
         //var_dump($num);
         echo "<br>update Num:".$num;
         Yii::app()->end();
