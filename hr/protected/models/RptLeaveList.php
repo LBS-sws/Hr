@@ -24,8 +24,8 @@ class RptLeaveList extends CReport {
 	}
 
 	public function retrieveData() {
-		$start_dt = $this->criteria['START_DT'];
-		$end_dt = $this->criteria['END_DT'];
+        $start_dt = date("Y-m-d 00:00:00",$this->criteria['START_DT']);
+        $end_dt = date("Y-m-d 23:59:59",$this->criteria['END_DT']);
 		$city = $this->criteria['CITY'];
 		$staff_id = $this->criteria['STAFFS'];
 		
@@ -50,7 +50,7 @@ class RptLeaveList extends CReport {
         $sql = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
                 from hr_employee_leave a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
-                where b.city in($citylist) and a.status=4 and a.lcd >= '$start_dt' and a.lcd <= '$end_dt' 
+                where b.city in($citylist) and a.status=4 and a.start_time >= '$start_dt' and a.start_time <= '$end_dt' 
                 $cond_staff
 				order by b.lcd desc, a.id
 			";
