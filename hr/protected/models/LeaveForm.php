@@ -191,8 +191,10 @@ class LeaveForm extends CFormModel
     //根據加班id獲取加班信息
     public function getLeaveListToLeaveId($leave_id){
         $connection = Yii::app()->db;
-        $sql = "select a.*,b.name AS employee_name,b.code AS employee_code ,b.entry_time,b.department,b.position,d.name AS vacation_name,d.vaca_type
-                from hr_employee_leave a LEFT JOIN hr_employee b ON a.employee_id = b.id
+        $sql = "select a.*,b.name AS employee_name,b.code AS employee_code ,b.entry_time,b.department,b.position,d.name AS vacation_name,d.vaca_type,e.name as company_name
+                from hr_employee_leave a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id
+                LEFT JOIN hr_company e ON b.company_id=e.id
                 LEFT JOIN hr_vacation d ON a.vacation_id=d.id
                 where a.id =$leave_id
 			";
