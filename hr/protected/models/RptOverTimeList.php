@@ -25,10 +25,10 @@ class RptOverTimeList extends CReport {
 	}
 
 	public function retrieveData() {
-	    echo $this->criteria['START_DT']."<br>";
-	    echo $this->criteria['END_DT'];
-		$start_dt = date("Y-m-d 00:00:00",strtotime($this->criteria['START_DT']));
-        $end_dt = date("Y-m-d 23:59:59",strtotime($this->criteria['END_DT']));
+        $start_dt = $this->criteria['START_DT'];
+        $end_dt = $this->criteria['END_DT'];
+        $start_dt = date("Y-m-d 00:00:00",strtotime($start_dt));
+        $end_dt = date("Y-m-d 23:59:59",strtotime($end_dt));
 		$city = $this->criteria['CITY'];
 		$staff_id = $this->criteria['STAFFS'];
 		
