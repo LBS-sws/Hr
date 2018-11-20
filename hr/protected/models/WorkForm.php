@@ -192,12 +192,12 @@ class WorkForm extends CFormModel
 
             $whereSql = "((a.start_time>'$startTime' AND a.end_time <'$endTime') OR (a.start_time<='$startTime' AND a.end_time >='$startTime') OR (a.start_time<='$endTime' AND a.end_time >='$endTime')) ";
             //var_dump($sql);die();
-            $sql="";
-            $info_sql="";
+            $employeeId = $this->getEmployeeIdToUser();
+            $sql=" and a.employee_id='$employeeId'";
+            $info_sql=" and b.employee_id='$employeeId'";
             if(!empty($this->id)&&is_numeric($this->id)){
-                $employeeId = $this->getEmployeeIdToUser();
-                $sql.=" and a.id!=".$this->id." and a.employee_id='$employeeId'";
-                $info_sql.=" and b.id!=".$this->id." and b.employee_id='$employeeId'";
+                $sql.=" and a.id!=".$this->id;
+                $info_sql.=" and b.id!=".$this->id;
             }
             $rows = Yii::app()->db->createCommand("select a.work_code from hr_employee_work a WHERE $whereSql $sql")->queryRow();
             if($rows){
