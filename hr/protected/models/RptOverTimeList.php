@@ -25,6 +25,8 @@ class RptOverTimeList extends CReport {
 	}
 
 	public function retrieveData() {
+	    echo $this->criteria['START_DT']."<br>";
+	    echo $this->criteria['END_DT'];
 		$start_dt = date("Y-m-d 00:00:00",strtotime($this->criteria['START_DT']));
         $end_dt = date("Y-m-d 23:59:59",strtotime($this->criteria['END_DT']));
 		$city = $this->criteria['CITY'];
@@ -60,15 +62,9 @@ class RptOverTimeList extends CReport {
             $costNumList = WorkList::getWorkTypeList();
 			foreach ($rows as $row) {
                 $temp = array();
-                if($row['work_type'] == 2){
-                    $temp['start_time'] = date("Y/m/d",strtotime($row['start_time']));
-                    $temp['end_time'] = date("Y/m/d",strtotime($row['end_time']));
-                    $dayStr ="天";
-                }else{
-                    $temp['start_time'] = date("Y/m/d H:i:s",strtotime($row['start_time']));
-                    $temp['end_time'] = date("Y/m/d H:i:s",strtotime($row['end_time']));
-                    $dayStr ="小時";
-                }
+                $temp['start_time'] = date("Y/m/d H:i:s",strtotime($row['start_time']));
+                $temp['end_time'] = date("Y/m/d H:i:s",strtotime($row['end_time']));
+                $dayStr ="小時";
 				$temp['work_address'] = $row['work_address'];
 				$temp['work_cause'] = $row['work_cause'];
 				$temp['work_code'] = $row['work_code'];
