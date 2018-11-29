@@ -19,7 +19,7 @@
         </div>
     </div>
 <?php endif; ?>
-<?php if (get_class($model) == "LeaveForm"&&Yii::app()->user->validFunction('ZR06')): ?>
+<?php if (get_class($model) == "LeaveForm"&&Yii::app()->user->validFunction('ZR06')&&!$model->getInputBool()): ?>
     <div class="form-group">
         <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
         <div class="col-sm-4">
@@ -32,9 +32,8 @@
     <div class="form-group">
         <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
         <div class="col-sm-4">
-            <?php echo $form->dropDownList($model, 'employee_id',LeaveForm::getBindEmployeeList($model->employee_id),
-                array('readonly'=>(true),'id'=>'employee_id')
-            ); ?>
+            <?php echo $form->hiddenField($model, 'employee_id'); ?>
+            <?php echo TbHtml::textField("employee_name",YearDayList::getEmployeeNameToId($model->employee_id),array('readonly'=>true))?>
         </div>
     </div>
 <?php endif; ?>
