@@ -32,7 +32,7 @@
     <div class="form-group">
         <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
         <div class="col-sm-4">
-            <?php echo $form->hiddenField($model, 'employee_id'); ?>
+            <?php echo $form->hiddenField($model, 'employee_id',array('id'=>'employee_id')); ?>
             <?php echo TbHtml::textField("employee_name",YearDayList::getEmployeeNameToId($model->employee_id),array('readonly'=>true))?>
         </div>
     </div>
