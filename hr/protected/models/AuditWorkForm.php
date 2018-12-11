@@ -349,6 +349,7 @@ class AuditWorkForm extends CFormModel
         $message="<p>加班编号：".$this->work_code."</p>";
         $message.="<p>员工编号：".$row["code"]."</p>";
         $message.="<p>员工姓名：".$row["name"]."</p>";
+        $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
         $message.="<p>加班时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."$dayStr)</p>";
         if($this->scenario == "audit"){
             if ($this->z_index == 2){

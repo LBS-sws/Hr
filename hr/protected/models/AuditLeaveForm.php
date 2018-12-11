@@ -335,6 +335,7 @@ class AuditLeaveForm extends CFormModel
         $message="<p>请假编号：".$this->leave_code."</p>";
         $message.="<p>员工编号：".$row["code"]."</p>";
         $message.="<p>员工姓名：".$row["name"]."</p>";
+        $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
         $message.="<p>请假时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."天)</p>";
         if($this->scenario == "audit"){
             if ($this->z_index == 2){
@@ -358,7 +359,7 @@ class AuditLeaveForm extends CFormModel
             $subject="请假单被拒絕 - ".$row["name"];
             $message.="<p>拒絕原因：".$this->reject_cause."</p>";
             $email->addEmailToStaffId($row["id"]);
-            $email->addEmailToPrefixAndCity("ZG05",$row["city"]);
+            //$email->addEmailToPrefixAndCity("ZG05",$row["city"]);//總監說郵件太多，不想看郵件取消掉了
         }
         $email->setDescription($description);
         $email->setMessage($message);

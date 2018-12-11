@@ -510,6 +510,7 @@ class LeaveForm extends CFormModel
             $message="<p>请假编号：".$this->leave_code."</p>";
             $message.="<p>员工编号：".$row["code"]."</p>";
             $message.="<p>员工姓名：".$row["name"]."</p>";
+            $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
             $message.="<p>请假时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."天)</p>";
             $message.="<p>请假原因：".$this->leave_cause."</p>";
             $email->setDescription($description);
@@ -534,7 +535,7 @@ class LeaveForm extends CFormModel
 	//獲取綁定員工的列表(解決地區變化問題$staff_id)
     public function getBindEmployeeList($staff_id=0){
         $city_allow = Yii::app()->user->city_allow();
-        $arr = array();
+        $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select("a.employee_id as id,b.name as name")->from("hr_binding a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where("b.city in ($city_allow) or b.id=:id",array(":id"=>$staff_id))->queryAll();
