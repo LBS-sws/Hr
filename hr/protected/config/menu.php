@@ -215,6 +215,10 @@ return array(
 				'access'=>'YB01',
                 'url'=>'/queue/index',
 			),
+			'Common forms download'=>array(
+				'access'=>'YB07',
+                'url'=>'/downForm/index',
+			),
 		),
 	),
 );

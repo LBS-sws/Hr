@@ -129,6 +129,7 @@ return array(
     'Pennants ex List'=>'锦旗明细报表',
     'Pennants cumulative List'=>'锦旗累积报表',
     'All evaluation lists'=>'所有评估列表',
+    'Common forms download'=>'常用表格下载',
     //沈超添加结束
 );
 ?>

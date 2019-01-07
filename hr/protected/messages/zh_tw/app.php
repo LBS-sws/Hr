@@ -129,6 +129,7 @@ return array(
     'Audit Config'=>'請假、加班審核配置',
     'City index'=>'城市等級配置',
     'All evaluation lists'=>'所有評估列表',
+    'Common forms download'=>'常用表格下載',
     //沈超添加结束
 );
 ?>
