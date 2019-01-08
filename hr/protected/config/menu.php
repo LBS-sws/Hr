@@ -56,7 +56,7 @@ return array(
 				'url'=>'/contract/index',
 			),
             'Common forms download'=>array(
-                'access'=>'ZD03',//YB07
+                'access'=>'ZD04',//YB07
                 'url'=>'/downForm/index',
             )
 		),
