@@ -42,11 +42,11 @@ class DownFormController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validRWFunction('YB07');
+        return Yii::app()->user->validRWFunction('ZD04');
     }
 
     public static function allowReadOnly() {
-        return Yii::app()->user->validFunction('YB07');
+        return Yii::app()->user->validFunction('ZD04');
     }
 
     public function actionIndex($pageNum=0){

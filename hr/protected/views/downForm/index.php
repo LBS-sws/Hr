@@ -27,7 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - DownForm';
             <div class="btn-group" role="group">
                 <?php
                 //var_dump(Yii::app()->session['rw_func']);
-                if (Yii::app()->user->validRWFunction('YB07'))
+                if (Yii::app()->user->validRWFunction('ZD04'))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
                         'submit'=>Yii::app()->createUrl('downForm/new'),
                     ));
