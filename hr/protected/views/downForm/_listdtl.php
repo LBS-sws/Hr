@@ -1,7 +1,7 @@
-<tr class='clickable-row' data-href='<?php echo $this->getLink('YB07', 'downForm/edit', 'downForm/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row' data-href='<?php echo $this->getLink('ZD03', 'downForm/edit', 'downForm/view', array('index'=>$this->record['id']));?>'>
 
 
-	<td><?php echo $this->drawEditButton('YB07', 'downForm/edit','downForm/view', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->drawEditButton('ZD03', 'downForm/edit','downForm/view', array('index'=>$this->record['id'])); ?></td>
 
 
 

@@ -54,7 +54,11 @@ return array(
 			'Contract List'=>array(
 				'access'=>'ZD02',
 				'url'=>'/contract/index',
-			)
+			),
+            'Common forms download'=>array(
+                'access'=>'ZD03',//YB07
+                'url'=>'/downForm/index',
+            )
 		),
 	),
     //員工模塊
@@ -214,10 +218,6 @@ return array(
 			'Report Manager'=>array(
 				'access'=>'YB01',
                 'url'=>'/queue/index',
-			),
-			'Common forms download'=>array(
-				'access'=>'YB07',
-                'url'=>'/downForm/index',
 			),
 		),
 	),
