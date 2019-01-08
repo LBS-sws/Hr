@@ -21,11 +21,11 @@ class DownFormList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
-		$sql1 = "select id,city,name,type from hr_down_form 
+		$sql1 = "select * from hr_down_form 
                 where id > 0 
 			";
 		$sql2 = "select count(id)
-				from hr_docx 
+				from hr_down_form 
 				where id > 0 
 			";
 
