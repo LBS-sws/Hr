@@ -76,9 +76,10 @@ class DownFormController extends Controller
     {
         $url =DownFormForm::getDocxUrlToId($index);
         if($url){
+            $type = end(explode(".",$url["docx_url"]));
             $file = Yii::app()->basePath."/../".$url["docx_url"];
             header("Content-type: application/octet-stream");
-            header('Content-Disposition: attachment; filename="'.$url["name"].'.docx"');
+            header('Content-Disposition: attachment; filename="'.$url["name"].".".$type.'"');
             header("Content-Length: ". filesize($file));
             readfile($file);
         }else{
@@ -122,8 +123,14 @@ class DownFormController extends Controller
                         $myfile = fopen($path."index.php", "w");
                         fclose($myfile);
                     }
-                    $model->docx_url = 'upload/form/'.date("YmdHis").".docx";
-                    $docx->saveAs($model->docx_url);
+                    if(is_null($docx)){
+                        Dialog::message(Yii::t('dialog','Validation Message'), "文件不存在");
+                        $this->render('form',array('model'=>$model,));
+                        return false;
+                    }else{
+                        $model->docx_url = 'upload/form/'.date("YmdHis").".".$docx->getExtensionName();
+                        $docx->saveAs($model->docx_url);
+                    }
                 }
 
                 $model->saveData();

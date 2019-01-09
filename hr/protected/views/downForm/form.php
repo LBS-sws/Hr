@@ -109,7 +109,7 @@ $this->pageTitle=Yii::app()->name . ' - downForm Form';
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
-$wordFileInput="<div class='col-sm-3 word'><input type='hidden' value='' name='DownForm[file]'><input class='form-control' name='DownForm[file]' type='file'></div>";
+$wordFileInput="<div class='col-sm-3 word'><input type='hidden' value='' name='DownFormForm[file]'><input class='form-control' name='DownFormForm[file]' type='file'></div>";
 $js = '
     $("#updateWord").on("click",function(){
         var $div = $(this).parents("div.word");

@@ -122,6 +122,7 @@ class DownFormForm extends CFormModel
 			case 'edit':
 				$sql = "update hr_down_form set
 							name = :name, 
+							docx_url = :docx_url, 
 							remark = :remark, 
 							luu = :luu 
 						where id = :id
@@ -135,7 +136,7 @@ class DownFormForm extends CFormModel
 		if (strpos($sql,':name')!==false)
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
 		if (strpos($sql,':docx_url')!==false)
-			$command->bindParam(':docx_url',$this->docx_url,PDO::PARAM_STR);
+            $command->bindParam(':docx_url',$this->docx_url,PDO::PARAM_STR);
 
         if (strpos($sql,':remark')!==false)
             $command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
