@@ -77,11 +77,13 @@ class YearDayForm extends CFormModel
         $month = date("m/d",strtotime($time));
         $time = date("Y/m/d",strtotime("$time - 1 year"));
         // and replace(entry_time,'-','/')<='$time'
-        $sql = "SELECT year_day,entry_time FROM hr_employee WHERE staff_status = 0 and replace(entry_time,'-','/')<='$time' AND id=$employee_id";
+        $sql = "SELECT year_day,entry_time FROM hr_employee WHERE staff_status = 0 AND id=$employee_id";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         $yearDay = 0;
         if($row){
-            $yearDay+=floatval($row["year_day"]);
+            if(date("Y/m/d",strtotime($row["entry_time"]))<=$time){
+                $yearDay+=floatval($row["year_day"]);
+            }
             $entry_time = date("m/d",strtotime($row["entry_time"]));
             if($entry_time>$month){
                 $year--;
