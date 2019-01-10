@@ -4,6 +4,8 @@ class AuditPrizeForm extends CFormModel
 {
     public $id;
     public $employee_id;
+    public $employee_name;
+    public $employee_code;
     public $work_type;
     public $prize_date;
     public $city;
@@ -74,6 +76,8 @@ class AuditPrizeForm extends CFormModel
             foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->employee_id = $row['employee_id'];
+                $this->employee_name = $row['employee_name'];
+                $this->employee_code = $row['employee_code'];
                 $this->prize_date = $row['prize_date'];
                 $this->city = $row['s_city'];
                 $this->prize_num = $row['prize_num'];
@@ -146,8 +150,34 @@ class AuditPrizeForm extends CFormModel
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
+        $this->sendEmail();
 		return true;
 	}
+
+
+    protected function sendEmail(){
+        $email = new Email();
+        $this->retrieveData($this->id);
+        $message="<p>员工编号：".$this->employee_code."</p>";
+        $message.="<p>员工姓名：".$this->employee_name."</p>";
+        $message.="<p>员工城市：".General::getCityName($this->city)."</p>";
+        $message.="<p>嘉许日期：".date("Y-m-d",strtotime($this->prize_date))."</p>";
+        $message.="<p>锦旗总数：".$this->type_num."</p>";
+        $message.="<p>申请时间：".$this->lcd."</p>";
+        if($this->scenario == "audit"){
+            $description="锦旗申请已通过 - ".$this->employee_name;
+            $subject="锦旗申请已通过 - ".$this->employee_name;
+        }else{
+            $description="锦旗申请被拒绝 - ".$this->employee_name;
+            $subject="锦旗申请被拒绝 - ".$this->employee_name;
+            $message.="<p style='color:red;'>拒絕原因：".$this->reject_remark."</p>";
+        }
+        $email->setDescription($description);
+        $email->setMessage($message);
+        $email->setSubject($subject);
+        $email->addEmailToStaffId($this->employee_id);
+        $email->sent();
+    }
 
     //判斷輸入框能否修改
     public function getInputBool(){

@@ -4,6 +4,8 @@ class PrizeForm extends CFormModel
 {
 	public $id;
 	public $employee_id;
+	public $employee_name;
+	public $employee_code;
     public $work_type;
 	public $prize_date;
 	public $city;
@@ -87,6 +89,8 @@ class PrizeForm extends CFormModel
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->employee_id = $row['employee_id'];
+                $this->employee_name = $row['employee_name'];
+                $this->employee_code = $row['employee_code'];
                 $this->prize_date = $row['prize_date'];
                 $this->work_type = DeptForm::getDeptToId($row['position']);
                 $this->city = $row['s_city'];
@@ -223,8 +227,31 @@ class PrizeForm extends CFormModel
             $this->id = Yii::app()->db->getLastInsertID();
             $this->scenario = "edit";
         }
+
+        $this->sendEmail();
 		return true;
 	}
+
+
+    protected function sendEmail(){
+        if($this->audit){
+            $email = new Email();
+            $this->retrieveData($this->id);
+            $description="锦旗申请 - ".$this->employee_name;
+            $subject="锦旗申请 - ".$this->employee_name;
+            $message="<p>员工编号：".$this->employee_code."</p>";
+            $message.="<p>员工姓名：".$this->employee_name."</p>";
+            $message.="<p>员工城市：".General::getCityName($this->city)."</p>";
+            $message.="<p>嘉许日期：".date("Y-m-d",strtotime($this->prize_date))."</p>";
+            $message.="<p>锦旗总数：".$this->type_num."</p>";
+            $message.="<p>申请时间：".$this->lcd."</p>";
+            $email->setDescription($description);
+            $email->setMessage($message);
+            $email->setSubject($subject);
+            $email->addEmailToPrefixAndCity("ZG07",$this->city);
+            $email->sent();
+        }
+    }
 
     private function lenStr($id){
         $code = strval($id);
