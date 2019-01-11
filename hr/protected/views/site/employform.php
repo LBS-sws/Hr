@@ -4,7 +4,7 @@
     <?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'name',
-            array('size'=>10,'maxlength'=>10,'readonly'=>($readonly))
+            array('size'=>100,'maxlength'=>100,'readonly'=>($readonly))
         ); ?>
     </div>
     <!--分割-->
