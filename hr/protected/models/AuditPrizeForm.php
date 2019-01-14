@@ -181,7 +181,7 @@ class AuditPrizeForm extends CFormModel
         $email->setDescription($description);
         $email->setMessage($message);
         $email->setSubject($subject);
-        $email->addEmailToStaffId($this->lcu);
+        $email->addEmailToLcu($this->lcu);
         $email->sent();
     }
 
