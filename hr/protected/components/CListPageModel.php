@@ -78,7 +78,7 @@ class CListPageModel extends CFormModel
     public function getCriteria() {
         $criteriaList= array();
         $list = $this->attributes;
-        $notList = array("attr","totalRow");
+        $notList = array("attr","totalRow","only","type");
         foreach ($list as $key=> $value){
             if(!is_array($value)&&!in_array($key,$notList)){
                 $criteriaList[$key]=$value;
