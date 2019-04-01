@@ -153,6 +153,7 @@ $('#btnSysChange').on('click',function() {
 	}
 	Yii::app()->clientScript->registerScript('systemchange',$js,CClientScript::POS_READY);
 
+    Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/message.js", CClientScript::POS_END);
 }
 ?>
 </html>
