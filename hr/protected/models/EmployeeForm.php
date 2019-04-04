@@ -166,6 +166,7 @@ class EmployeeForm extends CFormModel
                 'safe'),
 			array('code','required'),
 			array('name','required'),
+			array('household','required'),
             array('staff_id','required'),
 			array('code','validateCode'),
 			array('sex','required'),

@@ -168,6 +168,7 @@ class EmployForm extends CFormModel
                 'safe'),
 			array('entry_time','required'),
 			array('name','required'),
+			array('household','required'),
 			array('staff_id','required'),
 			array('sex','required'),
 			array('name','validateName'),
