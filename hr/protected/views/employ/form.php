@@ -100,17 +100,9 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
             <?php endif; ?>
             <?php if ($model->staff_status == 4): ?>
                 <div class="form-group">
-                    <?php echo $form->labelEx($model,'ld_card',array('class'=>"col-sm-2 control-label")); ?>
+                    <?php echo $form->labelEx($model,'social_code',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-5">
-                        <?php echo $form->textField($model, 'ld_card',
-                            array('readonly'=>($model->scenario=='view'))
-                        ); ?>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <?php echo $form->labelEx($model,'sb_card',array('class'=>"col-sm-2 control-label")); ?>
-                    <div class="col-sm-5">
-                        <?php echo $form->textField($model, 'sb_card',
+                        <?php echo $form->textField($model, 'social_code',
                             array('readonly'=>($model->scenario=='view'))
                         ); ?>
                     </div>
