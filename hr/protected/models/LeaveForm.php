@@ -32,6 +32,8 @@ class LeaveForm extends CFormModel
     public $wage;//合約工資
     public $staff_type;//員工的辦公類型
 
+    public $state;//員工的辦公類型
+
 
 
     public $no_of_attm = array(
@@ -70,6 +72,7 @@ class LeaveForm extends CFormModel
             'reject_cause'=>Yii::t('contract','Rejected Remark'),
             'wage'=>Yii::t('contract','Contract Pay'),
             'lcd'=>Yii::t('fete','apply for time'),
+            'state'=>Yii::t('contract','Status'),
 		);
 	}
 
@@ -309,8 +312,8 @@ class LeaveForm extends CFormModel
                 $this->z_index = $row['z_index'];
                 $this->start_time_lg = $row['start_time_lg'];
                 $this->end_time_lg = $row['end_time_lg'];
+                $this->state = LeaveForm::translationState($row['z_index']);
                 $this->status = $row['status'];
-                $this->user_lcu = $row['user_lcu'];
                 $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
@@ -329,6 +332,22 @@ class LeaveForm extends CFormModel
 		}
 		return true;
 	}
+
+//1:部門審核、2：主管、3：總監、4：你
+	public function translationState($str){
+        switch ($str){
+            case 1:
+                return "部門審核";
+            case 2:
+                return "主管審核";
+            case 3:
+                return "總監審核";
+            case 4:
+                return "最高審核";
+            default:
+                return $str;
+        }
+    }
 
     //刪除驗證
     public function deleteValidate(){
