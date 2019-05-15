@@ -8,6 +8,8 @@
  */
 class AuditHistoryController extends Controller
 {
+	public $function_id='ZG02';
+
 
     public function filters()
     {

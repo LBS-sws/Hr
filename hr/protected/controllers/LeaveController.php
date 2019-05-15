@@ -8,6 +8,7 @@
  */
 class LeaveController extends Controller
 {
+	public $function_id='ZA06';
 
     public function filters()
     {
