@@ -121,6 +121,8 @@ class DeptController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('dept/edit',array('index'=>$model->id,'type'=>$model->type)));
             } else {
+                $this->function_id = $model->type==0 ? 'ZC01' : 'ZC02';
+                Yii::app()->session['active_func'] = $this->function_id;
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));

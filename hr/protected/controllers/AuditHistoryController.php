@@ -69,7 +69,7 @@ class AuditHistoryController extends Controller
 
     public function actionEdit($index)
     {
-        $model = new AuditHistoryForm('view');
+        $model = new AuditHistoryForm('edit');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {

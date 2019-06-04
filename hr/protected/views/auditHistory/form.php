@@ -36,7 +36,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                 ?>
             </div>
             <?php
-            if($model->scenario=='view'){
+            if($model->scenario!='view'){
                 if($model->staff_status == 2){
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                         'submit'=>Yii::app()->createUrl('auditHistory/audit')));
