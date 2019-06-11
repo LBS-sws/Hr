@@ -207,7 +207,7 @@ class LeaveForm extends CFormModel
             $records["posi_name"]=DeptForm::getDeptToId($records["position"]);
             if($records["vaca_type"] == "E"){ //年假
                 $records["sumDay"] =YearDayForm::getSumDayToYear($records["employee_id"],$records["start_time"]);
-                $records["leaveNum"] =LeaveForm::getLeaveNumToYear($records["employee_id"],$records["start_time"],true);
+                $records["leaveNum"] =LeaveForm::getLeaveNumToYear($records["employee_id"],$records["start_time"],true,$records['lcd']);
             }else{
                 $records["sumDay"]=0;
                 $records["leaveNum"]=0;
@@ -251,7 +251,7 @@ class LeaveForm extends CFormModel
     }
 
     //某年累積的請假天數（僅年假)
-    public function getLeaveNumToYear($employee_id,$time="",$endBool=false){
+    public function getLeaveNumToYear($employee_id,$time="",$endBool=false,$lcd=''){
         if(empty($employee_id)){
             return 0;
         }
@@ -275,8 +275,8 @@ class LeaveForm extends CFormModel
         }
         $statusSql = "a.status NOT IN (0,3)";
         if($endBool){
-            $end_time = date("Y-m-d 23:59:59",strtotime($time));
-            $statusSql = "a.status =  4";
+            //$end_time = date("Y-m-d 23:59:59",strtotime($time));
+            $statusSql = "a.status =  4 and a.lcd<='$lcd'";
         }
         $sql = "select sum(a.log_time) AS sumDay from hr_employee_leave a 
             LEFT JOIN hr_vacation b ON a.vacation_id = b.id
@@ -337,13 +337,13 @@ class LeaveForm extends CFormModel
 	public function translationState($str){
         switch ($str){
             case 1:
-                return "部門審核";
+                return "部門審核（數據輸入 → 審核）";
             case 2:
-                return "主管審核";
+                return "主管審核（員工 → 審核）";
             case 3:
-                return "總監審核";
+                return "總監審核（審核 → 審核）";
             case 4:
-                return "最高審核";
+                return "最高審核（系統設置 → 審核）";
             default:
                 return $str;
         }
