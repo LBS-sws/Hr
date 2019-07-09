@@ -268,10 +268,10 @@ class LeaveForm extends CFormModel
         $day = date("d",strtotime($rows["entry_time"]));
         if(date("m-d",strtotime($time))>date("m-d",strtotime($rows["entry_time"]))){
             $start_time = "$year-$month-$day 00:00:00";
-            $end_time = (intval($year)+1)."-$month-$day 23:59:59";
+            $end_time = (intval($year)+1)."-$month-$day 00:00:00";
         }else{
             $start_time = (intval($year)-1)."-$month-$day 00:00:00";
-            $end_time = "$year-$month-$day 23:59:59";
+            $end_time = "$year-$month-$day 00:00:00";
         }
         $statusSql = "a.status NOT IN (0,3)";
         if($endBool){
@@ -281,6 +281,7 @@ class LeaveForm extends CFormModel
         $sql = "select sum(a.log_time) AS sumDay from hr_employee_leave a 
             LEFT JOIN hr_vacation b ON a.vacation_id = b.id
             WHERE a.start_time>'$start_time'AND a.start_time<='$end_time' AND $statusSql AND b.vaca_type='E' AND a.employee_id=$employee_id";
+        //var_dump($sql);die();
         $Sum = Yii::app()->db->createCommand($sql)->queryRow();
         if($Sum){
             return $Sum["sumDay"];
