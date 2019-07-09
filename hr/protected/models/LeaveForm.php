@@ -267,11 +267,11 @@ class LeaveForm extends CFormModel
         $month = date("m",strtotime($rows["entry_time"]));
         $day = date("d",strtotime($rows["entry_time"]));
         if(date("m-d",strtotime($time))>date("m-d",strtotime($rows["entry_time"]))){
-            $start_time = "$year-$month-$day 23:59:59";
-            $end_time = (intval($year)+1)."-$month-$day 23:59:59";
+            $start_time = "$year-$month-$day 00:00:00";
+            $end_time = (intval($year)+1)."-$month-$day 00:00:00";
         }else{
-            $start_time = (intval($year)-1)."-$month-$day 23:59:59";
-            $end_time = "$year-$month-$day 23:59:59";
+            $start_time = (intval($year)-1)."-$month-$day 00:00:00";
+            $end_time = "$year-$month-$day 00:00:00";
         }
         $statusSql = "a.status NOT IN (0,3)";
         if($endBool){
