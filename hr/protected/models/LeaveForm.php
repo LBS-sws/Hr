@@ -266,7 +266,7 @@ class LeaveForm extends CFormModel
         $year = date("Y",strtotime($time));
         $month = date("m",strtotime($rows["entry_time"]));
         $day = date("d",strtotime($rows["entry_time"]));
-        if(date("m-d",strtotime($time))>date("m-d",strtotime($rows["entry_time"]))){
+        if(date("m-d",strtotime($time))>=date("m-d",strtotime($rows["entry_time"]))){
             $start_time = "$year-$month-$day 00:00:00";
             $end_time = (intval($year)+1)."-$month-$day 00:00:00";
         }else{
