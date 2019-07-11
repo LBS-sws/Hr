@@ -13,7 +13,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="language" content="<?php echo Yii::app()->language; ?>" />
-	
+
 	<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 </head>
 
@@ -91,7 +91,6 @@
 <!-- ./wrapper -->
 
 </body>
-<script>
 <?php
 if (!Yii::app()->user->isGuest) {
 	$this->widget('ext.layout.SessionExpiryWidget');		// Session Expiry
@@ -103,5 +102,6 @@ if (!Yii::app()->user->isGuest) {
 		)
 	);
 }
+Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/message.js", CClientScript::POS_END);//日期輸入框語言選擇
 ?>
 </html>

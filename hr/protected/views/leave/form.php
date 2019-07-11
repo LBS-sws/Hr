@@ -196,7 +196,7 @@ Script::genFileUpload($model,$form->id,'LEAVE');
 
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
-$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+var datePickerObj = $('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 $('#start_time').on('change',function(){
     if($('#end_time').val()==''){
         $('#end_time').val($(this).val());
@@ -266,11 +266,18 @@ $('#leave_type,#start_time,#employee_id').on('change',function(){
             ajaxBool = true;
             if(data.status == 1){
                 var html = data.html;
+                var entry_time = data.entry_time;
                 var parentDiv = $('#leave_type').parents('div.form-group:first');
                 if(parentDiv.find('div.yearDay').length > 0){
                     parentDiv.find('div.yearDay').html(html);
                 }else{
                     parentDiv.append('<div class=\"col-sm-7 yearDay\">'+html+'</div>');
+                }
+                if(entry_time!=''){//修改年假最大日期
+                    $('#end_time').datepicker('setEndDate',entry_time);
+                    if($('#end_time').val()!=''&&Date.parse($('#end_time').val())>Date.parse(entry_time)){
+                        $('#end_time').val(entry_time);
+                    }
                 }
             }
         }
