@@ -296,19 +296,9 @@ class LeaveController extends Controller
             $entry_time = date("Y/m/d",strtotime(date("Y/m/d")."+2 year"));
             if($model->retrieveData($leave_type)){
                 if($model->vaca_type == 'E'){
-                    $sql = "SELECT entry_time FROM hr_employee WHERE staff_status = 0 AND id=$index";
-                    $row = Yii::app()->db->createCommand($sql)->queryRow();
-                    if($row){
-                        $year = empty($time)?date("Y"):date("Y",strtotime($time));
-                        $thisMonth = empty($time)?date("/m/d"):date("/m/d",strtotime($time));
-                        $month = date("/m/d",strtotime($row["entry_time"]." - 1 day"));
-                        if($thisMonth>$month){
-                            $year++;
-                        }
-                        $entry_time = $year.$month;
-                    }
                     $yearDay =YearDayForm::getSumDayToYear($index,$time);
                     $leaveNum =LeaveForm::getLeaveNumToYear($index,$time);
+                    $entry_time =LeaveForm::getMaxYearLeaveDate($index,$time);
                     $leaveNum =$yearDay - floatval($leaveNum);
                     $html = "<p class='form-control-static text-success'>年假剩余天数：".$leaveNum."</p>";
                 }
