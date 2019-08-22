@@ -45,7 +45,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                     echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                         'submit'=>Yii::app()->createUrl('employ/save')));
                 }
-                if(($model->city == Yii::app()->user->city() || $model->scenario=='edit')&&$model->staff_status == 1){
+                if(($model->city == Yii::app()->user->city() || $model->scenario=='edit')&&in_array(intval($model->staff_status),array(1,3,4))){
                     echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                             'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
                     );
