@@ -300,7 +300,7 @@ class LeaveController extends Controller
                     $leaveNum =LeaveForm::getLeaveNumToYear($index,$time);
                     $entry_time =LeaveForm::getMaxYearLeaveDate($index,$time);
                     $leaveNum =$yearDay - floatval($leaveNum);
-                    $html = "<p class='form-control-static text-success'>年假剩余天数：".$leaveNum."</p>";
+                    $html = "<p class='form-control-static text-success'>".Yii::t("contract","remaining days of annual leave")."：".$leaveNum."</p>";
                 }
             }
             echo CJSON::encode(array("status"=>1,"html"=>$html,"entry_time"=>$entry_time));
