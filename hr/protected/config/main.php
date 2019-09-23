@@ -128,7 +128,7 @@ return array(
 		'docmanPath'=>'/docman/dev',
 		'systemId'=>'hr',
 		'envSuffix'=>'dev',
-		'employeeCode'='4',
+		'employeeCode'=>'4',
 		'appname'=>'LBS DMS (UAT)',
 		'appcolor'=>'skin-red-light',
 	),
