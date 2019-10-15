@@ -251,10 +251,6 @@ return array(
 				'access'=>'YB01',
                 'url'=>'/queue/index',
 			),
-            'Search all review'=>array(
-                'access'=>'YB07',
-                'url'=>'/report/pennantculist',
-            ),
 		),
 	),
 );

@@ -38,7 +38,7 @@ class ReviewSearchList extends CListPageModel
         $rows = Yii::app()->db->createCommand()->select("employee_id,employee_name")->from("hr_binding")
             ->where('user_id=:user_id',
                 array(':user_id'=>$uid))->queryRow();
-        if ($rows||Yii::app()->user->validFunction('YB07')){
+        if ($rows||Yii::app()->user->validFunction('ZR09')){
             $this->employee_id = isset($rows["employee_id"])?$rows["employee_id"]:"";
             return true;
         }
@@ -52,7 +52,7 @@ class ReviewSearchList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         //FIND_IN_SET
         $expr_sql = " and b.status_type in (1,2,3)";
-        if(!Yii::app()->user->validFunction('YB07')){//沒有所有權限
+        if(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
             $expr_sql.=" and (FIND_IN_SET('$this->employee_id',b.id_s_list) or b.employee_id = '$this->employee_id' or b.lcu = '$this->employee_id')";
         }
 		$sql1 = "select c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum 

@@ -94,7 +94,7 @@ class ReviewSearchForm extends CFormModel
         $rows = Yii::app()->db->createCommand()->select("employee_id,employee_name")->from("hr_binding")
             ->where('user_id=:user_id',
                 array(':user_id'=>$uid))->queryRow();
-        if ($rows||Yii::app()->user->validFunction('YB07')){
+        if ($rows||Yii::app()->user->validFunction('ZR09')){
             $this->login_id = isset($rows["employee_id"])?$rows["employee_id"]:"";
             return true;
         }
@@ -105,7 +105,7 @@ class ReviewSearchForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         //,b.status_type,b.year,b.year_type,b.id as review_id
         $expr_sql = '';
-        if(!Yii::app()->user->validFunction('YB07')){//沒有所有權限
+        if(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
             $expr_sql.=" and (FIND_IN_SET('$this->login_id',b.id_s_list) or b.employee_id = '$this->login_id' or b.lcu = '$this->login_id')";
         }
 		$row = Yii::app()->db->createCommand()
@@ -153,7 +153,7 @@ class ReviewSearchForm extends CFormModel
     }
 //員工評語
     protected function resetRemarkList($row){
-        $bool = $row['handle_id']==$this->login_id||$this->employee_id==$this->login_id||$this->status_type == 3;
+        $bool = $row['status_type']==3&&($row['handle_id']==$this->login_id||$this->employee_id==$this->login_id||$this->status_type == 3);
         if($bool&&!empty($row["review_remark"])){
             $this->review_remark .=$row["handle_name"].":\r\n".$row["review_remark"]."\r\n";
         }
@@ -244,7 +244,7 @@ class ReviewSearchForm extends CFormModel
             $proSum = 0;
             for ($i=0;$i<count($rows);$i++){
                 $bool = ($rows[$i]['handle_id']!=$this->login_id&&$this->employee_id!=$this->login_id);
-                $bool = $bool&&$this->status_type != 3;
+                $bool = in_array($rows[$i]['status_type'],array(1,4))||($bool&&$this->status_type != 3);
                 if(!isset($rows[$i]["list"][$set_id]["list"][$proList["id"]]["value"])||$bool){
                     $proSum = '-';
                     $proValue = "-";
@@ -316,18 +316,17 @@ class ReviewSearchForm extends CFormModel
             return '';
         }elseif ($sum<50){
             return 'V';
-        }elseif ($sum<59){
+        }elseif ($sum<=59){
             return 'IV';
-        }elseif ($sum<69){
+        }elseif ($sum<=69){
             return 'III';
-        }elseif ($sum<79){
+        }elseif ($sum<=79){
             return 'II';
         }elseif ($sum<=100){
             return 'I';
         }else{
             return $sum;
         }
-
     }
 
     protected function getCountTable($html){
@@ -337,7 +336,18 @@ class ReviewSearchForm extends CFormModel
         $html.="<tr><td colspan='$sum'>".Yii::t("contract","Quarterly assessment score")." (100%)</td></tr>";
         $html.="</tbody><tfoot>";
         $html.=$this->returnTableFoot($this->table_foot,$this->pro_str);
-        $html.="</tfoot></table></div></div>";
+        $html.="</tfoot></table></div>";
+        //評分級別規則
+        $html.="<div class='col-sm-3 col-sm-offset-1'><table class='table table-bordered table-striped'>";
+        $html.="<thead><tr><th class='text-center'>评分级别标准</th><th class='text-center'>排 名</th><th class='text-center'>评 级</th></tr></thead>";
+        $html.="<tbody>";
+        $html.="<tr><th class='text-center'>80 - 100</th><th class='text-center'>Top 20%</th><th class='text-center'>I</th></tr>";
+        $html.="<tr><th class='text-center'>70 - 79</th><th class='text-center'>21 - 40%</th><th class='text-center'>II</th></tr>";
+        $html.="<tr><th class='text-center'>60 - 69</th><th class='text-center'>41 - 70%</th><th class='text-center'>III</th></tr>";
+        $html.="<tr><th class='text-center'>50 - 59</th><th class='text-center'>71 - 90%</th><th class='text-center'>IV</th></tr>";
+        $html.="<tr><th class='text-center'>50分以下</th><th class='text-center'>Bottom 10%</th><th class='text-center'>V</th></tr>";
+        $html.="</tbody></table></div>";
+        $html.="</div>";
         return $html;
     }
 
