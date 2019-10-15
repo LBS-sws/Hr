@@ -1,0 +1,29 @@
+<tr>
+	<th></th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('id').$this->drawOrderArrow('a.id'),'#',$this->createOrderLink('reviewSet-list','a.id'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('set_code').$this->drawOrderArrow('a.set_code'),'#',$this->createOrderLink('reviewSet-list','a.set_code'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('set_name').$this->drawOrderArrow('a.set_name'),'#',$this->createOrderLink('reviewSet-list','a.set_name'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('z_index').$this->drawOrderArrow('a.z_index'),'#',$this->createOrderLink('reviewSet-list','a.z_index'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('pro_num').$this->drawOrderArrow('pro_num'),'#',$this->createOrderLink('reviewSet-list','pro_num'))
+			;
+		?>
+	</th>
+	<th width="1%"></th>
+</tr>

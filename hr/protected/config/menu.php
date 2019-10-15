@@ -145,6 +145,32 @@ return array(
             ),
 		),
 	),
+    'review'=>array(
+        'access'=>'RE',
+        'icon'=>'fa-life-ring',
+        'items'=>array(
+            'Review Allot'=>array( //分配員工
+                'access'=>'RE01',
+                'url'=>'/ReviewAllot/index',
+            ),
+            'Review Handle'=>array( //優化人才評估
+                'access'=>'RE02',
+                'url'=>'/ReviewHandle/index',
+            ),
+            'Review Search'=>array( //查詢
+                'access'=>'RE03',
+                'url'=>'/ReviewSearch/index',
+            ),
+            'Review Set'=>array( //評估選項設置
+                'access'=>'RE04',
+                'url'=>'/ReviewSet/index',
+            ),
+            'Review Template'=>array( //分配模板
+                'access'=>'RE05',
+                'url'=>'/Template/index',
+            ),
+        ),
+    ),
 	'System Setting'=>array(
 		'access'=>'ZC',
 		'icon'=>'fa-gear',
@@ -225,6 +251,10 @@ return array(
 				'access'=>'YB01',
                 'url'=>'/queue/index',
 			),
+            'Search all review'=>array(
+                'access'=>'YB07',
+                'url'=>'/report/pennantculist',
+            ),
 		),
 	),
 );

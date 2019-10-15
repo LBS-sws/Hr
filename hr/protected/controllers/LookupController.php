@@ -27,7 +27,7 @@ class LookupController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('company','supplier','staff','product','companyex','supplierex','staffex','productex','template',
-						'account','accountex'
+						'account','accountex','applytemplate'
 					),
 				'users'=>array('@'),
 			),
@@ -219,23 +219,40 @@ class LookupController extends Controller
 		print json_encode($result);
 	}
 
-	public function actionTemplate($system) {
+	public function actionTemplate() {
+        $city = Yii::app()->user->city();
 		$result = array();
-		$suffix = Yii::app()->params['envSuffix'];
-		$sql = "select temp_id, temp_name from security$suffix.sec_template
-				where system_id='$system'
+		$sql = "select id, tem_name from hr_template
+				where city='$city'
 			";
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$result[] = array(
-						'id'=>$record['temp_id'],
-						'name'=>$record['temp_name'],
+						'id'=>$record['id'],
+						'name'=>$record['tem_name'],
 					);
 			}
 		}
 		print json_encode($result);
 	}
+
+    public function actionApplytemplate($id) {
+	    if(!is_numeric($id)||empty($id)){
+            print json_encode(array());
+        }else{
+            $city = Yii::app()->user->city();
+            $sql = "select tem_str from hr_template
+				where city='$city' AND id='$id'
+			";
+            $records = Yii::app()->db->createCommand($sql)->queryRow();
+            $lists = array();
+            if ($records) {
+                $lists = explode(",",$records["tem_str"]);
+            }
+            print json_encode($lists);
+        }
+    }
 
 //	public function actionSystemDate()
 //	{
