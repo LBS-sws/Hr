@@ -82,7 +82,7 @@ class ReviewAllotList extends CListPageModel
                     $clause .= General::getSqlConditionClause('d.name',$svalue);
                     break;
                 case 'city_name':
-                    $clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
 			}
 		}

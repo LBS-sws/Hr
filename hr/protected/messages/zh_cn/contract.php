@@ -355,7 +355,7 @@ return array(
     'review number'=>'总分',
     'review grade'=>'评分后级别',
     'reviewHandle Form'=>'员工考核信息',
-    //'review remark'=>'评分备注',
+    'Scoring remark'=>'评分备注',
     'reviewAllot comments'=>'考核评语',
     'employee remark'=>'员工的自我功绩',
     'review remark'=>'其它功绩',
@@ -370,6 +370,8 @@ return array(
     'Percentage score'=>'百分比得分',
     'Scoring ratio'=>'评分比率',
     'Percentage Sum'=>'所占比率得分',
+    'On'=>'开启',
+    'Off'=>'关闭',
     'Quarterly assessment score'=>'季度评核得分',
 
     'zero'=>'0 - 表现不值任何分数  (玩忽职守)',

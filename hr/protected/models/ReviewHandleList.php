@@ -82,7 +82,7 @@ class ReviewHandleList extends CListPageModel
                     $clause .= General::getSqlConditionClause('e.name',$svalue);
                     break;
                 case 'city_name':
-                    $clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    $clause .= ' and c.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
 			}
 		}

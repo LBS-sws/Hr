@@ -92,8 +92,8 @@ class TemplateForm extends CFormModel
             ->order("b.z_index desc,a.z_index desc")->queryAll();
         $className = get_class($model);
         $downList = array(
-            ''=>Yii::t("Misc","Off"),//关闭
-            'on'=>Yii::t("Misc","On")//开启
+            ''=>Yii::t("contract","Off"),//关闭
+            'on'=>Yii::t("contract","On")//开启
         );
         $html.="";
         $divBool = false;//div閉合判斷

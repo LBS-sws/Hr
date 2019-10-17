@@ -125,7 +125,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 </section>
 <xmp id="xmpText">
     <td class="remark">
-        <textarea rows="1" name=":name" class="form-control" placeholder="<?php echo Yii::t("contract","review remark")?>"></textarea>
+        <textarea rows="1" name=":name" class="form-control" placeholder="<?php echo Yii::t("contract","Scoring remark")?>"></textarea>
     </td>
 </xmp>
 <?php

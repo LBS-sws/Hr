@@ -208,12 +208,12 @@ class ReviewAllotForm extends CFormModel
     public function getReviewManagerList($city){
 	    $arr = array();
         $cityList = Email::getAllCityToMinCity($city);
-        $city_allow = implode(",",$cityList);
+        $city_allow = implode("','",$cityList);
         $rows = Yii::app()->db->createCommand()
             ->select("a.id,a.name,a.code")
             ->from("hr_employee a")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("a.city in ('$city_allow') AND a.staff_status = 0 and d.manager>0")->queryAll();
+            ->where("a.city in ('$city_allow') AND a.staff_status = 0")->queryAll();
         foreach ($rows as $row){
             $arr[$row["id"]] = $row["code"]." - ".$row["name"];
         }
