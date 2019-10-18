@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
 <style>
     tbody>tr{position: relative;}
     select[readonly="readonly"]{pointer-events: none;}
-    td.remark{position: absolute;min-width: 300px;}
+    td.remark{;min-width: 300px;}
 </style>
 
 <section class="content-header">
@@ -132,6 +132,20 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
 
 
 $js = "
+$(function(){
+    $('td.remark').each(function(){
+        if(!$(this).parents('.tab-pane.fade').hasClass('active')){
+            $(this).parents('.tab-pane.fade').addClass('active in');
+        }
+        var height = $(this).outerHeight();
+        $(this).parent('tr').height(height);
+        $(this).css({
+            'position':'absolute',
+            'height':height+'px'
+        });
+        $(this).parents('.tab-pane.fade').removeClass('active in');
+    });
+});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

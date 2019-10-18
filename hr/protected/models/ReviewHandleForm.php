@@ -113,9 +113,9 @@ class ReviewHandleForm extends CFormModel
                             $this->addError($attribute,$message);
                             return false;
                         }
-                        if($item["value"]!=6&&$item["value"]!=7){
+                        if(!$this->scoringOk($item["value"])){
                             if(!isset($item["remark"])||empty($item["remark"])){
-                                $message = Yii::t('contract','review remark').Yii::t("contract"," can not be empty");
+                                $message = Yii::t('contract','Scoring remark')."（".$item['name']."）".Yii::t("contract"," can not be empty");
                                 $this->addError($attribute,$message);
                                 return false;
                             }
@@ -130,6 +130,17 @@ class ReviewHandleForm extends CFormModel
                 return false;
             }
         }
+    }
+
+    //評分安全數字範圍
+    public function scoringOk($num){
+        if(is_numeric($num)){
+            $num = intval($num);
+            if(in_array($num,array(6,7,8))){
+                return true;
+            }
+        }
+        return false;
     }
 
     //驗證賬號是否綁定員工
@@ -234,7 +245,7 @@ class ReviewHandleForm extends CFormModel
                     $html.=TbHtml::hiddenField($name."[name]",$item['name']);
                     $html.=TbHtml::dropDownList($name."[value]",$item['value'],$this->getReviewNumList(),array('class'=>'form-control changeSelect'));
                     $html.="</td>";
-                    if($item['value']!=6&&$item['value']!=7){
+                    if(!$this->scoringOk($item['value'])){
                         $item['remark'] = isset($item['remark'])?$item['remark']:'';
                         $html.="<td class='remark'>";
                         $html.=TbHtml::textArea($name."[remark]",$item['remark'],array('rows'=>1));
@@ -293,17 +304,19 @@ class ReviewHandleForm extends CFormModel
         if($this->status_type == 3){ //考核完成
             $status_type = 3;//2:部分考核完成（兩個經理時，有一個已經完成）
             $review_sum = $this->sumReview($this->review_sum,$this->handle_per,$this->tem_sum);
-            $rows = Yii::app()->db->createCommand()->select("status_type,handle_per,review_sum,tem_sum")->from("hr_review_h")
-                ->where('review_id=:review_id and id!=:id',
-                    array(':review_id'=>$this->review_id,':id'=>$this->id))->queryAll();
+            $rows = Yii::app()->db->createCommand()->select("*")->from("hr_review_h")
+                ->where('review_id=:review_id',
+                    array(':review_id'=>$this->review_id))->queryAll();
             if($rows){
                 foreach ($rows as $row){
-                    if($row['status_type']!=3){
-                        $status_type = 2;
+                    if ($row['id']!=$this->id){ //不計算自己
+                        if($row['status_type']!=3){
+                            $status_type = 2;
+                        }
+                        $row["review_sum"] = empty($row["review_sum"])?0:intval($row["review_sum"]);
+                        //$review_sum+=$row["review_sum"];
+                        $review_sum+=$this->sumReview($row["review_sum"],$row["handle_per"],$row["tem_sum"]);
                     }
-                    $row["review_sum"] = empty($row["review_sum"])?0:intval($row["review_sum"]);
-                    //$review_sum+=$row["review_sum"];
-                    $review_sum+=$this->sumReview($row["review_sum"],$row["handle_per"],$row["tem_sum"]);
                 }
             }
             $connection->createCommand()->update("hr_review", array(
@@ -311,21 +324,46 @@ class ReviewHandleForm extends CFormModel
                 'review_sum'=>$status_type==3?$review_sum:null
             ), 'id=:id', array(':id'=>$this->review_id));
             if($status_type == 3){
-                $this->sendEmail($review_sum);
+                $this->sendEmail($review_sum,$rows);
             }
         }
     }
 
-    protected function sendEmail($review_sum){
+    protected function sendEmail($review_sum,$rows){
         $email = new Email();
         $description="人才優化評核完成 - ".$this->name."(".$this->year.ReviewAllotList::getYearTypeList($this->year_type).")";
         $subject=$description;
+        $colspan = count($rows)+1;
+        $width = intval(50/$colspan);
         $message="<p>员工编号：".$this->code."</p>";
         $message.="<p>员工姓名：".$this->name."</p>";
         $message.="<p>入职时间：".$this->entry_time."</p>";
         $message.="<p>员工职位：".$this->dept_name."</p>";
-        $message.="<p>公司名字：".$this->company_name."</p>";
         $message.="<p>评核总得分：$review_sum</p>";
+        $message.="<table width='600px' border='1px'>";
+        $message.="<thead><tr><th colspan='2' width='50%'>表现因素</th>";
+        $footArr = array( //表格底部統計
+            'sumNum'=>0,
+            'sumList'=>array(),
+            'preList'=>array()
+        );
+        $handleNameHtml = "";
+        foreach ($rows as $row){
+            $email->addEmailToStaffId($row['handle_id']);//添加考核人郵箱
+            $message.="<th width='$width%'>".$row['handle_per']."(%)</th>";
+            $handleNameHtml.="<th>".$row['handle_name']."</th>";
+            $footArr['sumNum'] = $row['tem_sum']*10;
+            $footArr['sumList'][] = $row['review_sum'];
+            $footArr['preList'][] = $row['handle_per'];
+        }
+        $message.="<th width='$width%'>&nbsp;</th></tr>";
+        $message.="<tr><th colspan='2'>被评核员工</th><th colspan='$colspan'>".$this->name."</th></tr>";
+        $message.="<tr><th colspan='2'>做出评核之员工</th>$handleNameHtml<th>总分</th></tr>";
+        $message.="</thead><tbody><tr><td colspan='".($colspan+2)."'>季度评核得分 (100%)</td></tr></tbody>";
+        $message.="<tfoot>";
+        $message.=ReviewSearchForm::returnTableFoot($footArr);
+        $message.="</tfoot>";
+        $message.="</table>";
         $email->setDescription($description);
         $email->setMessage($message);
         $email->setSubject($subject);

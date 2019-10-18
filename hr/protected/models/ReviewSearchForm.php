@@ -179,18 +179,19 @@ class ReviewSearchForm extends CFormModel
                 'preList'=>array()
             );
             $colspan = count($rows)+1;
+            $width = intval(50/$colspan);
             $handleNameHtml = '';
             $handleHtml="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered table-striped'>";
             $handleHtml.="<thead><tr><th colspan='2' width='50%' class='text-center'>".Yii::t("contract","Performance factors")."</th>";
             foreach ($rows as &$row){
                 $this->resetRemarkList($row);//員工評語
                 $row['list'] = json_decode($row["tem_s_ist"],true);
-                $handleHtml.="<th>".$row['handle_per']."(%)</th>";
+                $handleHtml.="<th width='$width%'>".$row['handle_per']."(%)</th>";
                 $handleNameHtml.="<th>".$row['handle_name']."</th>";
                 $this->table_foot["sumList"][] = 0;
                 $this->table_foot["preList"][] = $row["handle_per"];
             }
-            $handleHtml.="<th>&nbsp;</th></tr>";
+            $handleHtml.="<th width='$width%'>&nbsp;</th></tr>";
             $handleHtml.="<tr><th colspan='2' class='text-center'>".Yii::t("contract","Employee evaluated")."</th><th colspan='$colspan'>".$this->name."</th></tr>";
             $handleHtml.="<tr><th colspan='2' class='text-center'>".Yii::t("contract","Assessment person")."</th>$handleNameHtml<th>".Yii::t("contract","review number")."</th></tr>";
             foreach ($this->tem_s_ist as $set_id => $setList) {
@@ -242,6 +243,7 @@ class ReviewSearchForm extends CFormModel
             $html.="<tr><td>$num</td>";
             $html.="<td>".$proList["name"]."</td>";
             $proSum = 0;
+            $proArr= array();
             for ($i=0;$i<count($rows);$i++){
                 $bool = ($rows[$i]['handle_id']!=$this->login_id&&$this->employee_id!=$this->login_id);
                 $bool = in_array($rows[$i]['status_type'],array(1,4))||($bool&&$this->status_type != 3);
@@ -254,12 +256,25 @@ class ReviewSearchForm extends CFormModel
                     $this->table_foot["sumList"][$i]+=$proValue;
                     $proSum = $proSum+$proValue;
                 }
-                if($proValue!=6&&$proValue!=7&&$proValue!="-"){
-                    $proValue.="<br><span class='text-danger'>".htmlspecialchars($rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"])."</span>";
+                if(!ReviewHandleForm::scoringOk($proValue)){
+                    $colorList = array("text-danger","text-info","text-warning","text-primary");
+                    $key = in_array($i,array(0,1,2,3))?$i:0;
+                    $proArr[]=array('color'=>$colorList[$key],'name'=>$rows[$i]['handle_name'],'remark'=>htmlspecialchars($rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"]));
                 }
                 $html.="<td>$proValue</td>";
             }
             $html.="<td>$proSum</td>";
+            if(!empty($proArr)){
+                $html.="<td class='remark'>";
+                if(count($proArr)>1){
+                    foreach ($proArr as $remarkArr){
+                        $html.="<span class='".$remarkArr['color']."'>".$remarkArr["name"]."：".$remarkArr["remark"]."</span><br>";
+                    }
+                }else{
+                    $html.="<span class='".$proArr[0]['color']."'>".$proArr[0]["remark"]."</span>";
+                }
+                $html.="</td>";
+            }
             $html.='</tr>';
         }
         $html.="</tbody><tfoot>";
@@ -270,7 +285,7 @@ class ReviewSearchForm extends CFormModel
         return $html;
     }
 
-    protected function returnTableFoot($footArr,$str=""){
+    public function returnTableFoot($footArr,$str=""){
         $footList = array(
             array("code"=>"A","name"=>Yii::t("contract","Project total score").$str,"list"=>array()),
             array("code"=>"B","name"=>Yii::t("contract","assessed total score"),"list"=>array()),

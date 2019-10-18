@@ -14,7 +14,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
     select[readonly="readonly"]{pointer-events: none;}
     td.remark{position: absolute;min-width: 300px;}
 </style>
-
+<tr ></tr>
 <section class="content-header">
 	<h1>
 		<strong><?php echo Yii::t('contract','reviewHandle Form'); ?></strong>
@@ -139,7 +139,7 @@ $('#xmpText').remove();
         var tr = $(this).parents('tr').eq(0);
         var name = tr.data('name')+'[remark]';
         var html = '';
-        if(num!=6&&num!=7){
+        if(num!=6&&num!=7&&num!=8){
             html = xmpText.replace(/:name/g,name);
             tr.append(html);
         }else{
