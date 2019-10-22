@@ -89,7 +89,7 @@ class TemplateForm extends CFormModel
         $list = explode(",",$model->tem_str);
         $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,b.set_code,b.set_name")->from("hr_set_pro a")
             ->leftJoin("hr_set b",'a.set_id = b.id')
-            ->order("b.z_index desc,a.z_index desc")->queryAll();
+            ->order("b.z_index desc,b.id desc,a.z_index desc")->queryAll();
         $className = get_class($model);
         $downList = array(
             ''=>Yii::t("contract","Off"),//关闭

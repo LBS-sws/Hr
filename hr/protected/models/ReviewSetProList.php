@@ -40,7 +40,7 @@ class ReviewSetProList extends CListPageModel
                 LEFT JOIN hr_set b on a.set_id = b.id 
                 where a.set_id ='$type' 
 			";
-		$sql2 = "select a.*,b.set_name from hr_set_pro a
+		$sql2 = "select count(*) from hr_set_pro a
                 LEFT JOIN hr_set b on a.set_id = b.id 
                 where a.set_id ='$type' 
 			";

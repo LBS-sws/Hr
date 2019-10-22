@@ -213,7 +213,7 @@ class ReviewAllotForm extends CFormModel
             ->select("a.id,a.name,a.code")
             ->from("hr_employee a")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("a.city in ('$city_allow') AND a.staff_status = 0")->queryAll();
+            ->where("(a.city in ('$city_allow') or d.manager > 2) AND a.staff_status = 0")->queryAll();
         foreach ($rows as $row){
             $arr[$row["id"]] = $row["code"]." - ".$row["name"];
         }
