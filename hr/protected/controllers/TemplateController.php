@@ -29,7 +29,7 @@ class TemplateController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','save','new','delete'),
+                'actions'=>array('edit','save','new','delete','copy'),
                 'expression'=>array('TemplateController','allowReadWrite'),
             ),
             array('allow',
@@ -129,5 +129,35 @@ class TemplateController extends Controller
         }else{
             $this->redirect(Yii::app()->createUrl('template/index'));
         }
+    }
+
+    public function actionCopy()
+    {
+        $copyCity = "CD";//複製成都的模板數據
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("*")->from("hr_template")
+            ->where("city = '$copyCity'")->queryAll();
+        $cityRows = Yii::app()->db->createCommand()->select("code,name")->from("security$suffix.sec_city")
+            ->where("code != '$copyCity'")->queryAll();
+        echo "start:<br>------------------------<br>";
+        if($rows&&$cityRows){
+            foreach ($rows as $row){
+                foreach ($cityRows as $city){
+                    $bool = Yii::app()->db->createCommand()->select("*")->from("hr_template")
+                        ->where("city = :city and tem_name = :tem_name",array(":city"=>$city["code"],":tem_name"=>$row["tem_name"]))->queryRow();
+                    if(!$bool){
+                        echo "<br>".$city['name']."---".$row["tem_name"]." ------- finish";
+                        $arr = array(
+                            "tem_name"=>$row["tem_name"],
+                            "city"=>$city["code"],
+                            "tem_str"=>$row["tem_str"],
+                            "lcu"=>'lbs',
+                        );
+                        Yii::app()->db->createCommand()->insert('hr_template',$arr);
+                    }
+                }
+            }
+        }
+        echo "<br>------------------------<br>copy complete";
     }
 }
