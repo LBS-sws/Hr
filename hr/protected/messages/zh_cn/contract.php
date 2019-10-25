@@ -385,5 +385,8 @@ return array(
     'perform well'=>'8 - 表现良好  (表现称职，符合公司的期望)',
     'Good performance'=>'9 - 表现优秀  (表现出色，超越公司的期望)',
     'Excellent performance'=>'10 - 表现卓越  (表现十分超卓，持续远超过公司期望)',
+
+    'Employee City'=>'员工城市',
+    'User City'=>'账号城市',
 );
 ?>
