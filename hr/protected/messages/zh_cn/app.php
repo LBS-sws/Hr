@@ -145,6 +145,8 @@ return array(
     'Review Set'=>'配置考核选项',
     'Review Template'=>'考核模板',
     'Search all review'=>'查询所有考核',
+
+    'Vacation Type Config'=>'假期种类配置',
     //沈超添加结束
 );
 ?>

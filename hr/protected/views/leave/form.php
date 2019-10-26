@@ -284,6 +284,9 @@ $('#leave_type,#start_time,#employee_id').on('change',function(){
     });
 });
 ";
+if(!$model->getInputBool()){
+$js.="$('#leave_type').trigger('change');";
+}
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('leave/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);

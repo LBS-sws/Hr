@@ -320,6 +320,7 @@ return array(
     'Staff to be produced'=>'待製作工資單的員工數量',
     'Apply Date'=>'錄入日期',
     'remaining days of annual leave'=>'剩餘年假天數',
+    'remaining days'=>'剩餘天數',
 
     //2019-09-26
     'what year'=>'年份',
@@ -383,5 +384,10 @@ return array(
 
     'Employee City'=>'員工城市',
     'User City'=>'賬號城市',
+    'Holiday rules'=>'假期規則',
+    'Holiday monthLong'=>'時間分割（月份）',
+    'Holiday dayNum'=>'假期天數（天）',
+    'associated config'=>'關聯的假期',
+    'associated bool'=>'是否關聯假期',
 );
 ?>

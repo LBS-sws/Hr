@@ -281,7 +281,7 @@ class LeaveController extends Controller
         } else {
             $pdf = new MyPDFTwo();
             $pdf->setPageToLeave($arr);
-            $pdf->getOutput($arr["employee_name"]."".$arr["leave_code"]);
+            $pdf->getOutput($arr["leave_code"]);
         }
     }
 
@@ -291,17 +291,14 @@ class LeaveController extends Controller
             $index = $_POST["index"];
             $time = $_POST["time"];
             $leave_type = $_POST["leave_type"];
-            $model = new VacationForm();
-            $html = "";
-            $entry_time = date("Y/m/d",strtotime(date("Y/m/d")."+2 year"));
-            if($model->retrieveData($leave_type)){
-                if($model->vaca_type == 'E'){
-                    $yearDay =YearDayForm::getSumDayToYear($index,$time);
-                    $leaveNum =LeaveForm::getLeaveNumToYear($index,$time);
-                    $entry_time =LeaveForm::getMaxYearLeaveDate($index,$time);
-                    $leaveNum =$yearDay - floatval($leaveNum);
-                    $html = "<p class='form-control-static text-success'>".Yii::t("contract","remaining days of annual leave")."：".$leaveNum."</p>";
-                }
+            $model = new VacationDayForm($index,$leave_type,$time);
+            $useDay = $model->getVacationSum();
+            if($model->remain_bool){
+                $entry_time = $model->getEndTime();
+                $html = "<p class='form-control-static text-success'>".Yii::t("contract","remaining days")."：".$useDay."</p>";
+            }else{
+                $entry_time = date("Y/m/d",strtotime(date("Y/m/d")."+2 year"));
+                $html = "";
             }
             echo CJSON::encode(array("status"=>1,"html"=>$html,"entry_time"=>$entry_time));
         }else{

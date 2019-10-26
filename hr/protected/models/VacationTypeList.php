@@ -1,6 +1,6 @@
 <?php
 
-class VacationList extends CListPageModel
+class VacationTypeList extends CListPageModel
 {
 	/**
 	 * Declares customized attribute labels.
@@ -10,33 +10,30 @@ class VacationList extends CListPageModel
 	public function attributeLabels()
 	{
 		return array(	
-			'name'=>Yii::t('fete','Vacation Name'),
-			'city'=>Yii::t('contract','City'),
-            'only'=>Yii::t('fete','Scope of application'),
-            'ass_id_name'=>Yii::t('contract','associated config'),
-            'ass_bool'=>Yii::t('contract','associated bool'),
+			'vaca_code'=>Yii::t('fete','Vacation type code'),
+			'vaca_name'=>Yii::t('fete','Vacation type name')
 		);
 	}
 
 	public function retrieveDataByPage($pageNum=1)
 	{
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select * from hr_vacation 
-                where (city in ($city_allow) OR only='default')
+		$sql1 = "select * from hr_vacation_type 
+                where vaca_code IS NOT NULL 
 			";
-		$sql2 = "select count(id)
-				from hr_vacation 
-                where (city in ($city_allow) OR only='default')
+		$sql2 = "select count(*)
+				from hr_vacation_type 
+                where vaca_code IS NOT NULL 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
-				case 'name':
-					$clause .= General::getSqlConditionClause('name',$svalue);
+				case 'vaca_code':
+					$clause .= General::getSqlConditionClause('vaca_code',$svalue);
 					break;
-				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
+				case 'vaca_name':
+					$clause .= General::getSqlConditionClause('vaca_name',$svalue);
 					break;
 			}
 		}
@@ -59,16 +56,13 @@ class VacationList extends CListPageModel
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'name'=>$record['name'],
-					'ass_id_name'=>$record['ass_id_name'],
-					'ass_bool'=>$record['ass_bool']==1?Yii::t("misc","Yes"):Yii::t("misc","No"),
-					'only'=>Yii::t("fete",$record['only']),
-                    'city'=>CGeneral::getCityName($record["city"]),
+					'vaca_name'=>$record['vaca_name'],
+					'vaca_code'=>$record['vaca_code'],
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['vacation_01'] = $this->getCriteria();
+		$session['vacationType_01'] = $this->getCriteria();
 		return true;
 	}
 }

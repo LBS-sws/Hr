@@ -129,6 +129,7 @@ return array(
 		'systemId'=>'hr',
 		'envSuffix'=>'dev',
 		'employeeCode'=>'4',
+        'yearLeave'=>'employee', //employee:年假根據員工信息的年假計算
 		'appname'=>'LBS DMS (UAT)',
 		'appcolor'=>'skin-red-light',
 	),

@@ -325,6 +325,7 @@ return array(
     'Staff to be produced'=>'待制作工资单的员工数量',
     'Apply Date'=>'录入日期',
     'remaining days of annual leave'=>'剩余年假天数',
+    'remaining days'=>'剩余天数',
 
     //2019-09-26
     'what year'=>'年份',
@@ -388,5 +389,10 @@ return array(
 
     'Employee City'=>'员工城市',
     'User City'=>'账号城市',
+    'Holiday rules'=>'假期规则',
+    'Holiday monthLong'=>'时间分割（月份）',
+    'Holiday dayNum'=>'假期天数（天）',
+    'associated config'=>'关联的假期',
+    'associated bool'=>'是否关联假期',
 );
 ?>
