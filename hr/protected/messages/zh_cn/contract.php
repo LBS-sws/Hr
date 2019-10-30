@@ -394,5 +394,8 @@ return array(
     'Holiday dayNum'=>'假期天数（天）',
     'associated config'=>'关联的假期',
     'associated bool'=>'是否关联假期',
+    'undistributed'=>'未分配',
+    'allocated'=>'已分配',
+    'Template Employee Form'=>'员工考核模板表单',
 );
 ?>

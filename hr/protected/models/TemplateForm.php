@@ -154,7 +154,13 @@ class TemplateForm extends CFormModel
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_template")
             ->where("id=:id and city=:city",array(":id"=>$this->id,":city"=>$city))->queryRow();
         if ($row) {
-            return true;
+            $row = Yii::app()->db->createCommand()->select("*")->from("hr_template_employee")
+                ->where("tem_id=:id",array(":id"=>$this->id))->queryRow();
+            if($row){
+                return false;
+            }else{
+                return true;
+            }
         }
         return false;
     }

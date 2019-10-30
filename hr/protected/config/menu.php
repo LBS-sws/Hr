@@ -169,6 +169,10 @@ return array(
                 'access'=>'RE05',
                 'url'=>'/Template/index',
             ),
+            'Review Template Employee'=>array( //員工綁定考核模板
+                'access'=>'RE06',
+                'url'=>'/TemplateEmployee/index',
+            ),
         ),
     ),
 	'System Setting'=>array(

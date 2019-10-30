@@ -83,7 +83,8 @@ class EmployeeList extends CListPageModel
 			    $arr = $this->returnStaffStatus($record["test_type"],$record["test_start_time"],$record["test_end_time"],$record["staff_status"]);
                 $arr = $this->resetStatus($arr,$record);
                 $model->setEmployeeList($record['id']);
-                $leaveNum = $model->getVacationSum();
+                $leaveNum = $model->getVacationSum();//剩餘年假天數
+                $leaveSum = $model->getSumDay();//總年假天數
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
@@ -97,7 +98,7 @@ class EmployeeList extends CListPageModel
 					'style'=>$arr["style"],
                     'city'=>CGeneral::getCityName($record["city"]),
                     'entry_time'=>$record["entry_time"],
-                    'year_day'=>$record["year_day"],
+                    'year_day'=>$leaveSum,
                     'remain_year_day'=>$leaveNum,
 				);
 			}

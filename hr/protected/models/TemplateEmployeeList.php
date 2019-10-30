@@ -1,0 +1,164 @@
+<?php
+
+class TemplateEmployeeList extends CListPageModel
+{
+	/**
+	 * Declares customized attribute labels.
+	 * If not declared here, an attribute would have a label that is
+	 * the same as its name with the first letter in upper case.
+	 */
+	public function attributeLabels()
+	{
+		return array(	
+			'id'=>Yii::t('contract','ID'),
+			'name'=>Yii::t('contract','Employee Name'),
+			'code'=>Yii::t('contract','Employee Code'),
+			'phone'=>Yii::t('contract','Employee Phone'),
+			'position'=>Yii::t('contract','Position'),
+			'company_id'=>Yii::t('contract','Company Name'),
+			'contract_id'=>Yii::t('contract','Contract Name'),
+			'status'=>Yii::t('contract','Status'),
+			'city'=>Yii::t('contract','City'),
+            'city_name'=>Yii::t('contract','City'),
+            'entry_time'=>Yii::t('contract','Entry Time'),
+            'tem_name'=>Yii::t('contract','template name'),
+		);
+	}
+
+	public function retrieveDataByPage($pageNum=1)
+	{
+		$suffix = Yii::app()->params['envSuffix'];
+		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
+        //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
+		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name 
+                from hr_employee a 
+                LEFT JOIN hr_company c ON a.company_id = c.id
+                LEFT JOIN hr_dept d ON a.position = d.id
+                where a.city IN ($city_allow) AND a.staff_status = 0 
+			";
+		$sql2 = "select count(*) from hr_employee a 
+                LEFT JOIN hr_company c ON a.company_id = c.id
+                LEFT JOIN hr_dept d ON a.position = d.id
+                where a.city IN ($city_allow) AND a.staff_status = 0 
+			";
+		$clause = "";
+		if (!empty($this->searchField) && !empty($this->searchValue)) {
+			$svalue = str_replace("'","\'",$this->searchValue);
+			switch ($this->searchField) {
+				case 'name':
+					$clause .= General::getSqlConditionClause('a.name',$svalue);
+					break;
+				case 'code':
+					$clause .= General::getSqlConditionClause('a.code',$svalue);
+					break;
+				case 'phone':
+					$clause .= General::getSqlConditionClause('a.phone',$svalue);
+					break;
+                case 'position':
+                    $clause .= General::getSqlConditionClause('d.name',$svalue);
+                    break;
+                case 'city_name':
+                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
+			}
+		}
+		
+		$order = "";
+		if (!empty($this->orderField)) {
+		    if($this->orderField == "status_type"||$this->orderField == "tem_name"){
+                $order .=$this->orderStatusType();
+            }else{
+                $order .= " order by ".$this->orderField." ";
+                if ($this->orderType=='D') $order .= "desc ";
+            }
+		}else{
+            $order .= " order by a.id asc ";
+        }
+
+		$sql = $sql2.$clause;
+		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
+		
+		$sql = $sql1.$clause.$order;
+		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
+		$records = Yii::app()->db->createCommand($sql)->queryAll();
+		
+		$list = array();
+		$this->attr = array();
+		if (count($records) > 0) {
+			foreach ($records as $k=>$record) {
+                $arr = $this->resetStatus($record);
+				$this->attr[] = array(
+					'id'=>$record['id'],
+					'name'=>$record['name'],
+					'code'=>$record['code'],
+					'position'=>$record['dept_name'],
+					'company_id'=>$record['company_name'],
+					'phone'=>$record['phone'],
+					'tem_name'=>$record['tem_name'],
+					'status'=>$arr["status"],
+					'style'=>$arr["style"],
+                    'city'=>CGeneral::getCityName($record["city"]),
+                    'entry_time'=>$record["entry_time"],
+				);
+			}
+		}
+		$session = Yii::app()->session;
+		$session['templateEmployee_01'] = $this->getCriteria();
+		return true;
+	}
+
+    protected function orderStatusType(){
+        if ($this->orderType=='D'){
+            $order_type = "desc";
+        }else{
+            $order_type = "asc";
+        }
+        if($this->orderField == "tem_name"){
+            $orderField = "c.tem_name";
+        }else{
+            $orderField = "b.city";
+        }
+        $city_allow = Yii::app()->user->city_allow();
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.employee_id")
+            ->from("hr_template_employee a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("hr_template c","a.tem_id = c.id")
+            ->where(" b.city IN ($city_allow)")->order("$orderField $order_type")->queryAll();
+        if($rows){
+            $rows = implode(",",array_column($rows,"employee_id"));
+            return " order by find_in_set(a.id,'$rows') $order_type,a.name $order_type";
+        }else{
+            return " order by a.name $order_type ";
+        }
+    }
+
+	protected function resetStatus(&$record){
+	    //,b.status_type,b.year,b.year_type,b.id as review_id
+        $rows = Yii::app()->db->createCommand()->select("b.tem_name")->from("hr_template_employee a")
+            ->leftJoin("hr_template b","a.tem_id = b.id")
+            ->where("a.employee_id=:id",array(":id"=>$record["id"]))->queryRow();
+        if($rows){
+            $record["tem_name"] = $rows["tem_name"];
+        }else{
+            $record["tem_name"] = "";
+        }
+
+        return $this->getTemplateNameStatuts($record["tem_name"]);
+    }
+
+    protected function getTemplateNameStatuts($str){
+	    if($str===""){
+            return array(
+                "status"=>Yii::t("contract","undistributed"),
+                "style"=>"text-danger"
+            );//未分配
+        }else{
+            return array(
+                "status"=>Yii::t("contract","allocated"),
+                "style"=>""
+            );//已分配
+        }
+    }
+}

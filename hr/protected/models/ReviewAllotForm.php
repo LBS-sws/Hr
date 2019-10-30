@@ -191,11 +191,25 @@ class ReviewAllotForm extends CFormModel
             $this->dept_name = $row['dept_name'];
             $this->code = $row['code'];
             $this->phone = $row['phone'];
+            $this->getEmployeeTemplate();
             return true;
 		}else{
 		    return false;
         }
 	}
+
+	protected function getEmployeeTemplate(){
+        if(empty($this->tem_str)){
+            $row = Yii::app()->db->createCommand()->select("d.tem_str")
+                ->from("hr_template_employee a")
+                ->leftJoin("hr_template d","a.tem_id = d.id")
+                ->where("a.employee_id= :id",array(":id"=>$this->employee_id))->queryRow();
+            if($row){
+                $this->tem_str = $row["tem_str"];
+            }
+        }
+    }
+
 
 	public function getReadonly(){
         if ($this->getScenario()=='view'||in_array($this->status_type,array(1,2,3))){

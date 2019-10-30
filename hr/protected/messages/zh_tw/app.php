@@ -146,6 +146,7 @@ return array(
     'Search all review'=>'查詢所有考核',
 
     'Vacation Type Config'=>'假期種類配置',
+    'Review Template Employee'=>'員工綁定考核模板',
 //沈超添加結束
 );
 ?>
