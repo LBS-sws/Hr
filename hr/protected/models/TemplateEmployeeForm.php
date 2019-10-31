@@ -6,12 +6,17 @@ class TemplateEmployeeForm extends CFormModel
 	public $tem_id;
 	public $city;
 	public $employee_id;
+	public $employee_name;
+    public $id_list;
+    public $id_s_list;
+    public $name_list;
 
 	public function attributeLabels()
 	{
 		return array(
             'employee_id'=>Yii::t('contract','Employee Name'),
             'tem_name'=>Yii::t('contract','template name'),
+            'tem_id'=>Yii::t('contract','template name'),
 		);
 	}
 
@@ -25,95 +30,115 @@ class TemplateEmployeeForm extends CFormModel
             array('tem_id','required'),
             array('employee_id','required'),
             array('employee_id','validateName'),
+            array('id_list','validateIdList'),
 		);
 	}
 
 	public function validateName($attribute, $params){
-        $city_allow = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("city")->from("hr_employee")
-            ->where("id=:id and city IN ($city_allow)",array(':id'=>$this->employee_id))->queryRow();
-        if($row){
-            $row = Yii::app()->db->createCommand()->select("city")->from("hr_template")
-                ->where("id=:id and city=:city",array(':id'=>$this->tem_id,':city'=>$row['city']))->queryRow();
+	    if(!empty($this->tem_id)){
+            $city_allow = Yii::app()->user->city_allow();
+            $row = Yii::app()->db->createCommand()->select("city")->from("hr_employee")
+                ->where("id=:id and city IN ($city_allow)",array(':id'=>$this->employee_id))->queryRow();
             if($row){
-                $row = Yii::app()->db->createCommand()->select("id")->from("hr_template_employee")
-                    ->where("employee_id=:employee_id",array(':employee_id'=>$this->employee_id))->queryRow();
+                $row = Yii::app()->db->createCommand()->select("city")->from("hr_template")
+                    ->where("id=:id and city=:city",array(':id'=>$this->tem_id,':city'=>$row['city']))->queryRow();
                 if($row){
-                    $this->setScenario("edit");
+                    $row = Yii::app()->db->createCommand()->select("id")->from("hr_template_employee")
+                        ->where("employee_id=:employee_id",array(':employee_id'=>$this->employee_id))->queryRow();
+                    if($row){
+                        $this->id = $row['id'];
+                        $this->setScenario("edit");
+                    }else{
+                        $this->setScenario('new');
+                    }
                 }else{
-                    $this->setScenario('new');
+                    $message = "模板不存在";
+                    $this->addError($attribute,$message);
                 }
             }else{
-                $message = "模板不存在";
+                $message = "員工不存在";
                 $this->addError($attribute,$message);
             }
-        }else{
-            $message = "員工不存在";
-            $this->addError($attribute,$message);
         }
 	}
+    public function validateIdList($attribute, $params){
+        if(!empty($this->id_list)){ //考核經理驗證
+            $sum = 0;
+            $this->name_list = array();
+            $idList =array();
+            foreach ($this->id_list as &$list){
+                if(in_array($list["employee_id"],$idList)){
+                    $message = Yii::t('contract','reviewAllot manager'). Yii::t('contract',' can not repeat');
+                    $this->addError($attribute,$message);
+                    return false;
+                }else{
+                    $idList[] = $list["employee_id"];
+                }
+                $rows = Yii::app()->db->createCommand()->select("name")->from("hr_employee")
+                    ->where("id=:id",array(":id"=>$list["employee_id"]))->queryRow();
+                if(!$rows){
+                    $message = Yii::t('contract','reviewAllot manager'). Yii::t('contract',' not exist');
+                    $this->addError($attribute,$message);
+                    return false;
+                }else{
+                    $list["employee_name"] = $rows["name"];
+                }
+                if(empty($list['num'])||!is_numeric($list['num'])){
+                    $message = Yii::t('contract','manager percent').Yii::t('contract',' can not be empty');
+                    $this->addError($attribute,$message);
+                    return false;
+                }
+                $this->name_list[] = $rows["name"]."（".$list["num"]."%）";
+                $sum+=intval($list["num"]);
+            }
+            if($sum!=100){
+                $message = '經理考核佔比必須為100';
+                $this->addError($attribute,$message);
+                return false;
+            }
+            $this->id_s_list = implode(",",$idList);
+            $this->name_list = implode(",",$this->name_list);
+            //var_dump($this->id_s_list);die();
+        }
+    }
 
 	public function retrieveData($index) {
-		$row = Yii::app()->db->createCommand()->select("city")
+		$row = Yii::app()->db->createCommand()->select("city,name")
             ->from("hr_employee")->where("id=:id",array(":id"=>$index))->queryRow();
 		if($row){
 		    $this->city = $row["city"];
 		    $this->employee_id = $index;
+		    $this->employee_name = $row["name"];
             $row = Yii::app()->db->createCommand()->select("*")
                 ->from("hr_template_employee")->where("employee_id=:id",array(":id"=>$index))->queryRow();
             if($row){
                 $this->tem_id = $row["tem_id"];
+                $this->id_s_list = $row['id_s_list'];
+                $this->id_list = json_decode($row['id_list'],true);
             }else{
                 $this->tem_id = "";
+                $this->id_s_list = '';
+                $this->id_list = array();
             }
         }
 		return true;
 	}
 
-    //根據id獲取請假類型
-    public function getEmployeeListHtml(){
-        $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("id,name,city")
-            ->from("hr_employee")->where("city IN ($city_allow)")->order("name asc")->queryAll();
-        $className = get_class($this)."[employee_id]";
-        $html = "<select class='form-control' name='$className' id='changeEmployee'>";
-        $html.="<option value=''></option>";
-        if($rows){
-            foreach ($rows as $row){
-                $row['name'] = !Yii::app()->user->isSingleCity()?$row['name']." -- ".$row["city"]:$row['name'];
-                $html.="<option value='".$row["id"]."' data-city='".$row["city"]."' ";
-                if($this->employee_id == $row["id"]){
-                    $html.=" selected='selected' ";
-                }
-                $html.=">".$row['name']."</option>";
-            }
-        }
-        $html.="</select>";
-        return $html;
+    public function getReadonly(){
+        return $this->getScenario() =='view';
     }
 
     //根據id獲取請假類型
-    public function getCityListHtml(){
-        $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("id,tem_name,city")
-            ->from("hr_template")->where("city IN ($city_allow)")->order("city")->queryAll();
-        $className = get_class($this)."[tem_id]";
-        $html = "<select class='form-control' name='$className' id='changeCity' data-id='".$this->tem_id."'>";
-        $html.="<option value=''></option>";
+    public function getTemplateListToCity($city){
+        $arr = array(''=>'');
+        $rows = Yii::app()->db->createCommand()->select("id,tem_name")
+            ->from("hr_template")->where("city=:city",array(":city"=>$city))->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $html.="<option value='".$row["id"]."' data-city='".$row["city"]."' ";
-                if($this->tem_id == $row["id"]){
-                    $html.=" selected='selected' ";
-                }
-                if($this->city != $row["city"]){
-                    $html.= " class='hide'";
-                }
-                $html.=">".$row['tem_name']."</option>";
+                $arr[$row['id']] = $row['tem_name'];
             }
         }
-        $html.="</select>";
-        return $html;
+        return $arr;
     }
 
     //刪除驗證
@@ -137,46 +162,27 @@ class TemplateEmployeeForm extends CFormModel
 
 	protected function saveGoods(&$connection) {
 		$sql = '';
+        $uid = Yii::app()->user->id;
         switch ($this->scenario) {
             case 'new':
-                $sql = "insert into hr_template_employee(
-							tem_id,employee_id, lcu
-						) values (
-							:tem_id,:employee_id, :lcu
-						)";
+                $connection->createCommand()->insert("hr_template_employee", array(
+                    'tem_id'=>$this->tem_id,
+                    'employee_id'=>$this->employee_id,
+                    'id_list'=>json_encode($this->id_list),
+                    'id_s_list'=>$this->id_s_list,
+                    'name_list'=>$this->name_list,
+                    'lcu'=>$uid,
+                ));
                 break;
             case 'edit':
-                $sql = "update hr_template_employee set
-							tem_id = :tem_id, 
-							employee_id = :employee_id, 
-							luu = :luu
-						where id = :id
-						";
+                $connection->createCommand()->update('hr_template_employee', array(
+                    'tem_id'=>$this->tem_id,
+                    'id_list'=>json_encode($this->id_list),
+                    'id_s_list'=>$this->id_s_list,
+                    'name_list'=>$this->name_list,
+                    'luu'=>$uid,
+                ), 'id=:id', array(':id'=>$this->id));
                 break;
-        }
-		if (empty($sql)) return false;
-
-        $city = Yii::app()->user->city();
-        $uid = Yii::app()->user->id;
-
-        $command=$connection->createCommand($sql);
-        if (strpos($sql,':id')!==false)
-            $command->bindParam(':id',$this->id,PDO::PARAM_INT);
-        //log_bool,max_log,sub_bool,sub_multiple
-        if (strpos($sql,':tem_id')!==false)
-            $command->bindParam(':tem_id',$this->tem_id,PDO::PARAM_STR);
-        if (strpos($sql,':employee_id')!==false)
-            $command->bindParam(':employee_id',$this->employee_id,PDO::PARAM_STR);
-
-        if (strpos($sql,':luu')!==false)
-            $command->bindParam(':luu',$uid,PDO::PARAM_STR);
-        if (strpos($sql,':lcu')!==false)
-            $command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-        $command->execute();
-
-        if ($this->scenario=='new'){
-            $this->id = Yii::app()->db->getLastInsertID();
-            $this->scenario = "edit";
         }
 		return true;
 	}

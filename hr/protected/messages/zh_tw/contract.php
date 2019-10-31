@@ -396,5 +396,6 @@ return array(
     'Participate'=>'參與',
     'not Participate'=>'不參與',
     'review sum ranking'=>'評核得分排名',
+    'review sum Grade'=>'經高低差異化(拉curve)後評級',
 );
 ?>

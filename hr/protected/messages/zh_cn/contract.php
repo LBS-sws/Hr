@@ -401,5 +401,6 @@ return array(
     'Participate'=>'参与',
     'not Participate'=>'不参与',
     'review sum ranking'=>'评核得分排名',
+    'review sum Grade'=>'经高低差异化(拉curve)后评级',
 );
 ?>

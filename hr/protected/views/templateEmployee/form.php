@@ -46,37 +46,73 @@ $this->pageTitle=Yii::app()->name . ' - TemplateEmployee Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'employee_id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
+			<?php echo $form->hiddenField($model, 'id'); ?>
 
             <div class="form-group">
                 <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $model->getEmployeeListHtml(); ?>
+                    <?php echo $form->textField($model,'employee_name',array("readonly"=>true)) ?>
                 </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'tem_name',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $model->getCityListHtml(); ?>
+                    <?php echo $form->dropDownList($model,'tem_id',$model->getTemplateListToCity($model->city),array('readonly'=>$model->getReadonly())) ?>
                 </div>
             </div>
 
+
+            <legend><?php echo Yii::t("contract","reviewAllot manager");?></legend><!--考核经理-->
+            <div class="form-group">
+                <div class="col-sm-5 col-sm-offset-2">
+                    <?php
+                    $ReviewAllotForm = new ReviewAllotForm();
+                    echo $ReviewAllotForm->returnManager($model);
+                    ?>
+                </div>
+            </div>
 		</div>
 
 	</div>
 </section>
+<xmp hidden id="readyOne">
+    <?php echo $ReviewAllotForm->getRowOnly($model,":num",ReviewAllotForm::getReviewManagerList($model->city),false,array("employee_id"=>"","num"=>""));?>
+</xmp>
 <?php
 
 $js = "
-var oldCity = '".$model->city."';
-$('#changeEmployee').on('change',function(){
-    var city = $(this).find('option:selected').data('city');
-    if(oldCity != city){
-        $('#changeCity').val('');
-        oldCity = city;
-    }
-    $('#changeCity option').removeClass('hide');
-    $('#changeCity option:not([data-city=\"'+city+'\"])').addClass('hide');
-});
+    var rowHtml = $('#readyOne').html();
+    $('#readyOne').remove();
+    $('#addManager').on('click',function(){
+        var num = $('#managerTable>tbody').data('num');
+        num = parseInt(num,10);
+        num++;
+        $('#managerTable>tbody').data('num',num)
+        var newHtml = rowHtml.replace(/:num/g,num);
+        $('#managerTable>tbody').append(newHtml);
+    });
+    
+    $('#managerTable').delegate('.delManager','click',function(){
+        $(this).parents('tr').remove();
+    });
+
+    $('#managerTable').delegate('.changeNum','keyup',function(){
+        var value = $(this).val();
+        $(this).addClass('noneChange');
+        var num = $('.changeNum').not('.noneChange').length;
+        var sum = 100;
+        if(value<100&&num!=0){
+            $('.changeNum.noneChange').each(function(){
+                sum-=$(this).val();
+            });
+            var newNum = Math.floor(sum/num);
+            var proNum = sum%num;
+            $('.changeNum').not('.noneChange').val(newNum);
+            if(proNum!=0){
+                $('.changeNum').not('.noneChange').last().val(newNum+proNum);
+            }
+        }
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

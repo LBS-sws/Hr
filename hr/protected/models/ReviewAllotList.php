@@ -48,13 +48,23 @@ class ReviewAllotList extends CListPageModel
         );
     }
 
+    public function getReviewDateTime($year,$year_type){
+        $dateTime = $year."/";
+        if($year_type==1){
+            $dateTime.="06/30";
+        }else{
+            $dateTime.="12/31";
+        }
+	    return $dateTime;
+    }
+
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        $dateTime = date("Y/m/d");
-        $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
+        $dateTime = $this->getReviewDateTime($this->year,$this->year_type);
+        //$dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
 		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name 
                 from hr_employee a 

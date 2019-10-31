@@ -217,9 +217,11 @@ class ReviewSearchForm extends CFormModel
                 'content'=>&$content,
                 'active'=>true,
             );
+            $reviewGrade = Yii::t("contract","review grade");
 
             //評分排名
             if($this->ranking_bool){
+                $reviewGrade = Yii::t("contract","review sum Grade");
                 $tabs[] = array(
                     'label'=>Yii::t("contract","review sum ranking"),
                     'content'=>"<p>&nbsp;</p>".$this->getRankingHtml(),
@@ -227,6 +229,7 @@ class ReviewSearchForm extends CFormModel
                 );
             }
             $content = str_replace(":RANKINGLEAVE",$this->leave_bool,$content);
+            $content = str_replace(":REVIEWGRADE",$reviewGrade,$content);
         }
         return $tabs;
     }
@@ -305,8 +308,7 @@ class ReviewSearchForm extends CFormModel
             ->leftJoin("hr_dept b","a.position = b.id")
             ->where("a.id=:id and b.review_status = 1",array(":id"=>$this->employee_id))->queryRow();
         if($row){
-            $dateTime = date("Y/m/d");
-            $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
+            $dateTime = ReviewAllotList::getReviewDateTime($this->year,$this->year_type);
             $this->department=$row["department"];
             $this->ranking_sum = Yii::app()->db->createCommand()->select("count(*)")->from("hr_employee a")
                 ->leftJoin("hr_dept b","a.position = b.id")
@@ -364,8 +366,7 @@ class ReviewSearchForm extends CFormModel
             }
         }
         $orderSql = empty($reviewId)?"":"find_in_set(a.id,'".implode(",",array_reverse($reviewId))."') desc";
-        $dateTime = date("Y/m/d");
-        $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
+        $dateTime = ReviewAllotList::getReviewDateTime($this->year,$this->year_type);
         $rows = Yii::app()->db->createCommand()->select("a.*,b.name as dept_name")->from("hr_employee a")
             ->leftJoin("hr_dept b","a.position = b.id")
             ->where("b.review_status = 1 and a.department=:department and a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",
@@ -486,7 +487,7 @@ class ReviewSearchForm extends CFormModel
                 }
             }
             $num = count($footList[0]['list'])+2;
-            $html.="<tr><th class='text-right' colspan='$num'>".Yii::t("contract","review grade")."</th><th>$reviewLevel</th></tr>";
+            $html.="<tr><th class='text-right' colspan='$num'>:REVIEWGRADE</th><th>$reviewLevel</th></tr>";
         }
 
         return $html;

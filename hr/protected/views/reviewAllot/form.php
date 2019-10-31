@@ -61,7 +61,10 @@ $this->pageTitle=Yii::app()->name . ' - ReviewAllot Form';
             <legend><?php echo Yii::t("contract","reviewAllot manager");?></legend><!--考核经理-->
             <div class="form-group">
                 <div class="col-sm-5 col-sm-offset-2">
-                    <?php echo $model->returnManager(); ?>
+                    <?php
+                    $ReviewAllotForm = new ReviewAllotForm();
+                    echo $ReviewAllotForm->returnManager($model);
+                    ?>
                 </div>
             </div>
             <legend><?php echo Yii::t("contract","reviewAllot project");?></legend><!--考核项目-->
@@ -103,7 +106,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
 ?>
 
 <xmp hidden id="readyOne">
-    <?php echo $model->getRowOnly(":num",$model->getReviewManagerList($model->city),false,array("employee_id"=>"","num"=>""));?>
+    <?php echo $model->getRowOnly($model,":num",$model->getReviewManagerList($model->city),false,array("employee_id"=>"","num"=>""));?>
 </xmp>
 <?php
 
@@ -155,25 +158,6 @@ $('#btnApply').on('click',function(){
 		}
 	});
 });
-
-    $('#managerTable').delegate('.changeNum','keyup',function(){
-        var value = $(this).val();
-        $(this).addClass('noneChange');
-        var num = $('.changeNum').not('.noneChange').length;
-        var sum = 100;
-        if(value<100&&num!=0){
-            $('.changeNum.noneChange').each(function(){
-                sum-=$(this).val();
-                console.log(sum);
-            });
-            var newNum = Math.floor(sum/num);
-            var proNum = sum%num;
-            $('.changeNum').not('.noneChange').val(newNum);
-            if(proNum!=0){
-                $('.changeNum').not('.noneChange').last().val(newNum+proNum);
-            }
-        }
-    });
 	";
 Yii::app()->clientScript->registerScript('lookupTemplate',$js,CClientScript::POS_READY);
 
@@ -191,6 +175,24 @@ $js = "
     
     $('#managerTable').delegate('.delManager','click',function(){
         $(this).parents('tr').remove();
+    });
+
+    $('#managerTable').delegate('.changeNum','keyup',function(){
+        var value = $(this).val();
+        $(this).addClass('noneChange');
+        var num = $('.changeNum').not('.noneChange').length;
+        var sum = 100;
+        if(value<100&&num!=0){
+            $('.changeNum.noneChange').each(function(){
+                sum-=$(this).val();
+            });
+            var newNum = Math.floor(sum/num);
+            var proNum = sum%num;
+            $('.changeNum').not('.noneChange').val(newNum);
+            if(proNum!=0){
+                $('.changeNum').not('.noneChange').last().val(newNum+proNum);
+            }
+        }
     });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);

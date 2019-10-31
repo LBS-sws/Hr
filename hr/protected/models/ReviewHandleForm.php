@@ -90,10 +90,12 @@ class ReviewHandleForm extends CFormModel
 
     public function validateList($attribute, $params){
         if(!empty($this->tem_s_ist)){
-            $rows = Yii::app()->db->createCommand()->select("tem_s_ist")->from("hr_review")
+            $rows = Yii::app()->db->createCommand()->select("tem_s_ist,year,year_type")->from("hr_review")
                 ->where("id=:id",array(":id"=>$this->review_id))->queryRow();
             if($rows){
                 $this->review_sum = 0;
+                $this->year = $rows["year"];
+                $this->year_type = $rows["year_type"];
                 $rows = json_decode($rows["tem_s_ist"],true);
                 foreach ($rows as $key => &$row){
                     foreach ($row["list"] as &$item){
@@ -360,6 +362,8 @@ class ReviewHandleForm extends CFormModel
         $model = new ReviewSearchForm();
         $model->employee_id = $this->employee_id;
         $model->status_type = 3;
+        $model->year = $this->year;
+        $model->year_type = $this->year_type;
         $message.="<th width='$width%'>&nbsp;</th></tr>";
         $message.="<tr><th colspan='2'>被评核员工</th><th colspan='$colspan'>".$this->name."</th></tr>";
         $message.="<tr><th colspan='2'>做出评核之员工</th>$handleNameHtml<th>总分</th></tr>";

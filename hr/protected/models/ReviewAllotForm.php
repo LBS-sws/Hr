@@ -64,11 +64,16 @@ class ReviewAllotForm extends CFormModel
             ->where("id=:id and city in ($city_allow) AND staff_status = 0",array(":id"=>$this->employee_id))->queryRow();
         if($rows){
             $this->employee_name = $rows["name"];
-            $rows = Yii::app()->db->createCommand()->select("id")->from("hr_review")
+            $rows = Yii::app()->db->createCommand()->select("id,status_type")->from("hr_review")
                 ->where("employee_id=:id AND year = :year AND year_type = :year_type",array(":id"=>$this->employee_id,":year"=>$this->year,":year_type"=>$this->year_type))->queryRow();
             if($rows){
-                $this->review_id = $rows["id"];
-                $this->setScenario("edit");
+                if($rows["status_type"] == 4){
+                    $this->review_id = $rows["id"];
+                    $this->setScenario("edit");
+                }else{
+                    $message = "考核單已存在不可重複提交,錯誤碼:".$rows["status_type"];
+                    $this->addError($attribute,$message);
+                }
             }else{
                 $this->setScenario("new");
             }
@@ -155,8 +160,7 @@ class ReviewAllotForm extends CFormModel
 	public function retrieveData($index,$year,$year_type) {
         $city_allow = Yii::app()->user->city_allow();
         //,b.status_type,b.year,b.year_type,b.id as review_id
-        $dateTime = date("Y/m/d");
-        $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
+        $dateTime = ReviewAllotList::getReviewDateTime($year,$year_type);
 		$row = Yii::app()->db->createCommand()
             ->select("a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name")
             ->from("hr_employee a")
@@ -202,12 +206,13 @@ class ReviewAllotForm extends CFormModel
 
 	protected function getEmployeeTemplate(){
         if(empty($this->tem_str)){
-            $row = Yii::app()->db->createCommand()->select("d.tem_str")
+            $row = Yii::app()->db->createCommand()->select("d.tem_str,a.id_s_list,a.id_list,a.name_list")
                 ->from("hr_template_employee a")
                 ->leftJoin("hr_template d","a.tem_id = d.id")
                 ->where("a.employee_id= :id",array(":id"=>$this->employee_id))->queryRow();
             if($row){
                 $this->tem_str = $row["tem_str"];
+                $this->id_list = json_decode($row["id_list"],true);
             }
         }
     }
@@ -237,11 +242,11 @@ class ReviewAllotForm extends CFormModel
         return $arr;
     }
 
-    public function getRowOnly($num,$managerList,$bool,$list=array()){
+    public function getRowOnly($model,$num,$managerList,$bool,$list=array()){
         if(empty($list)){
             $list = array("employee_id"=>"","num"=>100);
         }
-        $className = get_class($this);
+        $className = get_class($model);
         $html = "";
         $html .= "<tr>";
         $html.="<td>".TbHtml::dropDownList($className."[id_list][$num][employee_id]",$list["employee_id"],$managerList,array("class"=>"form-control","readonly"=>$bool))."</td>";
@@ -254,10 +259,10 @@ class ReviewAllotForm extends CFormModel
             }
         }else{
             $status_type = "";
-            if(!empty($this->review_id)&&!empty($list["employee_id"])){
+            if(!empty($model->review_id)&&!empty($list["employee_id"])){
                 $rows = Yii::app()->db->createCommand()->select("status_type")->from("hr_review_h")
                     ->where('review_id=:review_id and handle_id=:id',
-                        array(':review_id'=>$this->review_id,':id'=>$list["employee_id"]))->queryRow();
+                        array(':review_id'=>$model->review_id,':id'=>$list["employee_id"]))->queryRow();
                 if($rows){//none review
                     $status_type = $rows["status_type"] == 3?Yii::t("contract","success review"):Yii::t("contract","none review");
                 }
@@ -269,19 +274,19 @@ class ReviewAllotForm extends CFormModel
         return $html;
     }
 
-    public function returnManager(){
-        $bool = $this->getReadonly();
-        $managerList = $this->getReviewManagerList($this->city);
+    public function returnManager($model){
+        $bool = $model->getReadonly();
+        $managerList = ReviewAllotForm::getReviewManagerList($model->city);
 	    $html ="<table class='table table-bordered table-striped' id='managerTable'><thead><tr><th width='50%'>".Yii::t("contract","reviewAllot manager")."</th><th width='40%'>".Yii::t("contract","manager percent")."</th>";
         $html.='<th>&nbsp;</th>';
-        $num = count($this->id_list);
+        $num = count($model->id_list);
 	    $html.="</tr></thead><tbody data-num='$num'>";
-        if (empty($this->id_list)){
-            $html .= $this->getRowOnly($num,$managerList,$bool);
+        if (empty($model->id_list)){
+            $html .= $this->getRowOnly($model,$num,$managerList,$bool);
         }else{
             $i = 0;
-            foreach ($this->id_list as $list){
-                $html .= $this->getRowOnly($i,$managerList,$bool,$list);
+            foreach ($model->id_list as $list){
+                $html .= $this->getRowOnly($model,$i,$managerList,$bool,$list);
                 $i++;
             }
         }
@@ -365,6 +370,7 @@ class ReviewAllotForm extends CFormModel
             $email->setMessage($message);
             $email->setSubject($subject);
             $email->addEmailToStaffId($this->employee_id);//添加備考人郵箱
+            $connection->createCommand()->delete('hr_review_h', 'review_id=:review_id', array(':review_id'=>$this->review_id));
             foreach ($this->id_list as $list){ //給考核人分別添加考核表
                 $email->addEmailToStaffId($list["employee_id"]);//添加主管郵箱
                 $connection->createCommand()->insert("hr_review_h", array(
