@@ -13,6 +13,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
     tbody>tr{position: relative;}
     select[readonly="readonly"]{pointer-events: none;}
     td.remark{;min-width: 300px;}
+    tr.text-weight>td{font-weight: bold;}
 </style>
 
 <section class="content-header">

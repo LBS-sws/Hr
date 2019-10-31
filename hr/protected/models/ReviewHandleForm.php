@@ -15,6 +15,7 @@ class ReviewHandleForm extends CFormModel
 	public $code;
 	public $phone;
 	public $year;
+	public $department;
 
     public $employee_remark;
     public $review_remark;
@@ -356,12 +357,15 @@ class ReviewHandleForm extends CFormModel
             $footArr['sumList'][] = $row['review_sum'];
             $footArr['preList'][] = $row['handle_per'];
         }
+        $model = new ReviewSearchForm();
+        $model->employee_id = $this->employee_id;
+        $model->status_type = 3;
         $message.="<th width='$width%'>&nbsp;</th></tr>";
         $message.="<tr><th colspan='2'>被评核员工</th><th colspan='$colspan'>".$this->name."</th></tr>";
         $message.="<tr><th colspan='2'>做出评核之员工</th>$handleNameHtml<th>总分</th></tr>";
         $message.="</thead><tbody><tr><td colspan='".($colspan+2)."'>季度评核得分 (100%)</td></tr></tbody>";
         $message.="<tfoot>";
-        $message.=ReviewSearchForm::returnTableFoot($footArr);
+        $message.=$model->returnTableFoot($footArr,'',true);
         $message.="</tfoot>";
         $message.="</table>";
         $email->setDescription($description);

@@ -155,12 +155,14 @@ class ReviewAllotForm extends CFormModel
 	public function retrieveData($index,$year,$year_type) {
         $city_allow = Yii::app()->user->city_allow();
         //,b.status_type,b.year,b.year_type,b.id as review_id
+        $dateTime = date("Y/m/d");
+        $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
 		$row = Yii::app()->db->createCommand()
             ->select("a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name")
             ->from("hr_employee a")
             ->leftJoin("hr_company c","a.company_id = c.id")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("a.id=:id and a.city in ($city_allow) AND a.staff_status = 0",array(":id"=>$index))->queryRow();
+            ->where("a.id=:id and a.city in ($city_allow) AND a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",array(":id"=>$index))->queryRow();
 		if ($row) {
             $review = Yii::app()->db->createCommand()
                 ->select("status_type,year,id_list,id_s_list,year_type,tem_str,tem_s_ist,id as review_id")

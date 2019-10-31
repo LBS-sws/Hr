@@ -53,17 +53,19 @@ class ReviewAllotList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        $dateTime = date("Y/m/d");
+        $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
 		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name 
                 from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 
+                where a.city IN ($city_allow) AND a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime' 
 			";
 		$sql2 = "select count(*) from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 
+                where a.city IN ($city_allow) AND a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime' 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

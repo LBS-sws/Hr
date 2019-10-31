@@ -17,6 +17,7 @@ class DeptForm extends CFormModel
 	public $dept_class;
 	public $manager=0;
 	public $technician=0;
+	public $review_status=0;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -33,6 +34,7 @@ class DeptForm extends CFormModel
             'dept_class'=>Yii::t('contract','Job category'),
             'manager'=>Yii::t('fete','Manager level audit'),
             'technician'=>Yii::t('fete','technician'),
+            'review_status'=>Yii::t('contract','dept review'),
 		);
 	}
 
@@ -43,7 +45,7 @@ class DeptForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, dept_id, type, dept_class, manager, technician','safe'),
+            array('id, name, z_index, dept_id, type, dept_class, manager, technician, review_status','safe'),
 			array('name','required'),
 			array('city','validateCity'),
             array('dept_id','validateDeptId'),
@@ -249,6 +251,7 @@ class DeptForm extends CFormModel
                 $this->dept_class = $row['dept_class'];
                 $this->manager = $row['manager'];
                 $this->technician = $row['technician'];
+                $this->review_status = $row['review_status'];
 				break;
 			}
 		}
@@ -281,9 +284,9 @@ class DeptForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
-							name, type, z_index, dept_id, city, dept_class, manager, technician, lcu
+							name, type, z_index, dept_id, city, dept_class, manager, technician, review_status, lcu
 						) values (
-							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :lcu
+							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :review_status, :lcu
 						)";
 				break;
 			case 'edit':
@@ -296,6 +299,7 @@ class DeptForm extends CFormModel
 							dept_class = :dept_class,
 							manager = :manager,
 							technician = :technician,
+							review_status = :review_status,
 							luu = :luu 
 						where id = :id
 						";
@@ -319,6 +323,8 @@ class DeptForm extends CFormModel
 			$command->bindParam(':manager',$this->manager,PDO::PARAM_STR);
 		if (strpos($sql,':technician')!==false)
 			$command->bindParam(':technician',$this->technician,PDO::PARAM_STR);
+		if (strpos($sql,':review_status')!==false)
+			$command->bindParam(':review_status',$this->review_status,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);

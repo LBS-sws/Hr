@@ -17,6 +17,10 @@ class ReviewSearchForm extends CFormModel
 	public $year;
 	public $name_list;
 	public $login_id;
+    public $department;//部門
+    public $ranking_bool = false;//评分差异排名
+    public $leave_bool = '待定';//評分差異排名後的等級顯示
+    public $ranking_sum = false;//评分差异排名参与人数
 
     public $employee_remark;
     public $review_remark;
@@ -109,7 +113,7 @@ class ReviewSearchForm extends CFormModel
             $expr_sql.=" and (FIND_IN_SET('$this->login_id',b.id_s_list) or b.employee_id = '$this->login_id' or b.lcu = '$this->login_id')";
         }
 		$row = Yii::app()->db->createCommand()
-            ->select("b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id")
+            ->select("c.department,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id")
             ->from("hr_review b")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
             ->leftJoin("hr_company d","c.company_id = d.id")
@@ -130,6 +134,7 @@ class ReviewSearchForm extends CFormModel
             $this->company_name = $row['company_name'];
             $this->dept_name = $row['dept_name'];
             $this->code = $row['code'];
+            $this->department = $row['department'];
             $this->phone = $row['phone'];
             $this->review_sum = $row['review_sum'];
 //&#10;
@@ -206,12 +211,22 @@ class ReviewSearchForm extends CFormModel
             if (isset($setList['code'])){
                 $this->pro_str .= $setList['code']."）";
             }
-            $content = $this->getCountTable($handleHtml);
+            $content = "<p>&nbsp;</p>".$this->getCountTable($handleHtml);
             $tabs[] = array(
                 'label'=>Yii::t("contract","review sum"),
-                'content'=>"<p>&nbsp;</p>".$content,
+                'content'=>&$content,
                 'active'=>true,
             );
+
+            //評分排名
+            if($this->ranking_bool){
+                $tabs[] = array(
+                    'label'=>Yii::t("contract","review sum ranking"),
+                    'content'=>"<p>&nbsp;</p>".$this->getRankingHtml(),
+                    'active'=>false,
+                );
+            }
+            $content = str_replace(":RANKINGLEAVE",$this->leave_bool,$content);
         }
         return $tabs;
     }
@@ -285,7 +300,154 @@ class ReviewSearchForm extends CFormModel
         return $html;
     }
 
-    public function returnTableFoot($footArr,$str=""){
+    protected function reviewBool(){
+        $row = Yii::app()->db->createCommand()->select("a.department,a.position")->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("a.id=:id and b.review_status = 1",array(":id"=>$this->employee_id))->queryRow();
+        if($row){
+            $dateTime = date("Y/m/d");
+            $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
+            $this->department=$row["department"];
+            $this->ranking_sum = Yii::app()->db->createCommand()->select("count(*)")->from("hr_employee a")
+                ->leftJoin("hr_dept b","a.position = b.id")
+                ->where("b.review_status = 1 and a.department=:department and a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",
+                    array(":department"=>$row["department"]))->queryScalar();
+
+            if($this->ranking_sum>=10){
+                $this->ranking_bool = true;
+                return true;
+            }
+        }
+        $this->ranking_bool = false;
+    }
+
+    protected function getRankingHtml(){
+        // table-striped
+        $html="<div class='form-group'><div class='col-sm-8 col-sm-offset-2'><table class='table table-bordered'>";
+
+        $html.="<thead><tr>";
+        $html.="<th>".Yii::t("contract","Employee Code")."</th>";
+        $html.="<th>".Yii::t("contract","Employee Name")."</th>";
+        $html.="<th>".Yii::t("contract","Employee Phone")."</th>";
+        $html.="<th>".Yii::t("contract","City")."</th>";
+        $html.="<th>".Yii::t("contract","Department")."</th>";
+        $html.="<th>".Yii::t("contract","Position")."</th>";
+        $html.="<th>".Yii::t("contract","review sum")."</th>";
+
+        $show_ranking = true;
+        $reviewArr = array();
+        $reviewId = array();
+        $rankingArr = array(
+            array("maxNum"=>round($this->ranking_sum*0.2),"list"=>array(),"leave"=>"I","class"=>"success"),
+            array("maxNum"=>round($this->ranking_sum*0.2),"list"=>array(),"leave"=>"II","class"=>"info"),
+            array("maxNum"=>round($this->ranking_sum*0.3),"list"=>array(),"leave"=>"III","class"=>"warning"),
+            array("maxNum"=>round($this->ranking_sum*0.2),"list"=>array(),"leave"=>"IV","class"=>"active"),
+            array("maxNum"=>round($this->ranking_sum*0.1),"list"=>array(),"leave"=>"V","class"=>"danger"),
+        );
+        $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
+            ->leftJoin("hr_employee c","c.id = b.employee_id")
+            ->leftJoin("hr_dept e","c.position = e.id")
+            ->where("e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
+                array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
+            )->order("b.review_sum desc")->queryAll();
+        if($reviewRows){
+            foreach ($reviewRows as $row){
+                if($row['status_type']==4){
+                    continue;
+                }
+                $reviewArr[$row["employee_id"]]=$this->resetRanking($rankingArr,$row);
+                //$reviewArr[$row["employee_id"]]=array("name"=>$row["review_sum"],"ranking"=>'I',"class"=>'');
+                $reviewId[] = $row["employee_id"];
+                if($row['status_type']!=3){
+                    $show_ranking = false;
+                }
+            }
+        }
+        $orderSql = empty($reviewId)?"":"find_in_set(a.id,'".implode(",",array_reverse($reviewId))."') desc";
+        $dateTime = date("Y/m/d");
+        $dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.name as dept_name")->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("b.review_status = 1 and a.department=:department and a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",
+                array(":department"=>$this->department))
+            ->order($orderSql)->queryAll();
+        if(count($rows)!=count($reviewRows)){
+            $show_ranking = false;
+        }
+        if($show_ranking){
+            $html.="<th>".Yii::t("contract","review grade")."</th>";
+        }
+        $html.="</tr></thead><tbody>";
+        if($rows){
+            foreach ($rows as $row){
+                $employee_list = $this->getArrValueToKey($row["id"],$reviewArr);
+                $html.="<tr class='";
+                if($row['id'] == $this->employee_id){
+                    $html.=" text-weight ";
+                }
+                $html.=$employee_list["class"];
+                $html.="'>";
+                $html.="<td>".$row['code']."</td>";
+                $html.="<td>".$row['name']."</td>";
+                $html.="<td>".$row['phone']."</td>";
+                $html.="<td>".CGeneral::getCityName($row['city'])."</td>";
+                $html.="<td>".DeptForm::getDeptToId($row['department'])."</td>";
+                $html.="<td>".$row['dept_name']."</td>";
+                $html.="<td>".$employee_list['name']."</td>";
+                if($show_ranking){
+                    if($row['id'] == $this->employee_id){
+                        $this->leave_bool = $employee_list['ranking'];
+                    }
+                    $html.="<td>".$employee_list['ranking']."</td>";
+                }
+                $html.="</tr>";
+            }
+        }
+        $html.="</tbody></table></div></div>";
+        return $html;
+    }
+
+    protected function resetRanking(&$rankingArr,&$row){
+        foreach ($rankingArr as $key =>&$arr){
+            if(count($arr["list"])<$arr["maxNum"]){
+                if($key!==0){
+                    if(end($rankingArr[($key-1)]["list"]) == $row["review_sum"]){
+                        return array("name"=>$row["review_sum"],"ranking"=>$rankingArr[($key-1)]["leave"],"class"=>$rankingArr[($key-1)]["class"]);
+                    }
+                }
+                if($key === 4){
+                    if($row["review_sum"]>=50){
+                        return array("name"=>$row["review_sum"],"ranking"=>$rankingArr[3]["leave"],"class"=>$rankingArr[3]["class"]);
+                    }
+                }
+                $arr["list"][] = $row["review_sum"];
+                return array("name"=>$row["review_sum"],"ranking"=>$arr["leave"],"class"=>$arr["class"]);
+            }
+        }
+
+        if($row["review_sum"]>=50){
+            return array("name"=>$row["review_sum"],"ranking"=>$rankingArr[3]["leave"],"class"=>$rankingArr[3]["class"]);
+        }else{
+            return array("name"=>$row["review_sum"],"ranking"=>$rankingArr[4]["leave"],"class"=>$rankingArr[4]["class"]);
+        }
+    }
+
+    protected function getArrValueToKey(&$key,&$arr){
+        if (key_exists($key,$arr)){
+            if($arr[$key]['name'] === null){
+                return array("name"=>Yii::t("contract","in review"),"ranking"=>0,"class"=>'');
+            }else{
+                return $arr[$key];
+            }
+        }else{
+            return array("name"=>Yii::t("contract","none review"),"ranking"=>0,"class"=>'');
+        }
+    }
+
+    public function returnTableFoot($footArr,$str="",$bool=false){
+        if($bool){
+            $this->reviewBool();//判斷部門下參與評分的人數是否多餘10人
+        }
         $footList = array(
             array("code"=>"A","name"=>Yii::t("contract","Project total score").$str,"list"=>array()),
             array("code"=>"B","name"=>Yii::t("contract","assessed total score"),"list"=>array()),
@@ -317,7 +479,11 @@ class ReviewSearchForm extends CFormModel
             if($this->status_type != 3){
                 $reviewLevel = '';
             }else{
-                $reviewLevel =$this->getReviewLevelToSum($sum);
+                if($this->ranking_bool){
+                    $reviewLevel = ':RANKINGLEAVE';
+                }else{
+                    $reviewLevel =$this->getReviewLevelToSum($sum);
+                }
             }
             $num = count($footList[0]['list'])+2;
             $html.="<tr><th class='text-right' colspan='$num'>".Yii::t("contract","review grade")."</th><th>$reviewLevel</th></tr>";
@@ -350,7 +516,7 @@ class ReviewSearchForm extends CFormModel
         $html.="</thead><tbody>";
         $html.="<tr><td colspan='$sum'>".Yii::t("contract","Quarterly assessment score")." (100%)</td></tr>";
         $html.="</tbody><tfoot>";
-        $html.=$this->returnTableFoot($this->table_foot,$this->pro_str);
+        $html.=$this->returnTableFoot($this->table_foot,$this->pro_str,true);
         $html.="</tfoot></table></div>";
         //評分級別規則
         $html.="<div class='col-sm-3 col-sm-offset-1'><table class='table table-bordered table-striped'>";
@@ -361,6 +527,7 @@ class ReviewSearchForm extends CFormModel
         $html.="<tr><th class='text-center'>60 - 69</th><th class='text-center'>41 - 70%</th><th class='text-center'>III</th></tr>";
         $html.="<tr><th class='text-center'>50 - 59</th><th class='text-center'>71 - 90%</th><th class='text-center'>IV</th></tr>";
         $html.="<tr><th class='text-center'>50分以下</th><th class='text-center'>Bottom 10%</th><th class='text-center'>V</th></tr>";
+        $html.="<tr><th class='text-center' colspan='3'>不适用于差异性评分</th></tr>";
         $html.="</tbody></table></div>";
         $html.="</div>";
         return $html;

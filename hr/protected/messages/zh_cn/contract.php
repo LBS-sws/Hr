@@ -397,5 +397,9 @@ return array(
     'undistributed'=>'未分配',
     'allocated'=>'已分配',
     'Template Employee Form'=>'员工考核模板表单',
+    'dept review'=>'是否参与评分差异',
+    'Participate'=>'参与',
+    'not Participate'=>'不参与',
+    'review sum ranking'=>'评核得分排名',
 );
 ?>
