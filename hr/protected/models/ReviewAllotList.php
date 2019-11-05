@@ -28,6 +28,7 @@ class ReviewAllotList extends CListPageModel
             'entry_time'=>Yii::t('contract','Entry Time'),
             'year'=>Yii::t('contract','what year'),
             'year_type'=>Yii::t('contract','year type'),
+            'department'=>Yii::t("contract","Department"),
 		);
 	}
     public function __construct($scenario='')
@@ -66,15 +67,17 @@ class ReviewAllotList extends CListPageModel
         $dateTime = $this->getReviewDateTime($this->year,$this->year_type);
         //$dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
-		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name 
+		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name ,e.name as ment_name 
                 from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
+                LEFT JOIN hr_dept e ON a.department = e.id
                 where a.city IN ($city_allow) AND a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime' 
 			";
 		$sql2 = "select count(*) from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
+                LEFT JOIN hr_dept e ON a.department = e.id
                 where a.city IN ($city_allow) AND a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime' 
 			";
 		$clause = "";
@@ -92,6 +95,9 @@ class ReviewAllotList extends CListPageModel
 					break;
                 case 'position':
                     $clause .= General::getSqlConditionClause('d.name',$svalue);
+                    break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('e.name',$svalue);
                     break;
                 case 'city_name':
                     $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
@@ -131,6 +137,7 @@ class ReviewAllotList extends CListPageModel
 					'year_type'=>$this->getYearTypeList($record['year_type']),
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
+					'department'=>$record['ment_name'],
 					'company_id'=>$record['company_name'],
 					'phone'=>$record['phone'],
 					'status'=>$arr["status"],

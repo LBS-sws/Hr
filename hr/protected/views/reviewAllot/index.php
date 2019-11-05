@@ -22,6 +22,7 @@ $this->pageTitle=Yii::app()->name . ' - reviewAllot';
         'name',
         'phone',
         'position',
+        'department',
         'city_name',
     );
     $search_add_html="";

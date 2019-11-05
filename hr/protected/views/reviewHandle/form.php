@@ -37,7 +37,8 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 
         <?php if (!$model->getReadonly()): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('app','review'), array(
-                'submit'=>Yii::app()->createUrl('reviewHandle/save')));
+                    'id'=>'btnConfirm','data-toggle'=>'modal','data-target'=>'#confirmDialog',)
+            );
             ?>
             <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('contract','Draft'), array(
                 'submit'=>Yii::app()->createUrl('reviewHandle/draft')));
@@ -129,9 +130,32 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
     </td>
 </xmp>
 <?php
+$content = "<p>".Yii::t('contract','assessment score is confirmed and submitted, it cannot be modified after submission?')."</p>";
+$this->widget('bootstrap.widgets.TbModal', array(
+    'id'=>'confirmDialog',
+    'header'=>Yii::t('contract','Confirm review'),
+    'content'=>$content,
+    'footer'=>array(
+        TbHtml::button(Yii::t('dialog','OK'), array('id'=>'btnConfirmData','data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
+        TbHtml::button(Yii::t('dialog','Cancel'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
+    ),
+    'show'=>false,
+));
+?>
+<?php
 
-
+$link = Yii::app()->createUrl('reviewHandle/save');
 $js = "
+$('#btnConfirmData').on('click',function() {
+	$('#removedialog').modal('hide');
+	deletedata();
+});
+
+function deletedata() {
+	var elm=$('#btnConfirm');
+	jQuery.yii.submitForm(elm,'$link',{});
+}
+
 var xmpText = $('#xmpText').html();
 $('#xmpText').remove();
     $('.changeSelect').change(function(){

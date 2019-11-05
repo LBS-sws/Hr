@@ -16,12 +16,12 @@
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('phone').$this->drawOrderArrow('a.phone'),'#',$this->createOrderLink('reviewAllot-list','a.phone'))
+        <?php echo TbHtml::link($this->getLabelName('department').$this->drawOrderArrow('e.name'),'#',$this->createOrderLink('reviewAllot-list','e.name'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('a.position'),'#',$this->createOrderLink('reviewAllot-list','a.position'))
+        <?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('d.name'),'#',$this->createOrderLink('reviewAllot-list','d.name'))
         ;
         ?>
     </th>

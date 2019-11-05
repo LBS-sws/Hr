@@ -330,7 +330,6 @@ class ReviewSearchForm extends CFormModel
         $html.="<thead><tr>";
         $html.="<th>".Yii::t("contract","Employee Code")."</th>";
         $html.="<th>".Yii::t("contract","Employee Name")."</th>";
-        $html.="<th>".Yii::t("contract","Employee Phone")."</th>";
         $html.="<th>".Yii::t("contract","City")."</th>";
         $html.="<th>".Yii::t("contract","Department")."</th>";
         $html.="<th>".Yii::t("contract","Position")."</th>";
@@ -390,7 +389,6 @@ class ReviewSearchForm extends CFormModel
                 $html.="'>";
                 $html.="<td>".$row['code']."</td>";
                 $html.="<td>".$row['name']."</td>";
-                $html.="<td>".$row['phone']."</td>";
                 $html.="<td>".CGeneral::getCityName($row['city'])."</td>";
                 $html.="<td>".DeptForm::getDeptToId($row['department'])."</td>";
                 $html.="<td>".$row['dept_name']."</td>";

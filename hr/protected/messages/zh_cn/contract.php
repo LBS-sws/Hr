@@ -338,7 +338,7 @@ return array(
     'first half year'=>'4月-9月',
     'last half year'=>'10月-3月',
     'reviewAllot Form'=>'员工考核表单',
-    'reviewAllot manager'=>'考核经理',
+    'reviewAllot manager'=>'作出评核员工',
     'manager percent'=>'考核所占比（%）',
     'reviewAllot project'=>'考核项目',
     'set code'=>'总项目编号',
@@ -402,5 +402,8 @@ return array(
     'not Participate'=>'不参与',
     'review sum ranking'=>'评核得分排名',
     'review sum Grade'=>'经高低差异化(拉curve)后评级',
+
+    'Confirm review'=>'确认考核',
+    'assessment score is confirmed and submitted, it cannot be modified after submission?'=>'考核分数是否确认提交，提交后不能再修改',
 );
 ?>
