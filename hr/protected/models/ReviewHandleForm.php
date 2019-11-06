@@ -139,7 +139,7 @@ class ReviewHandleForm extends CFormModel
     public function scoringOk($num){
         if(is_numeric($num)){
             $num = intval($num);
-            if(in_array($num,array(6,7,8))){
+            if(in_array($num,array(6,7))){
                 return true;
             }
         }
