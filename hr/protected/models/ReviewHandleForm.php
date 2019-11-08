@@ -16,6 +16,10 @@ class ReviewHandleForm extends CFormModel
 	public $phone;
 	public $year;
 	public $department;
+	public $review_type;
+	public $change_num;
+	public $four_with_sum;
+	public $four_with_count;
 
     public $employee_remark;
     public $review_remark;
@@ -52,6 +56,7 @@ class ReviewHandleForm extends CFormModel
             'strengths'=>Yii::t('contract','employee strengths'),
             'target'=>Yii::t('contract','employee target'),
             'improve'=>Yii::t('contract','employee improve'),
+            'review_type'=>Yii::t('contract','review type'),
 		);
 	}
 
@@ -72,7 +77,7 @@ class ReviewHandleForm extends CFormModel
 
 	public function validateID($attribute, $params){
 	    if($this->validateEmployee()){
-            $rows = Yii::app()->db->createCommand()->select("id,handle_per,tem_sum,review_id")->from("hr_review_h")
+            $rows = Yii::app()->db->createCommand()->select("id,handle_per,tem_sum,review_id,four_with_count")->from("hr_review_h")
                 ->where("id=:id and handle_id=:handle_id",array(":id"=>$this->id,":handle_id"=>$this->handle_id))->queryRow();
             if(!$rows){
                 $message = Yii::t('contract','Employee Name'). Yii::t('contract',' not exist');
@@ -81,6 +86,7 @@ class ReviewHandleForm extends CFormModel
                 $this->review_id = $rows["review_id"];
                 $this->handle_per = $rows["handle_per"];
                 $this->tem_sum = $rows["tem_sum"];
+                $this->four_with_count = $rows["four_with_count"];
             }
         }else{
             $message = Yii::t("contract",'The account has no binding staff, please contact the administrator');
@@ -90,10 +96,13 @@ class ReviewHandleForm extends CFormModel
 
     public function validateList($attribute, $params){
         if(!empty($this->tem_s_ist)){
-            $rows = Yii::app()->db->createCommand()->select("tem_s_ist,year,year_type")->from("hr_review")
+            $rows = Yii::app()->db->createCommand()->select("tem_s_ist,change_num,review_type,year,year_type")->from("hr_review")
                 ->where("id=:id",array(":id"=>$this->review_id))->queryRow();
             if($rows){
                 $this->review_sum = 0;
+                $this->four_with_sum = 0;
+                $this->review_type = $rows["review_type"];
+                $this->change_num = $rows["change_num"];
                 $this->year = $rows["year"];
                 $this->year_type = $rows["year_type"];
                 $rows = json_decode($rows["tem_s_ist"],true);
@@ -124,6 +133,9 @@ class ReviewHandleForm extends CFormModel
                             }
                         }
                         $this->review_sum+=intval($item["value"]);
+                        if($row["four_with"]==1){
+                            $this->four_with_sum+=intval($item["value"]);
+                        }
                     }
                 }
                 $this->tem_s_ist = $rows;
@@ -163,7 +175,7 @@ class ReviewHandleForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         //,b.status_type,b.year,b.year_type,b.id as review_id
 		$row = Yii::app()->db->createCommand()
-            ->select("a.review_remark,a.strengths,a.target,a.improve,b.employee_remark,a.review_sum,a.handle_name,a.handle_per,a.tem_s_ist,a.review_id,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,a.status_type,b.year,b.year_type,a.id")
+            ->select("a.review_remark,a.strengths,a.target,a.improve,b.review_type,b.employee_remark,a.review_sum,a.handle_name,a.handle_per,a.tem_s_ist,a.review_id,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,a.status_type,b.year,b.year_type,a.id")
             ->from("hr_review_h a")
             ->leftJoin("hr_review b","a.review_id = b.id")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
@@ -181,6 +193,7 @@ class ReviewHandleForm extends CFormModel
             $this->year = $row['year'];
             $this->year_type = $row['year_type'];
             $this->employee_id = $row['employee_id'];
+            $this->review_type = $row['review_type'];
             $this->name = $row['name'];
             $this->city = $row["city"];
             $this->entry_time = $row['entry_time'];
@@ -289,6 +302,7 @@ class ReviewHandleForm extends CFormModel
                 $connection->createCommand()->update('hr_review_h', array(
                     'tem_s_ist'=>json_encode($this->tem_s_ist),
                     'review_sum'=>$this->review_sum,
+                    'four_with_sum'=>$this->four_with_sum,
                     'status_type'=>$this->status_type,
                     'review_remark'=>$this->review_remark,
                     'strengths'=>$this->strengths,
@@ -306,7 +320,13 @@ class ReviewHandleForm extends CFormModel
 	protected function sendReview($connection){
         if($this->status_type == 3){ //考核完成
             $status_type = 3;//2:部分考核完成（兩個經理時，有一個已經完成）
-            $review_sum = $this->sumReview($this->review_sum,$this->handle_per,$this->tem_sum);
+            $review_sum = $this->sumReview(array(
+                "review_sum"=>$this->review_sum,
+                "handle_per"=>$this->handle_per,
+                "tem_sum"=>$this->tem_sum,
+                "four_with_sum"=>$this->four_with_sum,
+                "four_with_count"=>$this->four_with_count,
+            ));
             $rows = Yii::app()->db->createCommand()->select("*")->from("hr_review_h")
                 ->where('review_id=:review_id',
                     array(':review_id'=>$this->review_id))->queryAll();
@@ -318,8 +338,21 @@ class ReviewHandleForm extends CFormModel
                         }
                         $row["review_sum"] = empty($row["review_sum"])?0:intval($row["review_sum"]);
                         //$review_sum+=$row["review_sum"];
-                        $review_sum+=$this->sumReview($row["review_sum"],$row["handle_per"],$row["tem_sum"]);
+                        $review_sum+=$this->sumReview($row);
                     }
+                }
+            }
+            if($status_type == 3){
+                switch ($this->review_type){
+                    case 2://技術員
+                        $review_sum*=0.85;
+                        $change_num = 15-($this->change_num*0.5);
+                        $change_num = $change_num<0?0:$change_num;
+                        $review_sum+=$change_num;
+                        break;
+                    case 3://銷售
+                        $review_sum+=$this->change_num*7;
+                        break;
                 }
             }
             $connection->createCommand()->update("hr_review", array(
@@ -346,28 +379,63 @@ class ReviewHandleForm extends CFormModel
         $message.="<table width='600px' border='1px'>";
         $message.="<thead><tr><th colspan='2' width='50%'>表现因素</th>";
         $footArr = array( //表格底部統計
-            'sumNum'=>0,
+            'sumNum'=>array(),
             'sumList'=>array(),
             'preList'=>array()
         );
+        $withArr = $footArr;
         $handleNameHtml = "";
+        if($this->review_type == 3){
+            $rows[] = array(
+                "four_with_count"=>0,
+                "four_with_sum"=>0,
+                "tem_sum"=>1,
+                "handle_per"=>70,
+                "review_sum"=>$this->change_num,
+                "handle_name"=>Yii::t("contract","Substantial sales performance")
+            );
+        }
         foreach ($rows as $row){
-            $email->addEmailToStaffId($row['handle_id']);//添加考核人郵箱
+            if (key_exists("handle_id",$row)){
+                $email->addEmailToStaffId($row['handle_id']);//添加考核人郵箱
+            }
             $message.="<th width='$width%'>".$row['handle_per']."(%)</th>";
             $handleNameHtml.="<th>".$row['handle_name']."</th>";
-            $footArr['sumNum'] = $row['tem_sum']*10;
+            $footArr['sumNum'][] = $row['tem_sum'];
             $footArr['sumList'][] = $row['review_sum'];
             $footArr['preList'][] = $row['handle_per'];
+            $withArr['sumNum'][] = $row['four_with_count'];
+            $withArr['sumList'][] = $row['four_with_sum'];
+            $withArr['preList'][] = $row['handle_per'];
         }
         $model = new ReviewSearchForm();
+        $model->with_foot = $withArr;
         $model->employee_id = $this->employee_id;
         $model->status_type = 3;
+        $model->review_type = $this->review_type;
+        $model->change_num = $this->change_num;
         $model->year = $this->year;
         $model->year_type = $this->year_type;
         $message.="<th width='$width%'>&nbsp;</th></tr>";
         $message.="<tr><th colspan='2'>被评核员工</th><th colspan='$colspan'>".$this->name."</th></tr>";
         $message.="<tr><th colspan='2'>做出评核之员工</th>$handleNameHtml<th>总分</th></tr>";
-        $message.="</thead><tbody><tr><td colspan='".($colspan+2)."'>季度评核得分 (100%)</td></tr></tbody>";
+        $message.="</thead><tbody><tr><td colspan='".($colspan+2)."'>季度评核得分 (";
+        $message.=$this->review_type==2?85:100;
+        switch ($this->review_type){
+            case 2:
+                $message.=Yii::t("contract","Quarterly assessment score")." (85%)";
+                break;
+            case 4:
+                if(!empty($withArr['sumNum'][0])){
+                    $message.=Yii::t("contract","Evaluate project score")." (90%)";
+                }else{
+                    $message.=Yii::t("contract","Evaluate project score")." (100%)";
+                }
+                break;
+            default:
+                $message.=Yii::t("contract","Quarterly assessment score")." (100%)";
+        }
+        $message.="%)</td></tr></tbody>";
         $message.="<tfoot>";
         $message.=$model->returnTableFoot($footArr,'',true);
         $message.="</tfoot>";
@@ -379,10 +447,20 @@ class ReviewHandleForm extends CFormModel
         $email->sent();
     }
 
-    public function sumReview($sum,$pro,$num){
-        $sum = intval($sum);
-        $pro = intval($pro);
-        $num = intval($num)*10;
-        return sprintf("%.2f",($sum/$num)*$pro);
+    //private function sumReview($sum,$pro,$num,$four_with_sum){
+    private function sumReview($arr){
+        //row["review_sum"],$row["handle_per"],$row["tem_sum"],$row["four_with_sum"]
+        $sum = intval($arr["review_sum"]);
+        $pro = intval($arr["handle_per"]);
+        $num = intval($arr["tem_sum"])*10;
+        $fourSum = intval($arr["four_with_sum"]);
+        $fourCount = intval($arr["four_with_count"])*10;
+        if($this->review_type == 4&&!empty($fourCount)){ //地區主管
+            $reviewSum = ($fourSum/$fourCount)*$pro*0.1;
+            $reviewSum+= (($sum-$fourSum)/($num-$fourCount))*$pro*0.9;
+            return sprintf("%.2f",$reviewSum);
+        }else{
+            return sprintf("%.2f",($sum/$num)*$pro);
+        }
     }
 }

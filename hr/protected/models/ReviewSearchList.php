@@ -29,6 +29,7 @@ class ReviewSearchList extends CListPageModel
             'year_type'=>Yii::t('contract','year type'),
             'name_list'=>Yii::t('contract','reviewAllot manager'),
             'review_sum'=>Yii::t('contract','review sum'),
+            'review_type'=>Yii::t('contract','review type'),
 		);
 	}
 
@@ -55,7 +56,7 @@ class ReviewSearchList extends CListPageModel
         if(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
             $expr_sql.=" and (FIND_IN_SET('$this->employee_id',b.id_s_list) or b.employee_id = '$this->employee_id' or b.lcu = '$this->employee_id')";
         }
-		$sql1 = "select c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum 
+		$sql1 = "select c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum,b.review_type 
                 from hr_review b 
                 LEFT JOIN hr_employee c ON c.id = b.employee_id
                 LEFT JOIN hr_company d ON c.company_id = d.id
@@ -118,6 +119,7 @@ class ReviewSearchList extends CListPageModel
 					'name'=>$record['name'],
 					'year'=>$record['year'],
 					'year_type'=>ReviewAllotList::getYearTypeList($record['year_type']),
+                    'review_type'=>DeptForm::getReviewType($record['review_type']),
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
 					'company_id'=>$record['company_name'],

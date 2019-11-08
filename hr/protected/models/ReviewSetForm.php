@@ -6,6 +6,7 @@ class ReviewSetForm extends CFormModel
 	public $city;
 	public $set_code;
 	public $set_name;
+	public $four_with;
 	public $z_index=1;
 
 	public function attributeLabels()
@@ -14,6 +15,7 @@ class ReviewSetForm extends CFormModel
             'id'=>Yii::t('contract','ID'),
             'set_code'=>Yii::t('contract','set code'),
             'set_name'=>Yii::t('contract','set name'),
+            'four_with'=>Yii::t('contract','four with'),
             'z_index'=>Yii::t('fete','level'),
         );
 	}
@@ -24,7 +26,7 @@ class ReviewSetForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, city, set_code,set_name,z_index','safe'),
+			array('id, city, set_code,set_name,z_index,four_with','safe'),
             array('set_code','required'),
             array('set_name','required'),
             array('set_code','validateCode'),
@@ -70,6 +72,17 @@ class ReviewSetForm extends CFormModel
         }
     }
 
+    public function getFourWith($str=''){
+        $arr = array(
+            Yii::t("misc","No"),
+            Yii::t("misc","Yes"),
+        );
+        if(key_exists($str,$arr)){
+            return $arr[$str];
+        }
+        return $arr;
+    }
+
 	public function retrieveData($index) {
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_set")
@@ -79,6 +92,7 @@ class ReviewSetForm extends CFormModel
             $this->city = $row['city'];
             $this->set_code = $row['set_code'];
             $this->set_name = $row['set_name'];
+            $this->four_with = $row['four_with'];
             $this->z_index = $row['z_index'];
 		}
 		return true;
@@ -116,9 +130,9 @@ class ReviewSetForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_set(
-							city,z_index,set_code,set_name, lcu
+							city,z_index,set_code,set_name,four_with, lcu
 						) values (
-							:city,:z_index,:set_code,:set_name, :lcu
+							:city,:z_index,:set_code,:set_name,:four_with, :lcu
 						)";
                 break;
             case 'edit':
@@ -126,6 +140,7 @@ class ReviewSetForm extends CFormModel
 							z_index = :z_index, 
 							set_name = :set_name, 
 							set_code = :set_code, 
+							four_with = :four_with, 
 							luu = :luu
 						where id = :id
 						";
@@ -148,6 +163,8 @@ class ReviewSetForm extends CFormModel
             $command->bindParam(':set_code',$this->set_code,PDO::PARAM_STR);
         if (strpos($sql,':set_name')!==false)
             $command->bindParam(':set_name',$this->set_name,PDO::PARAM_STR);
+        if (strpos($sql,':four_with')!==false)
+            $command->bindParam(':four_with',$this->four_with,PDO::PARAM_INT);
 
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);

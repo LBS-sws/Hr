@@ -42,6 +42,14 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
             ?>
         <?php endif ?>
 	</div>
+
+            <?php if ($model->status_type == 2 || $model->status_type == 3): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('contract','Down'), array(
+                        'submit'=>Yii::app()->createUrl('ReviewSearch/downExcel')));
+                    ?>
+                </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -61,6 +69,14 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
                 <?php echo $form->labelEx($model,'name_list',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-4">
                     <?php echo $form->textField($model, 'name_list',
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'review_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo TbHtml::textField("review_type", DeptForm::getReviewType($model->review_type),
                         array('readonly'=>(true))
                     ); ?>
                 </div>

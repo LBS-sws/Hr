@@ -29,6 +29,7 @@ class ReviewAllotList extends CListPageModel
             'year'=>Yii::t('contract','what year'),
             'year_type'=>Yii::t('contract','year type'),
             'department'=>Yii::t("contract","Department"),
+            'review_type'=>Yii::t('contract','review type'),
 		);
 	}
     public function __construct($scenario='')
@@ -67,7 +68,7 @@ class ReviewAllotList extends CListPageModel
         $dateTime = $this->getReviewDateTime($this->year,$this->year_type);
         //$dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
-		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name ,e.name as ment_name 
+		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name,d.review_type ,e.name as ment_name 
                 from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
@@ -137,6 +138,7 @@ class ReviewAllotList extends CListPageModel
 					'year_type'=>$this->getYearTypeList($record['year_type']),
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
+					'review_type'=>DeptForm::getReviewType($record['review_type']),
 					'department'=>$record['ment_name'],
 					'company_id'=>$record['company_name'],
 					'phone'=>$record['phone'],
@@ -192,7 +194,7 @@ class ReviewAllotList extends CListPageModel
 	protected function resetStatus(&$record){
 	    //,b.status_type,b.year,b.year_type,b.id as review_id
         $rows = Yii::app()->db->createCommand()
-            ->select("status_type,year,year_type,id as review_id")
+            ->select("status_type,year,review_type,year_type,id as review_id")
             ->from("hr_review")
             ->where("employee_id=:id and year = :year and year_type = :year_type",
                 array(
@@ -202,6 +204,7 @@ class ReviewAllotList extends CListPageModel
                 )
             )->queryRow();
         if($rows){
+            $record["review_type"] = $rows["review_type"];
             $record["status_type"] = $rows["status_type"];
             $record["year"] = $rows["year"];
             $record["year_type"] = $rows["year_type"];

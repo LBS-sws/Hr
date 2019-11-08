@@ -22,6 +22,7 @@ class TemplateEmployeeList extends CListPageModel
             'city_name'=>Yii::t('contract','City'),
             'entry_time'=>Yii::t('contract','Entry Time'),
             'tem_name'=>Yii::t('contract','template name'),
+            'review_type'=>Yii::t('contract','review type'),
 		);
 	}
 
@@ -31,7 +32,7 @@ class TemplateEmployeeList extends CListPageModel
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
-		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name 
+		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name ,d.review_type 
                 from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
@@ -96,6 +97,7 @@ class TemplateEmployeeList extends CListPageModel
 					'company_id'=>$record['company_name'],
 					'phone'=>$record['phone'],
 					'tem_name'=>$record['tem_name'],
+					'review_type'=>DeptForm::getReviewType($record["review_type"]),
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],
                     'city'=>CGeneral::getCityName($record["city"]),

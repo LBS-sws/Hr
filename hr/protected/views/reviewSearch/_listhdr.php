@@ -39,6 +39,11 @@
         ?>
     </th>
     <th>
+        <?php echo TbHtml::link($this->getLabelName('review_type').$this->drawOrderArrow('b.review_type'),'#',$this->createOrderLink('reviewSearch-list','b.review_type'))
+        ;
+        ?>
+    </th>
+    <th>
         <?php echo TbHtml::link($this->getLabelName('year').$this->drawOrderArrow('b.year'),'#',$this->createOrderLink('reviewSearch-list','b.year'))
         ;
         ?>

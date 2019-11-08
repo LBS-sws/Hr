@@ -45,6 +45,7 @@ $this->pageTitle=Yii::app()->name . ' - TemplateEmployee Form';
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'employee_id'); ?>
+			<?php echo $form->hiddenField($model, 'review_type'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 
@@ -52,6 +53,13 @@ $this->pageTitle=Yii::app()->name . ' - TemplateEmployee Form';
                 <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model,'employee_name',array("readonly"=>true)) ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'review_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo TbHtml::textField("review_type",DeptForm::getReviewType($model->review_type),array("readonly"=>true)) ?>
                 </div>
             </div>
             <div class="form-group">
@@ -100,8 +108,8 @@ $js = "
         var value = $(this).val();
         $(this).addClass('noneChange');
         var num = $('.changeNum').not('.noneChange').length;
-        var sum = 100;
-        if(value<100&&num!=0){
+        var sum = ".$model->count_num.";
+        if(value<sum&&num!=0){
             $('.changeNum.noneChange').each(function(){
                 sum-=$(this).val();
             });

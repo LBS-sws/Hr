@@ -36,6 +36,11 @@
         ?>
     </th>
     <th>
+        <?php echo TbHtml::link($this->getLabelName('review_type').$this->drawOrderArrow('d.review_type'),'#',$this->createOrderLink('templateEmployee-list','d.review_type'))
+        ;
+        ?>
+    </th>
+    <th>
         <?php echo TbHtml::link($this->getLabelName('tem_name').$this->drawOrderArrow('tem_name'),'#',$this->createOrderLink('templateEmployee-list','tem_name'))
         ;
         ?>

@@ -405,5 +405,16 @@ return array(
 
     'Confirm review'=>'确认考核',
     'assessment score is confirmed and submitted, it cannot be modified after submission?'=>'考核分数是否确认提交，提交后不能再修改',
+
+    'review type'=>'评核类型',
+    'normal'=>'正常',
+    'Substantial sales performance'=>'实质销售成绩',
+    'sick leave and personal leave'=>'总病假及事假天数',
+    'employee total score'=>'员工评核总得分',
+    'total score'=>'总得分',
+    'Out of 100'=>'以一百分为满分',
+    'Attendance score'=>'出勤率得分',
+    'four with'=>'四用规则',
+    'Evaluate project score'=>'评核项目得分',
 );
 ?>

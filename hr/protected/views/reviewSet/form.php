@@ -79,6 +79,15 @@ $this->pageTitle=Yii::app()->name . ' - reviewSet';
                     ); ?>
                 </div>
             </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'four_with',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'four_with',$model->getFourWith(),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>

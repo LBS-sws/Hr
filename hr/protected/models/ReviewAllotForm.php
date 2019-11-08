@@ -23,6 +23,11 @@ class ReviewAllotForm extends CFormModel
 	public $tem_str;
 	public $tem_list;
 	public $tem_sum;
+	public $four_with_count;
+
+	public $review_type;
+    public $count_num=100;
+    public $change_num;
 
 	public function attributeLabels()
 	{
@@ -38,6 +43,7 @@ class ReviewAllotForm extends CFormModel
             'entry_time'=>Yii::t('contract','Entry Time'),
             'year'=>Yii::t('contract','what year'),
             'year_type'=>Yii::t('contract','year type'),
+            'review_type'=>Yii::t('contract','review type'),
 		);
 	}
 
@@ -48,11 +54,12 @@ class ReviewAllotForm extends CFormModel
 	{
 		return array(
 			array('employee_id, name,code,phone,dept_name,company_name,contract_id,status_type,city,entry_time,year,year_type,id_list,
-			tem_str,tem_list','safe'),
+			tem_str,tem_list,change_num','safe'),
             array('employee_id','required'),
             array('id_list','required'),
             array('tem_list','required'),
             array('employee_id','validateName'),
+            array('change_num','validateChangeNum'),
             array('id_list','validateIdList'),
             array('tem_list','validateList'),
 		);
@@ -60,14 +67,17 @@ class ReviewAllotForm extends CFormModel
 
 	public function validateName($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("name")->from("hr_employee")
-            ->where("id=:id and city in ($city_allow) AND staff_status = 0",array(":id"=>$this->employee_id))->queryRow();
+        $rows = Yii::app()->db->createCommand()->select("a.name,b.review_type")->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("a.id=:id and a.city in ($city_allow) AND a.staff_status = 0",array(":id"=>$this->employee_id))->queryRow();
         if($rows){
+            $this->review_type = $rows["review_type"];
             $this->employee_name = $rows["name"];
-            $rows = Yii::app()->db->createCommand()->select("id,status_type")->from("hr_review")
+            $rows = Yii::app()->db->createCommand()->select("id,status_type,review_type")->from("hr_review")
                 ->where("employee_id=:id AND year = :year AND year_type = :year_type",array(":id"=>$this->employee_id,":year"=>$this->year,":year_type"=>$this->year_type))->queryRow();
             if($rows){
                 if($rows["status_type"] == 4){
+                    $this->review_type = $rows["review_type"];
                     $this->review_id = $rows["id"];
                     $this->setScenario("edit");
                 }else{
@@ -83,14 +93,82 @@ class ReviewAllotForm extends CFormModel
         }
 	}
 
+	public function validateChangeNum($attribute, $params){
+	    if(in_array($this->review_type,array(2,3))){ //評核類型是：技術員或銷售
+            if(!is_numeric($this->change_num)||$this->change_num<0){
+                $message = $this->getReviewStr($this->review_type).Yii::t('contract',' can not be empty');
+                $this->addError($attribute,$message);
+            }else{
+                if($this->review_type == 3){
+                    if($this->change_num>10){
+                        $message = $this->getReviewStr($this->review_type)."不能大于10";
+                        $this->addError($attribute,$message);
+                    }
+                }else{
+                    if(intval($this->change_num)!=floatval($this->change_num)){
+                        $message = $this->getReviewStr($this->review_type)."必须是整数";
+                        $this->addError($attribute,$message);
+                    }
+                }
+            }
+        }else{
+	        $this->change_num = 0;
+        }
+	}
+
+	public function getReviewStr($type){
+	    switch ($type){
+            case 2:
+                return Yii::t("contract","sick leave and personal leave");//总病假及事假天数
+            case 3:
+                return Yii::t("contract","Substantial sales performance");//实质销售成绩
+        }
+        return "異常";
+    }
+
+	public function returnChangeReviewType(){
+	    $html='';
+	    $className = get_class($this);
+	    if(in_array($this->review_type,array(2,3))){
+	        $change_num = '';
+	        $arr = array("readonly"=>$this->getReadonly(),"min"=>0,"id"=>"changeTwo","data-change"=>"two");
+	        if($this->review_type == 3){
+	            $arr["max"] = 10;
+	            $arr["data-change"] = "three";
+            }
+            if(!empty($this->change_num)){
+                if($this->review_type == 3){
+                    $change_num =$this->change_num*10;
+                    $change_num = sprintf("%.2f",$change_num);
+                }else{
+                    $change_num = 15-($this->change_num*0.5);
+                    $change_num = $change_num<0?0:$change_num;
+                }
+            }
+	        $html.='<div class="form-group">';
+            $html.=TbHtml::label($this->getReviewStr($this->review_type),'',array('class'=>"col-sm-2 control-label"));
+            $html.='<div class="col-sm-2">';
+            $html.=TbHtml::numberField($className."[change_num]",$this->change_num,$arr);
+	        $html.='</div>';
+            $html.=TbHtml::label(Yii::t("contract","review number"),'',array('class'=>"col-sm-2 control-label"));
+            $html.='<div class="col-sm-2">';
+            $html.=TbHtml::numberField("change_num",$change_num,array("readonly"=>true,'id'=>"change_value"));
+	        $html.='</div>';
+	        $html.='</div>';
+        }
+
+        return $html;
+    }
+
     public function validateList($attribute, $params){
         if(!empty($this->tem_list)){
             $arr = array();
             $tem_s_list = array();
             $this->tem_sum = 0;
+            $this->four_with_count = 0;
             foreach ($this->tem_list as $key => $list){
                 if($list=='on'){
-                    $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,a.set_id,b.set_code,b.set_name")->from("hr_set_pro a")
+                    $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,a.set_id,b.set_code,b.set_name,b.four_with")->from("hr_set_pro a")
                         ->leftJoin("hr_set b","b.id = a.set_id")
                         ->where('a.id=:id',array(':id'=>$key))->queryRow();
                     if(!$rows){
@@ -99,9 +177,13 @@ class ReviewAllotForm extends CFormModel
                         break;
                     }else{
                         $this->tem_sum++;
+                        if($rows['four_with']==1){
+                            $this->four_with_count++;
+                        }
                         $arr[] = $key;
                         $tem_s_list[$rows['set_id']]['code']=$rows['set_code'];
                         $tem_s_list[$rows['set_id']]['name']=$rows['set_name'];
+                        $tem_s_list[$rows['set_id']]['four_with']=$rows['four_with'];
                         $tem_s_list[$rows['set_id']]['list'][$this->tem_sum]['id']=$this->tem_sum;
                         $tem_s_list[$rows['set_id']]['list'][$this->tem_sum]['name']=$rows['pro_name'];
                     }
@@ -119,6 +201,7 @@ class ReviewAllotForm extends CFormModel
 
 	public function validateIdList($attribute, $params){
 	    if(!empty($this->id_list)){ //考核經理驗證
+            $this->count_num = $this->review_type == 3?30:100;
             $sum = 0;
             $this->name_list = array();
             $idList =array();
@@ -143,12 +226,16 @@ class ReviewAllotForm extends CFormModel
                     $message = Yii::t('contract','manager percent').Yii::t('contract',' can not be empty');
                     $this->addError($attribute,$message);
                     return false;
+                }elseif ($list['num']<0||intval($list['num'])!=floatval($list['num'])){
+                    $message = $rows["name"]."的考核所占比格式不正确";
+                    $this->addError($attribute,$message);
+                    return false;
                 }
                 $this->name_list[] = $rows["name"]."（".$list["num"]."%）";
                 $sum+=intval($list["num"]);
             }
-            if($sum!=100){
-                $message = '經理考核佔比必須為100';
+            if($sum!=$this->count_num){
+                $message = '經理考核佔比必須為'.$this->count_num;
                 $this->addError($attribute,$message);
                 return false;
             }
@@ -162,31 +249,13 @@ class ReviewAllotForm extends CFormModel
         //,b.status_type,b.year,b.year_type,b.id as review_id
         $dateTime = ReviewAllotList::getReviewDateTime($year,$year_type);
 		$row = Yii::app()->db->createCommand()
-            ->select("a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name")
+            ->select("a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name,d.review_type")
             ->from("hr_employee a")
             ->leftJoin("hr_company c","a.company_id = c.id")
             ->leftJoin("hr_dept d","a.position = d.id")
             ->where("a.id=:id and a.city in ($city_allow) AND a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",array(":id"=>$index))->queryRow();
 		if ($row) {
-            $review = Yii::app()->db->createCommand()
-                ->select("status_type,year,id_list,id_s_list,year_type,tem_str,tem_s_ist,id as review_id")
-                ->from("hr_review")
-                ->where("employee_id=:id and year = :year and year_type = :year_type",
-                    array(
-                        ":id"=>$row["id"],
-                        ":year"=>$year,
-                        ":year_type"=>$year_type,
-                    )
-                )->queryRow();
-            if($review){
-                $this->status_type = $review['status_type'];
-                //$this->status_type = ReviewAllotList::getReviewStatuts($review['status_type'])["status"];
-                $this->review_id = $review['review_id'];
-                $this->tem_str = $review['tem_str'];
-                $this->id_s_list = $review['id_s_list'];
-                $this->id_list = json_decode($review['id_list'],true);
-                $this->tem_s_ist = json_decode($review['tem_s_ist'],true);
-            }
+            $this->review_type = $row['review_type'];
             $this->year = $year;
             $this->year_type = $year_type;
             $this->employee_id = $row['id'];
@@ -197,6 +266,29 @@ class ReviewAllotForm extends CFormModel
             $this->dept_name = $row['dept_name'];
             $this->code = $row['code'];
             $this->phone = $row['phone'];
+            $review = Yii::app()->db->createCommand()
+                ->select("status_type,year,id_list,id_s_list,year_type,tem_str,tem_s_ist,change_num,review_type,id as review_id")
+                ->from("hr_review")
+                ->where("employee_id=:id and year = :year and year_type = :year_type",
+                    array(
+                        ":id"=>$row["id"],
+                        ":year"=>$year,
+                        ":year_type"=>$year_type,
+                    )
+                )->queryRow();
+            if($review){
+                $this->change_num = $review['change_num'];
+                $this->review_type = $review['review_type'];
+                $this->status_type = $review['status_type'];
+                //$this->status_type = ReviewAllotList::getReviewStatuts($review['status_type'])["status"];
+                $this->review_id = $review['review_id'];
+                $this->tem_str = $review['tem_str'];
+                $this->tem_str = $review['tem_str'];
+                $this->id_s_list = $review['id_s_list'];
+                $this->id_list = json_decode($review['id_list'],true);
+                $this->tem_s_ist = json_decode($review['tem_s_ist'],true);
+            }
+            $this->count_num = $this->review_type == 3?30:100;
             $this->getEmployeeTemplate();
             return true;
 		}else{
@@ -214,6 +306,22 @@ class ReviewAllotForm extends CFormModel
                 $this->tem_str = $row["tem_str"];
                 $this->id_list = json_decode($row["id_list"],true);
             }
+        }
+
+        if($this->change_num === null&&$this->review_type == 2){
+            if($this->year_type == 1){
+                $startTime = $this->year."/04";
+                $endTime = $this->year."/09";
+            }else{
+                $startTime = $this->year."/10";
+                $endTime = ($this->year+1)."/03";
+            }
+            $dateSql = "and date_format(a.start_time,'%Y/%m')>='$startTime' and date_format(a.start_time,'%Y/%m')<='$endTime'";
+            $this->change_num = Yii::app()->db->createCommand()->select("sum(a.log_time)")
+                ->from("hr_employee_leave a")
+                ->leftJoin("hr_vacation b","a.vacation_id = b.id")
+                ->where("a.employee_id= :id and a.status = 4 and b.sub_bool = 1 $dateSql",array(":id"=>$this->employee_id))->queryScalar();
+            //var_dump($this->change_num);
         }
     }
 
@@ -333,6 +441,8 @@ class ReviewAllotForm extends CFormModel
                     'tem_s_ist'=>json_encode($this->tem_s_ist),
                     'status_type'=>$this->status_type,
                     'tem_str'=>$this->tem_str,
+                    'review_type'=>$this->review_type,
+                    'change_num'=>$this->change_num,
                     'lcu'=>$uid,
                 ));
                 $this->review_id = Yii::app()->db->getLastInsertID();
@@ -346,6 +456,8 @@ class ReviewAllotForm extends CFormModel
                     'tem_s_ist'=>json_encode($this->tem_s_ist),
                     'status_type'=>$this->status_type,
                     'tem_str'=>$this->tem_str,
+                    'review_type'=>$this->review_type,
+                    'change_num'=>$this->change_num,
                     'luu'=>$uid,
                 ), 'id=:id', array(':id'=>$this->review_id));
                 break;
@@ -380,6 +492,7 @@ class ReviewAllotForm extends CFormModel
                     'handle_per'=>$list["num"],
                     'tem_s_ist'=>json_encode($this->tem_s_ist),
                     'tem_sum'=>$this->tem_sum,
+                    'four_with_count'=>$this->four_with_count,
                     'lcu'=>Yii::app()->user->id,
                 ));
             }

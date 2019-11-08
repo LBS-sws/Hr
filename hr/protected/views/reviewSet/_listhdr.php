@@ -16,6 +16,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('four_with').$this->drawOrderArrow('a.four_with'),'#',$this->createOrderLink('reviewSet-list','a.four_with'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('z_index').$this->drawOrderArrow('a.z_index'),'#',$this->createOrderLink('reviewSet-list','a.z_index'))
 			;
 		?>

@@ -10,12 +10,15 @@ class TemplateEmployeeForm extends CFormModel
     public $id_list;
     public $id_s_list;
     public $name_list;
+    public $review_type;
+    public $count_num=100;
 
 	public function attributeLabels()
 	{
 		return array(
             'employee_id'=>Yii::t('contract','Employee Name'),
             'tem_name'=>Yii::t('contract','template name'),
+            'review_type'=>Yii::t('contract','review type'),
             'tem_id'=>Yii::t('contract','template name'),
 		);
 	}
@@ -26,7 +29,7 @@ class TemplateEmployeeForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, tem_id,city,employee_id','safe'),
+			array('id, tem_id,city,employee_id,employee_name','safe'),
             array('tem_id','required'),
             array('employee_id','required'),
             array('employee_id','validateName'),
@@ -37,9 +40,11 @@ class TemplateEmployeeForm extends CFormModel
 	public function validateName($attribute, $params){
 	    if(!empty($this->tem_id)){
             $city_allow = Yii::app()->user->city_allow();
-            $row = Yii::app()->db->createCommand()->select("city")->from("hr_employee")
-                ->where("id=:id and city IN ($city_allow)",array(':id'=>$this->employee_id))->queryRow();
+            $row = Yii::app()->db->createCommand()->select("a.city,b.review_type")->from("hr_employee a")
+                ->leftJoin("hr_dept b","a.position = b.id")
+                ->where("a.id=:id and a.city IN ($city_allow)",array(':id'=>$this->employee_id))->queryRow();
             if($row){
+                $this->review_type = $row["review_type"];
                 $row = Yii::app()->db->createCommand()->select("city")->from("hr_template")
                     ->where("id=:id and city=:city",array(':id'=>$this->tem_id,':city'=>$row['city']))->queryRow();
                 if($row){
@@ -63,6 +68,7 @@ class TemplateEmployeeForm extends CFormModel
 	}
     public function validateIdList($attribute, $params){
         if(!empty($this->id_list)){ //考核經理驗證
+            $this->count_num = $this->review_type == 3?30:100;
             $sum = 0;
             $this->name_list = array();
             $idList =array();
@@ -87,12 +93,16 @@ class TemplateEmployeeForm extends CFormModel
                     $message = Yii::t('contract','manager percent').Yii::t('contract',' can not be empty');
                     $this->addError($attribute,$message);
                     return false;
+                }elseif ($list['num']<0||intval($list['num'])!=floatval($list['num'])){
+                    $message = $rows["name"]."的占比格式不正确";
+                    $this->addError($attribute,$message);
+                    return false;
                 }
                 $this->name_list[] = $rows["name"]."（".$list["num"]."%）";
                 $sum+=intval($list["num"]);
             }
-            if($sum!=100){
-                $message = '經理考核佔比必須為100';
+            if($sum!=$this->count_num){
+                $message = '經理考核佔比必須為'.$this->count_num;
                 $this->addError($attribute,$message);
                 return false;
             }
@@ -103,10 +113,13 @@ class TemplateEmployeeForm extends CFormModel
     }
 
 	public function retrieveData($index) {
-		$row = Yii::app()->db->createCommand()->select("city,name")
-            ->from("hr_employee")->where("id=:id",array(":id"=>$index))->queryRow();
+		$row = Yii::app()->db->createCommand()->select("a.city,a.name,b.review_type")->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("a.id=:id",array(":id"=>$index))->queryRow();
 		if($row){
 		    $this->city = $row["city"];
+		    $this->review_type = $row["review_type"];
+            $this->count_num = $this->review_type == 3?30:100;
 		    $this->employee_id = $index;
 		    $this->employee_name = $row["name"];
             $row = Yii::app()->db->createCommand()->select("*")

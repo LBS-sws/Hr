@@ -57,6 +57,16 @@ $this->pageTitle=Yii::app()->name . ' - ReviewAllot Form';
                 'model'=>$model,
             ));
             ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'review_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo TbHtml::textField("review_type",DeptForm::getReviewType($model->review_type),array("readonly"=>true)) ?>
+                </div>
+            </div>
+
+            <?php
+                echo $model->returnChangeReviewType();
+            ?>
 
             <legend><?php echo Yii::t("contract","reviewAllot manager");?></legend><!--考核经理-->
             <div class="form-group">
@@ -181,8 +191,8 @@ $js = "
         var value = $(this).val();
         $(this).addClass('noneChange');
         var num = $('.changeNum').not('.noneChange').length;
-        var sum = 100;
-        if(value<100&&num!=0){
+        var sum = ".$model->count_num.";
+        if(value<sum&&num!=0){
             $('.changeNum.noneChange').each(function(){
                 sum-=$(this).val();
             });
@@ -192,6 +202,21 @@ $js = "
             if(proNum!=0){
                 $('.changeNum').not('.noneChange').last().val(newNum+proNum);
             }
+        }
+    });
+    
+    $('#changeTwo').keyup(function(){
+        var value = $(this).val();
+        var change = $(this).data('change');
+        if(value!=''){
+            if(change == 'three'){
+                value *=10;
+                value = parseFloat(value).toFixed(2);
+            }else{
+                value =15-(value*0.5);
+                value = value<0?0:value;
+            }
+            $('#change_value').val(value);
         }
     });
 ";

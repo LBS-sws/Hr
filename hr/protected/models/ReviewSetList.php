@@ -14,6 +14,7 @@ class ReviewSetList extends CListPageModel
             'set_code'=>Yii::t('contract','set code'),
             'set_name'=>Yii::t('contract','set name'),
             'pro_num'=>Yii::t('contract','pro num'),
+            'four_with'=>Yii::t('contract','four with'),
             'z_index'=>Yii::t('fete','level'),
 		);
 	}
@@ -71,6 +72,7 @@ class ReviewSetList extends CListPageModel
 					'set_name'=>$record['set_name'],
 					'set_code'=>$record['set_code'],
 					'pro_num'=>$record['pro_num'],
+					'four_with'=>ReviewSetForm::getFourWith($record['four_with']),
 					'z_index'=>$record['z_index']
 				);
 			}

@@ -18,6 +18,7 @@ class DeptForm extends CFormModel
 	public $manager=0;
 	public $technician=0;
 	public $review_status=0;
+	public $review_type=1;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -35,6 +36,7 @@ class DeptForm extends CFormModel
             'manager'=>Yii::t('fete','Manager level audit'),
             'technician'=>Yii::t('fete','technician'),
             'review_status'=>Yii::t('contract','dept review'),
+            'review_type'=>Yii::t('contract','review type'),
 		);
 	}
 
@@ -45,8 +47,9 @@ class DeptForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, dept_id, type, dept_class, manager, technician, review_status','safe'),
+            array('id, name, z_index, dept_id, type, dept_class, manager, technician, review_status, review_type','safe'),
 			array('name','required'),
+			array('review_type','required'),
 			array('city','validateCity'),
             array('dept_id','validateDeptId'),
 			array('name','validateName'),
@@ -158,6 +161,19 @@ class DeptForm extends CFormModel
         return $arr;
     }
 
+    public function getReviewType($str=""){
+	    $arr = array(
+	        1=>Yii::t("contract","normal"),
+	        2=>Yii::t("fete","technician"),
+	        3=>Yii::t("staff","Sales"),
+	        4=>Yii::t("fete","charge"),
+        );
+	    if(key_exists($str,$arr)){
+            return $arr[$str];
+        }
+        return $arr;
+    }
+
     //獲取職位列表
 	public function getDeptListToCity($dept_id,$city=''){
 	    $sql = "";
@@ -251,6 +267,7 @@ class DeptForm extends CFormModel
                 $this->dept_class = $row['dept_class'];
                 $this->manager = $row['manager'];
                 $this->technician = $row['technician'];
+                $this->review_type = $row['review_type'];
                 $this->review_status = $row['review_status'];
 				break;
 			}
@@ -284,9 +301,9 @@ class DeptForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
-							name, type, z_index, dept_id, city, dept_class, manager, technician, review_status, lcu
+							name, type, z_index, dept_id, city, dept_class, manager, technician, review_status, review_type, lcu
 						) values (
-							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :review_status, :lcu
+							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :review_status, :review_type, :lcu
 						)";
 				break;
 			case 'edit':
@@ -300,6 +317,7 @@ class DeptForm extends CFormModel
 							manager = :manager,
 							technician = :technician,
 							review_status = :review_status,
+							review_type = :review_type,
 							luu = :luu 
 						where id = :id
 						";
@@ -325,6 +343,8 @@ class DeptForm extends CFormModel
 			$command->bindParam(':technician',$this->technician,PDO::PARAM_STR);
 		if (strpos($sql,':review_status')!==false)
 			$command->bindParam(':review_status',$this->review_status,PDO::PARAM_STR);
+		if (strpos($sql,':review_type')!==false)
+			$command->bindParam(':review_type',$this->review_type,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);

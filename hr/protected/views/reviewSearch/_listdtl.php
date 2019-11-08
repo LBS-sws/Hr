@@ -10,6 +10,7 @@
     <td><?php echo $this->record['position']; ?></td>
     <td><?php echo $this->record['entry_time']; ?></td>
     <td><?php echo $this->record['company_id']; ?></td>
+    <td><?php echo $this->record['review_type']; ?></td>
     <td><?php echo $this->record['year']; ?></td>
     <td><?php echo $this->record['year_type']; ?></td>
     <td><?php echo $this->record['name_list']; ?></td>

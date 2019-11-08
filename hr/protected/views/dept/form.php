@@ -138,6 +138,14 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         ); ?>
                     </div>
                 </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'review_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'review_type',$model->getReviewType(),
+                            array('disabled'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
             <?php endif; ?>
 
 		</div>

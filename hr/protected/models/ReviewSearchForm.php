@@ -17,6 +17,8 @@ class ReviewSearchForm extends CFormModel
 	public $year;
 	public $name_list;
 	public $login_id;
+	public $review_type;
+	public $change_num;
     public $department;//部門
     public $ranking_bool = false;//评分差异排名
     public $leave_bool = '待定';//評分差異排名後的等級顯示
@@ -36,6 +38,7 @@ class ReviewSearchForm extends CFormModel
 	public $tem_s_ist;//审核权限的序列化
 	public $tem_sum;
 	public $table_foot;
+	public $with_foot;//四用表格
 	public $pro_str='';//統計表格的字符串.例如：（甲-乙）
 
 	public function attributeLabels()
@@ -61,6 +64,7 @@ class ReviewSearchForm extends CFormModel
             'strengths'=>Yii::t('contract','employee strengths'),
             'target'=>Yii::t('contract','employee target'),
             'improve'=>Yii::t('contract','employee improve'),
+            'review_type'=>Yii::t('contract','review type'),
 		);
 	}
 
@@ -113,7 +117,7 @@ class ReviewSearchForm extends CFormModel
             $expr_sql.=" and (FIND_IN_SET('$this->login_id',b.id_s_list) or b.employee_id = '$this->login_id' or b.lcu = '$this->login_id')";
         }
 		$row = Yii::app()->db->createCommand()
-            ->select("c.department,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id")
+            ->select("c.department,b.review_type,b.change_num,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id")
             ->from("hr_review b")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
             ->leftJoin("hr_company d","c.company_id = d.id")
@@ -136,6 +140,8 @@ class ReviewSearchForm extends CFormModel
             $this->code = $row['code'];
             $this->department = $row['department'];
             $this->phone = $row['phone'];
+            $this->review_type = $row['review_type'];
+            $this->change_num = $row['change_num'];
             $this->review_sum = $row['review_sum'];
 //&#10;
             $this->employee_remark = $row['employee_remark'];
@@ -173,32 +179,51 @@ class ReviewSearchForm extends CFormModel
         }
     }
 
+    protected function getTableHeaderHtml($rows,$bool = false){
+        if($bool&&$this->review_type == 3){
+            $rows[] = array(
+                "handle_per"=>"70",
+                "handle_name"=>Yii::t("contract","Substantial sales performance")
+            );
+            $this->table_foot["sumNum"][] = 1;
+            $this->table_foot["sumList"][] = $this->change_num;
+            $this->table_foot["preList"][] = 70;
+        }
+        $colspan = count($rows)+1;
+        $width = intval(50/$colspan);
+        $handleNameHtml = '';
+        $handleHtml="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered table-striped'>";
+        $handleHtml.="<thead><tr><th colspan='2' width='50%' class='text-center'>".Yii::t("contract","Performance factors")."</th>";
+        foreach ($rows as $row){
+            $handleHtml.="<th width='$width%'>".$row['handle_per']."(%)</th>";
+            $handleNameHtml.="<th>".$row['handle_name']."</th>";
+        }
+        $handleHtml.="<th width='$width%'>&nbsp;</th></tr>";
+        $handleHtml.="<tr><th colspan='2' class='text-center'>".Yii::t("contract","Employee evaluated")."</th><th colspan='$colspan'>".$this->name."</th></tr>";
+        $handleHtml.="<tr><th colspan='2' class='text-center'>".Yii::t("contract","Assessment person")."</th>$handleNameHtml<th>".Yii::t("contract","review number")."</th></tr>";
+
+        return $handleHtml;
+    }
+
     public function getTabList(){
         $tabs = array();
         $rows = Yii::app()->db->createCommand()->select("*")->from("hr_review_h")
             ->where("review_id=:review_id",array(":review_id"=>$this->id))->queryAll();
         if(is_array($this->tem_s_ist)&&$rows){
             $this->table_foot = array( //表格底部統計
-                'sumNum'=>0,
+                'sumNum'=>array(),
                 'sumList'=>array(),
                 'preList'=>array()
             );
-            $colspan = count($rows)+1;
-            $width = intval(50/$colspan);
-            $handleNameHtml = '';
-            $handleHtml="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered table-striped'>";
-            $handleHtml.="<thead><tr><th colspan='2' width='50%' class='text-center'>".Yii::t("contract","Performance factors")."</th>";
+            $handleHtml=$this->getTableHeaderHtml($rows);
             foreach ($rows as &$row){
                 $this->resetRemarkList($row);//員工評語
                 $row['list'] = json_decode($row["tem_s_ist"],true);
-                $handleHtml.="<th width='$width%'>".$row['handle_per']."(%)</th>";
-                $handleNameHtml.="<th>".$row['handle_name']."</th>";
+                $this->table_foot["sumNum"][] = 0;
                 $this->table_foot["sumList"][] = 0;
                 $this->table_foot["preList"][] = $row["handle_per"];
             }
-            $handleHtml.="<th width='$width%'>&nbsp;</th></tr>";
-            $handleHtml.="<tr><th colspan='2' class='text-center'>".Yii::t("contract","Employee evaluated")."</th><th colspan='$colspan'>".$this->name."</th></tr>";
-            $handleHtml.="<tr><th colspan='2' class='text-center'>".Yii::t("contract","Assessment person")."</th>$handleNameHtml<th>".Yii::t("contract","review number")."</th></tr>";
+            $this->with_foot = $this->table_foot;
             foreach ($this->tem_s_ist as $set_id => $setList) {
                 $this->pro_str = empty($this->pro_str)?"（".$setList['code']."-":$this->pro_str;
                 $content = $this->reviewSearchDiv($set_id,$setList,$rows,$handleHtml);
@@ -211,7 +236,7 @@ class ReviewSearchForm extends CFormModel
             if (isset($setList['code'])){
                 $this->pro_str .= $setList['code']."）";
             }
-            $content = "<p>&nbsp;</p>".$this->getCountTable($handleHtml);
+            $content = "<p>&nbsp;</p>".$this->getCountTable($this->getTableHeaderHtml($rows,$this->status_type == 3));
             $tabs[] = array(
                 'label'=>Yii::t("contract","review sum"),
                 'content'=>&$content,
@@ -237,7 +262,7 @@ class ReviewSearchForm extends CFormModel
     protected function reviewSearchDiv($set_id,$setList,$rows,$handleHtml){
         $sum = (count($setList['list'])*10);
         $footArr = array( //表格底部統計
-            'sumNum'=>$sum,
+            'sumNum'=>array(),
             'sumList'=>array(),
             'preList'=>array()
         );
@@ -246,6 +271,7 @@ class ReviewSearchForm extends CFormModel
         $html.="<tr><th width='1%'>".$setList['code']."</th><th>".$setList['name']."</th>";
         for ($i=0;$i<count($rows);$i++){
             if(!isset($footArr["sumList"][$i])){
+                $footArr["sumNum"][$i] = count($setList['list']);
                 $footArr["sumList"][$i] = 0;
                 $footArr["preList"][$i] = $rows[$i]["handle_per"];
             }
@@ -257,12 +283,15 @@ class ReviewSearchForm extends CFormModel
         //表格內容
         foreach ($setList["list"] as $proList) {
             $num++;
-            $this->table_foot["sumNum"]++;
             $html.="<tr><td>$num</td>";
             $html.="<td>".$proList["name"]."</td>";
             $proSum = 0;
             $proArr= array();
             for ($i=0;$i<count($rows);$i++){
+                $this->table_foot["sumNum"][$i]++;
+                if($setList["four_with"]==1){
+                    $this->with_foot["sumNum"][$i]++;
+                }
                 $bool = ($rows[$i]['handle_id']!=$this->login_id&&$this->employee_id!=$this->login_id);
                 $bool = in_array($rows[$i]['status_type'],array(1,4))||($bool&&$this->status_type != 3);
                 if(!isset($rows[$i]["list"][$set_id]["list"][$proList["id"]]["value"])||$bool){
@@ -272,6 +301,9 @@ class ReviewSearchForm extends CFormModel
                     $proValue = $rows[$i]["list"][$set_id]["list"][$proList["id"]]["value"];
                     $footArr["sumList"][$i]+=$proValue;
                     $this->table_foot["sumList"][$i]+=$proValue;
+                    if($setList["four_with"]==1){
+                        $this->with_foot["sumList"][$i]+=$proValue;
+                    }
                     $proSum = $proSum+$proValue;
                 }
                 if(!ReviewHandleForm::scoringOk($proValue)&&$proValue!="-"&&isset($rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"])){
@@ -443,24 +475,64 @@ class ReviewSearchForm extends CFormModel
         }
     }
 
+    public function validateWithFoot(){
+        if(empty($this->with_foot["sumNum"][0])){
+            return false;
+        }else{
+            return true;
+        }
+    }
+
     public function returnTableFoot($footArr,$str="",$bool=false){
         if($bool){
             $this->reviewBool();//判斷部門下參與評分的人數是否多餘10人
         }
+        $str = $this->review_type == 4?"":$str;
+        $withFoot = $this->with_foot;
+        $nameStr = (in_array($this->review_type,array(2,4))&&$this->status_type==3&&$bool)?Yii::t("contract","employee total score"):Yii::t("contract","Percentage Sum");
         $footList = array(
             array("code"=>"A","name"=>Yii::t("contract","Project total score").$str,"list"=>array()),
             array("code"=>"B","name"=>Yii::t("contract","assessed total score"),"list"=>array()),
             array("code"=>"C","name"=>Yii::t("contract","Percentage score")."（B/A*100）","list"=>array()),
             array("code"=>"D","name"=>Yii::t("contract","Scoring ratio"),"list"=>array()),
-            array("code"=>"E","name"=>Yii::t("contract","Percentage Sum")."（C*D）","list"=>array()),
+            array("code"=>"E","name"=>$nameStr."（C*D）","list"=>array()),
         );
+        if($this->status_type==3&&$bool){
+            switch ($this->review_type){
+                case 2:
+                    $footList[] = array("code"=>"F","name"=>Yii::t("contract","Percentage Sum")."（E*85%）","list"=>array());
+                    break;
+                case 4:
+                    if(!empty($this->with_foot["sumNum"][0])){ //含有四有
+                        $footList[] = array("code"=>"F","name"=>Yii::t("contract","Percentage Sum")."（E*90%）","list"=>array());
+                    }
+                    break;
+            }
+        }
         $html = '';
         foreach ($footArr["sumList"] as $key => $sum){
-            $footList[0]['list'][$key] = $footArr["sumNum"];
+            $sumNum = $footArr["sumNum"][$key]*10;
+            if($this->review_type == 4&&$bool){
+                $sumNum -=$withFoot["sumNum"][$key]*10;
+                $sum -=$withFoot["sumList"][$key];
+            }
+            $footList[0]['list'][$key] = $sumNum;
             $footList[1]['list'][$key] = $sum;
-            $footList[2]['list'][$key] = sprintf("%.2f",($sum/$footArr["sumNum"])*100);
+            $footList[2]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*100);
             $footList[3]['list'][$key] = $footArr["preList"][$key];
-            $footList[4]['list'][$key] = sprintf("%.2f",($sum/$footArr["sumNum"])*$footArr["preList"][$key]);
+            $footList[4]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*$footArr["preList"][$key]);
+            if($this->status_type==3&&$bool){
+                switch ($this->review_type){
+                    case 2:
+                        $footList[5]['list'][$key] = sprintf("%.2f",(($sum/$sumNum)*$footArr["preList"][$key]*0.85));
+                        break;
+                    case 4:
+                        if(!empty($this->with_foot["sumNum"][0])){ //含有四有
+                            $footList[5]['list'][$key] = sprintf("%.2f",(($sum/$sumNum)*$footArr["preList"][$key]*0.9));
+                        }
+                        break;
+                }
+            }
         }
         foreach ($footList as $list){
             $html.="<tr>";
@@ -471,8 +543,21 @@ class ReviewSearchForm extends CFormModel
                 $html.="<th>".$item."</th>";
                 $sum+=$item;
             }
-            $html.="<th>$sum</th>";
+            $html.="<th>".$sum."</th>";
             $html.="</tr>";
+        }
+        $num = count($footList[0]['list'])+2;
+        if($this->status_type==3&&$bool){
+            switch ($this->review_type){
+                case 2://技術員的專屬表格
+                    $html.=$this->reviewTwoHtml($num,$sum);
+                    break;
+                case 4:
+                    if(!empty($this->with_foot["sumNum"][0])) { //含有四有
+                        $html.=$this->reviewThreeHtml($num,$sum);
+                    }
+                    break;
+            }
         }
         if(!empty($str)){
             if($this->status_type != 3){
@@ -484,9 +569,65 @@ class ReviewSearchForm extends CFormModel
                     $reviewLevel =$this->getReviewLevelToSum($sum);
                 }
             }
-            $num = count($footList[0]['list'])+2;
             $html.="<tr><th class='text-right' colspan='$num'>:REVIEWGRADE</th><th>$reviewLevel</th></tr>";
         }
+
+        return $html;
+    }
+
+    private function reviewTwoHtml($num,&$sum){
+        $change_num = 15-($this->change_num*0.5);
+        $change_num = $change_num<0?0:$change_num;
+        $html="<tr><td colspan='".($num+1)."'>".Yii::t("contract","Attendance score")." (15%)</td></tr>";
+        $html.="<tr><th>G</th><th>".Yii::t("contract","sick leave and personal leave")."</th><th colspan='".($num-2)."'></th>";
+        $html.="<th>".$this->change_num."</th>";
+        $html.="</tr>";
+        $html.="<tr><th>H</th><th>".Yii::t("contract","Attendance score")."</th><th colspan='".($num-2)."'></th>";
+        $html.="<th>$change_num</th>";
+        $html.="</tr>";
+        $html.="<tr><td colspan='".($num+1)."'>".Yii::t("contract","total score")." (100%)</td></tr>";
+        $html.="<tr><th>J</th><th>".Yii::t("contract","Percentage score")."(".Yii::t("contract","Out of 100").") (F + H)</th><th colspan='".($num-2)."'>&nbsp;</th>";
+        $sum+=$change_num;
+        $html.="<th>$sum</th>";
+        $html.="</tr>";
+
+        return $html;
+    }
+
+    private function reviewThreeHtml($num,&$otherSum){
+        $footArr = $this->with_foot;
+        $footList = array(
+            array("code"=>"G","name"=>Yii::t("contract","Project total score"),"list"=>array()),
+            array("code"=>"H","name"=>Yii::t("contract","assessed total score"),"list"=>array()),
+            array("code"=>"J","name"=>Yii::t("contract","Percentage score")."（H/G*100）","list"=>array()),
+            array("code"=>"K","name"=>Yii::t("contract","Scoring ratio"),"list"=>array()),
+            array("code"=>"L","name"=>Yii::t("contract","employee total score")."（J*K）","list"=>array()),
+            array("code"=>"M","name"=>"“四用”总得分（L*10%）","list"=>array()),
+        );
+        foreach ($footArr["sumList"] as $key => $sum){
+            $sumNum = $footArr["sumNum"][$key]*10;
+            $footList[0]['list'][$key] = $sumNum;
+            $footList[1]['list'][$key] = $sum;
+            $footList[2]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*100);
+            $footList[3]['list'][$key] = $footArr["preList"][$key];
+            $footList[4]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*$footArr["preList"][$key]);
+            $footList[5]['list'][$key] = sprintf("%.2f",(($sum/$sumNum)*$footArr["preList"][$key]*0.1));
+        }
+        $html="<tr><td colspan='".($num+1)."'>“四用”之得分 (10%)</td></tr>";
+        foreach ($footList as $list){
+            $html.="<tr>";
+            $html.="<th>".$list["code"]."</th>";
+            $html.="<th>".$list["name"]."</th>";
+            $sum = 0;
+            foreach($list["list"] as $item){
+                $html.="<th>".$item."</th>";
+                $sum+=$item;
+            }
+            $html.="<th>".$sum."</th>";
+            $html.="</tr>";
+        }
+        $otherSum +=$sum;
+        $html.="<tr><th colspan='$num' class='text-right'>".Yii::t("contract","review sum")."</th><th>$otherSum</th></tr>";
 
         return $html;
     }
@@ -510,10 +651,25 @@ class ReviewSearchForm extends CFormModel
     }
 
     protected function getCountTable($html){
-        $this->table_foot["sumNum"] = $this->table_foot["sumNum"]*10;
+        //$this->table_foot["sumNum"] = $this->table_foot["sumNum"]*10;
         $sum = 3+count($this->table_foot["sumList"]);
         $html.="</thead><tbody>";
-        $html.="<tr><td colspan='$sum'>".Yii::t("contract","Quarterly assessment score")." (100%)</td></tr>";
+        $html.="<tr><td colspan='$sum'>";
+        switch ($this->review_type){
+            case 2:
+                $html.=Yii::t("contract","Quarterly assessment score")." (85%)";
+                break;
+            case 4:
+                if(!empty($this->with_foot['sumNum'][0])){
+                    $html.=Yii::t("contract","Evaluate project score")." (90%)";
+                }else{
+                    $html.=Yii::t("contract","Evaluate project score")." (100%)";
+                }
+                break;
+            default:
+                $html.=Yii::t("contract","Quarterly assessment score")." (100%)";
+        }
+        $html.="</td></tr>";
         $html.="</tbody><tfoot>";
         $html.=$this->returnTableFoot($this->table_foot,$this->pro_str,true);
         $html.="</tfoot></table></div>";
