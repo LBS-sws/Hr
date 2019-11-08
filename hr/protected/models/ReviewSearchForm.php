@@ -487,7 +487,6 @@ class ReviewSearchForm extends CFormModel
         if($bool){
             $this->reviewBool();//判斷部門下參與評分的人數是否多餘10人
         }
-        $str = $this->review_type == 4?"":$str;
         $withFoot = $this->with_foot;
         $nameStr = (in_array($this->review_type,array(2,4))&&$this->status_type==3&&$bool)?Yii::t("contract","employee total score"):Yii::t("contract","Percentage Sum");
         $footList = array(
