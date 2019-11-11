@@ -19,12 +19,12 @@
     </th>
     <?php endif ?>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('phone').$this->drawOrderArrow('c.phone'),'#',$this->createOrderLink('reviewSearch-list','c.phone'))
+        <?php echo TbHtml::link($this->getLabelName('department').$this->drawOrderArrow('f.name'),'#',$this->createOrderLink('reviewSearch-list','f.name'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('c.position'),'#',$this->createOrderLink('reviewSearch-list','c.position'))
+        <?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('e.name'),'#',$this->createOrderLink('reviewSearch-list','e.name'))
         ;
         ?>
     </th>

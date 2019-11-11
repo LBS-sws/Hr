@@ -30,6 +30,7 @@ class ReviewSearchList extends CListPageModel
             'name_list'=>Yii::t('contract','reviewAllot manager'),
             'review_sum'=>Yii::t('contract','review sum'),
             'review_type'=>Yii::t('contract','review type'),
+            'department'=>Yii::t("contract","Department"),
 		);
 	}
 
@@ -56,11 +57,12 @@ class ReviewSearchList extends CListPageModel
         if(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
             $expr_sql.=" and (FIND_IN_SET('$this->employee_id',b.id_s_list) or b.employee_id = '$this->employee_id' or b.lcu = '$this->employee_id')";
         }
-		$sql1 = "select c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum,b.review_type 
+		$sql1 = "select c.name,f.name as ment_name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum,b.review_type 
                 from hr_review b 
                 LEFT JOIN hr_employee c ON c.id = b.employee_id
                 LEFT JOIN hr_company d ON c.company_id = d.id
                 LEFT JOIN hr_dept e ON c.position = e.id
+                LEFT JOIN hr_dept f ON c.department = f.id
                 where c.city IN ($city_allow) AND c.staff_status = 0 $expr_sql
 			";
 		$sql2 = "select count(*)  
@@ -68,6 +70,7 @@ class ReviewSearchList extends CListPageModel
                 LEFT JOIN hr_employee c ON c.id = b.employee_id
                 LEFT JOIN hr_company d ON c.company_id = d.id
                 LEFT JOIN hr_dept e ON c.position = e.id
+                LEFT JOIN hr_dept f ON c.department = f.id
                 where c.city IN ($city_allow) AND c.staff_status = 0 $expr_sql
 			";
 		$clause = "";
@@ -83,6 +86,9 @@ class ReviewSearchList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('c.phone',$svalue);
 					break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('f.name',$svalue);
+                    break;
                 case 'position':
                     $clause .= General::getSqlConditionClause('e.name',$svalue);
                     break;
@@ -123,6 +129,7 @@ class ReviewSearchList extends CListPageModel
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
 					'company_id'=>$record['company_name'],
+                    'department'=>$record['ment_name'],
 					'phone'=>$record['phone'],
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],

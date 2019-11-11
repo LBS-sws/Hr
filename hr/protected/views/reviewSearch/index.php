@@ -20,7 +20,7 @@ $this->pageTitle=Yii::app()->name . ' - reviewSearch';
     $search = array(
         'code',
         'name',
-        'phone',
+        'department',
         'position',
         'year',
     );

@@ -27,6 +27,7 @@ class ReviewHandleList extends CListPageModel
             'entry_time'=>Yii::t('contract','Entry Time'),
             'year'=>Yii::t('contract','what year'),
             'year_type'=>Yii::t('contract','year type'),
+            'department'=>Yii::t("contract","Department"),
 		);
 	}
 
@@ -50,12 +51,13 @@ class ReviewHandleList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         //FIND_IN_SET
         $expr_sql = " and a.handle_id = $this->employee_id and a.status_type in (1,4)";
-		$sql1 = "select c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,a.status_type,b.year,b.year_type,a.id 
+		$sql1 = "select c.name,f.name as ment_name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,a.status_type,b.year,b.year_type,a.id 
                 from hr_review_h a 
                 LEFT JOIN hr_review b ON a.review_id = b.id
                 LEFT JOIN hr_employee c ON c.id = b.employee_id
                 LEFT JOIN hr_company d ON c.company_id = d.id
                 LEFT JOIN hr_dept e ON c.position = e.id
+                LEFT JOIN hr_dept f ON c.department = f.id
                 where c.city IN ($city_allow) AND c.staff_status = 0 $expr_sql
 			";
 		$sql2 = "select count(*) from hr_review_h a 
@@ -63,6 +65,7 @@ class ReviewHandleList extends CListPageModel
                 LEFT JOIN hr_employee c ON c.id = b.employee_id
                 LEFT JOIN hr_company d ON c.company_id = d.id
                 LEFT JOIN hr_dept e ON c.position = e.id
+                LEFT JOIN hr_dept f ON c.department = f.id
                 where c.city IN ($city_allow) AND c.staff_status = 0 $expr_sql
 			";
 		$clause = "";
@@ -78,6 +81,9 @@ class ReviewHandleList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('c.phone',$svalue);
 					break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('f.name',$svalue);
+                    break;
                 case 'position':
                     $clause .= General::getSqlConditionClause('e.name',$svalue);
                     break;
@@ -114,6 +120,7 @@ class ReviewHandleList extends CListPageModel
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
 					'company_id'=>$record['company_name'],
+					'department'=>$record['ment_name'],
 					'phone'=>$record['phone'],
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],

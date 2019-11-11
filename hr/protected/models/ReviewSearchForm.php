@@ -518,7 +518,7 @@ class ReviewSearchForm extends CFormModel
             $footList[0]['list'][$key] = $sumNum;
             $footList[1]['list'][$key] = $sum;
             $footList[2]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*100);
-            $footList[3]['list'][$key] = $footArr["preList"][$key];
+            $footList[3]['list'][$key] = $footArr["preList"][$key]."%";
             $footList[4]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*$footArr["preList"][$key]);
             if($this->status_type==3&&$bool){
                 switch ($this->review_type){
@@ -540,7 +540,10 @@ class ReviewSearchForm extends CFormModel
             $sum = 0;
             foreach($list["list"] as $item){
                 $html.="<th>".$item."</th>";
-                $sum+=$item;
+                $sum+=floatval($item);
+            }
+            if(strstr($item,"%")){
+                $sum.="%";
             }
             $html.="<th>".$sum."</th>";
             $html.="</tr>";
@@ -608,7 +611,7 @@ class ReviewSearchForm extends CFormModel
             $footList[0]['list'][$key] = $sumNum;
             $footList[1]['list'][$key] = $sum;
             $footList[2]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*100);
-            $footList[3]['list'][$key] = $footArr["preList"][$key];
+            $footList[3]['list'][$key] = $footArr["preList"][$key]."%";
             $footList[4]['list'][$key] = sprintf("%.2f",($sum/$sumNum)*$footArr["preList"][$key]);
             $footList[5]['list'][$key] = sprintf("%.2f",(($sum/$sumNum)*$footArr["preList"][$key]*0.1));
         }
@@ -620,7 +623,10 @@ class ReviewSearchForm extends CFormModel
             $sum = 0;
             foreach($list["list"] as $item){
                 $html.="<th>".$item."</th>";
-                $sum+=$item;
+                $sum+=floatval($item);
+            }
+            if(strstr($item,"%")){
+                $sum.="%";
             }
             $html.="<th>".$sum."</th>";
             $html.="</tr>";
