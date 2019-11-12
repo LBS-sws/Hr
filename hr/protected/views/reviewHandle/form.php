@@ -197,6 +197,9 @@ Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_
     #prompt_button>span{position: absolute;top:50%;left: 50%;margin-top: -7px;margin-left: -4px;}
     .prompt.active .fa-angle-double-right:before{content: "\f100";}
     .prompt.active>.prompt_div{display: none;}
+    @media (max-width: 768px){
+        .prompt_div{width: 100%;}
+    }
 </style>
 <div id="prompt" class="prompt">
     <div id="prompt_button"><span class="fa fa-angle-double-right"></span></div>
