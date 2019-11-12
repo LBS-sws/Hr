@@ -260,7 +260,7 @@ class ReviewSearchForm extends CFormModel
     }
 
     protected function reviewSearchDiv($set_id,$setList,$rows,$handleHtml){
-        $sum = (count($setList['list'])*10);
+        $sum = (count($setList['list'])*10)*intval($setList['num_ratio']);
         $footArr = array( //表格底部統計
             'sumNum'=>array(),
             'sumList'=>array(),
@@ -271,7 +271,7 @@ class ReviewSearchForm extends CFormModel
         $html.="<tr><th width='1%'>".$setList['code']."</th><th>".$setList['name']."</th>";
         for ($i=0;$i<count($rows);$i++){
             if(!isset($footArr["sumList"][$i])){
-                $footArr["sumNum"][$i] = count($setList['list']);
+                $footArr["sumNum"][$i] = count($setList['list'])*intval($setList['num_ratio']);
                 $footArr["sumList"][$i] = 0;
                 $footArr["preList"][$i] = $rows[$i]["handle_per"];
             }
@@ -288,9 +288,9 @@ class ReviewSearchForm extends CFormModel
             $proSum = 0;
             $proArr= array();
             for ($i=0;$i<count($rows);$i++){
-                $this->table_foot["sumNum"][$i]++;
+                $this->table_foot["sumNum"][$i]+=intval($setList['num_ratio']);
                 if($setList["four_with"]==1){
-                    $this->with_foot["sumNum"][$i]++;
+                    $this->with_foot["sumNum"][$i]+=intval($setList['num_ratio']);
                 }
                 $bool = ($rows[$i]['handle_id']!=$this->login_id&&$this->employee_id!=$this->login_id);
                 $bool = in_array($rows[$i]['status_type'],array(1,4))||($bool&&$this->status_type != 3);
@@ -299,6 +299,7 @@ class ReviewSearchForm extends CFormModel
                     $proValue = "-";
                 }else{
                     $proValue = $rows[$i]["list"][$set_id]["list"][$proList["id"]]["value"];
+                    $proValue *= intval($setList['num_ratio']);
                     $footArr["sumList"][$i]+=$proValue;
                     $this->table_foot["sumList"][$i]+=$proValue;
                     if($setList["four_with"]==1){

@@ -416,5 +416,6 @@ return array(
     'Attendance score'=>'出勤率得分',
     'four with'=>'四用规则',
     'Evaluate project score'=>'评核项目得分',
+    'num ratio'=>'基础分数倍率',
 );
 ?>

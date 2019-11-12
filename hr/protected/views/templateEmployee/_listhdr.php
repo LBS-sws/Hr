@@ -11,17 +11,17 @@
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('a.city'),'#',$this->createOrderLink('reviewAllot-list','a.city'))
+        <?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('a.city'),'#',$this->createOrderLink('templateEmployee-list','a.city'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('phone').$this->drawOrderArrow('a.phone'),'#',$this->createOrderLink('reviewAllot-list','a.phone'))
+        <?php echo TbHtml::link($this->getLabelName('department').$this->drawOrderArrow('f.name'),'#',$this->createOrderLink('templateEmployee-list','f.name'))
         ;
         ?>
     </th>
     <th>
-        <?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('a.position'),'#',$this->createOrderLink('templateEmployee-list','a.position'))
+        <?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('d.name'),'#',$this->createOrderLink('templateEmployee-list','d.name'))
         ;
         ?>
     </th>

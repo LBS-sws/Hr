@@ -20,7 +20,7 @@ $this->pageTitle=Yii::app()->name . ' - templateEmployee';
     $search = array(
         'code',
         'name',
-        'phone',
+        'department',
         'position',
         'city_name',
     );

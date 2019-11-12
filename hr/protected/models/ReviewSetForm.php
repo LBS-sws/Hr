@@ -7,6 +7,7 @@ class ReviewSetForm extends CFormModel
 	public $set_code;
 	public $set_name;
 	public $four_with;
+	public $num_ratio;
 	public $z_index=1;
 
 	public function attributeLabels()
@@ -16,6 +17,7 @@ class ReviewSetForm extends CFormModel
             'set_code'=>Yii::t('contract','set code'),
             'set_name'=>Yii::t('contract','set name'),
             'four_with'=>Yii::t('contract','four with'),
+            'num_ratio'=>Yii::t('contract','num ratio'),
             'z_index'=>Yii::t('fete','level'),
         );
 	}
@@ -26,9 +28,11 @@ class ReviewSetForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, city, set_code,set_name,z_index,four_with','safe'),
+			array('id, city, set_code,set_name,z_index,four_with,num_ratio','safe'),
             array('set_code','required'),
             array('set_name','required'),
+            array('num_ratio','required'),
+            array('num_ratio','numerical','min'=>1),
             array('set_code','validateCode'),
             array('set_name','validateName'),
 		);
@@ -94,6 +98,7 @@ class ReviewSetForm extends CFormModel
             $this->set_name = $row['set_name'];
             $this->four_with = $row['four_with'];
             $this->z_index = $row['z_index'];
+            $this->num_ratio = $row['num_ratio'];
 		}
 		return true;
 	}
@@ -130,9 +135,9 @@ class ReviewSetForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_set(
-							city,z_index,set_code,set_name,four_with, lcu
+							city,z_index,set_code,set_name,four_with,num_ratio, lcu
 						) values (
-							:city,:z_index,:set_code,:set_name,:four_with, :lcu
+							:city,:z_index,:set_code,:set_name,:four_with,:num_ratio, :lcu
 						)";
                 break;
             case 'edit':
@@ -141,6 +146,7 @@ class ReviewSetForm extends CFormModel
 							set_name = :set_name, 
 							set_code = :set_code, 
 							four_with = :four_with, 
+							num_ratio = :num_ratio, 
 							luu = :luu
 						where id = :id
 						";
@@ -165,6 +171,8 @@ class ReviewSetForm extends CFormModel
             $command->bindParam(':set_name',$this->set_name,PDO::PARAM_STR);
         if (strpos($sql,':four_with')!==false)
             $command->bindParam(':four_with',$this->four_with,PDO::PARAM_INT);
+        if (strpos($sql,':num_ratio')!==false)
+            $command->bindParam(':num_ratio',$this->num_ratio,PDO::PARAM_INT);
 
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);

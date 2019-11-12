@@ -132,9 +132,9 @@ class ReviewHandleForm extends CFormModel
                                 return false;
                             }
                         }
-                        $this->review_sum+=intval($item["value"]);
+                        $this->review_sum+=intval($item["value"])*intval($row["num_ratio"]);
                         if($row["four_with"]==1){
-                            $this->four_with_sum+=intval($item["value"]);
+                            $this->four_with_sum+=intval($item["value"])*intval($row["num_ratio"]);
                         }
                     }
                 }

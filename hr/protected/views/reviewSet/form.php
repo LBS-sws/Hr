@@ -88,6 +88,15 @@ $this->pageTitle=Yii::app()->name . ' - reviewSet';
                     ); ?>
                 </div>
             </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'num_ratio',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->numberField($model, 'num_ratio',
+                        array('readonly'=>($model->scenario=='view'),'min'=>1)
+                    ); ?>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>

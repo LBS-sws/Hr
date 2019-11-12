@@ -23,6 +23,7 @@ class TemplateEmployeeList extends CListPageModel
             'entry_time'=>Yii::t('contract','Entry Time'),
             'tem_name'=>Yii::t('contract','template name'),
             'review_type'=>Yii::t('contract','review type'),
+            'department'=>Yii::t("contract","Department"),
 		);
 	}
 
@@ -32,15 +33,17 @@ class TemplateEmployeeList extends CListPageModel
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
-		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name ,d.review_type 
+		$sql1 = "select a.id,f.name as ment_name,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name ,d.review_type 
                 from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
+                LEFT JOIN hr_dept f ON a.department = f.id
                 where a.city IN ($city_allow) AND a.staff_status = 0 
 			";
 		$sql2 = "select count(*) from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
+                LEFT JOIN hr_dept f ON a.department = f.id
                 where a.city IN ($city_allow) AND a.staff_status = 0 
 			";
 		$clause = "";
@@ -56,6 +59,9 @@ class TemplateEmployeeList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('a.phone',$svalue);
 					break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('f.name',$svalue);
+                    break;
                 case 'position':
                     $clause .= General::getSqlConditionClause('d.name',$svalue);
                     break;
@@ -97,6 +103,7 @@ class TemplateEmployeeList extends CListPageModel
 					'company_id'=>$record['company_name'],
 					'phone'=>$record['phone'],
 					'tem_name'=>$record['tem_name'],
+                    'department'=>$record['ment_name'],
 					'review_type'=>DeptForm::getReviewType($record["review_type"]),
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],

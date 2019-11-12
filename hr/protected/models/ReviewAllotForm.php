@@ -168,7 +168,7 @@ class ReviewAllotForm extends CFormModel
             $this->four_with_count = 0;
             foreach ($this->tem_list as $key => $list){
                 if($list=='on'){
-                    $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,a.set_id,b.set_code,b.set_name,b.four_with")->from("hr_set_pro a")
+                    $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,a.set_id,b.num_ratio,b.set_code,b.set_name,b.four_with")->from("hr_set_pro a")
                         ->leftJoin("hr_set b","b.id = a.set_id")
                         ->where('a.id=:id',array(':id'=>$key))->queryRow();
                     if(!$rows){
@@ -176,13 +176,14 @@ class ReviewAllotForm extends CFormModel
                         $this->addError($attribute,$message);
                         break;
                     }else{
-                        $this->tem_sum++;
+                        $this->tem_sum+=intval($rows['num_ratio']);
                         if($rows['four_with']==1){
-                            $this->four_with_count++;
+                            $this->four_with_count+=intval($rows['num_ratio']);
                         }
                         $arr[] = $key;
                         $tem_s_list[$rows['set_id']]['code']=$rows['set_code'];
                         $tem_s_list[$rows['set_id']]['name']=$rows['set_name'];
+                        $tem_s_list[$rows['set_id']]['num_ratio']=$rows['num_ratio'];
                         $tem_s_list[$rows['set_id']]['four_with']=$rows['four_with'];
                         $tem_s_list[$rows['set_id']]['list'][$this->tem_sum]['id']=$this->tem_sum;
                         $tem_s_list[$rows['set_id']]['list'][$this->tem_sum]['name']=$rows['pro_name'];

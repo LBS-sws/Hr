@@ -171,6 +171,13 @@ $('#xmpText').remove();
         }
         console.log($(this).val());
     });
+    $('#prompt_button').on('click',function(){
+        if($('#prompt').hasClass('active')){
+            $('#prompt').removeClass('active');
+        }else{
+            $('#prompt').addClass('active');
+        }
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
@@ -181,4 +188,29 @@ Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_
 <?php $this->endWidget(); ?>
 
 </div><!-- form -->
+
+<style>
+    .prompt{position: fixed;top:20%;right: 10px;border-radius:4px;min-width:25px;min-height:25px;box-shadow:0px 0px 2px rgba(0,0,0,0.4);z-index: 1111;background: #fff;}
+    .prompt_div{padding: 25px;width: 480px;}
+    .prompt_div>p{margin-bottom: 3px;}
+    #prompt_button{position: absolute;left: 0px;top: 0px;bottom: 0px;width: 25px;cursor:pointer;}
+    #prompt_button>span{position: absolute;top:50%;left: 50%;margin-top: -7px;margin-left: -4px;}
+    .prompt.active .fa-angle-double-right:before{content: "\f100";}
+    .prompt.active>.prompt_div{display: none;}
+</style>
+<div id="prompt" class="prompt">
+    <div id="prompt_button"><span class="fa fa-angle-double-right"></span></div>
+    <div class="prompt_div">
+        <p><?php echo Yii::t("fete","Assessment score score reference:");?></p>
+        <p><?php echo Yii::t("fete","The starting point of each score is 6, with 6 as the central axis");?></p>
+        <p><br><?php echo Yii::t("fete","0-3: a 0-3 rating is given for even one example of an action that touches or undermines the group's philosophy and principles");?></p>
+        <p><br><?php echo Yii::t("fete","4 points: there are obvious examples");?></p>
+        <p><?php echo Yii::t("fete","5 points: give 5 points if you don't do well in a project");?></p>
+        <p><?php echo Yii::t("fete","6 points: the generic example has no obvious example, and there is room for further improvement, can give 6 points");?></p>
+        <p><?php echo Yii::t("fete","7 points: 7 points for doing better than expected");?></p>
+        <p><br><?php echo Yii::t("fete","8-9 points: for the city level managed by a colleague, he/she will be given 8 or 9 points according to the size of the city he/she manages, and 8 or 9 points must be supported by substantial examples in the evaluation period at that time");?></p>
+        <p><br><?php echo Yii::t("fete","10分：如果出色的例子多于3个，可以给10分（当然这个也不会轻易有同事达到，所以也十分罕有）");?></p>
+
+    </div>
+</div>
 

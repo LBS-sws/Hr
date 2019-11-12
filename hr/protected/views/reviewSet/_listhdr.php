@@ -21,6 +21,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('num_ratio').$this->drawOrderArrow('a.num_ratio'),'#',$this->createOrderLink('reviewSet-list','a.num_ratio'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('z_index').$this->drawOrderArrow('a.z_index'),'#',$this->createOrderLink('reviewSet-list','a.z_index'))
 			;
 		?>
