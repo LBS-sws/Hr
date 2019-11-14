@@ -166,9 +166,10 @@ class ReviewAllotForm extends CFormModel
             $tem_s_list = array();
             $this->tem_sum = 0;
             $this->four_with_count = 0;
+            $i = -1;
             foreach ($this->tem_list as $key => $list){
                 if($list=='on'){
-                    $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,a.set_id,b.num_ratio,b.set_code,b.set_name,b.four_with")->from("hr_set_pro a")
+                    $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,a.set_id,b.num_ratio,b.set_name,b.four_with")->from("hr_set_pro a")
                         ->leftJoin("hr_set b","b.id = a.set_id")
                         ->where('a.id=:id',array(':id'=>$key))->queryRow();
                     if(!$rows){
@@ -176,12 +177,15 @@ class ReviewAllotForm extends CFormModel
                         $this->addError($attribute,$message);
                         break;
                     }else{
+                        if(!key_exists($rows['set_id'],$tem_s_list)){
+                            $i++;
+                        }
                         $this->tem_sum+=intval($rows['num_ratio']);
                         if($rows['four_with']==1){
                             $this->four_with_count+=intval($rows['num_ratio']);
                         }
                         $arr[] = $key;
-                        $tem_s_list[$rows['set_id']]['code']=$rows['set_code'];
+                        $tem_s_list[$rows['set_id']]['code']=$this->getSetCodeToKey($i);
                         $tem_s_list[$rows['set_id']]['name']=$rows['set_name'];
                         $tem_s_list[$rows['set_id']]['num_ratio']=$rows['num_ratio'];
                         $tem_s_list[$rows['set_id']]['four_with']=$rows['four_with'];
@@ -296,6 +300,16 @@ class ReviewAllotForm extends CFormModel
 		    return false;
         }
 	}
+
+	public function getSetCodeToKey($key){
+	    $arr = array("甲","乙","丙","丁","戊","己","庚","辛","壬","癸","子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥");
+	    if(key_exists($key,$arr)){
+	        return $arr[$key];
+        }else{
+	        return "LBS";
+        }
+
+    }
 
 	protected function getEmployeeTemplate(){
         if(empty($this->tem_str)){

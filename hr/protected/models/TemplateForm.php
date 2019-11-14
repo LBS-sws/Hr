@@ -87,7 +87,7 @@ class TemplateForm extends CFormModel
         $key = "";
         $html = "";
         $list = explode(",",$model->tem_str);
-        $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,b.set_code,b.set_name")->from("hr_set_pro a")
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.pro_name,b.set_name")->from("hr_set_pro a")
             ->leftJoin("hr_set b",'a.set_id = b.id')
             ->order("b.z_index desc,b.id desc,a.z_index desc")->queryAll();
         $className = get_class($model);
@@ -106,7 +106,7 @@ class TemplateForm extends CFormModel
                         $html.="</div>";
                         $divBool = false;
                     }
-                    $html.="<legend>".$row["set_code"]."（".$row["set_name"]."）</legend>";
+                    $html.="<legend>".$row["set_name"]."</legend>";
                     $num =0;
                 }
                 if($num%3==0){

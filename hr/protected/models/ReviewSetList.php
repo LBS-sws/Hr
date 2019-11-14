@@ -11,7 +11,6 @@ class ReviewSetList extends CListPageModel
 	{
 		return array(
             'id'=>Yii::t('contract','ID'),
-            'set_code'=>Yii::t('contract','set code'),
             'set_name'=>Yii::t('contract','set name'),
             'pro_num'=>Yii::t('contract','pro num'),
             'four_with'=>Yii::t('contract','four with'),
@@ -37,9 +36,6 @@ class ReviewSetList extends CListPageModel
 			switch ($this->searchField) {
 				case 'id':
 					$clause .= General::getSqlConditionClause('a.id',$svalue);
-					break;
-				case 'set_code':
-					$clause .= General::getSqlConditionClause('a.set_code',$svalue);
 					break;
 				case 'set_name':
 					$clause .= General::getSqlConditionClause('a.set_name',$svalue);
@@ -71,7 +67,6 @@ class ReviewSetList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'set_name'=>$record['set_name'],
-					'set_code'=>$record['set_code'],
 					'pro_num'=>$record['pro_num'],
 					'num_ratio'=>$record['num_ratio'],
 					'four_with'=>ReviewSetForm::getFourWith($record['four_with']),

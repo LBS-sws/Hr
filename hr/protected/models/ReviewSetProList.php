@@ -13,7 +13,6 @@ class ReviewSetProList extends CListPageModel
 	{
 		return array(
             'id'=>Yii::t('contract','ID'),
-            'set_code'=>Yii::t('contract','set code'),
             'set_name'=>Yii::t('contract','set name'),
             'pro_name'=>Yii::t('contract','pro name'),
             'z_index'=>Yii::t('fete','level'),

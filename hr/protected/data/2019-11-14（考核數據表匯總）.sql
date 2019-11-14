@@ -78,7 +78,6 @@ CREATE TABLE `hr_review_h` (
 DROP TABLE IF EXISTS `hr_set`;
 CREATE TABLE `hr_set` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `set_code` varchar(255) NOT NULL,
   `set_name` varchar(255) NOT NULL,
   `z_index` int(11) NOT NULL DEFAULT '1',
   `set_type` int(11) NOT NULL DEFAULT '1' COMMENT '1:全部可見  2：進本城市可見',

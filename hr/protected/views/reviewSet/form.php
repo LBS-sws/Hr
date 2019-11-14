@@ -54,15 +54,6 @@ $this->pageTitle=Yii::app()->name . ' - reviewSet';
 			<?php echo $form->hiddenField($model, 'city'); ?>
 
             <div class="form-group">
-                <?php echo $form->labelEx($model,'set_code',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <?php echo $form->textField($model, 'set_code',
-                        array('readonly'=>($model->scenario=='view'))
-                    ); ?>
-                </div>
-            </div>
-
-            <div class="form-group">
                 <?php echo $form->labelEx($model,'set_name',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'set_name',

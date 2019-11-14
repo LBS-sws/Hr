@@ -6,11 +6,6 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('set_code').$this->drawOrderArrow('a.set_code'),'#',$this->createOrderLink('reviewSet-list','a.set_code'))
-			;
-		?>
-	</th>
-	<th>
 		<?php echo TbHtml::link($this->getLabelName('set_name').$this->drawOrderArrow('a.set_name'),'#',$this->createOrderLink('reviewSet-list','a.set_name'))
 			;
 		?>

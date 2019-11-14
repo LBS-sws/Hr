@@ -38,7 +38,6 @@ $this->pageTitle=Yii::app()->name . ' - reviewSet';
     <?php
     $search = array(
         'id',
-        'set_code',
         'set_name',
     );
     $this->widget('ext.layout.ListPageWidget', array(

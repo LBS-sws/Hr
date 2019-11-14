@@ -4,17 +4,15 @@ class ReviewSetForm extends CFormModel
 {
 	public $id;
 	public $city;
-	public $set_code;
 	public $set_name;
 	public $four_with;
-	public $num_ratio;
+	public $num_ratio=1;
 	public $z_index=1;
 
 	public function attributeLabels()
 	{
         return array(
             'id'=>Yii::t('contract','ID'),
-            'set_code'=>Yii::t('contract','set code'),
             'set_name'=>Yii::t('contract','set name'),
             'four_with'=>Yii::t('contract','four with'),
             'num_ratio'=>Yii::t('contract','num ratio'),
@@ -28,29 +26,13 @@ class ReviewSetForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, city, set_code,set_name,z_index,four_with,num_ratio','safe'),
-            array('set_code','required'),
+			array('id, city,set_name,z_index,four_with,num_ratio','safe'),
             array('set_name','required'),
             array('num_ratio','required'),
             array('num_ratio','numerical','min'=>1),
-            array('set_code','validateCode'),
             array('set_name','validateName'),
 		);
 	}
-
-    public function validateCode($attribute, $params){
-        $id = -1;
-        if(!empty($this->id)){
-            $id = $this->id;
-        }
-        $rows = Yii::app()->db->createCommand()->select("id")->from("hr_set")
-            ->where('set_code=:set_code and id!=:id',
-                array(':set_code'=>$this->set_code,':id'=>$id))->queryAll();
-        if(count($rows)>0){
-            $message = Yii::t('contract','set code'). Yii::t('contract',' can not repeat');
-            $this->addError($attribute,$message);
-        }
-    }
 
     public function validateName($attribute, $params){
         $id = -1;
@@ -94,7 +76,6 @@ class ReviewSetForm extends CFormModel
 		if ($row) {
             $this->id = $row['id'];
             $this->city = $row['city'];
-            $this->set_code = $row['set_code'];
             $this->set_name = $row['set_name'];
             $this->four_with = $row['four_with'];
             $this->z_index = $row['z_index'];
@@ -135,16 +116,15 @@ class ReviewSetForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_set(
-							city,z_index,set_code,set_name,four_with,num_ratio, lcu
+							city,z_index,set_name,four_with,num_ratio, lcu
 						) values (
-							:city,:z_index,:set_code,:set_name,:four_with,:num_ratio, :lcu
+							:city,:z_index,:set_name,:four_with,:num_ratio, :lcu
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_set set
 							z_index = :z_index, 
 							set_name = :set_name, 
-							set_code = :set_code, 
 							four_with = :four_with, 
 							num_ratio = :num_ratio, 
 							luu = :luu
@@ -165,8 +145,6 @@ class ReviewSetForm extends CFormModel
             $command->bindParam(':city',$city,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false)
             $command->bindParam(':z_index',$this->z_index,PDO::PARAM_INT);
-        if (strpos($sql,':set_code')!==false)
-            $command->bindParam(':set_code',$this->set_code,PDO::PARAM_STR);
         if (strpos($sql,':set_name')!==false)
             $command->bindParam(':set_name',$this->set_name,PDO::PARAM_STR);
         if (strpos($sql,':four_with')!==false)
