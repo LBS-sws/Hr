@@ -140,7 +140,7 @@ class VacationDayForm
             $lcd = date("Y/m/d",strtotime($lcd));
             $statusSql = " and status =  4 and date_format(lcd,'%Y/%m/%d')<='$lcd'";
         }
-        if(!empty($this->vacation_list)){
+        if(!empty($this->vacation_id_list[0])){
             $vacation_id_list = implode(",",$this->vacation_id_list);
             $statusSql.=" and vacation_id in ($vacation_id_list)";
         }else{
@@ -148,7 +148,7 @@ class VacationDayForm
         }
         $suffix = Yii::app()->params['envSuffix'];
         $sum = Yii::app()->db->createCommand()->select("sum(log_time)")->from("hr$suffix.hr_employee_leave")
-            ->where("employee_id=:employee_id $statusSql and date_format(start_time,'%Y/%m/%d')>:start_time and date_format(start_time,'%Y/%m/%d')<:end_time",
+            ->where("employee_id=:employee_id $statusSql and date_format(start_time,'%Y/%m/%d')>=:start_time and date_format(start_time,'%Y/%m/%d')<:end_time",
                 array(":employee_id"=>$this->employee_id,":start_time"=>$this->start_time,":end_time"=>$this->end_time))->queryScalar();
 
         $this->vacation_sum-=$sum;
@@ -194,6 +194,7 @@ class VacationDayForm
             if($vacation_id==$this->year_type&&$yearLeave === "employee"){
                 $this->remain_bool = true;
                 $this->addEmployeeNum();//年假根據員工信息計算
+                $this->addYearLeaveNum(array("vaca_type"=>$this->year_type));//根據假期種類，分別對待
             }else{
                 $this->error_bool = true;
             }
@@ -240,8 +241,9 @@ class VacationDayForm
                 $suffix = Yii::app()->params['envSuffix'];
                 $sum = Yii::app()->db->createCommand()->select("sum(add_num)")->from("hr$suffix.hr_staff_year")
                     ->where("employee_id=:employee_id and year=:year",array(":employee_id"=>$this->employee_id,":year"=>$year))->queryScalar();
+                //var_dump($sum);
                 $this->vacation_sum+=$sum;
-                $this->sumDay+=$sum;
+                //$this->sumDay+=$sum;
                 break;
         }
     }
