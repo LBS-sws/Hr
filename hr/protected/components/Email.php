@@ -107,6 +107,27 @@ class Email {
         }
     }
 
+    //添加收信人(所有地區老總）
+    public function addEmailToAllCity(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("b.email, b.username")->from("security$suffix.sec_city a")
+            ->leftJoin("security$suffix.sec_user b","a.incharge=b.username")
+            ->where("b.email != '' and b.status='A'")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $rs){
+                if(!empty($rs["email"])){
+                    if(!in_array($rs["email"],$this->to_addr)){
+                        $this->to_addr[] = $rs["email"];
+                    }
+                    if(!in_array($rs["username"],$this->to_user)){	//因通知記錄需要
+                        $this->to_user[] = $rs["username"];
+                    }
+                }
+            }
+        }
+    }
+
     //
     public function getEmailUserList($city_allow){
         if(!empty($city_allow)){

@@ -41,6 +41,26 @@ class TimerCommand extends CConsoleCommand {
 
         $this->sendEmail();//統一發送郵件
         echo "end";
+
+        $this->reviewHint();//考核提示
+    }
+
+    private function reviewHint(){
+        $date = date("m-d");
+        $email = new Email();
+        if(in_array($date,array("04-01","10-01"))){ //提示開始考核
+            $email->setMessage("准备开始优化人才评核");
+            $email->setSubject("准备开始优化人才评核");
+            $email->addEmailToAllCity();
+            $email->sent();
+        }
+
+        if(in_array($date,array("04-29","10-29"))){ //提示考核即將結束
+            $email->setMessage("优化人才评核即将结束");
+            $email->setSubject("优化人才评核即将结束");
+            $email->addEmailToAllCity();
+            $email->sent();
+        }
     }
 
     private function sendEmail(){

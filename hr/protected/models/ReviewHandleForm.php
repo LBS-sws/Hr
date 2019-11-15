@@ -360,6 +360,7 @@ class ReviewHandleForm extends CFormModel
                 'review_sum'=>$status_type==3?$review_sum:null
             ), 'id=:id', array(':id'=>$this->review_id));
             if($status_type == 3){
+                Yii::app()->user->reviewFinish();
                 $this->sendEmail($review_sum,$rows);
             }
         }
