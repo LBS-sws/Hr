@@ -29,7 +29,7 @@ class TemplateEmployeeForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, tem_id,city,employee_id,employee_name','safe'),
+			array('id, tem_id,city,employee_id,employee_name,review_type','safe'),
             array('tem_id','required'),
             array('employee_id','required'),
             array('employee_id','validateName'),
