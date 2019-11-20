@@ -148,6 +148,7 @@ return array(
 
     'Vacation Type Config'=>'假期种类配置',
     'Review Template Employee'=>'员工绑定考核模板',
+    'Optimize assessment report'=>'优化人才评核报表',
     //沈超添加结束
 );
 ?>

@@ -162,8 +162,13 @@ class ReviewSearchForm extends CFormModel
             return false;
         }
     }
+
+    public function getShowBool($row){
+	    return $row['status_type']==3&&($row['handle_id']==$this->login_id||$this->employee_id==$this->login_id||$this->status_type == 3);
+    }
+
 //員工評語
-    protected function resetRemarkList($row){
+    public function resetRemarkList($row){
         $bool = $row['status_type']==3&&($row['handle_id']==$this->login_id||$this->employee_id==$this->login_id||$this->status_type == 3);
         if($bool&&!empty($row["review_remark"])){
             $this->review_remark .=$row["handle_name"].":\r\n".$row["review_remark"]."\r\n";
@@ -654,6 +659,48 @@ class ReviewSearchForm extends CFormModel
         }else{
             return $sum;
         }
+    }
+
+    public function getReviewLeave(){
+        $this->reviewBool();
+        if($this->ranking_bool){
+            $str = "经高低差异化(拉curve)后评级";
+            $reviewLevel = "待定";
+            $rankingArr = array(
+                array("maxNum"=>round($this->ranking_sum*0.2),"list"=>array(),"leave"=>"I","class"=>"success"),
+                array("maxNum"=>round($this->ranking_sum*0.2),"list"=>array(),"leave"=>"II","class"=>"info"),
+                array("maxNum"=>round($this->ranking_sum*0.3),"list"=>array(),"leave"=>"III","class"=>"warning"),
+                array("maxNum"=>round($this->ranking_sum*0.2),"list"=>array(),"leave"=>"IV","class"=>"active"),
+                array("maxNum"=>round($this->ranking_sum*0.1),"list"=>array(),"leave"=>"V","class"=>"danger"),
+            );
+            $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
+                ->leftJoin("hr_employee c","c.id = b.employee_id")
+                ->leftJoin("hr_dept e","c.position = e.id")
+                ->where("e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
+                    array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
+                )->order("b.review_sum desc")->queryAll();
+            if($reviewRows){
+                if($this->ranking_sum==count($reviewRows)){
+                    foreach ($reviewRows as $row){
+                        if($row['status_type']!=3){
+                            $reviewLevel = "待定";
+                            break;
+                        }
+                        $arr = $this->resetRanking($rankingArr,$row);
+                        if($this->employee_id == $row["employee_id"]){
+                            $reviewLevel = $arr["ranking"];
+                        }
+                    }
+                }
+            }
+        }else{
+            $str = "评分后级别";
+            $reviewLevel =$this->getReviewLevelToSum($this->review_sum);
+        }
+        return array(
+            'str'=>$str,
+            'leave'=>$reviewLevel,
+        );
     }
 
     protected function getCountTable($html){

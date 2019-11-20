@@ -412,5 +412,6 @@ return array(
     'four with'=>'四用規則',
     'Evaluate project score'=>'評核項目得分',
     'num ratio'=>'基礎分數倍率',
+    'Evaluation period'=>'評核時間段',
     );
 ?>

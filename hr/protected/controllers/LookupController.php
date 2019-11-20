@@ -26,7 +26,7 @@ class LookupController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('company','supplier','staff','product','companyex','supplierex','staffex','productex','template',
+				'actions'=>array('company','supplier','staff','staffAllex','product','companyex','supplierex','staffex','productex','template',
 						'account','accountex','applytemplate'
 					),
 				'users'=>array('@'),
@@ -145,6 +145,28 @@ class LookupController extends Controller
             ->from("hr_binding a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("b.name like '%$searchx%' and b.city in ($city_allow)")->queryAll();
+		if (count($records) > 0) {
+			foreach ($records as $k=>$record) {
+				$result[] = array(
+						'id'=>$record['id'],
+						'value'=>$record['name'],
+					);
+			}
+		}
+		print json_encode($result);
+	}
+
+	public function actionStaffAllEx($search)
+	{
+//		$suffix = Yii::app()->params['envSuffix'];
+		$suffix = '_w';
+		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
+		$result = array();
+		$searchx = str_replace("'","\'",$search);
+		$sql ="b.name like '%$searchx%' and b.city in ($city_allow)";
+        $records = Yii::app()->db->createCommand()->select("b.*")->from("hr_employee b")
+            ->where("b.name like '%$searchx%' and b.city in ($city_allow) and b.staff_status = 0")->queryAll();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$result[] = array(

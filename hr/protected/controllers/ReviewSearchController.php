@@ -29,7 +29,7 @@ class ReviewSearchController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('index','view','save'),
+                'actions'=>array('index','view','save','downExcel'),
                 'expression'=>array('ReviewSearchController','allowReadOnly'),
             ),
             array('deny',  // deny all users
@@ -93,6 +93,24 @@ class ReviewSearchController extends Controller
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl('reviewSearch/view',array('index'=>$model->id)));
+            }
+        }
+    }
+
+    public function actionDownExcel()
+    {
+        if (isset($_POST['ReviewSearchForm'])) {
+            $model = new ReviewSearchForm();
+            if($model->validateEmployee()){
+                if (!$model->retrieveData($_POST['ReviewSearchForm']['id'])) {
+                    throw new CHttpException(404,'The requested page does not exist.');
+                } else {
+                    $downExcel = new DownReviewForm();
+                    $downExcel->setRowExcel($model);
+                    $downExcel->outDownExcel("text.xls");
+                }
+            }else{
+                throw new CHttpException(404,Yii::t("contract",'The account has no binding staff, please contact the administrator'));
             }
         }
     }

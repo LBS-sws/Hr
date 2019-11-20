@@ -255,6 +255,10 @@ return array(
 				'access'=>'YB06',
                 'url'=>'/report/pennantculist',
 			),
+			'Optimize assessment report'=>array(
+				'access'=>'YB07',
+                'url'=>'/report/reviewlist',
+			),
 			'Report Manager'=>array(
 				'access'=>'YB01',
                 'url'=>'/queue/index',
