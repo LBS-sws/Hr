@@ -293,7 +293,6 @@ class AuditForm extends CFormModel
 				$sql = "update hr_employee set
 							staff_status = 3,
 							ject_remark = :ject_remark,
-							lud = :lud,
 							luu = :luu 
 						where id = :id
 						";
@@ -301,7 +300,7 @@ class AuditForm extends CFormModel
 			case 'audit':
 				$sql = "update hr_employee set
 							staff_status = 4,
-							lud = :lud,
+							lcd = :lcd,
 							luu = :luu 
 						where id = :id
 						";
@@ -315,8 +314,8 @@ class AuditForm extends CFormModel
 			$command->bindParam(':ject_remark',$this->ject_remark,PDO::PARAM_STR);
 		if (strpos($sql,':luu')!==false)
 			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lud')!==false)
-			$command->bindParam(':lud',date('Y-m-d H:i:s'),PDO::PARAM_STR);
+		if (strpos($sql,':lcd')!==false)
+			$command->bindParam(':lcd',date('Y-m-d H:i:s'),PDO::PARAM_STR);
 
         //die();
 		$command->execute();

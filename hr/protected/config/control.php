@@ -10,4 +10,5 @@ return array(
 	'salary deduction is shown'=>array('access'=>'ZR07',),//工資扣減顯示
 	'All evaluation lists'=>array('access'=>'ZR08',),//所有評估列表
 	'Search all review'=>array('access'=>'ZR09',),//查询所有考核
+	'Daily incoming and outgoing email'=>array('access'=>'ZR10',),//查询所有考核
 );

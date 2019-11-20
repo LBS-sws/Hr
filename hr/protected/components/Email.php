@@ -304,13 +304,16 @@ class Email {
     }
 
     //發送郵件
-    public function sent($uid=""){
+    public function sent($uid="",$systemId=""){
         if(empty($this->to_addr)){ //後期修改，如果沒有收件人不發送郵件
             return false;
         }
         $to_addr = empty($this->to_addr)?json_encode(array("it@lbsgroup.com.hk")):json_encode($this->to_addr);
         if(empty($uid)){
             $uid = Yii::app()->user->id;
+        }
+        if(empty($systemId)){
+            $systemId = Yii::app()->user->system();
         }
         $from_addr = Yii::app()->params['adminEmail'];
         $suffix = Yii::app()->params['envSuffix'];
@@ -334,7 +337,7 @@ class Email {
 				'description'=>$this->description,//郵件副題
 				'message'=>$this->message,
 				'username'=>json_encode($this->to_user),
-				'system_id'=>Yii::app()->user->system(),
+				'system_id'=>$systemId,
 				'form_id'=>$this->form_id,
 				'rec_id'=>$this->rec_id,
 			)
