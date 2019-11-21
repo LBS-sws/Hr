@@ -111,11 +111,15 @@ class DownReviewForm {
         $this->setRowContent("A2",$this->model->dept_name,$this->end_str."2");//員工職位
         $this->setBoxStyle("A2",true,16);//
         $this->setRowContent("A3","为配合采用差异化管理模式，公司每个部门都会根据自己部门的特点，制定了一套包括了有",$this->end_str."3");//
+        $this->setBoxStyle("A3");
         $this->setRowContent("A4","主观评核的、客观评核的、有上司、旁线、及下属评核的全方位的，内容十分精细的，",$this->end_str."4");//
+        $this->setBoxStyle("A4");
         $this->setRowContent("A5","包括了各种因素的，能真正反映每位员工的工作能力、心态、理念、个人表现的",$this->end_str."5");//
+        $this->setBoxStyle("A5");
         $this->setRowContent("A6","<<员工表现评核机制>>",$this->end_str."6");//
         $this->setBoxStyle("A6",true,16);//
         $this->setRowContent("A7","去对每位员工进每评分，力求做到公平、公正、公开。",$this->end_str."7");//
+        $this->setBoxStyle("A7");
 
         $this->setRowContent("A9","评分标准 (0至10分) :","B9");//
         $this->setRowContent("C9"," 5 - 表现尚可 (表现努力，但仍未达公司标准)",$this->end_str."9");//
@@ -275,10 +279,10 @@ class DownReviewForm {
 
     protected function setReviewFoot($footArr,$bool=false,$pro=90){
         $arr = array(
-            array('code'=>'A','name'=>"项目总分",'value'=>'sum','sumBool'=>true,'bold'=>false),
-            array('code'=>'B','name'=>"评核项目得总分",'value'=>'num','sumBool'=>true,'bold'=>false),
-            array('code'=>'C','name'=>"百分比得分(以一百分为满分) B/A*100",'value'=>'c','sumBool'=>false,'bold'=>false),
-            array('code'=>'D','name'=>"评分比率",'value'=>'pro','sumBool'=>false,'bold'=>false),
+            array('code'=>'A','name'=>"项目总分",'value'=>'sum','sumBool'=>true,'bold'=>true),
+            array('code'=>'B','name'=>"评核项目得总分",'value'=>'num','sumBool'=>true,'bold'=>true),
+            array('code'=>'C','name'=>"百分比得分(以一百分为满分) B/A*100",'value'=>'c','sumBool'=>false,'bold'=>true),
+            array('code'=>'D','name'=>"评分比率",'value'=>'pro','sumBool'=>false,'bold'=>true),
             array('code'=>'E','name'=>"所占比率得分 (Ｃ x D)",'value'=>'e','sumBool'=>true,'bold'=>true),
         );
         if($bool){
@@ -389,10 +393,10 @@ class DownReviewForm {
         $this->setBoxStyle("A".$this->row,true,0,"left");//
 
         $arr = array(
-            array('code'=>'G','name'=>"项目总分",'value'=>'sum','sumBool'=>true,'bold'=>false),
-            array('code'=>'H','name'=>"评核项目得总分",'value'=>'num','sumBool'=>true,'bold'=>false),
-            array('code'=>'J','name'=>"百分比得分(以一百分为满分) H/G*100",'value'=>'c','sumBool'=>false,'bold'=>false),
-            array('code'=>'K','name'=>"评分比率",'value'=>'pro','sumBool'=>false,'bold'=>false),
+            array('code'=>'G','name'=>"项目总分",'value'=>'sum','sumBool'=>true,'bold'=>true),
+            array('code'=>'H','name'=>"评核项目得总分",'value'=>'num','sumBool'=>true,'bold'=>true),
+            array('code'=>'J','name'=>"百分比得分(以一百分为满分) H/G*100",'value'=>'c','sumBool'=>false,'bold'=>true),
+            array('code'=>'K','name'=>"评分比率",'value'=>'pro','sumBool'=>false,'bold'=>true),
             array('code'=>'L','name'=>"所占比率得分 (J x K)",'value'=>'e','sumBool'=>true,'bold'=>true),
             array('code'=>'M','name'=>"“四用”总得分（L*10%）",'value'=>'e','sumBool'=>true,'bold'=>true),
         );
