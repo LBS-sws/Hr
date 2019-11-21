@@ -173,6 +173,10 @@ return array(
                 'access'=>'RE06',
                 'url'=>'/TemplateEmployee/index',
             ),
+            'Email Hint'=>array( //郵件提醒
+                'access'=>'RE07',
+                'url'=>'/Email/index',
+            ),
         ),
     ),
 	'System Setting'=>array(

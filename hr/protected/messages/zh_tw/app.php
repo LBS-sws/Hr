@@ -149,6 +149,7 @@ return array(
     'Review Template Employee'=>'員工綁定考核模板',
     'Optimize assessment report'=>'優化人才評核報表',
     'Daily incoming and outgoing email'=>'入職、離職總覽電郵',
+    'Email Hint'=>'電郵提醒',
 //沈超添加結束
 );
 ?>

@@ -413,5 +413,11 @@ return array(
     'Evaluate project score'=>'評核項目得分',
     'num ratio'=>'基礎分數倍率',
     'Evaluation period'=>'評核時間段',
+    'email hint list'=>'通知郵件列表',
+    'email hint form'=>'通知郵件表單',
+    'send city'=>'通知城市',
+    'send staff'=>'通知賬號',
+    'Send'=>'發送',
+    'Send Email Finish'=>'郵件發送成功',
     );
 ?>
