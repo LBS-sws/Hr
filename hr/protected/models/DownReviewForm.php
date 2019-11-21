@@ -108,7 +108,7 @@ class DownReviewForm {
             $this->setRowContent("A1","史伟莎员工评分制度表 (10/".$this->model->year." - 3/".($this->model->year+1).")",$this->end_str."1");//年份
         }
         $this->setBoxStyle("A1",true,18);//
-        $this->setRowContent("A2",$this->model->dept_name,$this->end_str."2");//員工職位
+        $this->setRowContent("A2",DeptForm::getDeptToId($this->model->department)." / ".$this->model->dept_name,$this->end_str."2");//員工職位
         $this->setBoxStyle("A2",true,16);//
         $this->setRowContent("A3","为配合采用差异化管理模式，公司每个部门都会根据自己部门的特点，制定了一套包括了有",$this->end_str."3");//
         $this->setBoxStyle("A3");
@@ -393,10 +393,10 @@ class DownReviewForm {
         $this->setBoxStyle("A".$this->row,true,0,"left");//
 
         $arr = array(
-            array('code'=>'G','name'=>"项目总分",'value'=>'sum','sumBool'=>true,'bold'=>true),
-            array('code'=>'H','name'=>"评核项目得总分",'value'=>'num','sumBool'=>true,'bold'=>true),
-            array('code'=>'J','name'=>"百分比得分(以一百分为满分) H/G*100",'value'=>'c','sumBool'=>false,'bold'=>true),
-            array('code'=>'K','name'=>"评分比率",'value'=>'pro','sumBool'=>false,'bold'=>true),
+            array('code'=>'G','name'=>"项目总分",'value'=>'sum','sumBool'=>true,'bold'=>false),
+            array('code'=>'H','name'=>"评核项目得总分",'value'=>'num','sumBool'=>true,'bold'=>false),
+            array('code'=>'J','name'=>"百分比得分(以一百分为满分) H/G*100",'value'=>'c','sumBool'=>false,'bold'=>false),
+            array('code'=>'K','name'=>"评分比率",'value'=>'pro','sumBool'=>false,'bold'=>false),
             array('code'=>'L','name'=>"所占比率得分 (J x K)",'value'=>'e','sumBool'=>true,'bold'=>true),
             array('code'=>'M','name'=>"“四用”总得分（L*10%）",'value'=>'e','sumBool'=>true,'bold'=>true),
         );
@@ -603,14 +603,16 @@ class DownReviewForm {
         $this->printTable($tableBorder);
     }
 
-
     //繪製表格
     protected function printTable($str){
         $styleArray = array(
             'borders' => array(
                 'allborders' => array(
                     'style' => PHPExcel_Style_Border::BORDER_THIN
-                )
+                ),
+                'outline' => array(
+                    'style' => PHPExcel_Style_Border::BORDER_THICK
+                ),
             )
         );
         $this->objActSheet->getStyle($str)->applyFromArray($styleArray);
