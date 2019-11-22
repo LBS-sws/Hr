@@ -38,13 +38,13 @@ class TemplateEmployeeList extends CListPageModel
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept f ON a.department = f.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 
+                where a.city IN ($city_allow) AND d.review_type IN (1,2,3,4) AND a.staff_status = 0 
 			";
 		$sql2 = "select count(*) from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept f ON a.department = f.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 
+                where a.city IN ($city_allow) AND d.review_type IN (1,2,3,4) AND a.staff_status = 0 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
