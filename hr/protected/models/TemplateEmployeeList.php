@@ -93,6 +93,7 @@ class TemplateEmployeeList extends CListPageModel
 		$list = array();
 		$this->attr = array();
 		if (count($records) > 0) {
+		    $reviewTypeList = DeptForm::getReviewType();
 			foreach ($records as $k=>$record) {
                 $arr = $this->resetStatus($record);
 				$this->attr[] = array(
@@ -104,7 +105,7 @@ class TemplateEmployeeList extends CListPageModel
 					'phone'=>$record['phone'],
 					'tem_name'=>$record['tem_name'],
                     'department'=>$record['ment_name'],
-					'review_type'=>DeptForm::getReviewType($record["review_type"]),
+					'review_type'=>key_exists($record["review_type"],$reviewTypeList)?$reviewTypeList[$record["review_type"]]:$record["review_type"],
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],
                     'city'=>CGeneral::getCityName($record["city"]),

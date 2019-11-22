@@ -129,6 +129,7 @@ class ReviewAllotList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
             $time = date("Y-m-d");
+            $reviewTypeList = DeptForm::getReviewType();
 			foreach ($records as $k=>$record) {
                 $arr = $this->resetStatus($record);
 				$this->attr[] = array(
@@ -138,7 +139,7 @@ class ReviewAllotList extends CListPageModel
 					'year_type'=>$this->getYearTypeList($record['year_type']),
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
-					'review_type'=>DeptForm::getReviewType($record['review_type']),
+                    'review_type'=>key_exists($record["review_type"],$reviewTypeList)?$reviewTypeList[$record["review_type"]]:$record["review_type"],
 					'department'=>$record['ment_name'],
 					'company_id'=>$record['company_name'],
 					'phone'=>$record['phone'],

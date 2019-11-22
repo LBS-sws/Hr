@@ -118,6 +118,7 @@ class ReviewSearchList extends CListPageModel
 
 		$this->attr = array();
 		if (count($records) > 0) {
+            $reviewTypeList = DeptForm::getReviewType();
 			foreach ($records as $k=>$record) {
                 $arr = ReviewAllotList::getReviewStatuts($record["status_type"]);
 				$this->attr[] = array(
@@ -125,7 +126,7 @@ class ReviewSearchList extends CListPageModel
 					'name'=>$record['name'],
 					'year'=>$record['year'],
 					'year_type'=>ReviewAllotList::getYearTypeList($record['year_type']),
-                    'review_type'=>DeptForm::getReviewType($record['review_type']),
+                    'review_type'=>key_exists($record["review_type"],$reviewTypeList)?$reviewTypeList[$record["review_type"]]:$record["review_type"],
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
 					'company_id'=>$record['company_name'],
