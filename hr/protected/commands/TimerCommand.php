@@ -118,7 +118,7 @@ class TimerCommand extends CConsoleCommand {
             ->leftJoin("security$suffix.sec_city b","a.city = b.code")//職位
             ->leftJoin("hr_dept d","a.position = d.id")//職位
             ->leftJoin("hr_dept e","a.department = e.id")//部門
-            ->where("date_format(a.lcd,'%Y/%m/%d') = '$date' and a.staff_status in (0,4,-1)")->order("a.city desc")->queryAll();
+            ->where("(date_format(a.lcd,'%Y/%m/%d') = '$date' and a.staff_status in (0,4)) or (date_format(a.lud,'%Y/%m/%d') = '$date' and a.staff_status=-1)")->order("a.city desc")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $trHtml="<tr>";
