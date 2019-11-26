@@ -106,7 +106,7 @@ class ReviewSearchList extends CListPageModel
             $order .= " order by ".$this->orderField." ";
             if ($this->orderType=='D') $order .= "desc ";
 		}else{
-            $order .= " order by b.id asc ";
+            $order .= " order by b.status_type asc,b.lcd desc ";
         }
 
 		$sql = $sql2.$clause;
