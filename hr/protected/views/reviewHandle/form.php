@@ -45,6 +45,14 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
             ?>
         <?php endif ?>
 	</div>
+
+            <?php if (!$model->getReadonly()): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-copy"></span> '.Yii::t('contract','Copy review'), array(
+                        'id'=>'reviewCopy'));
+                    ?>
+                </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -53,6 +61,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'year_type'); ?>
+			<?php echo $form->hiddenField($model, 'employee_id'); ?>
 
             <?php
             $this->renderPartial('//site/reviewStaff',array(
@@ -169,7 +178,6 @@ $('#xmpText').remove();
         }else{
             tr.find('td.remark').remove();
         }
-        console.log($(this).val());
     });
     $('#prompt_button').on('click',function(){
         if($('#prompt').hasClass('active')){
@@ -178,7 +186,33 @@ $('#xmpText').remove();
             $('#prompt').addClass('active');
         }
     });
-";
+    
+    
+$('#reviewCopy').on('click',function(){
+	$.ajax({
+		type: 'POST',
+		url: '".Yii::app()->createUrl('reviewHandle/copy')."',
+		data: $('#reviewHandle-form').serialize(),
+		dataType: 'json',
+		success: function(data) {
+		    if(data.status == 1){
+		        data = data.list;
+                $.each(data, function(index, element) {
+                    num = element['value'];
+                    $('#'+index).val(num);
+                    $('#'+index).trigger('change');
+                    if(element.hasOwnProperty('remark')){
+                        $('#'+index).parents('tr:first').find('.remark>textarea').val(element['remark']);
+                    }
+                });
+		    }
+		},
+		error: function(data) { // if error occured
+			alert('Error occured.please try again');
+		}
+	});
+});
+";//
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
@@ -190,7 +224,7 @@ Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_
 </div><!-- form -->
 
 <style>
-    .prompt{position: fixed;top:20%;right: 10px;border-radius:4px;min-width:25px;min-height:25px;box-shadow:0px 0px 2px rgba(0,0,0,0.4);z-index: 1111;background: #fff;}
+    .prompt{position: fixed;top:20%;right: 10px;border-radius:4px;min-width:25px;min-height:25px;box-shadow:0px 0px 2px rgba(0,0,0,0.4);z-index: 1;background: #fff;}
     .prompt_div{padding: 25px;width: 480px;}
     .prompt_div>p{margin-bottom: 3px;}
     #prompt_button{position: absolute;left: 0px;top: 0px;bottom: 0px;width: 25px;cursor:pointer;}

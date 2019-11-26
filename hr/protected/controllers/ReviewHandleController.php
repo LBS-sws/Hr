@@ -29,7 +29,7 @@ class ReviewHandleController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','save'),
+                'actions'=>array('new','edit','draft','save','copy'),
                 'expression'=>array('ReviewHandleController','allowReadWrite'),
             ),
             array('allow',
@@ -129,6 +129,21 @@ class ReviewHandleController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }
+        }
+    }
+
+    public function actionCopy()
+    {
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new ReviewHandleForm();
+            $model->attributes = $_POST['ReviewHandleForm'];
+            if($model->validateEmployee()){
+                echo CJSON::encode(array("status"=>1,"list"=>$model->getLastTemList()));
+            }else{
+                echo CJSON::encode(array("status"=>0));
+            }
+        }else{
+            $this->redirect(Yii::app()->createUrl(''));
         }
     }
 

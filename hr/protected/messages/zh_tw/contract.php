@@ -421,5 +421,6 @@ return array(
     'Send Email Finish'=>'郵件發送成功',
     'undo'=>'撤銷',
     'Draft status returned'=>'已退回草稿狀態',
+    'Copy review'=>'複製上次評核分數',
     );
 ?>

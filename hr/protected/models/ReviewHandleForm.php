@@ -281,6 +281,36 @@ class ReviewHandleForm extends CFormModel
         return false;
     }
 
+    //拷貝
+    public function getLastTemList(){
+        $arr = array();
+        $className = get_class($this);
+        $row = Yii::app()->db->createCommand()
+            ->select("a.tem_s_ist,a.review_remark,a.strengths,a.target,a.improve")->from("hr_review_h a")
+            ->leftJoin("hr_review b","a.review_id = b.id")
+            ->where("a.handle_id = :handle_id and a.status_type = 3 and b.employee_id=:id",
+                array(":id"=>$this->employee_id,":handle_id"=>$this->handle_id)
+            )->order("b.year desc,b.year_type desc")->queryRow();
+        if($row){
+            $name = $className."_review_remark";
+            $arr[$name] = array('value'=>$row["review_remark"]);
+            $name = $className."_strengths";
+            $arr[$name] = array('value'=>$row["strengths"]);
+            $name = $className."_target";
+            $arr[$name] = array('value'=>$row["target"]);
+            $name = $className."_improve";
+            $arr[$name] = array('value'=>$row["improve"]);
+            $tem_s_list = json_decode($row["tem_s_ist"],true);
+            foreach ($tem_s_list as $set_id => $list){
+                foreach ($list["list"] as $key=>$item){
+                    $name = $className."_tem_s_ist_".$set_id."_list_".$key."_value";
+                    $arr[$name] = $item;
+                }
+            }
+        }
+        return $arr;
+    }
+
 	public function saveData()
 	{
 		$connection = Yii::app()->db;
