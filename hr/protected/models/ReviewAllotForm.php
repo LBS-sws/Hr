@@ -53,7 +53,7 @@ class ReviewAllotForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('employee_id, name,code,phone,dept_name,company_name,contract_id,status_type,city,entry_time,year,year_type,id_list,
+			array('review_id,employee_id, name,code,phone,dept_name,company_name,contract_id,status_type,city,entry_time,year,year_type,id_list,
 			tem_str,tem_list,change_num','safe'),
             array('employee_id','required'),
             array('id_list','required'),
@@ -424,7 +424,12 @@ class ReviewAllotForm extends CFormModel
     }
 
     //刪除驗證
-    public function deleteValidate(){
+    public function validateUndo(){
+        $row = Yii::app()->db->createCommand()->select("id")->from("hr_review")
+            ->where("id=:id and status_type=1",array(":id"=>$this->review_id))->queryRow();
+        if($row){
+            return true;
+        }
         return false;
     }
 
@@ -475,6 +480,13 @@ class ReviewAllotForm extends CFormModel
                     'change_num'=>$this->change_num,
                     'luu'=>$uid,
                 ), 'id=:id', array(':id'=>$this->review_id));
+                break;
+            case 'undo':
+                $connection->createCommand()->update('hr_review', array(
+                    'status_type'=>4,
+                    'luu'=>$uid,
+                ), 'id=:id', array(':id'=>$this->review_id));
+                $connection->createCommand()->delete('hr_review_h', 'review_id=:review_id', array(':review_id'=>$this->review_id));
                 break;
         }
 

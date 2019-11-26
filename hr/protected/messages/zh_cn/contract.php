@@ -424,5 +424,7 @@ return array(
     'send staff'=>'通知账号',
     'Send'=>'发送',
     'Send Email Finish'=>'邮件发送成功',
+    'undo'=>'撤销',
+    'Draft status returned'=>'已退回草稿状态',
 );
 ?>

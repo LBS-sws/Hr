@@ -42,11 +42,19 @@ $this->pageTitle=Yii::app()->name . ' - ReviewAllot Form';
             ?>
         <?php endif ?>
 	</div>
+            <?php if ($model->status_type == 1&&$model->scenario=='edit'): ?>
+            <div class="btn-group pull-right" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-reply-all"></span> '.Yii::t('contract','undo'), array(
+                    'submit'=>Yii::app()->createUrl('reviewAllot/undo')));
+                ?>
+            </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
 		<div class="box-body">
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
+			<?php echo $form->hiddenField($model, 'review_id'); ?>
 			<?php echo $form->hiddenField($model, 'employee_id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'year_type'); ?>

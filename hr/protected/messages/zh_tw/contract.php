@@ -419,5 +419,7 @@ return array(
     'send staff'=>'通知賬號',
     'Send'=>'發送',
     'Send Email Finish'=>'郵件發送成功',
+    'undo'=>'撤銷',
+    'Draft status returned'=>'已退回草稿狀態',
     );
 ?>

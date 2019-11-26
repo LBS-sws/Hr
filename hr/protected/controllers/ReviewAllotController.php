@@ -29,7 +29,7 @@ class ReviewAllotController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','save'),
+                'actions'=>array('new','edit','draft','save','undo'),
                 'expression'=>array('ReviewAllotController','allowReadWrite'),
             ),
             array('allow',
@@ -124,19 +124,18 @@ class ReviewAllotController extends Controller
         }
     }
 
-    //刪除
-    public function actionDelete(){
-        $model = new ReviewAllotForm('delete');
+    //退回
+    public function actionUndo(){
+        $model = new ReviewAllotForm('undo');
         if (isset($_POST['ReviewAllotForm'])) {
             $model->attributes = $_POST['ReviewAllotForm'];
-            if($model->validate()){
+            if($model->validateUndo()){
                 $model->saveData();
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
-                $this->redirect(Yii::app()->createUrl('reviewAllot/index'));
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','Draft status returned'));
+                $this->redirect(Yii::app()->createUrl('reviewAllot/edit',array('index'=>$model->employee_id,'year'=>$model->year,'year_type'=>$model->year_type)));
             }else{
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
-                //$this->redirect(Yii::app()->createUrl('reviewAllot/edit',array('index'=>$model->id)));
-                $this->render('form',array('model'=>$model,));
+                $this->redirect(Yii::app()->createUrl('reviewAllot/edit',array('index'=>$model->employee_id,'year'=>$model->year,'year_type'=>$model->year_type)));
             }
         }
     }
