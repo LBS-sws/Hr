@@ -349,15 +349,19 @@ class ReviewAllotForm extends CFormModel
         }
     }
 
-    public function getReviewManagerList($city){
+    public function getReviewManagerList($city,$id_s_list=''){
 	    $arr = array();
         $cityList = Email::getAllCityToMinCity($city);
         $city_allow = implode("','",$cityList);
+        $sql = '';
+        if(!empty($id_s_list)){
+            $sql = " or a.id in ($id_s_list)";
+        }
         $rows = Yii::app()->db->createCommand()
             ->select("a.id,a.name,a.code")
             ->from("hr_employee a")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("(a.city in ('$city_allow') or d.manager > 2) AND a.staff_status = 0")->queryAll();
+            ->where("((a.city in ('$city_allow') and d.review_leave=1) or d.review_leave = 2 $sql) AND a.staff_status = 0")->queryAll();
         foreach ($rows as $row){
             $arr[$row["id"]] = $row["code"]." - ".$row["name"];
         }
@@ -399,7 +403,7 @@ class ReviewAllotForm extends CFormModel
 
     public function returnManager($model){
         $bool = $model->getReadonly();
-        $managerList = ReviewAllotForm::getReviewManagerList($model->city);
+        $managerList = ReviewAllotForm::getReviewManagerList($model->city,$model->id_s_list);
 	    $html ="<table class='table table-bordered table-striped' id='managerTable'><thead><tr><th width='50%'>".Yii::t("contract","reviewAllot manager")."</th><th width='40%'>".Yii::t("contract","manager percent")."</th>";
         $html.='<th>&nbsp;</th>';
         $num = count($model->id_list);

@@ -427,5 +427,6 @@ return array(
     'undo'=>'撤销',
     'Draft status returned'=>'已退回草稿状态',
     'Copy review'=>'复制上次评核分数',
+    'review leave'=>'评核级别',
 );
 ?>

@@ -172,7 +172,7 @@ $('#xmpText').remove();
         var tr = $(this).parents('tr').eq(0);
         var name = tr.data('name')+'[remark]';
         var html = '';
-        if(num!=6&&num!=7){
+        if(num!=6&&num!=7&&num!=8){
             html = xmpText.replace(/:name/g,name);
             tr.append(html);
         }else{
