@@ -269,6 +269,9 @@ class ReviewAllotList extends CListPageModel
         $year = date("Y");
         $arr = array();
         for ($i = $year-5;$i<$year+5;$i++){
+            if($i<=2018){
+                continue;
+            }
             $arr[$i] = $i.Yii::t("contract"," year");
         }
         return $arr;
