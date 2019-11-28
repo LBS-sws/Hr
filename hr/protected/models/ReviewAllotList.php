@@ -103,6 +103,9 @@ class ReviewAllotList extends CListPageModel
                 case 'city_name':
                     $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
+                case 'status':
+                    $clause .= $this->searchStatus($svalue);
+                    break;
 			}
 		}
 		
@@ -252,6 +255,56 @@ class ReviewAllotList extends CListPageModel
                     "style"=>"text-danger"
                 );//未評核
         }
+    }
+
+    private function searchStatus($str){
+        if($str === ""){
+            return "";
+        }
+        $arr = array(
+            //0=>Yii::t("contract","none review"),
+            1=>Yii::t("contract","in review"),
+            2=>Yii::t("contract","more review"),
+            3=>Yii::t("contract","success review"),
+            4=>Yii::t("contract","Draft"),
+        );
+        $idList = array();
+        if($str === Yii::t("contract","none review")||$str === "未"){
+            $rows = Yii::app()->db->createCommand()->select("employee_id")->from("hr_review")
+                ->where("year = :year and year_type = :year_type",
+                    array(":year"=>$this->year,":year_type"=>$this->year_type)
+                )->queryAll();
+            if($rows){
+                foreach ($rows as $row){
+                    if(!in_array($row["employee_id"],$idList)){
+                        $idList[] = $row["employee_id"];
+                    }
+                }
+            }
+            if(!empty($idList)){
+                return " and a.id not in (".implode(",",$idList).")";
+            }
+        }else{
+            foreach ($arr as $key =>$item){
+                if (strpos($item,$str)!==false){
+                    $rows = Yii::app()->db->createCommand()->select("employee_id")->from("hr_review")
+                        ->where("status_type=:status_type and year = :year and year_type = :year_type",
+                            array(":status_type"=>$key,":year"=>$this->year,":year_type"=>$this->year_type)
+                        )->queryAll();
+                    if($rows){
+                        foreach ($rows as $row){
+                            if(!in_array($row["employee_id"],$idList)){
+                                $idList[] = $row["employee_id"];
+                            }
+                        }
+                    }
+                }
+            }
+            if(!empty($idList)){
+                return " and a.id in (".implode(",",$idList).")";
+            }
+        }
+        return " and a.id=0";
     }
 
     public function getYearTypeList($num=-1){

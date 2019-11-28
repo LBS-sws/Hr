@@ -23,6 +23,7 @@ $this->pageTitle=Yii::app()->name . ' - templateEmployee';
         'department',
         'position',
         'city_name',
+        'status',
     );
 
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';

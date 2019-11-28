@@ -23,6 +23,7 @@ $this->pageTitle=Yii::app()->name . ' - reviewSearch';
         'department',
         'position',
         'year',
+        'status',
     );
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
     $this->widget('ext.layout.ListPageWidget', array(

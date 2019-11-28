@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 <style>
     tbody>tr{position: relative;}
     select[readonly="readonly"]{pointer-events: none;}
-    td.remark{position: absolute;min-width: 300px;}
+    /*td.remark{position: absolute;min-width: 300px;}*/
 </style>
 <tr ></tr>
 <section class="content-header">
@@ -134,9 +134,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 	</div>
 </section>
 <xmp id="xmpText">
-    <td class="remark">
         <textarea rows="1" name=":name" class="form-control" placeholder="<?php echo Yii::t("contract","Scoring remark")?>"></textarea>
-    </td>
 </xmp>
 <?php
 $content = "<p>".Yii::t('contract','assessment score is confirmed and submitted, it cannot be modified after submission?')."</p>";
@@ -174,9 +172,9 @@ $('#xmpText').remove();
         var html = '';
         if(num!=6&&num!=7&&num!=8){
             html = xmpText.replace(/:name/g,name);
-            tr.append(html);
+            tr.find('td.remark').html(html);
         }else{
-            tr.find('td.remark').remove();
+            tr.find('td.remark').html('<button class=\"addRemark btn btn-default\" type=\"button\"><span class=\"glyphicon glyphicon-plus\"></span></button>');
         }
     });
     $('#prompt_button').on('click',function(){
@@ -185,6 +183,12 @@ $('#xmpText').remove();
         }else{
             $('#prompt').addClass('active');
         }
+    });
+    $('.remark').delegate('.addRemark','click',function(){
+        var tr = $(this).parents('tr').eq(0);
+        var name = tr.data('name')+'[remark]';
+        var html = xmpText.replace(/:name/g,name);
+        tr.find('td.remark').html(html);
     });
     
     

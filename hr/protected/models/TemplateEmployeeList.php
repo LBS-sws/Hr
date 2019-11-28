@@ -68,6 +68,9 @@ class TemplateEmployeeList extends CListPageModel
                 case 'city_name':
                     $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
+                case 'status':
+                    $clause .= $this->searchStatus($svalue);
+                    break;
 			}
 		}
 		
@@ -117,6 +120,44 @@ class TemplateEmployeeList extends CListPageModel
 		$session['templateEmployee_01'] = $this->getCriteria();
 		return true;
 	}
+
+    private function searchStatus($str){
+        if($str === ""){
+            return "";
+        }
+        $city_allow = Yii::app()->user->city_allow();
+        $idList = array();
+        if($str === Yii::t("contract","undistributed")||$str === "未"){
+            $rows = Yii::app()->db->createCommand()->select("a.employee_id")->from("hr_template_employee a")
+                ->leftJoin("hr_employee b","a.employee_id = b.id")
+                ->where(" b.city IN ($city_allow)")->queryAll();
+            if($rows){
+                foreach ($rows as $row){
+                    if(!in_array($row["employee_id"],$idList)){
+                        $idList[] = $row["employee_id"];
+                    }
+                }
+            }
+            if(!empty($idList)){
+                return " and a.id not in (".implode(",",$idList).")";
+            }
+        }elseif($str === Yii::t("contract","allocated")||$str === "已"){
+            $rows = Yii::app()->db->createCommand()->select("a.employee_id")->from("hr_template_employee a")
+                ->leftJoin("hr_employee b","a.employee_id = b.id")
+                ->where(" b.city IN ($city_allow)")->queryAll();
+            if($rows){
+                foreach ($rows as $row){
+                    if(!in_array($row["employee_id"],$idList)){
+                        $idList[] = $row["employee_id"];
+                    }
+                }
+            }
+            if(!empty($idList)){
+                return " and a.id in (".implode(",",$idList).")";
+            }
+        }
+        return " and a.id=0";
+    }
 
     protected function orderStatusType(){
         if ($this->orderType=='D'){

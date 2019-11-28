@@ -24,6 +24,7 @@ $this->pageTitle=Yii::app()->name . ' - reviewAllot';
         'position',
         'department',
         'city_name',
+        'status',
     );
     $search_add_html="";
     $modelName = get_class($model);

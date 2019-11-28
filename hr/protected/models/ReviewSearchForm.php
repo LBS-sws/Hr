@@ -312,10 +312,11 @@ class ReviewSearchForm extends CFormModel
                     }
                     $proSum = $proSum+$proValue;
                 }
-                if(!ReviewHandleForm::scoringOk($proValue)&&$proValue!="-"&&isset($rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"])){
+                if((!ReviewHandleForm::scoringOk($proValue)&&$proValue!="-")||isset($rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"])){
+                    $remark = isset($rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"])?$rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"]:"";
                     $colorList = array("text-danger","text-info","text-warning","text-primary");
                     $key = in_array($i,array(0,1,2,3))?$i:0;
-                    $proArr[]=array('color'=>$colorList[$key],'name'=>$rows[$i]['handle_name'],'remark'=>htmlspecialchars($rows[$i]["list"][$set_id]["list"][$proList["id"]]["remark"]));
+                    $proArr[]=array('color'=>$colorList[$key],'name'=>$rows[$i]['handle_name'],'remark'=>htmlspecialchars($remark));
                 }
                 $html.="<td>$proValue</td>";
             }

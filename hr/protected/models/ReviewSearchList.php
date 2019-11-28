@@ -95,6 +95,9 @@ class ReviewSearchList extends CListPageModel
                 case 'year':
                     $clause .= General::getSqlConditionClause('b.year',$svalue);
                     break;
+                case 'status':
+                    $clause .= $this->getSearchValueToStatus($svalue);
+                    break;
                 case 'city_name':
                     $clause .= ' and c.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
@@ -145,4 +148,27 @@ class ReviewSearchList extends CListPageModel
 		$session['reviewSearch_01'] = $this->getCriteria();
 		return true;
 	}
+
+    private function getSearchValueToStatus($status){
+        if($status === ""){
+            return "";
+        }
+        $arr = array(
+            //0=>Yii::t("contract","none review"),
+            1=>Yii::t("contract","in review"),
+            2=>Yii::t("contract","more review"),
+            3=>Yii::t("contract","success review"),
+            4=>Yii::t("contract","Draft"),
+        );
+        $statusList = array();
+        foreach ($arr as $key =>$item){
+            if (strpos($item,$status)!==false){
+                $statusList[] = $key;
+            }
+        }
+        if(!empty($statusList)){
+            return " and b.status_type in (".implode(",",$statusList).")";
+        }
+        return " and b.status_type = -1";
+    }
 }

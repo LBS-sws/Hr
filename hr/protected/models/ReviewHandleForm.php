@@ -131,6 +131,10 @@ class ReviewHandleForm extends CFormModel
                                 $this->addError($attribute,$message);
                                 return false;
                             }
+                        }else{
+                            if(key_exists("remark",$item)&&$item["remark"] === ""){
+                                unset($item["remark"]);
+                            }
                         }
                         $this->review_sum+=intval($item["value"])*intval($row["num_ratio"]);
                         if($row["four_with"]==1){
@@ -246,8 +250,8 @@ class ReviewHandleForm extends CFormModel
             foreach ($this->tem_s_ist as $set_id =>$items){
                 $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][code]",$items['code']);
                 $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][name]",$items['name']);
-                $html.="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered table-striped'>";
-                $html.="<thead><tr><th colspan='2'>".$items['code']."（".$items['name']."）</th></tr></thead><tbody>";
+                $html.="<div class='form-group'><div class='col-sm-7 col-sm-offset-2'><table class='table table-bordered table-striped'>";
+                $html.="<thead><tr><th colspan='2'>".$items['code']."（".$items['name']."）</th><th width='33%'>".Yii::t("contract","Scoring remark")."</th></tr></thead><tbody>";
 
                 foreach ($items['list'] as $key =>$item){
                     if(!is_array($item)){
@@ -256,17 +260,19 @@ class ReviewHandleForm extends CFormModel
                     $item['value'] = isset($item['value'])?$item['value']:6;
                     $num = $key;
                     $name = $className."[tem_s_ist][$set_id][list][$num]";
-                    $html.="<tr data-name='$name'><td width='50%'>".$item['name']."</td>";
+                    $html.="<tr data-name='$name'><td width='33%'>".$item['name']."</td>";
                     $html.="<td>";
                     $html.=TbHtml::hiddenField($name."[name]",$item['name']);
                     $html.=TbHtml::dropDownList($name."[value]",$item['value'],$this->getReviewNumList(),array('class'=>'form-control changeSelect'));
                     $html.="</td>";
-                    if(!$this->scoringOk($item['value'])){
+                    $html.="<td class='remark'>";
+                    if(!$this->scoringOk($item['value'])||key_exists("remark",$item)){
                         $item['remark'] = isset($item['remark'])?$item['remark']:'';
-                        $html.="<td class='remark'>";
                         $html.=TbHtml::textArea($name."[remark]",$item['remark'],array('rows'=>1));
-                        $html.="</td>";
+                    }else{
+                        $html.=TbHtml::button("<span class='glyphicon glyphicon-plus'></span>",array("class"=>"addRemark"));
                     }
+                    $html.="</td>";
                     $html.="</tr>";
                 }
 
