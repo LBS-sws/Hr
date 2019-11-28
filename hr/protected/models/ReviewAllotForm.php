@@ -104,11 +104,6 @@ class ReviewAllotForm extends CFormModel
                         $message = $this->getReviewStr($this->review_type)."不能大于10";
                         $this->addError($attribute,$message);
                     }
-                }else{
-                    if(intval($this->change_num)!=floatval($this->change_num)){
-                        $message = $this->getReviewStr($this->review_type)."必须是整数";
-                        $this->addError($attribute,$message);
-                    }
                 }
             }
         }else{
