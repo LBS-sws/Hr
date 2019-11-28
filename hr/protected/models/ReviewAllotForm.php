@@ -314,6 +314,7 @@ class ReviewAllotForm extends CFormModel
                 ->where("a.employee_id= :id",array(":id"=>$this->employee_id))->queryRow();
             if($row){
                 $this->tem_str = $row["tem_str"];
+                $this->id_s_list = $row["id_s_list"];
                 $this->id_list = json_decode($row["id_list"],true);
             }
         }
