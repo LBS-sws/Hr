@@ -114,7 +114,6 @@ class TimerCommand extends CConsoleCommand {
     private function setDailyHintHtml(){
         $suffix = Yii::app()->params['envSuffix'];
         $date = date("Y/m/d");
-        $date = date("Y/m/d",strtotime("$date - 1 day"));
         $rows = Yii::app()->db->createCommand()->select("a.staff_status,a.name,a.city,b.name as city_name,d.name as dept_name,e.name as ment_name")->from("hr_employee a")
             ->leftJoin("security$suffix.sec_city b","a.city = b.code")//職位
             ->leftJoin("hr_dept d","a.position = d.id")//職位
