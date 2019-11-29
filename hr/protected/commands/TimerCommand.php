@@ -8,9 +8,9 @@ class TimerCommand extends CConsoleCommand {
     protected $out_list = array();//離職提示列表
 
     public function run() {
-        //echo "start:";
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
+        echo "start:$firstday\r\n";
         $lastday = date("Y/m/d",strtotime("$firstday + 1 month"));
         $this->longTimeContract();//合同過期提示（郵件)
         $aaa = $command->update('hr_employee', array("z_index"=>2),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') <= '$firstday' and replace(test_end_time,'-', '/') >='$firstday'");//試用期
@@ -43,9 +43,9 @@ class TimerCommand extends CConsoleCommand {
         //加班、請假批准后的郵件提示（結束)
 
         $this->sendEmail();//統一發送郵件
-        //echo "end";
 
         $this->dailyInAndOutHint();//入职、离职总览电邮
+        echo "end\r\n";
     }
 
     //入职、离职总览电邮
@@ -63,6 +63,7 @@ class TimerCommand extends CConsoleCommand {
                 ->where("a.system_id='$systemId' and a.a_control like '%ZR10%' and b.email is not null and b.status='A'")
                 ->queryAll();
             if($rs){
+                echo "entry and dimission,users number:".count($rs)."\r\n";
                 foreach ($rs as $row){
                     if(!empty($row["email"])){
                         $email->resetToAddr();
@@ -147,6 +148,7 @@ class TimerCommand extends CConsoleCommand {
         $email = new Email("人事系統待處理事項","","人事系統待處理事項");
         $userlist = $email->getEmailUserList($this->city_list);
         if($userlist){
+            echo "leave and work,users number:".count($userlist)."\r\n";
             foreach ($userlist as $user){
                 if($this->city != $user["city"]){
                     $this->city = $user["city"];
