@@ -12,6 +12,10 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 <style>
     tbody>tr{position: relative;}
     select[readonly="readonly"]{pointer-events: none;}
+    .reviewSumDiv{position:relative;display: inline-block;padding: 7px;}
+    .reviewSumDiv_hint{position: absolute;top: 100%;left: 50%;margin-top: 8px;margin-left:-160px;width: 320px;height: 50px;line-height: 50px;overflow: visible;text-align: center;background: #000;color: #fff;z-index: 1;border-radius: 10px;display: none;}
+    .reviewSumDiv_hint.active{display: block;}
+    .reviewSumDiv_hint:after{content: " ";position: absolute;top: 0px;left: 50%;margin-top: -9px;margin-left: -4.5px;border-bottom: 9px solid #000;border-left: 9px solid transparent;border-right: 9px solid transparent;}
     /*td.remark{position: absolute;min-width: 300px;}*/
 </style>
 <tr ></tr>
@@ -44,6 +48,10 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
                 'submit'=>Yii::app()->createUrl('reviewHandle/draft')));
             ?>
         <?php endif ?>
+        <div class="reviewSumDiv"><?php echo Yii::t("contract","Score of proportion of reviewers");?>：
+            <span id="reviewSum">...</span>
+            <div class="reviewSumDiv_hint">......</div>
+        </div>
 	</div>
 
             <?php if (!$model->getReadonly()): ?>
@@ -62,6 +70,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'year_type'); ?>
 			<?php echo $form->hiddenField($model, 'employee_id'); ?>
+			<?php echo $form->hiddenField($model, 'review_type'); ?>
 
             <?php
             $this->renderPartial('//site/reviewStaff',array(
@@ -176,6 +185,7 @@ $('#xmpText').remove();
         }else{
             tr.find('td.remark').html('<button class=\"addRemark btn btn-default\" type=\"button\"><span class=\"glyphicon glyphicon-plus\"></span></button>');
         }
+        reviewSum();
     });
     $('#prompt_button').on('click',function(){
         if($('#prompt').hasClass('active')){
@@ -216,6 +226,57 @@ $('#reviewCopy').on('click',function(){
 		}
 	});
 });
+
+$('.reviewSumDiv').hover(function(){
+    $('.reviewSumDiv_hint').addClass('active');
+},function(){
+    $('.reviewSumDiv_hint').removeClass('active');
+});
+
+function reviewSum(){
+    var reviewNum = 0;
+    var reviewSum = 0;
+    var fourNum = 0;
+    var fourSum = 0;
+    var handle_per = parseInt('".$model->handle_per."',10);
+    $('.reviewTable').each(function(){
+        var num_ratio = parseInt($(this).data('ratio'),10);
+        var four_with = parseInt($(this).data('four'),10);
+        var length = $(this).find('.changeSelect').length;
+        reviewSum += length*10*num_ratio;
+        if(four_with == 1){
+            fourSum += length*10*num_ratio;
+        }
+        $(this).find('.changeSelect').each(function(){
+            reviewNum+=parseInt($(this).val(),10)*num_ratio;
+            if(four_with == 1){
+                fourNum += parseInt($(this).val(),10)*num_ratio;
+            }
+        });
+    });
+    if('".$model->review_type."' == 4){
+        var sumOne = ((reviewNum-fourNum)/(reviewSum-fourSum))*100;
+        sumOne = sumOne.toFixed(2);
+        var sumTwo = (fourNum/fourSum)*100;
+        sumTwo = sumTwo.toFixed(2);
+        var sumOne_per = sumOne*handle_per/100;
+        sumOne_per = sumOne_per.toFixed(2);
+        var sumTwo_per = sumTwo*handle_per/100;
+        sumTwo_per = sumTwo_per.toFixed(2);
+        var sum = sumTwo_per*0.1+sumOne_per*0.9;
+        sum = sum.toFixed(2);
+        $('#reviewSum').text(sum);
+        $('.reviewSumDiv_hint').eq(0).text(sumOne+'*'+handle_per+'%*90% + '+sumTwo+'*'+handle_per+'%*10% = '+sum);
+    }else{
+        var sum = (reviewNum/reviewSum)*100;
+        sum = sum.toFixed(2);
+        var sum_per = sum*handle_per/100;
+        sum_per = sum_per.toFixed(2);
+        $('#reviewSum').text(sum_per);
+        $('.reviewSumDiv_hint').eq(0).text(sum+' * '+handle_per+'% = '+sum_per);
+    }
+}
+reviewSum();
 ";//
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

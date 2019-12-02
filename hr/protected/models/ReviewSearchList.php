@@ -2,6 +2,8 @@
 
 class ReviewSearchList extends CListPageModel
 {
+    public $year = 3;
+    public $year_type = 3;
 
     public $employee_id;
 
@@ -34,6 +36,25 @@ class ReviewSearchList extends CListPageModel
 		);
 	}
 
+    public function __construct($scenario='')
+    {
+        if($this->year_type===3){
+            //$this->year_type = intval(date("m"))<7?1:2;
+            $this->year_type = 1;
+        }
+        if($this->year === 3){
+            $this->year = date("Y");
+        }
+        parent::__construct();
+    }
+
+    public function rules()
+    {
+        return array(
+            array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter, year, year_type','safe',),
+        );
+    }
+
     //驗證賬號是否綁定員工
     public function validateEmployee(){
         $uid = Yii::app()->user->id;
@@ -56,6 +77,12 @@ class ReviewSearchList extends CListPageModel
         $expr_sql = " and b.status_type in (1,2,3)";
         if(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
             $expr_sql.=" and (FIND_IN_SET('$this->employee_id',b.id_s_list) or b.employee_id = '$this->employee_id' or b.lcu = '$this->employee_id')";
+        }
+        if(!empty($this->year)){
+            $expr_sql.=" and b.year='".$this->year."'";
+        }
+        if(!empty($this->year_type)){
+            $expr_sql.=" and b.year_type='".$this->year_type."'";
         }
 		$sql1 = "select c.name,f.name as ment_name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum,b.review_type 
                 from hr_review b 
@@ -170,5 +197,26 @@ class ReviewSearchList extends CListPageModel
             return " and b.status_type in (".implode(",",$statusList).")";
         }
         return " and b.status_type = -1";
+    }
+
+
+    public function getYearTypeList(){
+        return array(
+            0=>Yii::t("misc","All"),
+            1=>Yii::t("contract","first half year"),
+            2=>Yii::t("contract","last half year")
+        );
+    }
+
+    public function getYearList(){
+        $year = date("Y");
+        $arr = array(0=>Yii::t("misc","All"));
+        for ($i = $year-5;$i<$year+5;$i++){
+            if($i<=2018){
+                continue;
+            }
+            $arr[$i] = $i.Yii::t("contract"," year");
+        }
+        return $arr;
     }
 }

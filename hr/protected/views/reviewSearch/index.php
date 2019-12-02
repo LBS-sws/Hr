@@ -22,9 +22,15 @@ $this->pageTitle=Yii::app()->name . ' - reviewSearch';
         'name',
         'department',
         'position',
-        'year',
         'status',
     );
+    $search_add_html="";
+    $modelName = get_class($model);
+    $search_add_html .= TbHtml::dropDownList($modelName.'[year]',$model->year,$model->getYearList(),
+        array("class"=>"form-control"));
+    $search_add_html.="<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
+    $search_add_html .= TbHtml::dropDownList($modelName.'[year_type]',$model->year_type,$model->getYearTypeList(),
+        array("class"=>"form-control"));
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('contract','Employee List'),
@@ -34,6 +40,7 @@ $this->pageTitle=Yii::app()->name . ' - reviewSearch';
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,
+        'search_add_html'=>$search_add_html,
     ));
     ?>
 </section>

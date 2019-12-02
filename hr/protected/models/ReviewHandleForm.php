@@ -67,7 +67,7 @@ class ReviewHandleForm extends CFormModel
 	{
 		return array(
 			array('id,employee_id, name,code,phone,dept_name,company_name,handle_per,status_type,city,entry_time,year,year_type,handle_id,
-			handle_name,tem_s_ist,employee_remark,review_remark,strengths,target,improve','safe'),
+			handle_name,tem_s_ist,employee_remark,review_remark,strengths,target,improve,review_type','safe'),
             array('id','required'),
             array('tem_s_ist','required'),
             array('id','validateID'),
@@ -250,7 +250,9 @@ class ReviewHandleForm extends CFormModel
             foreach ($this->tem_s_ist as $set_id =>$items){
                 $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][code]",$items['code']);
                 $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][name]",$items['name']);
-                $html.="<div class='form-group'><div class='col-sm-7 col-sm-offset-2'><table class='table table-bordered table-striped'>";
+                $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][num_ratio]",$items['num_ratio']);
+                $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][four_with]",$items['four_with']);
+                $html.="<div class='form-group'><div class='col-sm-7 col-sm-offset-2'><table class='table table-bordered table-striped reviewTable' data-ratio='".$items['num_ratio']."' data-four='".$items['four_with']."'>";
                 $html.="<thead><tr><th colspan='2'>".$items['code']."（".$items['name']."）</th><th width='33%'>".Yii::t("contract","Scoring remark")."</th></tr></thead><tbody>";
 
                 foreach ($items['list'] as $key =>$item){
