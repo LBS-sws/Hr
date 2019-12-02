@@ -29,11 +29,11 @@ class ReviewAllotController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','save','undo'),
+                'actions'=>array('new','edit','draft','save','undo','fileupload','fileRemove'),
                 'expression'=>array('ReviewAllotController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view'),
+                'actions'=>array('index','view','fileDownload'),
                 'expression'=>array('ReviewAllotController','allowReadOnly'),
             ),
             array('deny',  // deny all users
@@ -140,4 +140,53 @@ class ReviewAllotController extends Controller
         }
     }
 
+    //上傳附件
+    public function actionFileupload($doctype='REVIEW') {
+        $model = new ReviewAllotForm();
+        if (isset($_POST['ReviewAllotForm'])) {
+            $model->attributes = $_POST['ReviewAllotForm'];
+
+            $id = ($_POST['ReviewAllotForm']['scenario']=='new') ? 0 : $model->review_id;
+            $docman = new DocMan($model->docType,$id,get_class($model));
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+            $docman->fileUpload();
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
+        }
+    }
+
+    //刪除附件
+    public function actionFileRemove($doctype) {
+        $model = new ReviewAllotForm();
+        if (isset($_POST['ReviewAllotForm'])) {
+            $model->attributes = $_POST['ReviewAllotForm'];
+
+            $docman = new DocMan($model->docType,$model->review_id,'ReviewAllotForm');
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+            echo $docman->genTableFileList(false);
+        } else {
+            echo "NIL";
+        }
+    }
+
+    //下載附件
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        $sql = "select b.city from hr_review a LEFT JOIN hr_employee b ON a.employee_id = b.id where a.id = $docId";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $citylist = Yii::app()->user->city_allow();
+            if (strpos($citylist, $row['city']) !== false) {
+                $docman = new DocMan($doctype,$docId,'ReviewAllotForm');
+                $docman->masterId = $mastId;
+                $docman->fileDownload($fileId);
+            } else {
+                throw new CHttpException(404,'Access right not match.');
+            }
+        } else {
+            throw new CHttpException(404,'Record not found.');
+        }
+    }
 }

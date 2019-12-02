@@ -33,7 +33,7 @@ class ReviewHandleController extends Controller
                 'expression'=>array('ReviewHandleController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view'),
+                'actions'=>array('index','view','fileDownload'),
                 'expression'=>array('ReviewHandleController','allowReadOnly'),
             ),
             array('deny',  // deny all users
@@ -147,4 +147,22 @@ class ReviewHandleController extends Controller
         }
     }
 
+
+    //下載附件
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        $sql = "select b.city from hr_review a LEFT JOIN hr_employee b ON a.employee_id = b.id where a.id = $docId";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $citylist = Yii::app()->user->city_allow();
+            if (strpos($citylist, $row['city']) !== false) {
+                $docman = new DocMan($doctype,$docId,'ReviewAllotForm');
+                $docman->masterId = $mastId;
+                $docman->fileDownload($fileId);
+            } else {
+                throw new CHttpException(404,'Access right not match.');
+            }
+        } else {
+            throw new CHttpException(404,'Record not found.');
+        }
+    }
 }

@@ -41,6 +41,18 @@ class ReviewSearchForm extends CFormModel
 	public $with_foot;//四用表格
 	public $pro_str='';//統計表格的字符串.例如：（甲-乙）
 
+
+    public $no_of_attm = array(
+        'review'=>0
+    );
+    public $docType = 'REVIEW';
+    public $docMasterId = array(
+        'review'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'review'=>0
+    );
 	public function attributeLabels()
 	{
 		return array(
@@ -110,6 +122,7 @@ class ReviewSearchForm extends CFormModel
     }
 
 	public function retrieveData($index) {
+        $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         //,b.status_type,b.year,b.year_type,b.id as review_id
         $expr_sql = '';
@@ -117,7 +130,8 @@ class ReviewSearchForm extends CFormModel
             $expr_sql.=" and (FIND_IN_SET('$this->login_id',b.id_s_list) or b.employee_id = '$this->login_id' or b.lcu = '$this->login_id')";
         }
 		$row = Yii::app()->db->createCommand()
-            ->select("c.department,b.review_type,b.change_num,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id")
+            ->select("c.department,b.review_type,b.change_num,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,docman$suffix.countdoc('REVIEW',b.id) as reviewdoc")
+            //->select("c.department,b.review_type,b.change_num,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,docman$suffix.countdoc('REVIEW',b.id) as reviewdoc")
             ->from("hr_review b")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
             ->leftJoin("hr_company d","c.company_id = d.id")
@@ -125,6 +139,7 @@ class ReviewSearchForm extends CFormModel
             ->where("b.id=:id and b.status_type in (1,2,3) $expr_sql",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
+            $this->no_of_attm['review'] = $row['reviewdoc'];
             $this->status_type = $row['status_type'];
             //$this->status_type = ReviewAllotList::getReviewStatuts($review['status_type'])["status"];
             $this->name_list = $row['name_list'];

@@ -35,6 +35,18 @@ class ReviewHandleForm extends CFormModel
 	public $tem_s_ist;//审核权限的序列化
 	public $tem_sum;
 
+
+    public $no_of_attm = array(
+        'review'=>0
+    );
+    public $docType = 'REVIEW';
+    public $docMasterId = array(
+        'review'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'review'=>0
+    );
 	public function attributeLabels()
 	{
 		return array(
@@ -176,10 +188,11 @@ class ReviewHandleForm extends CFormModel
     }
 
 	public function retrieveData($index) {
+        $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         //,b.status_type,b.year,b.year_type,b.id as review_id
 		$row = Yii::app()->db->createCommand()
-            ->select("a.review_remark,a.strengths,a.target,a.improve,b.review_type,b.employee_remark,a.review_sum,a.handle_name,a.handle_per,a.tem_s_ist,a.review_id,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,a.status_type,b.year,b.year_type,a.id")
+            ->select("docman$suffix.countdoc('REVIEW',a.review_id) as reviewdoc,a.review_remark,a.strengths,a.target,a.improve,b.review_type,b.employee_remark,a.review_sum,a.handle_name,a.handle_per,a.tem_s_ist,a.review_id,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,a.status_type,b.year,b.year_type,a.id")
             ->from("hr_review_h a")
             ->leftJoin("hr_review b","a.review_id = b.id")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
@@ -188,6 +201,7 @@ class ReviewHandleForm extends CFormModel
             ->where("a.id=:id and a.handle_id = :handle_id and a.status_type in (1,4)",array(":id"=>$index,":handle_id"=>$this->handle_id))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
+            $this->no_of_attm['review'] = $row['reviewdoc'];
             $this->status_type = $row['status_type'];
             //$this->status_type = ReviewAllotList::getReviewStatuts($review['status_type'])["status"];
             $this->handle_name = $row['handle_name'];

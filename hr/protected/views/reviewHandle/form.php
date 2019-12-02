@@ -54,13 +54,19 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
         </div>
 	</div>
 
-            <?php if (!$model->getReadonly()): ?>
                 <div class="btn-group pull-right" role="group">
+                    <?php if (!$model->getReadonly()): ?>
                     <?php echo TbHtml::button('<span class="fa fa-copy"></span> '.Yii::t('contract','Copy review'), array(
                         'id'=>'reviewCopy'));
                     ?>
+                    <?php endif ?>
+                    <?php
+                    $counter = ($model->no_of_attm['review'] > 0) ? ' <span id="docreview" class="label label-info">'.$model->no_of_attm['review'].'</span>' : ' <span id="docreview"></span>';
+                    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                            'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadreview',)
+                    );
+                    ?>
                 </div>
-            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -142,6 +148,17 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
 
 	</div>
 </section>
+<?php
+$review_id = $model->id;
+$model->id = $model->review_id;
+$this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'REVIEW',
+    'header'=>Yii::t('misc','Attachment'),
+    'ronly'=>true,
+));
+$model->id = $review_id;
+?>
 <xmp id="xmpText">
         <textarea rows="1" name=":name" class="form-control" placeholder="<?php echo Yii::t("contract","Scoring remark")?>"></textarea>
 </xmp>
@@ -160,6 +177,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
 ?>
 <?php
 
+Script::genFileUpload($model,$form->id,'REVIEW');
 $link = Yii::app()->createUrl('reviewHandle/save');
 $js = "
 $('#btnConfirmData').on('click',function() {

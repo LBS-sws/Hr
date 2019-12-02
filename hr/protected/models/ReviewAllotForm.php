@@ -2,6 +2,7 @@
 
 class ReviewAllotForm extends CFormModel
 {
+	public $id;
 	public $employee_id;
 	public $employee_name;
 	public $city;
@@ -29,6 +30,18 @@ class ReviewAllotForm extends CFormModel
     public $count_num=100;
     public $change_num;
 
+
+    public $no_of_attm = array(
+        'review'=>0
+    );
+    public $docType = 'REVIEW';
+    public $docMasterId = array(
+        'review'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'review'=>0
+    );
 	public function attributeLabels()
 	{
 		return array(
@@ -54,7 +67,7 @@ class ReviewAllotForm extends CFormModel
 	{
 		return array(
 			array('review_id,employee_id, name,code,phone,dept_name,company_name,contract_id,status_type,city,entry_time,year,year_type,id_list,
-			tem_str,tem_list,change_num','safe'),
+			tem_str,tem_list,change_num,id','safe'),
             array('employee_id','required'),
             array('id_list','required'),
             array('tem_list','required'),
@@ -62,6 +75,7 @@ class ReviewAllotForm extends CFormModel
             array('change_num','validateChangeNum'),
             array('id_list','validateIdList'),
             array('tem_list','validateList'),
+            array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
 
@@ -246,6 +260,7 @@ class ReviewAllotForm extends CFormModel
 
 	public function retrieveData($index,$year,$year_type) {
         $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
         //,b.status_type,b.year,b.year_type,b.id as review_id
         $dateTime = ReviewAllotList::getReviewDateTime($year,$year_type);
 		$row = Yii::app()->db->createCommand()
@@ -267,7 +282,7 @@ class ReviewAllotForm extends CFormModel
             $this->code = $row['code'];
             $this->phone = $row['phone'];
             $review = Yii::app()->db->createCommand()
-                ->select("status_type,year,id_list,id_s_list,year_type,tem_str,tem_s_ist,change_num,review_type,id as review_id")
+                ->select("*,docman$suffix.countdoc('REVIEW',id) as reviewdoc")
                 ->from("hr_review")
                 ->where("employee_id=:id and year = :year and year_type = :year_type",
                     array(
@@ -277,11 +292,13 @@ class ReviewAllotForm extends CFormModel
                     )
                 )->queryRow();
             if($review){
+                $this->no_of_attm['review'] = $review['reviewdoc'];
                 $this->change_num = $review['change_num'];
                 $this->review_type = $review['review_type'];
                 $this->status_type = $review['status_type'];
                 //$this->status_type = ReviewAllotList::getReviewStatuts($review['status_type'])["status"];
-                $this->review_id = $review['review_id'];
+                $this->review_id = $review['id'];
+                $this->id = $review['id'];
                 $this->tem_str = $review['tem_str'];
                 $this->tem_str = $review['tem_str'];
                 $this->id_s_list = $review['id_s_list'];
@@ -439,6 +456,7 @@ class ReviewAllotForm extends CFormModel
 		//$transaction=$connection->beginTransaction();
 		try {
 			$this->saveGoods($connection);
+            $this->updateDocman($connection,'REVIEW');
 			//$transaction->commit();
 		}
 		catch(Exception $e) {
@@ -446,6 +464,18 @@ class ReviewAllotForm extends CFormModel
 			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
 		}
 	}
+
+    protected function updateDocman(&$connection, $doctype) {
+        if ($this->scenario=='new') {
+            $docidx = strtolower($doctype);
+            if ($this->docMasterId[$docidx] > 0) {
+                $docman = new DocMan($doctype,$this->review_id,get_class($this));
+                $docman->masterId = $this->docMasterId[$docidx];
+                $docman->updateDocId($connection, $this->docMasterId[$docidx]);
+            }
+            $this->scenario = "edit";
+        }
+    }
 
 	protected function saveGoods(&$connection) {
         $uid = Yii::app()->user->id;
@@ -466,7 +496,6 @@ class ReviewAllotForm extends CFormModel
                     'lcu'=>$uid,
                 ));
                 $this->review_id = Yii::app()->db->getLastInsertID();
-                $this->scenario = "edit";
                 break;
             case 'edit':
                 $connection->createCommand()->update('hr_review', array(

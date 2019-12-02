@@ -43,13 +43,19 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
         <?php endif ?>
 	</div>
 
-            <?php if ($model->status_type == 2 || $model->status_type == 3): ?>
                 <div class="btn-group pull-right" role="group">
+                    <?php if ($model->status_type == 2 || $model->status_type == 3): ?>
                     <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('contract','Down'), array(
                         'submit'=>Yii::app()->createUrl('ReviewSearch/downExcel')));
                     ?>
+                    <?php endif ?>
+                    <?php
+                    $counter = ($model->no_of_attm['review'] > 0) ? ' <span id="docreview" class="label label-info">'.$model->no_of_attm['review'].'</span>' : ' <span id="docreview"></span>';
+                    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                            'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadreview',)
+                    );
+                    ?>
                 </div>
-            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -145,8 +151,16 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
 
 	</div>
 </section>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'REVIEW',
+    'header'=>Yii::t('misc','Attachment'),
+    'ronly'=>$model->getReadonly(),
+));
+?>
 <?php
 
+Script::genFileUpload($model,$form->id,'REVIEW');
 
 $js = "
 $(function(){

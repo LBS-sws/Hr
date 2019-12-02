@@ -42,13 +42,19 @@ $this->pageTitle=Yii::app()->name . ' - ReviewAllot Form';
             ?>
         <?php endif ?>
 	</div>
-            <?php if ($model->status_type == 1&&$model->scenario=='edit'): ?>
             <div class="btn-group pull-right" role="group">
+                <?php if ($model->status_type == 1&&$model->scenario=='edit'): ?>
                 <?php echo TbHtml::button('<span class="fa fa-reply-all"></span> '.Yii::t('contract','undo'), array(
                     'submit'=>Yii::app()->createUrl('reviewAllot/undo')));
                 ?>
+                <?php endif ?>
+                <?php
+                $counter = ($model->no_of_attm['review'] > 0) ? ' <span id="docreview" class="label label-info">'.$model->no_of_attm['review'].'</span>' : ' <span id="docreview"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadreview',)
+                );
+                ?>
             </div>
-            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -98,6 +104,13 @@ $this->pageTitle=Yii::app()->name . ' - ReviewAllot Form';
 
 	</div>
 </section>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'REVIEW',
+    'header'=>Yii::t('misc','Attachment'),
+    'ronly'=>$model->getReadonly(),
+));
+?>
 <?php
 $list = TbHtml::listBox('lsttemplate', '', array(), array(
         'size'=>'15')
@@ -131,6 +144,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
 $mesg = Yii::t('dialog','No Record Found');
 $link = Yii::app()->createAbsoluteUrl("lookup");
 
+Script::genFileUpload($model,$form->id,'REVIEW');
 $js = "
 $('#btnTemplate').on('click',function(){
 	var link = '$link/template';
