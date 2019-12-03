@@ -166,7 +166,7 @@ class DeptForm extends CFormModel
 
     public function getReviewType($str=""){
 	    $arr = array(
-	        1=>Yii::t("contract","normal"),
+	        1=>Yii::t("fete","normal"),
 	        2=>Yii::t("fete","technician"),
 	        3=>Yii::t("staff","Sales"),
 	        4=>Yii::t("fete","charge"),

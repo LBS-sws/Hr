@@ -157,6 +157,7 @@ return array(
     'charge'=>'地區主管',
     'director'=>'總監',
     'you'=>'你',
+    'normal'=>'常規',
 
     'Regular overtime'=>'常規加班',
 

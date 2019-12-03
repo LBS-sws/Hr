@@ -161,6 +161,7 @@ return array(
     'charge'=>'地区主管',
     'director'=>'总监',
     'you'=>'你',
+    'normal'=>'常规',
 
     'Regular overtime'=>'常规加班',
 
