@@ -145,8 +145,8 @@ class ReviewAllotController extends Controller
         $model = new ReviewAllotForm();
         if (isset($_POST['ReviewAllotForm'])) {
             $model->attributes = $_POST['ReviewAllotForm'];
-
             $id = ($_POST['ReviewAllotForm']['scenario']=='new') ? 0 : $model->review_id;
+            $id = empty($id)?0:$id;
             $docman = new DocMan($model->docType,$id,get_class($model));
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
