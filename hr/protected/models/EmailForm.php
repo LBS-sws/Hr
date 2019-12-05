@@ -6,6 +6,7 @@ class EmailForm extends CFormModel
 	public $city;
 	public $subject;
 	public $message;
+	public $request_dt;
 	public $city_id;
 	public $city_str='全部';
 	public $staff_id;
@@ -22,6 +23,7 @@ class EmailForm extends CFormModel
             'city_str'=>Yii::t('contract','send city'),
             'staff_str'=>Yii::t('contract','send staff'),
             'status_type'=>Yii::t('contract','Status'),
+            'request_dt'=>Yii::t('contract','request date'),
         );
 	}
 
@@ -31,7 +33,7 @@ class EmailForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, city,subject,message,city_id,city_str,staff_id,staff_str,status_type','safe'),
+			array('id, city,subject,message,city_id,city_str,staff_id,staff_str,status_type,request_dt','safe'),
             array('subject','required'),
             array('message','required'),
             array('city_id','validateCity'),
@@ -77,6 +79,7 @@ class EmailForm extends CFormModel
             ->where("id=:id",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
+            $this->request_dt = empty($row['request_dt'])?"":date("Y/m/d",strtotime($row['request_dt']));
             $this->city = $row['city'];
             $this->subject = $row['subject'];
             $this->message = $row['message'];
@@ -121,9 +124,9 @@ class EmailForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_email(
-							city,subject,message,city_id,city_str,staff_id,staff_str,status_type, lcu
+							city,subject,message,city_id,city_str,staff_id,staff_str,status_type,request_dt, lcu
 						) values (
-							:city,:subject,:message,:s_city_id,:s_city_str,:staff_id,:staff_str,:status_type, :lcu
+							:city,:subject,:message,:s_city_id,:s_city_str,:staff_id,:staff_str,:status_type,:request_dt, :lcu
 						)";
                 break;
             case 'edit':
@@ -135,6 +138,7 @@ class EmailForm extends CFormModel
 							staff_id = :staff_id, 
 							staff_str = :staff_str, 
 							status_type = :status_type, 
+							request_dt = :request_dt, 
 							luu = :luu
 						where id = :id
 						";
@@ -161,6 +165,12 @@ class EmailForm extends CFormModel
             $command->bindParam(':staff_id',$this->staff_id,PDO::PARAM_STR);
         if (strpos($sql,':staff_str')!==false)
             $command->bindParam(':staff_str',$this->staff_str,PDO::PARAM_STR);
+        if (strpos($sql,':request_dt')!==false){
+            if(empty($this->request_dt)){
+                $this->request_dt = null;
+            }
+            $command->bindParam(':request_dt',$this->request_dt,PDO::PARAM_STR);
+        }
         if (strpos($sql,':status_type')!==false)
             $command->bindParam(':status_type',$this->status_type,PDO::PARAM_INT);
 
@@ -184,6 +194,7 @@ class EmailForm extends CFormModel
 	}
 
 	protected function sendEmail(){
+        //request_dt
         $email = new Email($this->subject,$this->message);
         if(empty($this->city_id)){
             $email->addEmailToAllCity();
@@ -200,6 +211,6 @@ class EmailForm extends CFormModel
                 $email->addEmailToLcu($staff);
             }
         }
-        $email->sent();
+        $email->sent('','',$this->request_dt);
     }
 }

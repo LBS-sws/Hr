@@ -424,5 +424,6 @@ return array(
     'Copy review'=>'複製上次評核分數',
     'review leave'=>'評核級別',
     'Score of proportion of reviewers'=>'評核人所占比例得分',
+    'request date'=>'郵件發送時間',
     );
 ?>

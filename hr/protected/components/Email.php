@@ -304,7 +304,8 @@ class Email {
     }
 
     //發送郵件
-    public function sent($uid="",$systemId=""){
+    public function sent($uid="",$systemId="",$request_dt=""){
+        $request_dt = empty($request_dt)?date('Y-m-d H:i:s'):$request_dt;
         if(empty($this->to_addr)){ //後期修改，如果沒有收件人不發送郵件
             return false;
         }
@@ -318,7 +319,7 @@ class Email {
         $from_addr = Yii::app()->params['adminEmail'];
         $suffix = Yii::app()->params['envSuffix'];
         $aaa = Yii::app()->db->createCommand()->insert("swoper$suffix.swo_email_queue", array(
-            'request_dt'=>date('Y-m-d H:i:s'),
+            'request_dt'=>$request_dt,
             'from_addr'=>$from_addr,
             'to_addr'=>$to_addr,
             'subject'=>$this->subject,//郵件主題

@@ -429,5 +429,8 @@ return array(
     'Copy review'=>'复制上次评核分数',
     'review leave'=>'评核级别',
     'Score of proportion of reviewers'=>'评核人所占比例得分',
+    'request date'=>'邮件发送时间',
+    'message sending time'=>'及时发送',
+    'custom date'=>'自定义日期',
 );
 ?>
