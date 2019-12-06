@@ -148,7 +148,6 @@ class TimerCommand extends CConsoleCommand {
         $email = new Email("人事系統待處理事項","","人事系統待處理事項");
         $userlist = $email->getEmailUserList($this->city_list);
         if($userlist){
-            echo "leave and work,users number:".count($userlist)."\r\n";
             foreach ($userlist as $user){
                 if($this->city != $user["city"]){
                     $this->city = $user["city"];
@@ -200,6 +199,7 @@ class TimerCommand extends CConsoleCommand {
                 }
 
                 if(!empty($message)){ //如果有內容則發送郵件
+                    echo "to do transaction:".$user['username']."\r\n";
                     $email->setMessage($message);
                     $email->addToAddrEmail($user["email"]);
                     $email->sent("系统生成",$systemId);
