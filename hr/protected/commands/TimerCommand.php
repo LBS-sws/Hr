@@ -10,6 +10,8 @@ class TimerCommand extends CConsoleCommand {
     public function run() {
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
+        echo "----------------------------------------------\r\n";
+        echo "----------------------------------------------\r\n";
         echo "start:$firstday\r\n";
         $lastday = date("Y/m/d",strtotime("$firstday + 1 month"));
         $this->longTimeContract();//合同過期提示（郵件)
@@ -156,7 +158,19 @@ class TimerCommand extends CConsoleCommand {
                 $message="";
                 foreach ($this->send_list as $send){
                     $html = "";
+                    $city_list = $send["city_allow"]?$this->city_list:array($user["city"]); //判斷是否需要查詢下級城市
                     $bool = array_intersect($this->city_list,$send["city_list"]);
+                    if(key_exists("joeEmail",$send)){//驗證是否只給繞生發郵件
+                        if($send["joeEmail"]){
+                            $joeEmail = $email->getJoeEmail();
+                            if($user["email"]!=$joeEmail){//用戶不是繞生跳出循環
+                                continue;
+                            }else{
+                                $bool=1;//繞生不需要城市驗證
+                                $city_list = $send["city_list"];
+                            }
+                        }
+                    }
                     if(empty($bool)){
                         continue;//該城市沒有提示信息
                     }
@@ -169,21 +183,6 @@ class TimerCommand extends CConsoleCommand {
                         if(empty($user["incharge"])){
                             continue;//該用戶不是boss
                         }
-                    }
-                    $city_bool = true;
-                    $city_list = array($user["city"]);
-                    if(key_exists("joeEmail",$send)){//驗證是否只給繞生發郵件
-                        if($send["joeEmail"]){
-                            $joeEmail = $email->getJoeEmail();
-                            if($user["email"]!=$joeEmail){//用戶不是繞生跳出循環
-                                continue;
-                            }
-                            $city_bool = false;
-                            $city_list = $send["city_list"];
-                        }
-                    }
-                    if($send["city_allow"]&&$city_bool){ //需要查詢下級城市
-                        $city_list = $this->city_list;
                     }
                     $html.=$send["title"];
                     $html.="<table border='1'>".$send["table_head"]."<tbody>";
@@ -309,9 +308,9 @@ class TimerCommand extends CConsoleCommand {
                     continue;
                 }
             }
-            $city = "'".$row["city"]."'";
-            if(!in_array($city,$this->city_list)){
-                $this->city_list[] = $city;
+            if(!in_array($row["city"],$this->city_list)){
+                $cityAllow = Email::getAllCityToMinCity($row["city"]);
+                $this->city_list = array_unique(array_merge($cityAllow,$this->city_list));
             }
             if(!key_exists($row["city"],$arr)){
                 $arr["city_list"][]=$row["city"];
@@ -337,9 +336,9 @@ class TimerCommand extends CConsoleCommand {
         $str = $str=="加班"?"WORKEM":"LEAVE";
         foreach ($rows as $row){
             if ($this->docmanSearch($str, $row["id"], $row["lud"])) {
-                $city = "'".$row["city"]."'";
-                if(!in_array($city,$this->city_list)){
-                    $this->city_list[] = $city;
+                if(!in_array($row["city"],$this->city_list)){
+                    $cityAllow = Email::getAllCityToMinCity($row["city"]);
+                    $this->city_list = array_unique(array_merge($cityAllow,$this->city_list));
                 }
                 if(!key_exists($row["city"],$arr)){
                     $arr["city_list"][]=$row["city"];

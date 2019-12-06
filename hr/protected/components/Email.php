@@ -131,8 +131,8 @@ class Email {
     //
     public function getEmailUserList($city_allow){
         if(!empty($city_allow)){
-            $city_allow = implode(",",$city_allow);
-            $sql = "a.city in ($city_allow)";
+            $city_allow = implode("','",$city_allow);
+            $sql = "a.city in ('CN','$city_allow')";
         }else{
             return false;
         }
