@@ -60,6 +60,20 @@ class Email {
         }
     }
 
+    //獲取重要地區總監的郵件
+    public function getJoeEmailAndMore(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rs = Yii::app()->db->createCommand()->select("b.email")->from("security$suffix.sec_city a")
+            ->leftJoin("security$suffix.sec_user b","a.incharge=b.username")
+            ->where("a.code in ('CN','HD','HN','HXHB')")
+            ->queryAll();
+        if($rs){
+            return array_column($rs,'email');
+        }else{
+            return array("joeyiu@lbsgroup.com.cn");
+        }
+    }
+
     //添加收信人(根據權限）
     public function addEmailToPrefix($str){
         $suffix = Yii::app()->params['envSuffix'];

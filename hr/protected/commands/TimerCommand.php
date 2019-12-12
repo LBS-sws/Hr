@@ -162,8 +162,8 @@ class TimerCommand extends CConsoleCommand {
                     $bool = array_intersect($this->city_list,$send["city_list"]);
                     if(key_exists("joeEmail",$send)){//驗證是否只給繞生發郵件
                         if($send["joeEmail"]){
-                            $joeEmail = $email->getJoeEmail();
-                            if($user["email"]!=$joeEmail){//用戶不是繞生跳出循環
+                            $joeEmailList = $email->getJoeEmailAndMore();
+                            if(!in_array($user["email"],$joeEmailList)){//用戶不是繞生跳出循環
                                 continue;
                             }else{
                                 $bool=1;//繞生不需要城市驗證
