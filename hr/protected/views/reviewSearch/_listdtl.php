@@ -16,4 +16,9 @@
     <td><?php echo $this->record['name_list']; ?></td>
     <td><?php echo $this->record['review_sum']; ?></td>
     <td><?php echo $this->record['status']; ?></td>
+    <td>
+        <?php if (!empty($this->record['reviewdoc'])): ?>
+            <span class="fa fa-paperclip"></span>
+        <?php endif; ?>
+    </td>
 </tr>

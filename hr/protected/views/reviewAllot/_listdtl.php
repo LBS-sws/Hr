@@ -13,4 +13,9 @@
     <td><?php echo $this->record['year']; ?></td>
     <td><?php echo $this->record['year_type']; ?></td>
     <td><?php echo $this->record['status']; ?></td>
+    <td>
+        <?php if (!empty($this->record['reviewdoc'])): ?>
+            <span class="fa fa-paperclip"></span>
+        <?php endif; ?>
+    </td>
 </tr>

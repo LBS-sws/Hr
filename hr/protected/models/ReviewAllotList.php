@@ -147,6 +147,7 @@ class ReviewAllotList extends CListPageModel
 					'company_id'=>$record['company_name'],
 					'phone'=>$record['phone'],
 					'status'=>$arr["status"],
+					'reviewdoc'=>$record["reviewdoc"],
 					'style'=>$arr["style"],
                     'city'=>CGeneral::getCityName($record["city"]),
                     'entry_time'=>$record["entry_time"],
@@ -197,8 +198,9 @@ class ReviewAllotList extends CListPageModel
 
 	protected function resetStatus(&$record){
 	    //,b.status_type,b.year,b.year_type,b.id as review_id
+        $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()
-            ->select("status_type,year,review_type,year_type,id as review_id")
+            ->select("status_type,year,review_type,year_type,id as review_id,docman$suffix.countdoc('REVIEW',id) as reviewdoc")
             ->from("hr_review")
             ->where("employee_id=:id and year = :year and year_type = :year_type",
                 array(
@@ -213,7 +215,9 @@ class ReviewAllotList extends CListPageModel
             $record["year"] = $rows["year"];
             $record["year_type"] = $rows["year_type"];
             $record["review_id"] = $rows["review_id"];
+            $record["reviewdoc"] = $rows["reviewdoc"];
         }else{
+            $record["reviewdoc"] = 0;
             $record["status_type"] = 0;
             $record["year"] = $this->year;
             $record["year_type"] = $this->year_type;

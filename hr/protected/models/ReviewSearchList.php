@@ -84,7 +84,7 @@ class ReviewSearchList extends CListPageModel
         if(!empty($this->year_type)){
             $expr_sql.=" and b.year_type='".$this->year_type."'";
         }
-		$sql1 = "select c.name,f.name as ment_name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum,b.review_type 
+		$sql1 = "select docman$suffix.countdoc('REVIEW',b.id) as reviewdoc,c.name,f.name as ment_name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum,b.review_type 
                 from hr_review b 
                 LEFT JOIN hr_employee c ON c.id = b.employee_id
                 LEFT JOIN hr_company d ON c.company_id = d.id
@@ -162,6 +162,7 @@ class ReviewSearchList extends CListPageModel
 					'company_id'=>$record['company_name'],
                     'department'=>$record['ment_name'],
 					'phone'=>$record['phone'],
+					'reviewdoc'=>$record['reviewdoc'],
 					'status'=>$arr["status"],
 					'style'=>$arr["style"],
                     'city'=>CGeneral::getCityName($record["city"]),

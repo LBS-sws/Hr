@@ -104,12 +104,18 @@ $this->pageTitle=Yii::app()->name . ' - ReviewAllot Form';
 
 	</div>
 </section>
-<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+<?php
+$fileUpload = array('model'=>$model,
     'form'=>$form,
     'doctype'=>'REVIEW',
     'header'=>Yii::t('misc','Attachment'),
-    'ronly'=>$model->getReadonly(),
-));
+    'ronly'=>$model->getScenario()=='view',
+);
+if(in_array($model->status_type,array(1,2,3))){
+    $fileUpload['delBtn']=false;
+}
+
+$this->renderPartial('//site/fileupload',$fileUpload);
 ?>
 <?php
 $list = TbHtml::listBox('lsttemplate', '', array(), array(
