@@ -160,14 +160,12 @@ class TimerCommand extends CConsoleCommand {
                     $html = "";
                     $city_list = $send["city_allow"]?$this->city_list:array($user["city"]); //判斷是否需要查詢下級城市
                     $bool = array_intersect($this->city_list,$send["city_list"]);
-                    if(key_exists("joeEmail",$send)){//驗證是否只給繞生發郵件
+                    if(key_exists("joeEmail",$send)){//驗證是否額外給繞生發郵件
                         if($send["joeEmail"]){
-                            $joeEmailList = $email->getJoeEmailAndMore();
-                            if(!in_array($user["email"],$joeEmailList)){//用戶不是繞生跳出循環
-                                continue;
-                            }else{
+                            $joeEmail = $email->getJoeEmail();
+                            if($user["email"]==$joeEmail){//用戶是繞生
                                 $bool=1;//繞生不需要城市驗證
-                                $city_list = $send["city_list"];
+                                $city_list = $send["city_list"];//繞生收到所有城市的郵件
                             }
                         }
                     }
