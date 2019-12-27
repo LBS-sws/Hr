@@ -6,6 +6,16 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('apply_type').$this->drawOrderArrow('a.apply_type'),'#',$this->createOrderLink('supportApply-list','a.apply_type'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('service_type').$this->drawOrderArrow('a.service_type'),'#',$this->createOrderLink('supportApply-list','a.service_type'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('apply_date').$this->drawOrderArrow('a.apply_date'),'#',$this->createOrderLink('supportApply-list','a.apply_date'))
 			;
 		?>

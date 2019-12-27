@@ -67,6 +67,7 @@ class SupportEmployeeList extends CListPageModel
 					'start_date'=>date("Y年m月d日",strtotime($record['apply_date'])),
 					'end_date'=>date("Y年m月d日",strtotime($record['apply_end_date'])),
 					'width'=>$width,
+					'url'=>Yii::app()->createUrl('supportSearch/view',array('index'=>$record['id'])),
 					'day'=>$day,
 					'city'=>$record['apply_city'],
 					'city_name'=>$record['city_name'],

@@ -17,6 +17,8 @@ class SupportSearchList extends CListPageModel
             'employee_id'=>Yii::t('contract','support employee'),
             'review_sum'=>Yii::t('contract','review sum'),
             'status_type'=>Yii::t('contract','Status'),
+            'service_type'=>Yii::t('contract','service type'),
+            'apply_type'=>Yii::t('contract','support type'),
 		);
 	}
 
@@ -85,6 +87,8 @@ class SupportSearchList extends CListPageModel
 					'apply_end_date'=>$record['apply_end_date'],
 					'name'=>$record['name'],
 					'review_sum'=>$record['review_sum'],
+                    'service_type'=>SupportApplyList::getServiceList($record['service_type'],true),
+                    'apply_type'=>$record['apply_type']==2?Yii::t("contract","renewal"):"",
 					'status'=>$arr['status'],
 					'style'=>$arr['style'],
 				);

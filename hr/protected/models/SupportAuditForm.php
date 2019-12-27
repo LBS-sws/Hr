@@ -7,6 +7,7 @@ class SupportAuditForm extends CFormModel
 	public $apply_date;
 	public $apply_num;
 	public $apply_type;
+	public $service_type;
 	public $apply_end_date;
 	public $apply_length=1;
 	public $apply_remark;
@@ -30,7 +31,7 @@ class SupportAuditForm extends CFormModel
 	public $early_remark;
 	public $early_date;
 	public $reject_remark;
-	public $city="ZY";
+	public $city="HK";
 
 	public function attributeLabels()
 	{
@@ -54,6 +55,8 @@ class SupportAuditForm extends CFormModel
             'early_remark10'=>Yii::t('contract','renewal remark'),
             'early_date10'=>Yii::t('contract','renewal date'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
+            'apply_type'=>Yii::t('contract','support type'),
+            'service_type'=>Yii::t('contract','service type'),
         );
 	}
 
@@ -63,7 +66,7 @@ class SupportAuditForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, support_code, reject_remark, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id','safe'),
+			array('id, support_code, service_type, reject_remark, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id','safe'),
             array('apply_date','required'),
             array('apply_end_date','required'),
             array('apply_city','required'),
@@ -153,13 +156,17 @@ class SupportAuditForm extends CFormModel
                 }
                 $oldApplyDate = date("Y/m/d",strtotime($row['apply_date']));
                 $oldApply_end_date = date("Y/m/d",strtotime($row['apply_end_date']));
+                $this->update_type = $row["update_type"];
+                $this->update_remark = $row["update_remark"];
                 if($oldApplyDate != $applyDate || $oldApply_end_date != $this->apply_end_date){
                     $this->update_type = 1;
-                    $this->update_remark = $row["update_remark"]."時間修改：$oldApplyDate - $oldApply_end_date 修改成 $applyDate - ".$this->apply_end_date."
+                    $this->update_remark .= "時間修改：$oldApplyDate - $oldApply_end_date 修改成 $applyDate - ".$this->apply_end_date."
 ";
-                }else{
-                    $this->update_type = $row["update_type"];
-                    $this->update_remark = $row["update_remark"];
+                }
+                if($row["service_type"]!=$this->service_type){
+                    $this->update_type = 1;
+                    $this->update_remark .= "服务修改：".SupportApplyList::getServiceList($row["service_type"],true)." 修改成 ".SupportApplyList::getServiceList($this->service_type,true)."
+";
                 }
             }else if($this->getScenario() != "support"){
                 $message = "權限不足，請於管理員聯繫";
@@ -237,6 +244,9 @@ class SupportAuditForm extends CFormModel
             $this->early_date = $row['early_date'];
             $this->early_remark = $row['early_remark'];
             $this->tem_s_ist = json_decode($row['tem_s_ist'],true);
+
+            $this->apply_type = $row['apply_type'];
+            $this->service_type = $row['service_type'];
 		}
 		return true;
 	}
@@ -256,7 +266,7 @@ class SupportAuditForm extends CFormModel
 
     //獲取支援的員工
     public function getSupportEmployee(){
-        $city = empty($this->city)?"ZY":$this->city;
+        $city = empty($this->city)?"HK":$this->city;
         $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
             ->where("city = '$city'")->queryAll();
@@ -457,15 +467,16 @@ class SupportAuditForm extends CFormModel
                 break;
             case 'new'://支援 5
                 $sql = "insert into hr_apply_support(
-							apply_date,apply_remark,apply_end_date,apply_city,apply_lcu,status_type, lcu, luu
+							service_type,apply_date,apply_remark,apply_end_date,apply_city,apply_lcu,status_type, lcu, luu
 							,tem_s_ist,tem_str,tem_sum,employee_id,audit_remark,apply_length,length_type
 						) values (
-							:apply_date,:apply_remark,:apply_end_date,:apply_city,:apply_lcu,:status_type, :lcu, :luu
+							:service_type,:apply_date,:apply_remark,:apply_end_date,:apply_city,:apply_lcu,:status_type, :lcu, :luu
 							,:tem_s_ist,:tem_str,:tem_sum,:employee_id,:audit_remark,:apply_length,:length_type
 						)";
                 break;
             case 'edit'://查看、待定、分配 3,4,5
                 $sql = "update hr_apply_support set
+							service_type = :service_type, 
 							apply_date = :apply_date, 
 							apply_end_date = :apply_end_date, 
 							length_type = :length_type, 
@@ -503,6 +514,8 @@ class SupportAuditForm extends CFormModel
             $command->bindParam(':apply_city',$this->apply_city,PDO::PARAM_STR);
         if (strpos($sql,':status_type')!==false)
             $command->bindParam(':status_type',$this->status_type,PDO::PARAM_INT);
+        if (strpos($sql,':service_type')!==false)
+            $command->bindParam(':service_type',$this->service_type,PDO::PARAM_INT);
 
         if (strpos($sql,':apply_length')!==false)
             $command->bindParam(':apply_length',$this->apply_length,PDO::PARAM_STR);
@@ -551,6 +564,7 @@ class SupportAuditForm extends CFormModel
             $this->city_name = CGeneral::getCityName($this->apply_city);
             $email = new Email();
             $message = "支援编号:".$this->support_code."<br>";
+            $message.= "服务类型:".SupportApplyList::getServiceList($this->service_type,true)."<br>";
             $message.= "申请城市:".$this->city_name."<br>";
             $message.= "申请时间:".$this->apply_date."<br>";
             $message.= "结束时间:".$this->apply_end_date."<br>";

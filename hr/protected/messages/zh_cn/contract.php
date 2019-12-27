@@ -469,5 +469,9 @@ return array(
     'send back'=>'退回',
     'finish to send back'=>'退回成功',
     'confirmed and submitted, it cannot be modified after submission?'=>'是否确认提交，提交后不能再修改',
+
+    'service type'=>'服务类型',
+    'service support'=>'服务支援',
+    'service guide'=>'技术指导',
 );
 ?>

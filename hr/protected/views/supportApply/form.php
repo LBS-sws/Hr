@@ -49,10 +49,12 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Send'), array(
                 'submit'=>Yii::app()->createUrl('supportApply/save')));
             ?>
-            <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
-                    'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
-            );
-            ?>
+            <?php if ($model->scenario!='new'): ?>
+                <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                );
+                ?>
+            <?php endif ?>
         <?php endif ?>
 
         <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))): ?>
@@ -65,8 +67,8 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
         <?php endif; ?>
 	</div>
 
-            <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))): ?>
-                <div class="btn-group pull-right" role="group">
+            <div class="btn-group pull-right" role="group">
+                <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))): ?>
                     <?php echo TbHtml::button('<span class="fa fa-sign-in"></span> '.Yii::t('contract','renewal'), array(
                             'id'=>'btnRenewal','data-url'=>Yii::app()->createUrl('supportApply/renewal'),
                             'data-label1'=>Yii::t('contract','renewal date'),
@@ -78,11 +80,16 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
                             'id'=>'btnEarly','data-url'=>Yii::app()->createUrl('supportApply/early'),
                             'data-label1'=>Yii::t('contract','early date'),
                             'data-label2'=>Yii::t('contract','early remark'),
-                            )
+                        )
                     );
                     ?>
-                </div>
-            <?php endif; ?>
+                <?php endif; ?>
+                <?php if ($model->scenario!='new'): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-calendar"></span> '.Yii::t('app','History'), array(
+                        'data-toggle'=>'modal','data-target'=>'#historydialog'));
+                    ?>
+                <?php endif ?>
+            </div>
 	</div></div>
 
 	<div class="box box-info">
@@ -124,6 +131,14 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
                     </div>
                 </div>
             <?php endif ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'service_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'service_type',SupportApplyList::getServiceList(),
+                        array('readonly'=>($model->getReadonly()))
+                    ); ?>
+                </div>
+            </div>
             <?php if ($model->apply_type==2): ?>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'apply_type',array('class'=>"col-sm-2 control-label")); ?>
@@ -202,6 +217,17 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
                 </div>
             <?php endif ?>
 
+            <?php if ($model->update_type==1): ?>
+                <div class="form-group has-error">
+                    <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-4">
+                        <?php echo $form->textArea($model, 'update_remark',
+                            array('rows'=>3,'readonly'=>(true))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif ?>
+
 
             <?php if (!in_array($model->status_type,array(1,2))): ?>
             <legend><?php echo Yii::t("contract","reviewAllot project");?></legend><!--考核项目-->
@@ -228,6 +254,7 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
 	</div>
 </section>
 <?php
+$this->renderPartial('//site/history',array('tableHtml'=>SupportSearchForm::getHistoryHtml($model->id)));
 $this->renderPartial('//site/removedialog');
 if(in_array($model->status_type,array(5,8,11))){
     $this->renderPartial('//site/earlydialog',array('form'=>$form,'model'=>$model));

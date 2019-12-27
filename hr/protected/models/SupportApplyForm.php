@@ -7,6 +7,7 @@ class SupportApplyForm extends CFormModel
 	public $apply_date;
 	public $apply_num;
 	public $apply_type;
+	public $service_type;
 	public $apply_end_date;
 	public $apply_length=1;
 	public $apply_remark;
@@ -45,6 +46,7 @@ class SupportApplyForm extends CFormModel
             'audit_remark'=>Yii::t('contract','audit remark'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
             'apply_type'=>Yii::t('contract','support type'),
+            'service_type'=>Yii::t('contract','service type'),
         );
 	}
 
@@ -54,7 +56,8 @@ class SupportApplyForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, apply_type, early_date, early_remark, reject_remark, status_type, support_code, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id,change_num','safe'),
+			array('id, service_type, apply_type, early_date, early_remark, reject_remark, status_type, support_code, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id,change_num','safe'),
+            array('service_type','required','on'=>array('edit','new')),
             array('apply_date','required','on'=>array('edit','new')),
             array('apply_remark','required','on'=>array('edit','new')),
             array('apply_end_date','required','on'=>array('edit','new')),
@@ -67,7 +70,7 @@ class SupportApplyForm extends CFormModel
 	}
 
     public function validateID($attribute, $params){
-        if($this->status_type == 2){
+        if($this->status_type == 2&&!empty($this->id)){
             $city = Yii::app()->user->city;
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")
                 ->where("id=:id and apply_city='$city' and status_type=1",array(":id"=>$this->id))->queryRow();
@@ -210,6 +213,8 @@ class SupportApplyForm extends CFormModel
             $this->tem_s_ist = json_decode($row['tem_s_ist'],true);
 
             $this->review_sum = $row['review_sum'];
+
+            $this->service_type = $row['service_type'];
 		}
 		return true;
 	}
@@ -246,9 +251,9 @@ class SupportApplyForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_apply_support(
-							apply_date,apply_remark,apply_end_date,apply_city,apply_lcu,status_type, lcu
+							apply_date,apply_remark,apply_end_date,apply_city,apply_lcu,status_type,service_type, lcu
 						) values (
-							:apply_date,:apply_remark,:apply_end_date,:apply_city,:apply_lcu,:status_type, :lcu
+							:apply_date,:apply_remark,:apply_end_date,:apply_city,:apply_lcu,:status_type,:service_type, :lcu
 						)";
                 break;
             case 'edit':
@@ -256,6 +261,7 @@ class SupportApplyForm extends CFormModel
 							apply_date = :apply_date, 
 							apply_remark = :apply_remark, 
 							apply_end_date = :apply_end_date, 
+							service_type = :service_type, 
 							apply_city = :apply_city, 
 							apply_lcu = :apply_lcu, 
 							status_type = :status_type, 
@@ -317,6 +323,8 @@ class SupportApplyForm extends CFormModel
             $command->bindParam(':apply_city',$city,PDO::PARAM_STR);
         if (strpos($sql,':status_type')!==false)
             $command->bindParam(':status_type',$this->status_type,PDO::PARAM_INT);
+        if (strpos($sql,':service_type')!==false)
+            $command->bindParam(':service_type',$this->service_type,PDO::PARAM_INT);
 
         if (strpos($sql,':review_sum')!==false)
             $command->bindParam(':review_sum',$this->review_sum,PDO::PARAM_STR);
@@ -355,6 +363,7 @@ class SupportApplyForm extends CFormModel
             $this->city_name = CGeneral::getCityName($this->apply_city);
             $email = new Email();
             $message = "支援编号:".$this->support_code."<br>";
+            $message.= "服务类型:".SupportApplyList::getServiceList($this->service_type,true)."<br>";
             $message.= "申请城市:".$this->city_name."<br>";
             $message.= "申请时间:".$this->apply_date."<br>";
             $message.= "结束时间:".$this->apply_end_date."<br>";

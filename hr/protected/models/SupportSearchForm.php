@@ -7,6 +7,7 @@ class SupportSearchForm extends CFormModel
 	public $apply_date;
 	public $apply_num;
 	public $apply_type;
+	public $service_type;
 	public $apply_end_date;
 	public $apply_length=1;
 	public $apply_remark;
@@ -54,6 +55,8 @@ class SupportSearchForm extends CFormModel
             'early_remark10'=>Yii::t('contract','renewal remark'),
             'early_date10'=>Yii::t('contract','renewal date'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
+            'apply_type'=>Yii::t('contract','support type'),
+            'service_type'=>Yii::t('contract','service type'),
         );
 	}
 
@@ -80,6 +83,9 @@ class SupportSearchForm extends CFormModel
             $this->apply_end_date = $row['apply_end_date'];
             $this->apply_remark = $row['apply_remark'];
             $this->status_type = $row['status_type'];
+
+            $this->apply_type = $row['apply_type'];
+            $this->service_type = $row['service_type'];
 
             $this->employee_id = $row['employee_id'];
             $this->employee_name = $row['employee_name'];
@@ -219,6 +225,38 @@ class SupportSearchForm extends CFormModel
         }
 
         return $tabs;
+    }
+
+    public function getHistoryHtml($id){
+        $suffix = Yii::app()->params['envSuffix'];
+        $html = '<table id="tblFlow" class="table table-bordered table-striped table-hover">';
+        $html.= '<thead><tr>';
+        $html.='<th>'.Yii::t("contract","Start Time").'</th>';
+        $html.='<th>'.Yii::t("contract","End Time").'</th>';
+        $html.='<th>'.Yii::t("contract","Operator Time").'</th>';
+        $html.='<th>'.Yii::t("contract","Operator User").'</th>';
+        $html.='<th>'.Yii::t("contract","Status").'</th>';
+        $html.='</tr></thead><tbody>';
+
+        $rows = Yii::app()->db->createCommand()->select("a.start_date,a.end_date,a.status_type,b.disp_name,a.lcd")->from("hr_apply_support_history a")
+            ->leftJoin("security$suffix.sec_user b","a.lcu = b.username")
+            ->where("a.support_id=:id",array(":id"=>$id))->order("lcd asc")->queryAll();
+        if($rows){
+            $arr = SupportApplyList::getStatusList();
+            foreach ($rows as $row){
+                $status = key_exists($row['status_type'],$arr)?$arr[$row['status_type']]:array('status'=>$row['status_type']);
+                $html.="<tr>";
+                $html.='<td>'.$row['start_date'].'</td>';
+                $html.='<td>'.$row['end_date'].'</td>';
+                $html.='<td>'.$row['lcd'].'</td>';
+                $html.='<td>'.$row['disp_name'].'</td>';
+                $html.='<td>'.$status['status'].'</td>';
+                $html.="</tr>";
+            }
+        }
+        $html.='</tbody></table>';
+
+        return $html;
     }
 
     //判断员工是否可以支援

@@ -76,23 +76,26 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
             ?>
         <?php endif ?>
 	</div>
-            <?php if ($model->scenario!='view'): ?>
-                <?php if ($model->status_type == 6): ?>
-                    <div class="btn-group pull-right" role="group">
+            <div class="btn-group pull-right" role="group">
+                <?php if ($model->scenario!='view'): ?>
+                    <?php if ($model->status_type == 6): ?>
                         <?php echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','undo'), array(
                             'submit'=>Yii::app()->createUrl('supportAudit/undo')));
                         ?>
-                    </div>
-                <?php endif ?>
+                    <?php endif ?>
 
-                <?php if (in_array($model->status_type,array(9,10))): ?>
-                    <div class="btn-group pull-right" role="group">
+                    <?php if (in_array($model->status_type,array(9,10))): ?>
                         <?php echo TbHtml::button('<span class="fa fa-mail-forward"></span> '.Yii::t('contract','Rejected'), array(
                             'data-toggle'=>'modal','data-target'=>'#jectdialog'));
                         ?>
-                    </div>
+                    <?php endif ?>
                 <?php endif ?>
-            <?php endif ?>
+                <?php if ($model->scenario!='new'): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-calendar"></span> '.Yii::t('app','History'), array(
+                        'data-toggle'=>'modal','data-target'=>'#historydialog'));
+                    ?>
+                <?php endif ?>
+            </div>
 	</div></div>
 
 	<div class="box box-info">
@@ -141,6 +144,24 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
                 </div>
             <?php endif ?>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'service_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'service_type',SupportApplyList::getServiceList(),
+                        array('readonly'=>($model->getReadonly()))
+                    ); ?>
+                </div>
+            </div>
+            <?php if ($model->apply_type==2): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'apply_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo TbHtml::textField('apply_type', Yii::t("contract","renewal"),
+                            array('class'=>'form-control','readonly'=>(true)));
+                        ?>
+                    </div>
+                </div>
+            <?php endif ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'apply_city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
@@ -247,6 +268,7 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
 	</div>
 </section>
 <?php
+$this->renderPartial('//site/history',array('tableHtml'=>SupportSearchForm::getHistoryHtml($model->id)));
 if(in_array($model->status_type,array(10,9))){
     $this->renderPartial('//site/ject',array('form'=>$form,'model'=>$model,'rejectName'=>'reject_remark','submit'=>Yii::app()->createUrl('supportAudit/reject')));
 }

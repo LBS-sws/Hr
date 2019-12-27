@@ -3,6 +3,8 @@
     <td><?php echo $this->needHrefButton('AY03', 'supportSearch/view', 'view', array('index'=>$this->record['id'])); ?></td>
 
     <td><?php echo $this->record['support_code']; ?></td>
+    <td><?php echo $this->record['apply_type']; ?></td>
+    <td><?php echo $this->record['service_type']; ?></td>
     <td><?php echo $this->record['apply_city']; ?></td>
     <td><?php echo $this->record['apply_date']; ?></td>
     <td><?php echo $this->record['apply_end_date']; ?></td>

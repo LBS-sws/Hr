@@ -17,6 +17,8 @@ class SupportApplyList extends CListPageModel
             'employee_id'=>Yii::t('contract','support employee'),
             'review_sum'=>Yii::t('contract','review sum'),
             'status_type'=>Yii::t('contract','Status'),
+            'service_type'=>Yii::t('contract','service type'),
+            'apply_type'=>Yii::t('contract','support type'),
 		);
 	}
 
@@ -73,6 +75,8 @@ class SupportApplyList extends CListPageModel
 					'apply_end_date'=>$record['apply_end_date'],
 					'name'=>$record['name'],
 					'review_sum'=>$record['review_sum'],
+					'service_type'=>SupportApplyList::getServiceList($record['service_type'],true),
+                    'apply_type'=>$record['apply_type']==2?Yii::t("contract","renewal"):"",
 					'status'=>$arr['status'],
 					'style'=>$arr['style'],
 				);
@@ -109,5 +113,20 @@ class SupportApplyList extends CListPageModel
                 "style"=>"text-danger"
             );//未發送
         }
+    }
+
+    public function getServiceList($id='',$bool=false){
+        $arr = array(
+            1=>Yii::t("contract","service support"),//服务支援
+            2=>Yii::t("contract","service guide"),//技術支援
+        );
+        if($bool){
+            if(key_exists($id,$arr)){
+                return $arr[$id];
+            }else{
+                return $id;
+            }
+        }
+        return $arr;
     }
 }

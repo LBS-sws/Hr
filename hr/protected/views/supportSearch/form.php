@@ -36,6 +36,11 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 				'submit'=>Yii::app()->createUrl('supportSearch/index')));
 		?>
 	</div>
+	<div class="btn-group pull-right" role="group">
+		<?php echo TbHtml::button('<span class="fa fa-calendar"></span> '.Yii::t('app','History'), array(
+            'data-toggle'=>'modal','data-target'=>'#historydialog'));
+		?>
+	</div>
 	</div></div>
 
 	<div class="box box-info">
@@ -72,6 +77,25 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
                     ?>
                 </div>
             </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'service_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'service_type',SupportApplyList::getServiceList(),
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
+            <?php if ($model->apply_type==2): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'apply_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo TbHtml::textField('apply_type', Yii::t("contract","renewal"),
+                            array('class'=>'form-control','readonly'=>(true)));
+                        ?>
+                    </div>
+                </div>
+            <?php endif ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'apply_city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
@@ -172,6 +196,8 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 </section>
 
 <?php
+$this->renderPartial('//site/history',array('tableHtml'=>SupportSearchForm::getHistoryHtml($model->id)));
+
 
 $js = "
 ";
