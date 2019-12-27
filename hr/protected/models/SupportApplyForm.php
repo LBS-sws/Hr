@@ -55,11 +55,11 @@ class SupportApplyForm extends CFormModel
 	{
 		return array(
 			array('id, apply_type, early_date, early_remark, reject_remark, status_type, support_code, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id,change_num','safe'),
-            array('apply_date','required','on'=>array('edit')),
-            array('apply_remark','required','on'=>array('edit')),
-            array('apply_end_date','required','on'=>array('edit')),
-            array('apply_date','validateApplyDate','on'=>array('edit')),
-            array('id','validateID','on'=>array('edit')),
+            array('apply_date','required','on'=>array('edit','new')),
+            array('apply_remark','required','on'=>array('edit','new')),
+            array('apply_end_date','required','on'=>array('edit','new')),
+            array('apply_date','validateApplyDate','on'=>array('edit','new')),
+            array('id','validateID','on'=>array('edit','new')),
             array('id','validateIDEarly','on'=>array('renewal','early','review')),
             array('tem_s_ist','validateList','on'=>array('review','early')),
             array('early_date','validateEarly','on'=>array('renewal','early')),

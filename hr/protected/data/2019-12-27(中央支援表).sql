@@ -22,6 +22,7 @@ DROP TABLE IF EXISTS `hr_apply_support`;
 CREATE TABLE `hr_apply_support` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `support_code` varchar(255) DEFAULT NULL,
+  `service_type`  int(11) NOT NULL DEFAULT 1 COMMENT '服務類型 1：服务支援 2：技術支援' ,
   `apply_date` date NOT NULL COMMENT '申請時間',
   `apply_num` int(11) NOT NULL DEFAULT '1' COMMENT '申請人數（暫定字段，不使用）',
   `apply_type` int(11) NOT NULL DEFAULT '1' COMMENT '申请类型： 1（新申请） 2（续期）',
