@@ -11,6 +11,7 @@ class TemplateEmployeeForm extends CFormModel
     public $id_s_list;
     public $name_list;
     public $review_type;
+    public $status_type=0;
     public $count_num=100;
 
 	public function attributeLabels()

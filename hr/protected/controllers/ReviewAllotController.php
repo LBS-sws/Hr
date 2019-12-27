@@ -29,7 +29,7 @@ class ReviewAllotController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','save','undo','fileupload','fileRemove'),
+                'actions'=>array('new','edit','draft','save','undo','back','fileupload','fileRemove','fileRemove'),
                 'expression'=>array('ReviewAllotController','allowReadWrite'),
             ),
             array('allow',
@@ -124,7 +124,15 @@ class ReviewAllotController extends Controller
         }
     }
 
-    //退回
+    //退回單個考核
+    public function actionBack($index)
+    {
+        $model = new ReviewAllotForm();
+        $model->reviewBack($index);
+        $this->redirect(Yii::app()->createUrl('reviewAllot/edit',array('index'=>$model->employee_id,'year'=>$model->year,'year_type'=>$model->year_type)));
+    }
+
+    //退回草稿
     public function actionUndo(){
         $model = new ReviewAllotForm('undo');
         if (isset($_POST['ReviewAllotForm'])) {

@@ -17,6 +17,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewHandle Form';
     .reviewSumDiv_hint.active{display: block;}
     .reviewSumDiv_hint:after{content: " ";position: absolute;top: 0px;left: 50%;margin-top: -9px;margin-left: -4.5px;border-bottom: 9px solid #000;border-left: 9px solid transparent;border-right: 9px solid transparent;}
     /*td.remark{position: absolute;min-width: 300px;}*/
+    textarea.form-control{margin: 0px !important;}
 </style>
 <tr ></tr>
 <section class="content-header">

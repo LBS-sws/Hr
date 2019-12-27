@@ -364,6 +364,38 @@ class ReviewAllotForm extends CFormModel
         }
     }
 
+
+	public function reviewBack($index){
+        $city_allow = Yii::app()->user->city_allow();
+        $uid = Yii::app()->user->id;
+        $row = Yii::app()->db->createCommand()
+            ->select("a.id,a.review_id,b.employee_id,b.year,b.year_type")
+            ->from("hr_review_h a")
+            ->leftJoin("hr_review b","a.review_id = b.id")
+            ->leftJoin("hr_employee d","b.employee_id = d.id")
+            ->where("a.id=:id and d.city in ($city_allow) and a.status_type=3",array(":id"=>$index))->queryRow();
+	    if($row){
+            $this->review_id = $row["review_id"];
+            $this->employee_id = $row["employee_id"];
+            $this->year = $row["year"];
+            $this->year_type = $row["year_type"];
+            $bool = Yii::app()->db->createCommand()->select("id")->from("hr_review_h")
+                ->where("status_type=3 and id!=:id and review_id=:review_id",array(":id"=>$index,":review_id"=>$row["review_id"]))->queryRow();
+            $bool = $bool?2:1;
+            Yii::app()->db->createCommand()->update('hr_review_h', array(
+                'status_type'=>4,
+                'luu'=>$uid
+            ), 'id=:id', array(':id'=>$index));
+            Yii::app()->db->createCommand()->update('hr_review', array(
+                'status_type'=>$bool,//1:考核中  2:部分考核
+                'luu'=>$uid
+            ), 'id=:id', array(':id'=>$this->review_id));
+            Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','finish to send back'));
+        }else{
+            Dialog::message(Yii::t('dialog','Validation Message'), "退回異常，請於管理員聯繫");
+        }
+    }
+
     public function getReviewManagerList($city,$id_s_list=''){
 	    $arr = array();
         $cityList = Email::getAllCityToMinCity($city);
@@ -400,16 +432,22 @@ class ReviewAllotForm extends CFormModel
                 $html.="<td>".TbHtml::button(Yii::t("misc","Delete"),array("class"=>"btn btn-danger delManager"))."</td>";
             }
         }else{
-            $status_type = "";
             if(!empty($model->review_id)&&!empty($list["employee_id"])){
-                $rows = Yii::app()->db->createCommand()->select("status_type")->from("hr_review_h")
+                $rows = Yii::app()->db->createCommand()->select("id,status_type")->from("hr_review_h")
                     ->where('review_id=:review_id and handle_id=:id',
                         array(':review_id'=>$model->review_id,':id'=>$list["employee_id"]))->queryRow();
                 if($rows){//none review
                     $status_type = $rows["status_type"] == 3?Yii::t("contract","success review"):Yii::t("contract","none review");
+                    $html.="<td class='text-center'><span style='white-space: nowrap;'>$status_type</span></td>";
+                    if(in_array($model->status_type,array(2,3))){
+                        if($rows["status_type"] == 3){
+                            $html.="<td class='text-center'>".TbHtml::link(Yii::t("contract","send back"),Yii::app()->createUrl('reviewAllot/back',array('index'=>$rows['id'])),array("class"=>"btn btn-info"))."</td>";
+                        }else{
+                            $html.="<td class='text-center'><span style='white-space: nowrap;'>&nbsp;</span></td>";
+                        }
+                    }
                 }
             }
-            $html.="<td class='text-center'><span style='white-space: nowrap;'>$status_type</span></td>";
         }
         $html.="</tr>";
 
@@ -421,6 +459,9 @@ class ReviewAllotForm extends CFormModel
         $managerList = ReviewAllotForm::getReviewManagerList($model->city,$model->id_s_list);
 	    $html ="<table class='table table-bordered table-striped' id='managerTable'><thead><tr><th width='50%'>".Yii::t("contract","reviewAllot manager")."</th><th width='40%'>".Yii::t("contract","manager percent")."</th>";
         $html.='<th>&nbsp;</th>';
+        if(in_array($model->status_type,array(2,3)) && get_class($model)=="ReviewAllotForm"){
+            $html.='<th>&nbsp;</th>';
+        }
         $num = count($model->id_list);
 	    $html.="</tr></thead><tbody data-num='$num'>";
         if (empty($model->id_list)){
