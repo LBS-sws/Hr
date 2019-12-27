@@ -116,14 +116,16 @@ class ReviewHandleController extends Controller
     public function actionDraft()
     {
         if (isset($_POST['ReviewHandleForm'])) {
-            $model = new ReviewHandleForm($_POST['ReviewHandleForm']['scenario']);
+            $model = new ReviewHandleForm("draft");
             $model->attributes = $_POST['ReviewHandleForm'];
             $model->status_type = 4;
             if ($model->validate()) {
+                $model->setScenario($_POST['ReviewHandleForm']['scenario']);
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('reviewHandle/edit',array('index'=>$model->id)));
             } else {
+                $model->setScenario($_POST['ReviewHandleForm']['scenario']);
                 $model->status_type = 0;
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
