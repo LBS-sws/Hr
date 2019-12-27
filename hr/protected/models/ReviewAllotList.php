@@ -210,7 +210,9 @@ class ReviewAllotList extends CListPageModel
                 )
             )->queryRow();
         if($rows){
-            $record["review_type"] = $rows["review_type"];
+            if($rows['status_type'] != 4){
+                $record["review_type"] = $rows["review_type"];
+            }
             $record["status_type"] = $rows["status_type"];
             $record["year"] = $rows["year"];
             $record["year_type"] = $rows["year_type"];

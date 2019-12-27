@@ -91,7 +91,7 @@ class ReviewAllotForm extends CFormModel
                 ->where("employee_id=:id AND year = :year AND year_type = :year_type",array(":id"=>$this->employee_id,":year"=>$this->year,":year_type"=>$this->year_type))->queryRow();
             if($rows){
                 if($rows["status_type"] == 4){
-                    $this->review_type = $rows["review_type"];
+                    //$this->review_type = $rows["review_type"];
                     $this->review_id = $rows["id"];
                     $this->setScenario("edit");
                 }else{
@@ -294,7 +294,9 @@ class ReviewAllotForm extends CFormModel
             if($review){
                 $this->no_of_attm['review'] = $review['reviewdoc'];
                 $this->change_num = $review['change_num'];
-                $this->review_type = $review['review_type'];
+                if($review['status_type'] != 4){
+                    $this->review_type = $review['review_type'];
+                }
                 $this->status_type = $review['status_type'];
                 //$this->status_type = ReviewAllotList::getReviewStatuts($review['status_type'])["status"];
                 $this->review_id = $review['id'];
