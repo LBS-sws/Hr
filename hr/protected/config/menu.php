@@ -179,6 +179,29 @@ return array(
             ),
         ),
     ),
+    //中央技术支持
+    'technical support'=>array(
+        'access'=>'AY',
+        'icon'=>'fa-grav',
+        'items'=>array(
+            'Apply technical support'=>array( //申请中央技术支持
+                'access'=>'AY01',
+                'url'=>'/SupportApply/index',
+            ),
+            'Audit technical support'=>array( //審核中央技术支持
+                'access'=>'AY02',
+                'url'=>'/SupportAudit/index',
+            ),
+            'Search technical support'=>array( //查詢中央技术支持
+                'access'=>'AY03',
+                'url'=>'/SupportSearch/index',
+            ),
+            'Search support employee'=>array( //員工支援概況
+                'access'=>'AY04',
+                'url'=>'/SupportEmployee/index',
+            ),
+        ),
+    ),
 	'System Setting'=>array(
 		'access'=>'ZC',
 		'icon'=>'fa-gear',

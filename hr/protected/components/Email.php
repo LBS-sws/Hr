@@ -102,6 +102,26 @@ class Email {
         }
     }
 
+    //添加收信人(根據權限-不包括城市）
+    public function addEmailToPrefixNullCity($str){
+        $suffix = Yii::app()->params['envSuffix'];
+        $systemId = Yii::app()->params['systemId'];
+        $rs = Yii::app()->db->createCommand()->select("b.email, b.username")->from("security$suffix.sec_user_access a")
+            ->leftJoin("security$suffix.sec_user b","a.username=b.username")
+            ->where("a.system_id='$systemId' and a.a_read_write like '%$str%' and b.email != '' and b.status='A'")
+            ->queryAll();
+        if($rs){
+            foreach ($rs as $row){
+                if(!in_array($row["email"],$this->to_addr)){
+                    $this->to_addr[] = $row["email"];
+                }
+                if(!in_array($row["username"],$this->to_user)){	//因通知記錄需要
+                    $this->to_user[] = $row["username"];
+                }
+            }
+        }
+    }
+
     //添加收信人(地區老總）
     public function addEmailToCity($city){
         $suffix = Yii::app()->params['envSuffix'];

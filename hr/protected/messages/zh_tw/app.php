@@ -150,6 +150,14 @@ return array(
     'Optimize assessment report'=>'優化人才評核報表',
     'Daily incoming and outgoing email'=>'入職、離職總覽電郵',
     'Email Hint'=>'電郵提醒',
+
+    'technical support'=>'中央技術支援',
+    'Apply technical support'=>'申請中央技術支援',
+    'Audit technical support'=>'審核中央技術支援',
+    'Search technical support'=>'查詢中央技術支援',
+    'Search all support'=>'查詢所有支援',
+    'Search support employee'=>'員工支援概況',
+
 //沈超添加結束
 );
 ?>
