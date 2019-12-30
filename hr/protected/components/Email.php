@@ -269,11 +269,14 @@ class Email {
     }
 
     //添加收信人(根據權限和部門）
-    public function addEmailToPrefixAndPoi($str,$department){
+    public function addEmailToPrefixAndPoi($str,$department,$groupType=0){
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
         //$city = Yii::app()->user->city();
         $sql = " and d.department = '$department' ";
+        if(!empty($groupType)){
+            $sql.=" and f.group_type in (0,$groupType) ";
+        }
         if(!is_array($str)){
             $likeSql = " and a.a_read_write like '%$str%'";
         }else{
@@ -288,6 +291,7 @@ class Email {
         }
         $rs = Yii::app()->db->createCommand()->select("b.email, b.username")->from("hr_binding e")
             ->leftJoin("hr_employee d","d.id = e.employee_id")
+            ->leftJoin("hr_dept f","f.id = d.position")
             ->leftJoin("security$suffix.sec_user_access a","a.username = e.user_id")
             ->leftJoin("security$suffix.sec_user b","a.username=b.username")
             ->where("a.system_id='$systemId' $likeSql $sql and b.email != '' and b.status='A'")

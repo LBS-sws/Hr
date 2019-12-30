@@ -265,7 +265,8 @@ class EmployController extends Controller
                 $json["data"] = $data;
             }else{
                 $model->retrieveData($position);
-                $json["data"] = $model->dept_class;
+                $json["data"]['dept_class'] = $model->dept_class;
+                $json["data"]['group_type'] = $model->group_type;
             }
             echo CJSON::encode($json);
         }else{

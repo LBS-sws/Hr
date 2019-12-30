@@ -473,5 +473,8 @@ return array(
     'service type'=>'服务类型',
     'service support'=>'服务支援',
     'service guide'=>'技术指导',
+    'group type'=>'组别分类',
+    'group business'=>'商业组',
+    'group repast'=>'餐饮组',
 );
 ?>

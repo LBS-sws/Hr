@@ -489,8 +489,9 @@ class WorkForm extends CFormModel
                 4=>"ZC10",
             );
             $email = new Email();
-            $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
-                ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
+            $row = Yii::app()->db->createCommand()->select("a.*,b.group_type")->from("hr_employee a")
+                ->leftJoin("hr_dept b","b.id = a.position")
+                ->where('a.id=:id', array(':id'=>$this->employee_id))->queryRow();
             $dayStr ="小時";
             $description="新的加班单 - ".$row["name"];
             $subject="新的加班单 - ".$row["name"];
@@ -506,7 +507,7 @@ class WorkForm extends CFormModel
             $assType = $assList[$this->z_index];
             switch ($this->z_index){
                 case 1:
-                    $email->addEmailToPrefixAndPoi($assType,$row["department"]);
+                    $email->addEmailToPrefixAndPoi($assType,$row["department"],$row["group_type"]);
                     break;
                 case 2:
                     $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);

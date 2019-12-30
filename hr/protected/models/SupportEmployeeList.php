@@ -82,11 +82,12 @@ class SupportEmployeeList extends CListPageModel
 
     public function getYearList(){
 	    $arr = array(""=>"选择年份");
-        $rows = Yii::app()->db->createCommand()->select("date_format(a.apply_date,'%Y') as year")->from("hr_apply_support a")
-            ->group("year")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("date_format(a.apply_date,'%Y') as year,date_format(a.apply_end_date,'%Y') as end_year")->from("hr_apply_support a")
+            ->group("year,end_year")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $arr[$row["year"]] = $row["year"];
+                $arr[$row["end_year"]] = $row["end_year"];
             }
         }
         return $arr;

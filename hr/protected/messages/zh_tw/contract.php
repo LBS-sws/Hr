@@ -468,5 +468,8 @@ return array(
     'service type'=>'服務類型',
     'service support'=>'服務支援',
     'service guide'=>'技術指導',
+    'group type'=>'組別分類',
+    'group business'=>'商業組',
+    'group repast'=>'餐飲組',
     );
 ?>

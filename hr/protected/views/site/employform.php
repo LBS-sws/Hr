@@ -246,6 +246,12 @@
         ?>
     </div>
     -->
+    <?php echo TbHtml::label(Yii::t("contract","group type"),'',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo TbHtml::dropDownList('group_type',0,DeptForm::getGroupType(),
+            array('readonly'=>(true),'id'=>'group_type')
+        ); ?>
+    </div>
     <!--分割-->
     <?php echo $form->labelEx($model,'code_old',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
@@ -577,7 +583,6 @@ if (!empty($contractNum)){
             }
         }).trigger("change");
 
-        <?php if (!$readonly): ?>
         //職位-變化
         $("#position,#department,#change_city").on("change",function () {
             var type = $(this).attr("id");
@@ -605,12 +610,14 @@ if (!empty($contractNum)){
                                 $("#department").append("<option value='"+key+"'>"+jsonList[key]+"</option>");
                             }
                         }else{
-                            $("#staff_type").val(jsonList);
+                            $("#staff_type").val(jsonList['staff_type']);
+                            $("#group_type").val(jsonList['group_type']);
                         }
                     }
                 }
             });
         });
-        <?php endif; ?>
+
+        $("#position").trigger("change");
     })
 </script>

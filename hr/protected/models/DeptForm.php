@@ -19,6 +19,7 @@ class DeptForm extends CFormModel
 	public $technician=0;
 	public $review_status=0;
 	public $review_type=1;
+	public $group_type=0;
 	public $review_leave=0;
 	/**
 	 * Declares customized attribute labels.
@@ -37,6 +38,7 @@ class DeptForm extends CFormModel
             'manager'=>Yii::t('fete','Manager level audit'),
             'technician'=>Yii::t('fete','technician'),
             'review_status'=>Yii::t('contract','dept review'),
+            'group_type'=>Yii::t('contract','group type'),
             'review_type'=>Yii::t('contract','review type'),
             'review_leave'=>Yii::t('contract','review leave'),
 		);
@@ -49,7 +51,7 @@ class DeptForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, dept_id, type, dept_class, manager, technician, review_status, review_type, review_leave','safe'),
+            array('id, name, group_type, z_index, dept_id, type, dept_class, manager, technician, review_status, review_type, review_leave','safe'),
 			array('name','required'),
 			array('review_leave','required'),
 			array('review_type','required'),
@@ -177,6 +179,22 @@ class DeptForm extends CFormModel
         return $arr;
     }
 
+    public function getGroupType($str="",$bool=false){
+	    $arr = array(
+	        0=>Yii::t("fete","none"),//無
+	        1=>Yii::t("contract","group business"),//商業組
+	        2=>Yii::t("contract","group repast"),//餐飲組
+        );
+	    if($bool){
+            if(key_exists($str,$arr)){
+                return $arr[$str];
+            }else{
+                return $str;
+            }
+        }
+        return $arr;
+    }
+
     public function getReviewLeave($str="",$bool=false){
 	    $arr = array(
 	        Yii::t("fete","none"),
@@ -282,6 +300,7 @@ class DeptForm extends CFormModel
                 $this->dept_class = $row['dept_class'];
                 $this->manager = $row['manager'];
                 $this->technician = $row['technician'];
+                $this->group_type = $row['group_type'];
                 $this->review_type = $row['review_type'];
                 $this->review_status = $row['review_status'];
                 $this->review_leave = $row['review_leave'];
@@ -317,9 +336,9 @@ class DeptForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
-							name, type, z_index, dept_id, city, dept_class, manager, technician, review_status, review_type, review_leave, lcu
+							name, type, z_index, dept_id, city, dept_class, manager, technician, group_type, review_status, review_type, review_leave, lcu
 						) values (
-							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :review_status, :review_type, :review_leave, :lcu
+							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :group_type, :review_status, :review_type, :review_leave, :lcu
 						)";
 				break;
 			case 'edit':
@@ -334,6 +353,7 @@ class DeptForm extends CFormModel
 							technician = :technician,
 							review_status = :review_status,
 							review_type = :review_type,
+							group_type = :group_type,
 							review_leave = :review_leave,
 							luu = :luu 
 						where id = :id
@@ -358,6 +378,8 @@ class DeptForm extends CFormModel
 			$command->bindParam(':manager',$this->manager,PDO::PARAM_STR);
 		if (strpos($sql,':technician')!==false)
 			$command->bindParam(':technician',$this->technician,PDO::PARAM_STR);
+		if (strpos($sql,':group_type')!==false)
+			$command->bindParam(':group_type',$this->group_type,PDO::PARAM_STR);
 		if (strpos($sql,':review_status')!==false)
 			$command->bindParam(':review_status',$this->review_status,PDO::PARAM_STR);
 		if (strpos($sql,':review_type')!==false)
