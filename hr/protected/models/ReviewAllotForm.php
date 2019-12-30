@@ -374,7 +374,7 @@ class ReviewAllotForm extends CFormModel
             ->leftJoin("hr_review b","a.review_id = b.id")
             ->leftJoin("hr_employee d","b.employee_id = d.id")
             ->where("a.id=:id and d.city in ($city_allow) and a.status_type=3",array(":id"=>$index))->queryRow();
-	    if($row){
+	    if($row&&Yii::app()->user->validFunction('ZR12')){
             $this->review_id = $row["review_id"];
             $this->employee_id = $row["employee_id"];
             $this->year = $row["year"];
@@ -439,7 +439,7 @@ class ReviewAllotForm extends CFormModel
                 if($rows){//none review
                     $status_type = $rows["status_type"] == 3?Yii::t("contract","success review"):Yii::t("contract","none review");
                     $html.="<td class='text-center'><span style='white-space: nowrap;'>$status_type</span></td>";
-                    if(in_array($model->status_type,array(2,3))){
+                    if(in_array($model->status_type,array(2,3))&&Yii::app()->user->validFunction('ZR12')){
                         if($rows["status_type"] == 3){
                             $html.="<td class='text-center'>".TbHtml::link(Yii::t("contract","send back"),Yii::app()->createUrl('reviewAllot/back',array('index'=>$rows['id'])),array("class"=>"btn btn-info"))."</td>";
                         }else{
@@ -459,7 +459,7 @@ class ReviewAllotForm extends CFormModel
         $managerList = ReviewAllotForm::getReviewManagerList($model->city,$model->id_s_list);
 	    $html ="<table class='table table-bordered table-striped' id='managerTable'><thead><tr><th width='50%'>".Yii::t("contract","reviewAllot manager")."</th><th width='40%'>".Yii::t("contract","manager percent")."</th>";
         $html.='<th>&nbsp;</th>';
-        if(in_array($model->status_type,array(2,3)) && get_class($model)=="ReviewAllotForm"){
+        if(in_array($model->status_type,array(2,3)) && get_class($model)=="ReviewAllotForm" && Yii::app()->user->validFunction('ZR12')){
             $html.='<th>&nbsp;</th>';
         }
         $num = count($model->id_list);

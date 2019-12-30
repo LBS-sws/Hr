@@ -83,7 +83,7 @@ class ReviewHandleForm extends CFormModel
             array('id','required'),
             array('tem_s_ist','required'),
             array('id','validateID'),
-            array('tem_s_ist','validateList','on'=>array('edit')),
+            array('tem_s_ist','validateList'),
 		);
 	}
 
@@ -137,7 +137,7 @@ class ReviewHandleForm extends CFormModel
                             $this->addError($attribute,$message);
                             return false;
                         }
-                        if(!$this->scoringOk($item["value"])){
+                        if(!$this->scoringOk($item["value"])&&$this->getScenario()=="edit"){
                             if(!isset($item["remark"])||empty($item["remark"])){
                                 $message = Yii::t('contract','Scoring remark')."（".$item['name']."）".Yii::t("contract"," can not be empty");
                                 $this->addError($attribute,$message);

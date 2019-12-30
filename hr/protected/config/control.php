@@ -12,4 +12,5 @@ return array(
 	'Search all review'=>array('access'=>'ZR09',),//查询所有考核
 	'Daily incoming and outgoing email'=>array('access'=>'ZR10',),//入职、离职总览电邮
 	'Search all support'=>array('access'=>'ZR11',),//查询所有支援
+	'Back to review'=>array('access'=>'ZR12',),//退回单个考核
 );

@@ -157,6 +157,7 @@ return array(
     'Search technical support'=>'查詢中央技術支援',
     'Search all support'=>'查詢所有支援',
     'Search support employee'=>'員工支援概況',
+    'Back to review'=>'退回單個考核',
 
 //沈超添加結束
 );
