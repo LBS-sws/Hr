@@ -100,8 +100,8 @@ class WorkList extends CListPageModel
             $sql1.=" and ((b.department='".$manager["department"]."' ";
             $sql2.=" and ((b.department='".$manager["department"]."' ";
             if(!empty($manager["group_type"])){
-                $sql1.=" and d.group_type='".$manager["group_type"]."' ";
-                $sql2.=" and d.group_type='".$manager["group_type"]."' ";
+                $sql1.=" and b.group_type='".$manager["group_type"]."' ";
+                $sql2.=" and b.group_type='".$manager["group_type"]."' ";
             }
             $sql1.=" and a.status !=0) or a.employee_id='$employee_id') ";
             $sql2.=" and a.status !=0) or a.employee_id='$employee_id') ";

@@ -275,7 +275,7 @@ class Email {
         //$city = Yii::app()->user->city();
         $sql = " and d.department = '$department' ";
         if(!empty($groupType)){
-            $sql.=" and f.group_type in (0,$groupType) ";
+            $sql.=" and d.group_type in (0,$groupType) ";
         }
         if(!is_array($str)){
             $likeSql = " and a.a_read_write like '%$str%'";

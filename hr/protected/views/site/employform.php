@@ -246,10 +246,10 @@
         ?>
     </div>
     -->
-    <?php echo TbHtml::label(Yii::t("contract","group type"),'',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->labelEx($model,'group_type',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
-        <?php echo TbHtml::dropDownList('group_type',0,DeptForm::getGroupType(),
-            array('readonly'=>(true),'id'=>'group_type')
+        <?php echo $form->dropDownList($model, 'group_type',DeptForm::getGroupType(),
+            array('disabled'=>($readonly))
         ); ?>
     </div>
     <!--分割-->
@@ -611,7 +611,6 @@ if (!empty($contractNum)){
                             }
                         }else{
                             $("#staff_type").val(jsonList['staff_type']);
-                            $("#group_type").val(jsonList['group_type']);
                         }
                     }
                 }

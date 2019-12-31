@@ -548,9 +548,8 @@ class LeaveForm extends CFormModel
                 4=>"ZC11",
             );
             $email = new Email();
-            $row = Yii::app()->db->createCommand()->select("a.*,b.group_type")->from("hr_employee a")
-                ->leftJoin("hr_dept b","b.id = a.position")
-                ->where('a.id=:id', array(':id'=>$this->employee_id))->queryRow();
+            $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
+                ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
             $description="新的请假单 - ".$row["name"];
             $subject="新的请假单 - ".$row["name"];
             $message="<p>请假编号：".$this->leave_code."</p>";
