@@ -29,7 +29,8 @@ class SupportSearchList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
         if(Yii::app()->user->validFunction('ZR11')){
-            $sqlEx = " and a.apply_city in ($city_allow) ";
+            $sqlEx = " ";
+            //$sqlEx = " and a.apply_city in ($city_allow) ";
         }else{
             $bindEmployee = BindingForm::getEmployeeIdToUsername();
             $sqlEx = " and a.employee_id=$bindEmployee ";

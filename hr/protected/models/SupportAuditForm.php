@@ -176,7 +176,7 @@ class SupportAuditForm extends CFormModel
     }
 
     public function validateList($attribute, $params){
-        if(!empty($this->tem_list)){
+        if(!empty($this->tem_list)||$this->getScenario()=="save"){
             $arr = array();
             $tem_s_list = array();
             $this->tem_sum = 0;
@@ -205,7 +205,7 @@ class SupportAuditForm extends CFormModel
                     }
                 }
             }
-            if (empty($arr)){
+            if (empty($arr)&&$this->getScenario()!="save"){
                 $message = Yii::t('contract','reviewAllot project'). Yii::t('contract',' can not be empty');
                 $this->addError($attribute,$message);
                 return false;

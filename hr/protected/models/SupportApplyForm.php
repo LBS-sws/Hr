@@ -374,24 +374,24 @@ class SupportApplyForm extends CFormModel
             switch ($this->status_type){
                 case 2://申請中
                     $email->setSubject("支援单（".$this->support_code."） - 申請支援");
-                    $status_remark = $this->apply_remark;
+                    $status_remark = '申请备注:'.$this->apply_remark;
                     break;
                 case 6://已評分
                     $email->setSubject("支援单（".$this->support_code."） - 已評分");
-                    $status_remark = '评分分数：'.$this->review_sum;
+                    $status_remark = '评分分数：'.sprintf("%.2f",$this->review_sum);
                     break;
                 case 9://申請提前結束
                     $email->setSubject("支援单（".$this->support_code."） - 申請提前結束");
-                    $status_remark = $this->early_remark;
+                    $status_remark = '申请备注:'.$this->early_remark;
                     break;
                 case 10://申請續期
                     $email->setSubject("支援单（".$this->support_code."） - 申請續期");
-                    $status_remark = $this->early_remark;
+                    $status_remark = '申请备注:'.$this->early_remark;
                     break;
                 default:
                     return false;
             }
-            $message.= "审核备注:$status_remark<br>";
+            $message.= "$status_remark<br>";
             $email->setMessage($message);
             $email->addEmailToPrefixNullCity("AY02");//有審核權限的人收到郵件
             $email->sent();
