@@ -31,7 +31,7 @@ class SupportAuditForm extends CFormModel
 	public $early_remark;
 	public $early_date;
 	public $reject_remark;
-	public $city="HK";
+	public $city="ZY";
 
 	public function attributeLabels()
 	{
@@ -266,7 +266,7 @@ class SupportAuditForm extends CFormModel
 
     //獲取支援的員工
     public function getSupportEmployee(){
-        $city = empty($this->city)?"HK":$this->city;
+        $city = empty($this->city)?"ZY":$this->city;
         $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
             ->where("city = '$city'")->queryAll();
