@@ -89,6 +89,14 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         ); ?>
                     </div>
                 </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'sales_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'sales_type',DeptForm::getSalesType(),
+                            array('disabled'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
             <?php endif; ?>
 
 			<div class="form-group">
@@ -114,6 +122,14 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                     <?php echo $form->labelEx($model,'manager',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
                         <?php echo $form->dropDownList($model, 'manager',EmployList::getManagerList(),
+                            array('disabled'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'group_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'group_type',DeptForm::getGroupType(),
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>

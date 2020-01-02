@@ -471,5 +471,6 @@ return array(
     'group type'=>'組別分類',
     'group business'=>'商業組',
     'group repast'=>'餐飲組',
+    'sales type'=>'銷售部門',
     );
 ?>

@@ -476,5 +476,6 @@ return array(
     'group type'=>'组别分类',
     'group business'=>'商业组',
     'group repast'=>'餐饮组',
+    'sales type'=>'销售部门',
 );
 ?>

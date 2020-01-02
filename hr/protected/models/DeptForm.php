@@ -19,6 +19,7 @@ class DeptForm extends CFormModel
 	public $technician=0;
 	public $review_status=0;
 	public $review_type=1;
+	public $sales_type=0;
 	public $review_leave=0;
 	/**
 	 * Declares customized attribute labels.
@@ -39,6 +40,7 @@ class DeptForm extends CFormModel
             'review_status'=>Yii::t('contract','dept review'),
             'review_type'=>Yii::t('contract','review type'),
             'review_leave'=>Yii::t('contract','review leave'),
+            'sales_type'=>Yii::t('contract','sales type'),
 		);
 	}
 
@@ -49,7 +51,7 @@ class DeptForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, z_index, dept_id, type, dept_class, manager, technician, review_status, review_type, review_leave','safe'),
+            array('id, name, sales_type, z_index, dept_id, type, dept_class, manager, technician, review_status, review_type, review_leave','safe'),
 			array('name','required'),
 			array('review_leave','required'),
 			array('review_type','required'),
@@ -199,8 +201,27 @@ class DeptForm extends CFormModel
 	        Yii::t("app","Region"),
 	        Yii::t("misc","All")
         );
-	    if(key_exists($str,$arr)&&$bool){
-            return $arr[$str];
+	    if($bool){
+	        if(key_exists($str,$arr)){
+                return $arr[$str];
+            }else{
+                return $str;
+            }
+        }
+        return $arr;
+    }
+
+    public function getSalesType($str="",$bool=false){
+        $arr = array(
+            Yii::t("misc","No"),
+            Yii::t("misc","Yes")
+        );
+        if($bool){
+            if(key_exists($str,$arr)){
+                return $arr[$str];
+            }else{
+                return $str;
+            }
         }
         return $arr;
     }
@@ -223,6 +244,16 @@ class DeptForm extends CFormModel
             }
         }
         return $arr;
+    }
+
+    //是否是銷售部門  0：不是  1：是銷售部
+	public function getSalesTypeToId($dept_id){
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+            ->where("id=:id",array(":id"=>$dept_id))->queryRow();
+        if ($rows){
+            return $rows["sales_type"];
+        }
+        return 0;
     }
 
     //獲取崗位列表
@@ -294,6 +325,7 @@ class DeptForm extends CFormModel
 				$this->z_index = $row['z_index'];
 				$this->city = $row['city'];
                 $this->type = $row['type'];
+                $this->sales_type = $row['sales_type'];
                 $this->dept_id = $row['dept_id'];
                 $this->dept_class = $row['dept_class'];
                 $this->manager = $row['manager'];
@@ -333,9 +365,9 @@ class DeptForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_dept(
-							name, type, z_index, dept_id, city, dept_class, manager, technician, review_status, review_type, review_leave, lcu
+							name, type, sales_type, z_index, dept_id, city, dept_class, manager, technician, review_status, review_type, review_leave, lcu
 						) values (
-							:name, :type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :review_status, :review_type, :review_leave, :lcu
+							:name, :type, :sales_type, :z_index, :dept_id, :city, :dept_class, :manager, :technician, :review_status, :review_type, :review_leave, :lcu
 						)";
 				break;
 			case 'edit':
@@ -351,6 +383,7 @@ class DeptForm extends CFormModel
 							review_status = :review_status,
 							review_type = :review_type,
 							review_leave = :review_leave,
+							sales_type = :sales_type,
 							luu = :luu 
 						where id = :id
 						";
@@ -368,6 +401,8 @@ class DeptForm extends CFormModel
 			$command->bindParam(':z_index',$this->z_index,PDO::PARAM_INT);
 		if (strpos($sql,':type')!==false)
 			$command->bindParam(':type',$this->type,PDO::PARAM_INT);
+		if (strpos($sql,':sales_type')!==false)
+			$command->bindParam(':sales_type',$this->sales_type,PDO::PARAM_INT);
 		if (strpos($sql,':dept_class')!==false)
 			$command->bindParam(':dept_class',$this->dept_class,PDO::PARAM_STR);
 		if (strpos($sql,':manager')!==false)
