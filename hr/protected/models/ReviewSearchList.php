@@ -177,6 +177,20 @@ class ReviewSearchList extends CListPageModel
 		return true;
 	}
 
+    public function getCriteria() {
+        return array(
+            'searchField'=>$this->searchField,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+            'year'=>$this->year,
+            'year_type'=>$this->year_type,
+        );
+    }
+
     private function getSearchValueToStatus($status){
         if($status === ""){
             return "";
