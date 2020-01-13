@@ -158,6 +158,7 @@ return array(
     'Search all support'=>'查詢所有支援',
     'Search support employee'=>'員工支援概況',
     'Back to review'=>'退回單個考核',
+    'Back to leave and work'=>'退回請假單及加班單',
 
 //沈超添加結束
 );

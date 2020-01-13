@@ -41,6 +41,10 @@ class LeaveController extends Controller
                 'expression'=>array('LeaveController','allowWrite'),
             ),
             array('allow',
+                'actions'=>array('back'),
+                'expression'=>array('LeaveController','allowBack'),
+            ),
+            array('allow',
                 'actions'=>array('cancel'),
                 'expression'=>array('LeaveController','allowCancelled'),
             ),
@@ -48,6 +52,10 @@ class LeaveController extends Controller
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public static function allowBack() {
+        return Yii::app()->user->validFunction('ZR13');
     }
 
     public static function allowReadWrite() {
@@ -184,6 +192,25 @@ class LeaveController extends Controller
             }else{
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
+                $this->redirect(Yii::app()->createUrl('leave/edit',array('index'=>$model->id)));
+            }
+        }
+    }
+
+    //退回
+    public function actionBack($index){
+        $model = new LeaveForm();
+        if (!$model->retrieveData($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            if($model->status == 1){
+                Yii::app()->db->createCommand()->update('hr_employee_leave', array(
+                    'status'=>0
+                ), 'id=:id', array(':id'=>$model->id));
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','finish to send back'));
+                $this->redirect(Yii::app()->createUrl('leave/edit',array('index'=>$model->id)));
+            }else{
+                Dialog::message(Yii::t('dialog','Information'), "请假单异常，请刷新重试");
                 $this->redirect(Yii::app()->createUrl('leave/edit',array('index'=>$model->id)));
             }
         }

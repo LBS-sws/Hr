@@ -66,6 +66,13 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                     ?>
                 </div>
             <?php endif; ?>
+            <?php if (Yii::app()->user->validFunction('ZR13')&&$model->status==1): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','send back'), array(
+                        'submit'=>Yii::app()->createUrl('leave/back',array("index"=>$model->id))));
+                    ?>
+                </div>
+            <?php endif; ?>
             <div class="btn-group pull-right" role="group">
                 <?php
                 $counter = ($model->no_of_attm['leave'] > 0) ? ' <span id="docleave" class="label label-info">'.$model->no_of_attm['leave'].'</span>' : ' <span id="docleave"></span>';
