@@ -69,13 +69,6 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
 
             <div class="btn-group pull-right" role="group">
                 <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))): ?>
-                    <?php echo TbHtml::button('<span class="fa fa-sign-in"></span> '.Yii::t('contract','renewal'), array(
-                            'id'=>'btnRenewal','data-url'=>Yii::app()->createUrl('supportApply/renewal'),
-                            'data-label1'=>Yii::t('contract','renewal date'),
-                            'data-label2'=>Yii::t('contract','renewal remark'),
-                        )
-                    );
-                    ?>
                     <?php echo TbHtml::button('<span class="fa fa-plug"></span> '.Yii::t('contract','early end'), array(
                             'id'=>'btnEarly','data-url'=>Yii::app()->createUrl('supportApply/early'),
                             'data-label1'=>Yii::t('contract','early date'),
@@ -139,16 +132,6 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
                     ); ?>
                 </div>
             </div>
-            <?php if ($model->apply_type==2): ?>
-                <div class="form-group">
-                    <?php echo $form->labelEx($model,'apply_type',array('class'=>"col-sm-2 control-label")); ?>
-                    <div class="col-sm-3">
-                        <?php echo TbHtml::textField('apply_type', Yii::t("contract","renewal"),
-                            array('class'=>'form-control','readonly'=>(true)));
-                        ?>
-                    </div>
-                </div>
-            <?php endif ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'apply_city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-2">
@@ -196,6 +179,22 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
                         ); ?>
                     </span>
                     </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'privilege',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'privilege',SupportApplyList::getPrivilegeList(),
+                        array('readonly'=>($model->getReadonly()),'id'=>'privilege')
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group" id="privilege_user" style="<?php if($model->privilege != 1){ echo "display:none;";}?>">
+                <?php echo $form->labelEx($model,'privilege_user',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'privilege_user',SupportApplyForm::getPrivilegeUserList($model->apply_city),
+                        array('readonly'=>($model->getReadonly()))
+                    ); ?>
                 </div>
             </div>
             <div class="form-group">
@@ -277,6 +276,13 @@ $('#apply_date').on('change',function(){
             }
         }
     });
+});
+$('#privilege').on('change',function(){
+    if($(this).val() == 1){
+        $('#privilege_user').show();
+    }else{
+        $('#privilege_user').hide();
+    }
 });
 ";
 

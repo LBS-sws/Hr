@@ -32,6 +32,8 @@ class SupportAuditForm extends CFormModel
 	public $early_date;
 	public $reject_remark;
 	public $city="ZY";
+    public $privilege;
+    public $privilege_user;
 
 	public function attributeLabels()
 	{
@@ -55,7 +57,9 @@ class SupportAuditForm extends CFormModel
             'early_remark10'=>Yii::t('contract','renewal remark'),
             'early_date10'=>Yii::t('contract','renewal date'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
-            'apply_type'=>Yii::t('contract','support type'),
+            'apply_type'=>Yii::t('queue','Type'),
+            'privilege'=>Yii::t('contract','privilege'),
+            'privilege_user'=>Yii::t('contract','privilege user'),
             'service_type'=>Yii::t('contract','service type'),
         );
 	}
@@ -66,12 +70,13 @@ class SupportAuditForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, support_code, service_type, reject_remark, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id','safe'),
+			array('id, support_code, privilege, privilege_user, service_type, reject_remark, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id','safe'),
             array('apply_date','required'),
             array('apply_end_date','required'),
             array('apply_city','required'),
             array('employee_id','required','on'=>array('save','audit','support','wait')),
             array('apply_date','validateApplyDate'),
+            array('privilege','validatePrivilege','on'=>array('save','audit','support')),
             array('employee_id','validateStaff','on'=>array('save','audit','support')),
             array('audit_remark','required','on'=>array('reject','wait')),
             array('tem_list','validateList','on'=>array('save','audit','support','wait')),
@@ -81,6 +86,36 @@ class SupportAuditForm extends CFormModel
             array('id','validateIDEx','on'=>array('renewal','early')),
 		);
 	}
+    public function validatePrivilege($attribute, $params){
+        $city = $this->apply_city;
+        switch ($this->privilege){
+            case 1://人員置換
+                if(empty($this->privilege_user)){
+                    $message = Yii::t('contract','privilege user').Yii::t('contract',' can not be empty');
+                    $this->addError($attribute,$message);
+                }else{
+                    $row = Yii::app()->db->createCommand()->select("id")->from("hr_employee")
+                        ->where("id=:id and city='$city'",array(":id"=>$this->privilege_user))->queryRow();
+                    if(!$row){
+                        $message = "置換的員工不存在!";
+                        $this->addError($attribute,$message);
+                    }
+                }
+                break;
+            case 2://優先權
+                $startDate = date("Y/m/31", strtotime($this->apply_date." - 6 month"));
+                $row = Yii::app()->db->createCommand()->select("support_code,apply_date,apply_end_date")->from("hr_apply_support")
+                    ->where("date_format(apply_end_date,'%Y/%m/%d')>:apply_date and apply_city='$city' and status_type!=1 and privilege=2 and id!=:id",
+                        array(":apply_date"=>$startDate,":id"=>$this->id))->queryRow();
+                if($row){
+                    $message = "使用优先权必须相隔六个月。重复支援编号：".$row["support_code"]."（".$row["apply_date"]." ~ ".$row["apply_end_date"]."）";
+                    $this->addError($attribute,$message);
+                }
+                break;
+            default:
+                $this->privilege = 0;
+        }
+    }
 
     //驗證續期及提前結束
     public function validateIDEx($attribute, $params){
@@ -168,6 +203,11 @@ class SupportAuditForm extends CFormModel
                     $this->update_remark .= "服务修改：".SupportApplyList::getServiceList($row["service_type"],true)." 修改成 ".SupportApplyList::getServiceList($this->service_type,true)."
 ";
                 }
+                if($row["privilege"]!=$this->privilege){
+                    $this->update_type = 1;
+                    $this->update_remark .= "特权修改：".SupportApplyList::getPrivilegeList($row["privilege"],true)." 修改成 ".SupportApplyList::getPrivilegeList($this->privilege,true)."
+";
+                }
             }else if($this->getScenario() != "support"){
                 $message = "權限不足，請於管理員聯繫";
                 $this->addError($attribute,$message);
@@ -247,6 +287,9 @@ class SupportAuditForm extends CFormModel
 
             $this->apply_type = $row['apply_type'];
             $this->service_type = $row['service_type'];
+
+            $this->privilege = $row['privilege'];
+            $this->privilege_user = $row['privilege_user'];
 		}
 		return true;
 	}
@@ -266,14 +309,31 @@ class SupportAuditForm extends CFormModel
 
     //獲取支援的員工
     public function getSupportEmployee(){
+        $sql = '';
+        if(!empty($this->id)&&is_numeric($this->id)){
+            $sql = " and a.id !=".$this->id;
+        }
         $city = empty($this->city)?"ZY":$this->city;
         $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
             ->where("city = '$city'")->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $boolList = SupportAuditForm::SupportEmployeeToSates($row['id']);
+                $boolList = $this->SupportEmployeeToSates($row['id'],$this->id);
                 $str = $boolList["bool"]?"（已支援）":"（空闲）";
+                $arr[$row['id']] = $row['code']." - ".$row['name'].$str;
+            }
+        }
+        $startDate = empty($this->apply_date)?date("Y/m/d"):date("Y/m/d",strtotime($this->apply_date));
+        $endDate = empty($this->apply_end_date)?date("Y/m/d", strtotime("+1 month")):date("Y/m/d",strtotime($this->apply_end_date));
+        //添加置換員工
+        $rows = Yii::app()->db->createCommand()->select("b.id,b.code,b.name")->from("hr_apply_support a")
+            ->leftJoin("hr_employee b","a.privilege_user = b.id")
+            ->where("a.status_type != 1 and a.privilege = 1 $sql and ((date_format(a.apply_date,'%Y/%m/%d')>='$startDate' and date_format(a.apply_date,'%Y/%m/%d')<='$endDate') or (date_format(a.apply_end_date,'%Y/%m/%d')<='$endDate' and date_format(a.apply_end_date,'%Y/%m/%d')>='$startDate'))")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $boolList = $this->SupportEmployeeToSates($row['id'],$this->id);
+                $str = $boolList["bool"]?"（置换员工 - 已支援）":"（置换员工 - 空闲）";
                 $arr[$row['id']] = $row['code']." - ".$row['name'].$str;
             }
         }
@@ -332,7 +392,11 @@ class SupportAuditForm extends CFormModel
         return $html;
     }
     protected function returnTableFoot($footArr){
-        $sum = ($footArr["sumNum"]/$footArr["sumSum"])*100;
+        if(empty($footArr["sumSum"])){
+            $sum = 0;
+        }else{
+            $sum = ($footArr["sumNum"]/$footArr["sumSum"])*100;
+        }
         $footHtml ="<tr><th width='1%'>A</th><th>".Yii::t("contract","Project total score")."</th><th>".$footArr["sumSum"]."</th></tr>";
         $footHtml.="<tr><th>B</th><th>".Yii::t("contract","assessed total score")."</th><th>".$footArr["sumNum"]."</th></tr>";
         $footHtml.="<tr><th>C</th><th>".Yii::t("contract","Percentage score")."（B/A*100）</th><th>".sprintf("%.2f",$sum)."</th></tr>";
@@ -467,11 +531,11 @@ class SupportAuditForm extends CFormModel
                 break;
             case 'new'://支援 5
                 $sql = "insert into hr_apply_support(
-							service_type,apply_date,apply_remark,apply_end_date,apply_city,apply_lcu,status_type, lcu, luu
-							,tem_s_ist,tem_str,tem_sum,employee_id,audit_remark,apply_length,length_type
+							service_type,apply_date,privilege,privilege_user,apply_remark,apply_end_date,apply_city,apply_lcu,status_type, lcu, luu
+							,tem_s_ist,tem_str,tem_sum,employee_id,audit_remark,apply_length,length_type,apply_type
 						) values (
-							:service_type,:apply_date,:apply_remark,:apply_end_date,:apply_city,:apply_lcu,:status_type, :lcu, :luu
-							,:tem_s_ist,:tem_str,:tem_sum,:employee_id,:audit_remark,:apply_length,:length_type
+							:service_type,:apply_date,:privilege,:user_privilege,:apply_remark,:apply_end_date,:apply_city,:apply_lcu,:status_type, :lcu, :luu
+							,:tem_s_ist,:tem_str,:tem_sum,:employee_id,:audit_remark,:apply_length,:length_type,2
 						)";
                 break;
             case 'edit'://查看、待定、分配 3,4,5
@@ -479,6 +543,8 @@ class SupportAuditForm extends CFormModel
 							service_type = :service_type, 
 							apply_date = :apply_date, 
 							apply_end_date = :apply_end_date, 
+							privilege = :privilege, 
+							privilege_user = :user_privilege, 
 							length_type = :length_type, 
 							apply_length = :apply_length, 
 							update_type = :update_type, 
@@ -539,6 +605,10 @@ class SupportAuditForm extends CFormModel
             $this->tem_s_ist = json_encode($this->tem_s_ist);
             $command->bindParam(':tem_s_ist',$this->tem_s_ist,PDO::PARAM_STR);
         }
+        if (strpos($sql,':privilege')!==false)
+            $command->bindParam(':privilege',$this->privilege,PDO::PARAM_INT);
+        if (strpos($sql,':user_privilege')!==false)
+            $command->bindParam(':user_privilege',$this->privilege_user,PDO::PARAM_INT);
 
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);

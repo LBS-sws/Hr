@@ -29,6 +29,8 @@ class SupportApplyForm extends CFormModel
 	public $city_name;
 	public $employee_name;
 	public $reject_remark;
+	public $privilege;
+	public $privilege_user;
 
 	public function attributeLabels()
 	{
@@ -45,7 +47,9 @@ class SupportApplyForm extends CFormModel
             'update_remark'=>Yii::t('contract','update remark'),
             'audit_remark'=>Yii::t('contract','audit remark'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
-            'apply_type'=>Yii::t('contract','support type'),
+            'apply_type'=>Yii::t('queue','Type'),
+            'privilege'=>Yii::t('contract','privilege'),
+            'privilege_user'=>Yii::t('contract','privilege user'),
             'service_type'=>Yii::t('contract','service type'),
         );
 	}
@@ -56,12 +60,13 @@ class SupportApplyForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, service_type, apply_type, early_date, early_remark, reject_remark, status_type, support_code, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id,change_num','safe'),
+			array('id, service_type, privilege, privilege_user, apply_type, early_date, early_remark, reject_remark, status_type, support_code, apply_date,apply_end_date,apply_remark,apply_city,apply_length,length_type,audit_remark,tem_list,employee_id,change_num','safe'),
             array('service_type','required','on'=>array('edit','new')),
             array('apply_date','required','on'=>array('edit','new')),
             array('apply_remark','required','on'=>array('edit','new')),
             array('apply_end_date','required','on'=>array('edit','new')),
             array('apply_date','validateApplyDate','on'=>array('edit','new')),
+            array('privilege','validatePrivilege','on'=>array('edit','new')),
             array('id','validateID','on'=>array('edit','new')),
             array('id','validateIDEarly','on'=>array('renewal','early','review')),
             array('tem_s_ist','validateList','on'=>array('review','early')),
@@ -182,6 +187,36 @@ class SupportApplyForm extends CFormModel
             }
         }
     }
+    public function validatePrivilege($attribute, $params){
+        $city = Yii::app()->user->city;
+        switch ($this->privilege){
+            case 1://人員置換
+                if(empty($this->privilege_user)){
+                    $message = Yii::t('contract','privilege user').Yii::t('contract',' can not be empty');
+                    $this->addError($attribute,$message);
+                }else{
+                    $row = Yii::app()->db->createCommand()->select("id")->from("hr_employee")
+                        ->where("id=:id and city='$city'",array(":id"=>$this->privilege_user))->queryRow();
+                    if(!$row){
+                        $message = "置換的員工不存在!";
+                        $this->addError($attribute,$message);
+                    }
+                }
+                break;
+            case 2://優先權
+                $startDate = date("Y/m/31", strtotime($this->apply_date." - 6 month"));
+                $row = Yii::app()->db->createCommand()->select("support_code,apply_date,apply_end_date")->from("hr_apply_support")
+                    ->where("date_format(apply_end_date,'%Y/%m/%d')>:apply_date and apply_city='$city' and status_type!=1 and privilege=2 and id!=:id",
+                        array(":apply_date"=>$startDate,":id"=>$this->id))->queryRow();
+                if($row){
+                    $message = "使用优先权必须相隔六个月。重复支援编号：".$row["support_code"]."（".$row["apply_date"]." ~ ".$row["apply_end_date"]."）";
+                    $this->addError($attribute,$message);
+                }
+                break;
+            default:
+                $this->privilege = 0;
+        }
+    }
 
     public function getReadonly(){
         return ($this->scenario=='view'||$this->status_type!=1);
@@ -215,6 +250,9 @@ class SupportApplyForm extends CFormModel
             $this->review_sum = $row['review_sum'];
 
             $this->service_type = $row['service_type'];
+
+            $this->privilege = $row['privilege'];
+            $this->privilege_user = $row['privilege_user'];
 		}
 		return true;
 	}
@@ -227,6 +265,22 @@ class SupportApplyForm extends CFormModel
             return true;
         }
         return false;
+    }
+
+    //刪除驗證
+    public function getPrivilegeUserList($city=''){
+        $arr = array(''=>'');
+        if(empty($city)){
+            $city = Yii::app()->user->city;
+        }
+        $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
+            ->where("city=:city and staff_status = 0",array(":city"=>$city))->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["id"]] = $row["code"]." - ".$row["name"];
+            }
+        }
+        return $arr;
     }
 
 	public function saveData()
@@ -251,15 +305,17 @@ class SupportApplyForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_apply_support(
-							apply_date,apply_remark,apply_end_date,apply_city,apply_lcu,status_type,service_type, lcu
+							apply_date,apply_remark,privilege_user,privilege,apply_end_date,apply_city,apply_lcu,status_type,service_type, lcu
 						) values (
-							:apply_date,:apply_remark,:apply_end_date,:apply_city,:apply_lcu,:status_type,:service_type, :lcu
+							:apply_date,:apply_remark,:user_privilege,:privilege,:apply_end_date,:apply_city,:apply_lcu,:status_type,:service_type, :lcu
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_apply_support set
 							apply_date = :apply_date, 
 							apply_remark = :apply_remark, 
+							privilege = :privilege, 
+							privilege_user = :user_privilege, 
 							apply_end_date = :apply_end_date, 
 							service_type = :service_type, 
 							apply_city = :apply_city, 
@@ -325,6 +381,10 @@ class SupportApplyForm extends CFormModel
             $command->bindParam(':status_type',$this->status_type,PDO::PARAM_INT);
         if (strpos($sql,':service_type')!==false)
             $command->bindParam(':service_type',$this->service_type,PDO::PARAM_INT);
+        if (strpos($sql,':privilege')!==false)
+            $command->bindParam(':privilege',$this->privilege,PDO::PARAM_INT);
+        if (strpos($sql,':user_privilege')!==false)
+            $command->bindParam(':user_privilege',$this->privilege_user,PDO::PARAM_INT);
 
         if (strpos($sql,':review_sum')!==false)
             $command->bindParam(':review_sum',$this->review_sum,PDO::PARAM_STR);

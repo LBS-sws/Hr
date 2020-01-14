@@ -211,6 +211,22 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'privilege',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'privilege',SupportApplyList::getPrivilegeList(),
+                        array('readonly'=>($model->getReadonly()),'id'=>'privilege')
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group" id="privilege_user" style="<?php if($model->privilege != 1){ echo "display:none;";}?>">
+                <?php echo $form->labelEx($model,'privilege_user',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'privilege_user',SupportApplyForm::getPrivilegeUserList($model->apply_city),
+                        array('readonly'=>($model->getReadonly()))
+                    ); ?>
+                </div>
+            </div>
             <?php if (!in_array($model->status_type,array(2,3,4))): ?>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'apply_remark',array('class'=>"col-sm-2 control-label")); ?>
@@ -296,15 +312,36 @@ $('#btnConfirmData').on('click',function() {
 	jQuery.yii.submitForm(elm,'$link',{});
 });
 
+$('#privilege').on('change',function(){
+    if($(this).val() == 1){
+        $('#privilege_user').show();
+    }else{
+        $('#privilege_user').hide();
+    }
+});
+$('#SupportAuditForm_apply_city').on('change',function(){
+    $.ajax({
+        type: 'post',
+        url: '".Yii::app()->createUrl('supportAudit/ajaxChangeCity')."',
+        data: {city:$(this).val()},
+        dataType: 'json',
+        success: function(data){
+            if(data.status == 1){
+                $('#SupportAuditForm_privilege_user').html(data.html);
+            }
+        }
+    });
+});
 $('#apply_date,#apply_length,#length_type').on('change',function(){
     $.ajax({
         type: 'post',
         url: '".Yii::app()->createUrl('supportApply/ajaxEndDate')."',
-        data: {apply_date:$('#apply_date').val(),apply_length:$('#apply_length').val(),length_type:$('#length_type').val()},
+        data: {apply_date:$('#apply_date').val(),apply_length:$('#apply_length').val(),length_type:$('#length_type').val(),support:1},
         dataType: 'json',
         success: function(data){
             if(data.status == 1){
                 $('#apply_end_date').val(data.endDate);
+                $('#SupportAuditForm_employee_id').html(data.html);
             }
         }
     });

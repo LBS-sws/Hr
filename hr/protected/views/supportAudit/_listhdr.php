@@ -16,6 +16,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('privilege').$this->drawOrderArrow('a.privilege'),'#',$this->createOrderLink('supportAudit-list','a.privilege'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('apply_city').$this->drawOrderArrow('c.name'),'#',$this->createOrderLink('supportAudit-list','c.name'))
 			;
 		?>

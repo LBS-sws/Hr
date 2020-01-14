@@ -472,5 +472,14 @@ return array(
     'group business'=>'商業組',
     'group repast'=>'餐飲組',
     'sales type'=>'銷售部門',
+
+    //2020-01-11
+    'support apply'=>'申請支援',
+    'stationary point'=>'駐點',
+    'privilege'=>'特權',
+    'privilege user'=>'置換的員工',
+    'not use'=>'不使用',
+    'Personnel replacement'=>'人員置換',
+    'priority'=>'優先權',
     );
 ?>

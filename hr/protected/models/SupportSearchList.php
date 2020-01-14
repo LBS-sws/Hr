@@ -18,7 +18,8 @@ class SupportSearchList extends CListPageModel
             'review_sum'=>Yii::t('contract','review sum'),
             'status_type'=>Yii::t('contract','Status'),
             'service_type'=>Yii::t('contract','service type'),
-            'apply_type'=>Yii::t('contract','support type'),
+            'apply_type'=>Yii::t('queue','Type'),
+            'privilege'=>Yii::t('contract','privilege'),
 		);
 	}
 
@@ -78,6 +79,7 @@ class SupportSearchList extends CListPageModel
 
 		$this->attr = array();
 		if (count($records) > 0) {
+            $supportApplyList = new SupportApplyList();
 			foreach ($records as $k=>$record) {
                 $arr = $this->getStatus($record);
 				$this->attr[] = array(
@@ -88,8 +90,9 @@ class SupportSearchList extends CListPageModel
 					'apply_end_date'=>$record['apply_end_date'],
 					'name'=>$record['name'],
 					'review_sum'=>$record['review_sum'],
-                    'service_type'=>SupportApplyList::getServiceList($record['service_type'],true),
-                    'apply_type'=>$record['apply_type']==2?Yii::t("contract","renewal"):"",
+                    'apply_type'=>$supportApplyList->getApplyTypeList($record['apply_type'],true),
+                    'service_type'=>$supportApplyList->getServiceList($record['service_type'],true),
+                    'privilege'=>$supportApplyList->getPrivilegeList($record['privilege'],true),
 					'status'=>$arr['status'],
 					'style'=>$arr['style'],
 				);

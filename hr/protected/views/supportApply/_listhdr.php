@@ -16,6 +16,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('privilege').$this->drawOrderArrow('a.privilege'),'#',$this->createOrderLink('supportApply-list','a.privilege'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('apply_date').$this->drawOrderArrow('a.apply_date'),'#',$this->createOrderLink('supportApply-list','a.apply_date'))
 			;
 		?>

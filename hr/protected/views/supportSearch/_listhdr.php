@@ -16,6 +16,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('privilege').$this->drawOrderArrow('a.privilege'),'#',$this->createOrderLink('supportSearch-list','a.privilege'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('apply_city').$this->drawOrderArrow('c.name'),'#',$this->createOrderLink('supportSearch-list','c.name'))
 			;
 		?>
@@ -41,7 +46,7 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('status_type').$this->drawOrderArrow('a.status_type'),'#',$this->createOrderLink('supportAudit-list','a.status_type'))
+		<?php echo TbHtml::link($this->getLabelName('status_type').$this->drawOrderArrow('a.status_type'),'#',$this->createOrderLink('supportSearch-list','a.status_type'))
 			;
 		?>
 	</th>

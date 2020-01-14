@@ -25,7 +25,7 @@ class SupportApplyController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','delete','save','review','early','renewal'),
+                'actions'=>array('new','edit','draft','delete','save','review','early'),//'renewal'續期功能不需要
                 'expression'=>array('SupportApplyController','allowReadWrite'),
             ),
             array('allow',
@@ -217,11 +217,22 @@ class SupportApplyController extends Controller
     //时间计算
     public function actionAjaxEndDate(){
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new SupportAuditForm();
+            $support = isset($_POST['support'])?$_POST['support']:0;
             $apply_date = $_POST['apply_date'];
             $apply_length = $_POST['apply_length'];
             $length_type = $_POST['length_type'] == 1?"month":"day";
             $endDate = date("Y/m/d",strtotime("$apply_date + $apply_length $length_type"));
-            echo CJSON::encode(array("status"=>1,"endDate"=>$endDate));
+            $html = '';
+            $model->apply_date = $apply_date;
+            $model->apply_end_date = $endDate;
+            if(!empty($support)&&Yii::app()->user->validFunction('AY02')){
+                $data = $model->getSupportEmployee();
+                foreach ($data as $key=>$item){
+                    $html.="<option value='$key'>$item</option>";
+                }
+            }
+            echo CJSON::encode(array("status"=>1,"endDate"=>$endDate,"html"=>$html));
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }

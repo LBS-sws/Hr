@@ -25,7 +25,7 @@ class SupportAuditController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','support','delete','save','audit','wait','undo','finish','reject','early','renewal'),
+                'actions'=>array('new','edit','support','delete','save','audit','wait','undo','finish','reject','early','renewal','ajaxChangeCity'),
                 'expression'=>array('SupportAuditController','allowReadWrite'),
             ),
             array('allow',
@@ -270,6 +270,21 @@ class SupportAuditController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), "內容不存在");
                 $this->render('form',array('model'=>$model));
             }
+        }
+    }
+
+    //时间计算
+    public function actionAjaxChangeCity(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $city = key_exists("city",$_POST)?$_POST['city']:0;
+            $arr = SupportApplyForm::getPrivilegeUserList($city);
+            $html ='';
+            foreach ($arr as $key =>$item){
+                $html.="<option value='$key'>".$item."</option>";
+            }
+            echo CJSON::encode(array("status"=>1,"html"=>$html));
+        }else{
+            $this->redirect(Yii::app()->createUrl(''));
         }
     }
 }

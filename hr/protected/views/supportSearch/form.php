@@ -146,6 +146,22 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'privilege',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'privilege',SupportApplyList::getPrivilegeList(),
+                        array('readonly'=>($model->getReadonly()),'id'=>'privilege')
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group" id="privilege_user" style="<?php if($model->privilege != 1){ echo "display:none;";}?>">
+                <?php echo $form->labelEx($model,'privilege_user',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'privilege_user',SupportApplyForm::getPrivilegeUserList($model->apply_city),
+                        array('readonly'=>($model->getReadonly()))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'apply_remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-4">
                     <?php echo $form->textArea($model, 'apply_remark',
