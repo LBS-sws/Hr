@@ -383,8 +383,13 @@ class SupportApplyForm extends CFormModel
             $command->bindParam(':service_type',$this->service_type,PDO::PARAM_INT);
         if (strpos($sql,':privilege')!==false)
             $command->bindParam(':privilege',$this->privilege,PDO::PARAM_INT);
-        if (strpos($sql,':user_privilege')!==false)
-            $command->bindParam(':user_privilege',$this->privilege_user,PDO::PARAM_INT);
+        if (strpos($sql,':user_privilege')!==false){
+            if(empty($this->privilege_user)){
+                $command->bindValue(':user_privilege',null,PDO::PARAM_INT);
+            }else{
+                $command->bindParam(':user_privilege',$this->privilege_user,PDO::PARAM_INT);
+            }
+        }
 
         if (strpos($sql,':review_sum')!==false)
             $command->bindParam(':review_sum',$this->review_sum,PDO::PARAM_STR);

@@ -607,8 +607,13 @@ class SupportAuditForm extends CFormModel
         }
         if (strpos($sql,':privilege')!==false)
             $command->bindParam(':privilege',$this->privilege,PDO::PARAM_INT);
-        if (strpos($sql,':user_privilege')!==false)
-            $command->bindParam(':user_privilege',$this->privilege_user,PDO::PARAM_INT);
+        if (strpos($sql,':user_privilege')!==false){
+            if(empty($this->privilege_user)){
+                $command->bindValue(':user_privilege',null,PDO::PARAM_INT);
+            }else{
+                $command->bindParam(':user_privilege',$this->privilege_user,PDO::PARAM_INT);
+            }
+        }
 
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
