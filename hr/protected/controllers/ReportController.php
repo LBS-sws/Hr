@@ -93,6 +93,9 @@ class ReportController extends Controller
 		Yii::app()->session['active_func'] = $this->function_id;
 		
         $model = new ReportY05Form;
+        $model->start_dt = date("Y/m/d");
+        $model->end_dt = date("Y/m/d",strtotime("+1 month"));
+        $model->fields = 'start_dt,end_dt,staffs,staffs_desc';
         if (isset($_POST['ReportY05Form'])) {
             $model->attributes = $_POST['ReportY05Form'];
             if ($model->validate()) {
