@@ -1,7 +1,7 @@
-<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('AY01', 'supportAudit/edit', 'supportAudit/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('AY02', 'supportAudit/edit', 'supportAudit/view', array('index'=>$this->record['id']));?>'>
 
 
-	<td><?php echo $this->drawEditButton('AY01', 'supportAudit/edit', 'supportAudit/view', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->drawEditButton('AY02', 'supportAudit/edit', 'supportAudit/view', array('index'=>$this->record['id'])); ?></td>
 
 
 
