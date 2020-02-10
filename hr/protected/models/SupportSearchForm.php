@@ -68,7 +68,7 @@ class SupportSearchForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city;
         $city_allow = Yii::app()->user->city_allow();
-        if(Yii::app()->user->validFunction('ZR11')){
+        if(Yii::app()->user->validFunction('ZR11')||Yii::app()->user->validFunction('AY02')){
             $sqlEx = " ";
             //$sqlEx = " and a.apply_city in ($city_allow) ";
         }else{

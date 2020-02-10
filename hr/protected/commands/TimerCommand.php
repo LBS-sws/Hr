@@ -44,6 +44,9 @@ class TimerCommand extends CConsoleCommand {
         $this->workMoreSendEmail();
         //加班、請假批准后的郵件提示（結束)
 
+        $this->signedSupportStart();//支援记录提醒地区做回馈
+        $this->signedSupportEnd();//支援记录15天後還未回饋
+
         $this->sendEmail();//統一發送郵件
 
         $this->dailyInAndOutHint();//入职、离职总览电邮
@@ -251,6 +254,68 @@ class TimerCommand extends CConsoleCommand {
                 $this->send_list[] = $arr;
             }
         }
+    }
+
+    //支援记录提醒地区做回馈
+    private function signedSupportStart(){
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $endDay = date("Y/m/d");
+        $firstDay = date("Y/m/d",strtotime("$endDay - 15 day"));
+        $sql = "status_type=5 and date_format(apply_end_date,'%Y/%m/%d') >'$firstDay' and date_format(apply_end_date,'%Y/%m/%d') <'$endDay'";
+        $rows = $command->select("*")->from("hr_apply_support")->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>請檢查下列中央技術支援是否已經回饋：</p>";
+            $arr = $this->getListToSupportList($description,$rows);
+            $arr["auth_list"] = array("AY01");
+            $arr["city_allow"] = false;
+            $arr["incharge"] = 0;
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
+    //支援记录15天後還未回饋
+    private function signedSupportEnd(){
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $endDay = date("Y/m/d");
+        $firstDay = date("Y/m/d",strtotime("$endDay - 15 day"));
+        $sql = "status_type=5 and date_format(apply_end_date,'%Y/%m/%d') <='$firstDay'";
+        $rows = $command->select("*")->from("hr_apply_support")->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>中央技術支援回饋已超過15天提醒：</p>";
+            $arr = $this->getListToSupportList($description,$rows);
+            $arr["auth_list"] = "";
+            $arr["city_allow"] = true;
+            $arr["incharge"] = 1;
+            $arr["joeEmail"] = true;//僅限繞生收到郵件
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
+    private function getListToSupportList($description,$rows){
+
+        $arr = array();
+        $arr["city_list"] = array();
+        $arr["title"] = $description;
+        $arr["table_head"] = "<thead><th>支援编号</th><th>服务类型</th><th>申请城市</th><th>开始时间</th><th>结束时间</th></thead>";
+        foreach ($rows as $row){
+            if(!in_array($row["apply_city"],$this->city_list)){
+                $this->city_list[] = $row["apply_city"];
+            }
+            if(!key_exists($row["apply_city"],$arr)){
+                $arr["city_list"][]=$row["apply_city"];
+                $arr[$row["apply_city"]]=array();
+                $arr[$row["apply_city"]]["city_name"]=CGeneral::getCityName($row["apply_city"]);
+            }
+            $row["service_type"] = $row["service_type"]==1?Yii::t("contract","service support"):Yii::t("contract","service guide");
+            $arr[$row["apply_city"]]["table_body"][]="<tr><td>".$row["support_code"]."</td>"."<td>".$row["service_type"]."</td>"."<td>".$arr[$row["apply_city"]]["city_name"]."</td>"."<td>".$row["apply_date"]."</td>"."<td>".$row["apply_end_date"]."</td></tr>";
+        }
+        return $arr;
     }
 
     //員工合同7天將過期時給地區總監發送郵件

@@ -29,7 +29,7 @@ class SupportSearchList extends CListPageModel
         $city = Yii::app()->user->city;
         $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
-        if(Yii::app()->user->validFunction('ZR11')){
+        if(Yii::app()->user->validFunction('ZR11')||Yii::app()->user->validFunction('AY02')){
             $sqlEx = " ";
             //$sqlEx = " and a.apply_city in ($city_allow) ";
         }else{

@@ -75,8 +75,19 @@ class SupportApplyForm extends CFormModel
 	}
 
     public function validateID($attribute, $params){
-        if($this->status_type == 2&&!empty($this->id)){
+        $city = Yii::app()->user->city;
+        if($this->status_type == 2){
             $city = Yii::app()->user->city;
+            $date = date("Y/m/d");
+            $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")
+                ->where("apply_city='$city' and status_type=5 and date_format(apply_end_date,'%Y/%m/%d') <'$date'")->queryRow();
+            if($row){
+                $message = "存在支援单未评分（支援编号:".$row['support_code']."）";
+                $this->addError($attribute,$message);
+                return false;
+            }
+        }
+        if($this->status_type == 2&&!empty($this->id)){
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")
                 ->where("id=:id and apply_city='$city' and status_type=1",array(":id"=>$this->id))->queryRow();
             if(!$row){
