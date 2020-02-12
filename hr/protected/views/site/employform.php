@@ -631,7 +631,7 @@ if (!empty($contractNum)){
                                 $(".group_type").hide();
                             }
                         }else{
-                            $("#staff_type").val(jsonList['staff_type']);
+                            $("#staff_type").val(jsonList['dept_class']);
                         }
                     }
                 }
