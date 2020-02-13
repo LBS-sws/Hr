@@ -225,7 +225,7 @@
     <?php echo $form->labelEx($model,'staff_type',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'staff_type',EmployList::getStaffTypeList(),
-            array('readonly'=>(true),"id"=>"staff_type")
+            array('readonly'=>($readonly),"id"=>"staff_type")
         ); ?>
     </div>
     <!--分割-->
@@ -638,6 +638,6 @@ if (!empty($contractNum)){
             });
         });
 
-        $("#position").trigger("change");
+        //$("#position").trigger("change");
     })
 </script>
