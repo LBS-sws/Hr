@@ -89,6 +89,12 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
                             'data-toggle'=>'modal','data-target'=>'#jectdialog'));
                         ?>
                     <?php endif ?>
+
+                    <?php if (in_array($model->status_type,array(2,3,4))): ?>
+                        <?php echo TbHtml::button('<span class="fa fa-desktop"></span> '.Yii::t('contract','Reply/end'), array(
+                            'submit'=>Yii::app()->createUrl('supportAudit/endReply')));
+                        ?>
+                    <?php endif ?>
                 <?php endif ?>
                 <?php if ($model->scenario!='new'): ?>
                     <?php echo TbHtml::button('<span class="fa fa-calendar"></span> '.Yii::t('app','History'), array(

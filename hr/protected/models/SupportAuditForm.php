@@ -81,6 +81,8 @@ class SupportAuditForm extends CFormModel
             array('audit_remark','required','on'=>array('reject','wait')),
             array('tem_list','validateList','on'=>array('save','audit','support','wait')),
             array('reject_remark','required','on'=>array('reject')),
+            array('audit_remark','required','on'=>array('endReply')),
+            array('id','validateEndReply','on'=>array('endReply')),
             array('id','validateIDGeneral','on'=>array('undo','finish')),
             array('id','validateIDGeneral','on'=>array('reject','renewal','early'),'status_type'=>"10,9"),
             array('id','validateIDEx','on'=>array('renewal','early')),
@@ -114,6 +116,43 @@ class SupportAuditForm extends CFormModel
                 break;
             default:
                 $this->privilege = 0;
+        }
+    }
+
+    //驗證續期及提前結束
+    public function validateEndReply($attribute, $params){
+        $sql = '';
+        if(!empty($this->id)&&is_numeric($this->id)){
+            $sql = " and a.id !=".$this->id;
+        }
+        $city = empty($this->city)?"ZY":$this->city;
+        $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
+            ->where("city = '$city'")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $boolList = $this->SupportEmployeeToSates($row['id'],$this->id);
+                if($boolList["bool"] === false){
+                    $message = "该时间段含有待支援的员工，无法完成。員工(".$row["name"].")";
+                    $this->addError($attribute,$message);
+                    return false;
+                }
+            }
+        }
+        $startDate = empty($this->apply_date)?date("Y/m/d"):date("Y/m/d",strtotime($this->apply_date));
+        $endDate = empty($this->apply_end_date)?date("Y/m/d", strtotime("+1 month")):date("Y/m/d",strtotime($this->apply_end_date));
+        //添加置換員工
+        $rows = Yii::app()->db->createCommand()->select("b.id,b.code,b.name")->from("hr_apply_support a")
+            ->leftJoin("hr_employee b","a.privilege_user = b.id")
+            ->where("a.status_type != 1 and a.privilege = 1 $sql and ((date_format(a.apply_date,'%Y/%m/%d')>='$startDate' and date_format(a.apply_date,'%Y/%m/%d')<='$endDate') or (date_format(a.apply_end_date,'%Y/%m/%d')<='$endDate' and date_format(a.apply_end_date,'%Y/%m/%d')>='$startDate'))")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $boolList = $this->SupportEmployeeToSates($row['id'],$this->id);
+                if($boolList["bool"] === false){
+                    $message = "该时间段含有待支援的员工，无法完成。員工(".$row["name"].")";
+                    $this->addError($attribute,$message);
+                    return false;
+                }
+            }
         }
     }
 
@@ -159,7 +198,7 @@ class SupportAuditForm extends CFormModel
     public function validateStaff($attribute, $params){
         if(!empty($this->employee_id)){
             $row = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
-                ->where("city=:city and id=:id",array(":city"=>$this->city,":id"=>$this->employee_id))->queryRow();
+                ->where("id=:id",array(":id"=>$this->employee_id))->queryRow();
             if($row){
                 $boolList = SupportAuditForm::SupportEmployeeToSates($row['id'],$this->id);
                 if($boolList["bool"]){
@@ -529,6 +568,13 @@ class SupportAuditForm extends CFormModel
 							luu = :luu
 						where id = :id";
                 break;
+            case 'endReply'://回復/完成 12
+                $sql = "update hr_apply_support set
+							status_type = 12 , 
+							audit_remark = :audit_remark, 
+							luu = :luu
+						where id = :id";
+                break;
             case 'new'://支援 5
                 $sql = "insert into hr_apply_support(
 							service_type,apply_date,privilege,privilege_user,apply_remark,apply_end_date,apply_city,apply_lcu,status_type, lcu, luu
@@ -634,7 +680,7 @@ class SupportAuditForm extends CFormModel
 	}
 
 	private function setSupportHistory(){
-        if (in_array($this->status_type,array(4,5,7,8,11))){
+        if (in_array($this->status_type,array(4,5,7,8,11,12))){
             $this->employee_name = YearDayList::getEmployeeNameToId($this->employee_id);
             $this->city_name = CGeneral::getCityName($this->apply_city);
             $email = new Email();
@@ -644,7 +690,9 @@ class SupportAuditForm extends CFormModel
             $message.= "申请时间:".$this->apply_date."<br>";
             $message.= "结束时间:".$this->apply_end_date."<br>";
             $message.= "支援时长:".$this->apply_length.($this->length_type==1?"个月":"天")."<br>";
-            $message.= "支援员工:".$this->employee_name."<br>";
+            if(!empty($this->employee_name)){
+                $message.= "支援员工:".$this->employee_name."<br>";
+            }
             switch ($this->status_type){
                 case 4://排隊等候
                     $email->setSubject("支援单（".$this->support_code."） - 排队等候");
@@ -666,6 +714,10 @@ class SupportAuditForm extends CFormModel
                 case 11://拒絕續期
                     $email->setSubject("支援单（".$this->support_code."） - 拒絕續期");
                     $status_remark = $this->reject_remark;
+                    break;
+                case 12://回復、完成
+                    $email->setSubject("支援单（".$this->support_code."） - 沒有支援，请和支援组联系");
+                    $status_remark = $this->audit_remark;
                     break;
                 default:
                     return false;

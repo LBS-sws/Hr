@@ -228,7 +228,7 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
             <?php endif ?>
 
 
-            <?php if (!in_array($model->status_type,array(1,2))): ?>
+            <?php if (!in_array($model->status_type,array(1,2,12))): ?>
             <legend><?php echo Yii::t("contract","reviewAllot project");?></legend><!--考核项目-->
             <div class="form-group">
                 <?php echo $form->labelEx($model,'review_sum',array('class'=>"col-sm-2 control-label")); ?>

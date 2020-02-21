@@ -483,8 +483,10 @@ return array(
     'stationary point'=>'驻点',
     'privilege'=>'特权',
     'privilege user'=>'置换的员工',
-    'not use'=>'不使用',
+    'not use'=>'正常',
     'Personnel replacement'=>'人员置换',
     'priority'=>'优先权',
+    'finish and custom'=>'已完成，自定义',
+    'Reply/end'=>'回复/結束',
 );
 ?>

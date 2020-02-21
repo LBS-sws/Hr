@@ -25,7 +25,7 @@ class SupportAuditController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','support','delete','save','audit','wait','undo','finish','reject','early','renewal','ajaxChangeCity'),
+                'actions'=>array('new','edit','support','delete','save','audit','wait','undo','finish','reject','early','renewal','ajaxChangeCity','endReply'),
                 'expression'=>array('SupportAuditController','allowReadWrite'),
             ),
             array('allow',
@@ -96,6 +96,26 @@ class SupportAuditController extends Controller
             $model = new SupportAuditForm("save");
             $model->attributes = $_POST['SupportAuditForm'];
             $model->status_type = 3;
+            if ($model->validate()) {
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                $this->redirect(Yii::app()->createUrl('supportAudit/edit',array('index'=>$model->id)));
+            } else {
+                $model->status_type = $_POST['SupportAuditForm']["status_type"];
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->render('form',array('model'=>$model,));
+            }
+        }
+    }
+
+
+    public function actionEndReply()
+    {
+        if (isset($_POST['SupportAuditForm'])) {
+            $model = new SupportAuditForm("endReply");
+            $model->attributes = $_POST['SupportAuditForm'];
+            $model->status_type = 12;
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));

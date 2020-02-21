@@ -478,8 +478,10 @@ return array(
     'stationary point'=>'駐點',
     'privilege'=>'特權',
     'privilege user'=>'置換的員工',
-    'not use'=>'不使用',
+    'not use'=>'正常',
     'Personnel replacement'=>'人員置換',
     'priority'=>'優先權',
+    'finish and custom'=>'已完成，自定義',
+    'Reply/end'=>'回復/結束',
     );
 ?>

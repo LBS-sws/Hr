@@ -198,7 +198,7 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
             <?php endif ?>
 
             <?php
-            if(!in_array($model->status_type,array(1,2))){ //顯示評核分數
+            if(!in_array($model->status_type,array(1,2,12))){ //顯示評核分數
                 echo "<legend>".Yii::t("contract","reviewAllot project")."</legend>";
                 $supportModel = new SupportAuditForm();
                 $tabs = $supportModel->getTabList($model);
