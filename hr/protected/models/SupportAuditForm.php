@@ -126,8 +126,9 @@ class SupportAuditForm extends CFormModel
             $sql = " and a.id !=".$this->id;
         }
         $city = empty($this->city)?"ZY":$this->city;
-        $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
-            ->where("city = '$city'")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.code,a.name")->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("a.city = '$city' and b.dept_class = 'Technician'")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $boolList = $this->SupportEmployeeToSates($row['id'],$this->id);
@@ -354,8 +355,9 @@ class SupportAuditForm extends CFormModel
         }
         $city = empty($this->city)?"ZY":$this->city;
         $arr = array(""=>"");
-        $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
-            ->where("city = '$city'")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.code,a.name")->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("a.city = '$city' and b.dept_class = 'Technician'")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $boolList = $this->SupportEmployeeToSates($row['id'],$this->id);
