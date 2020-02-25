@@ -117,7 +117,7 @@ class SupportAuditController extends Controller
             $model->attributes = $_POST['SupportAuditForm'];
             $model->status_type = 12;
             if ($model->validate()) {
-                $model->saveData();
+                $model->saveData('endReply');
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('supportAudit/edit',array('index'=>$model->id)));
             } else {
