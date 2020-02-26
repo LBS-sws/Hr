@@ -555,10 +555,20 @@ class EmployForm extends CFormModel
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
 		if (strpos($sql,':staff_id')!==false)
 			$command->bindParam(':staff_id',$this->staff_id,PDO::PARAM_INT);
-		if (strpos($sql,':company_id')!==false)
-			$command->bindParam(':company_id',$this->company_id,PDO::PARAM_INT);
-		if (strpos($sql,':contract_id')!==false)
-			$command->bindParam(':contract_id',$this->contract_id,PDO::PARAM_INT);
+		if (strpos($sql,':company_id')!==false){
+            if(empty($this->company_id)){
+                $command->bindValue(':company_id',null);
+            }else{
+                $command->bindParam(':company_id',$this->company_id,PDO::PARAM_INT);
+            }
+        }
+		if (strpos($sql,':contract_id')!==false){
+            if(empty($this->contract_id)){
+                $command->bindValue(':contract_id',null);
+            }else{
+                $command->bindParam(':contract_id',$this->contract_id,PDO::PARAM_INT);
+            }
+        }
 		if (strpos($sql,':address')!==false)
 			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
 		if (strpos($sql,':contact_address')!==false)
