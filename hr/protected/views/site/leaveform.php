@@ -46,41 +46,93 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("start_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-4">
-        <div class="input-group">
-            <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-            </div>
-            <?php echo $form->textField($model, 'start_time',
-                array('readonly'=>($model->getInputBool()),"id"=>"start_time")
-            ); ?>
-            <div class="input-group-btn" style="width: 80px;">
-                <?php echo $form->dropDownList($model, 'start_time_lg',LeaveForm::getAMPMList(),
-                    array('readonly'=>($model->getInputBool()),"id"=>"start_time_lg","style"=>"border-left:0px;")
-                ); ?>
-            </div>
-        </div>
+    <?php echo TbHtml::label(Yii::t("contract","Apply Time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
+    <div class="col-sm-7">
+        <?php
+        $leaveModel = new LeaveForm();
+        $leaveModel->setAttributes($model->getAttributes());
+        echo $leaveModel->parintLeaveTimeTable($model->getInputBool());
+        ?>
     </div>
 </div>
-<div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("end_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-4">
-        <div class="input-group">
-            <div class="input-group-addon">
-                <i class="fa fa-calendar"></i>
-            </div>
-            <?php echo $form->textField($model, 'end_time',
-                array('readonly'=>($model->getInputBool()),"id"=>"end_time")
-            ); ?>
-            <div class="input-group-btn" style="width: 80px;">
-                <?php echo $form->dropDownList($model, 'end_time_lg',LeaveForm::getAMPMList(),
-                    array('readonly'=>($model->getInputBool()),"id"=>"end_time_lg","style"=>"border-left:0px;")
-                ); ?>
-            </div>
-        </div>
-    </div>
-</div>
+<?php if (!$model->getInputBool()): ?>
+<script>
+    $(function () {
+        $('#addTimeTable').delegate("#addLeaveTime","click",function () {
+            var tBody = $("#addTimeTable>tbody:first");
+            var num = tBody.data("num");
+            tBody.data("num",num+1);
+            var html = $("#leaveTrModel").html();
+            html = html.replace(/#key#/g, "LeaveForm[addTime]["+num+"]");
+            html = $("<tr>"+html+"</tr>");
+            html.find('.dateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+            tBody.append(html);
+        });
+
+        $('#addTimeTable').delegate(".s_time","change",function () {
+            var value = $(this).parents("tr:first").find(".e_time").val();
+            if(value == ""){
+                $(this).parents("tr:first").find(".e_time").val($(this).val());
+            }
+        });
+
+        $('#addTimeTable').delegate(".delWages","click",function () {
+            $(this).parents("tr:first").remove();
+        });
+
+        $('.dateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+
+
+        $('#addTimeTable').delegate(".s_time,.e_time,.s_long,.e_long",'change',function(){
+            var hours = 0;
+            $('#log_time').attr('readonly',true);
+            $('#addTimeTable>tbody>tr').each(function () {
+                var start_day = $(this).find(".s_time:first").val();
+                var end_day = $(this).find(".e_time:first").val();
+                var start_hour = $(this).find(".s_long:first").val();
+                var end_hour = $(this).find(".e_long:first").val();
+                hours+=sumTimeLogToLeave(start_day,end_day,start_hour,end_hour);
+                if($('#log_time').attr('readonly')==undefined){
+                    return false;
+                }
+            });
+            if($('#log_time').attr('readonly')=="readonly"){
+                $('#log_time').val(hours);
+            }
+        });
+    });
+    function sumTimeLogToLeave(start_day,end_day,start_hour,end_hour) {
+        var hours = 0;
+        if(start_day!=''&&end_day!=''){
+            var d1 = new Date(start_day);
+            var week1 = d1.getDay();
+            var d2 = new Date(end_day);
+            var week2 = d2.getDay();
+            d1 = d1.getTime();
+            d2 = d2.getTime();
+            if(d1<=d2){
+                var time = d2-d1;
+                hours=time/(24*3600*1000);
+                if(start_hour==end_hour){
+                    hours+=0.5;
+                }else{
+                    if(start_hour == 'AM'){
+                        hours++;
+                    }
+                }
+                if(hours>0){
+                    if(week1 === 0 || week1 === 6 || week2 === 0 || week2 === 6 || hours >= 6 || week1 > week2){
+                        $('#log_time').attr('readonly',false);
+                    }
+                }else{
+                    hours = 0;
+                }
+            }
+        }
+        return hours;
+    }
+</script>
+<?php endif; ?>
 <div class="form-group">
     <?php echo TbHtml::label($model->getAttributeLabel("log_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
     <div class="col-sm-3">
