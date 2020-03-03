@@ -272,13 +272,13 @@ class LeaveForm extends CFormModel
 			";
         $records = $connection->createCommand($sql)->queryRow();
         if($records){
+            $this->resetLeaveType($records);
             $records["dept_name"]=DeptForm::getDeptToId($records["department"]);
             $records["posi_name"]=DeptForm::getDeptToId($records["position"]);
             $model = new VacationDayForm($records["employee_id"],$records["vacation_id"],$records["start_time"]);
             $model->getVacationSum($records['lcd']);
             $records["sumDay"]=$model->getSumDay();
             $records["leaveNum"]=$model->getUseDay();
-            $this->resetLeaveType($records);
             return $records;
         }else{
             return false;
@@ -298,6 +298,28 @@ class LeaveForm extends CFormModel
                 $records["vaca_type"] = $key;
                 break;
             }
+        }
+
+        //後續請假表能填寫多個時間段（擴充）
+        $rows = Yii::app()->db->createCommand()->select("*")
+            ->from("hr_employee_leave_info")->where("leave_id=:leave_id",array(":leave_id"=>$records["id"]))->queryAll();
+        $records["time_list"]=array();
+        if($rows){
+            foreach ($rows as $row){
+                $records["time_list"][]=array(
+                    "start_time"=>$row["start_time"],
+                    "start_time_lg"=>$this->getAMPMList($row["start_time_lg"],true),
+                    "end_time"=>$row["end_time"],
+                    "end_time_lg"=>$this->getAMPMList($row["end_time_lg"],true)
+                );
+            }
+        }else{
+            $records["time_list"][]=array(
+                "start_time"=>$records["start_time"],
+                "start_time_lg"=>$this->getAMPMList($records["start_time_lg"],true),
+                "end_time"=>$records["end_time"],
+                "end_time_lg"=>$this->getAMPMList($records["end_time_lg"],true)
+            );
         }
     }
 
@@ -440,7 +462,7 @@ class LeaveForm extends CFormModel
                 ->from("hr_employee_leave_info")->where("leave_id=:leave_id",array(":leave_id"=>$this->id))->queryAll();
         }
         if(empty($list)){
-	        $list[] = array('start_time'=>'','start_time_lg'=>'','end_time'=>'','end_time_lg'=>'PM');
+	        $list[] = array('start_time'=>$this->start_time,'start_time_lg'=>$this->start_time_lg,'end_time'=>$this->end_time,'end_time_lg'=>$this->end_time_lg);
         }
         $html = "<table class='table table-bordered table-striped' id='addTimeTable'><thead><tr>";
         $html.="<th>".Yii::t("contract","Start Time")."</th>";
@@ -729,11 +751,20 @@ class LeaveForm extends CFormModel
 
 
     //獲取上午下午列表
-    public function getAMPMList(){
-        return array(
+    public function getAMPMList($str='',$bool=false){
+        $arr = array(
             "AM"=>Yii::t("fete","AM"),
             "PM"=>Yii::t("fete","PM")
         );
+        if($bool){
+            if(key_exists($str,$arr)){
+                return $arr[$str];
+            }else{
+                return $str;
+            }
+        }else{
+            return $arr;
+        }
     }
 
     private function foreachAddTime(){

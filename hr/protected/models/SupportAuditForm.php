@@ -235,7 +235,7 @@ class SupportAuditForm extends CFormModel
                 $this->update_remark = $row["update_remark"];
                 if($oldApplyDate != $applyDate || $oldApply_end_date != $this->apply_end_date){
                     $this->update_type = 1;
-                    $this->update_remark .= "時間修改：$oldApplyDate - $oldApply_end_date 修改成 $applyDate - ".$this->apply_end_date."
+                    $this->update_remark .= "时间修改：".date("Y/m/d",strtotime($oldApplyDate))." ~ ".date("Y/m/d",strtotime($oldApply_end_date))." 修改成 ".date("Y/m/d",strtotime($applyDate))." ~ ".date("Y/m/d",strtotime($this->apply_end_date))."
 ";
                 }
                 if($row["service_type"]!=$this->service_type){
