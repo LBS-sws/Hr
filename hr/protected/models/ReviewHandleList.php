@@ -49,7 +49,6 @@ class ReviewHandleList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        var_dump($city_allow);
         //FIND_IN_SET
         $expr_sql = " and a.handle_id = $this->employee_id and a.status_type in (1,4)";
 		$sql1 = "select docman$suffix.countdoc('REVIEW',b.id) as reviewdoc,c.name,f.name as ment_name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,a.status_type,b.year,b.year_type,a.id 
@@ -59,7 +58,7 @@ class ReviewHandleList extends CListPageModel
                 LEFT JOIN hr_company d ON c.company_id = d.id
                 LEFT JOIN hr_dept e ON c.position = e.id
                 LEFT JOIN hr_dept f ON c.department = f.id
-                where  c.staff_status = 0 $expr_sql
+                where c.staff_status = 0 $expr_sql
 			";
 		$sql2 = "select count(*) from hr_review_h a 
                 LEFT JOIN hr_review b ON a.review_id = b.id
