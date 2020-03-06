@@ -59,7 +59,8 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
 
         <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))): ?>
             <?php echo TbHtml::button('<span class="fa fa-gavel"></span> '.Yii::t('contract','review score'), array(
-                'submit'=>Yii::app()->createUrl('supportApply/review')));
+                    'id'=>'btnConfirm','data-toggle'=>'modal','data-target'=>'#confirmDialog',)
+            );
             ?>
             <div class="reviewSumDiv"><?php echo Yii::t("contract","total score");?>：
                 <span id="reviewSum">...</span>
@@ -278,6 +279,20 @@ $this->renderPartial('//site/removedialog');
 if(in_array($model->status_type,array(5,8,11))){
     $this->renderPartial('//site/earlydialog',array('form'=>$form,'model'=>$model));
 }
+?>
+<?php
+$content = "<p>".Yii::t('contract','confirmed and submitted, it cannot be modified after submission?')."</p>";
+$this->widget('bootstrap.widgets.TbModal', array(
+    'id'=>'confirmDialog',
+    'header'=>Yii::t('contract','review score'),
+    'content'=>$content,
+    'footer'=>array(
+        TbHtml::button(Yii::t('dialog','OK'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY,
+            'submit'=>Yii::app()->createUrl('supportApply/review'))),
+        TbHtml::button(Yii::t('dialog','Cancel'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY)),
+    ),
+    'show'=>false,
+));
 ?>
 <?php
 $js = Script::genDeleteData(Yii::app()->createUrl('supportApply/delete'));
