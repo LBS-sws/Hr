@@ -142,6 +142,12 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				</div>
 			</div>
 			<div class="form-group">
+				<?php echo $form->labelEx($model,'phone',array('class'=>"col-sm-2 control-label")); ?>
+				<div class="col-sm-3">
+					<?php echo $form->textField($model, 'phone',
+						array('readonly'=>($model->scenario=='view'))
+					); ?>
+				</div>
 				<?php echo $form->labelEx($model,'postal',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'postal',
@@ -166,9 +172,9 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				</div>
 			</div>
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'phone',array('class'=>"col-sm-2 control-label")); ?>
+				<?php echo $form->labelEx($model,'phone_two',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
-					<?php echo $form->textField($model, 'phone',
+					<?php echo $form->textField($model, 'phone_two',
 						array('readonly'=>($model->scenario=='view'))
 					); ?>
 				</div>

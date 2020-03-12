@@ -24,6 +24,7 @@ class CompanyForm extends CFormModel
 	public $postal2;//郵政編碼2
 	public $mie;//滅蟲執照級別
 	public $phone;
+	public $phone_two;
 	public $tacitly=0;
 	public $security_code;
 	public $organization_code;
@@ -59,7 +60,8 @@ class CompanyForm extends CFormModel
 			'head'=>Yii::t('contract','Company Head'),
 			'agent'=>Yii::t('contract','Company Agent'),
 			'address'=>Yii::t('contract','Company Address'),
-			'phone'=>Yii::t('contract','Phone of consignee'),
+			'phone'=>Yii::t('contract','Company Phone'),
+			'phone_two'=>Yii::t('contract','Phone of consignee'),
 			'security_code'=>Yii::t('contract','Security Code'),
 			'organization_code'=>Yii::t('contract','Organization Code'),
 			'organization_time'=>Yii::t('contract','Organization Time'),
@@ -88,7 +90,7 @@ class CompanyForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, head, agent, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time,
+            array('id, name, head, agent, phone_two, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time,
             legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
             ','safe'),
 			array('name','required'),
@@ -168,6 +170,7 @@ class CompanyForm extends CFormModel
                 $this->agent = $row['agent'];
                 $this->address = $row['address'];
                 $this->phone = $row['phone'];
+                $this->phone_two = $row['phone_two'];
                 $this->city = $row['city'];
                 $this->tacitly = $row['tacitly'];
                 $this->security_code = $row['security_code'];
@@ -236,10 +239,10 @@ class CompanyForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_company(
-							name, agent, head, city, address, phone, security_code, organization_code, organization_time, license_code, license_time, tacitly, lcu
+							name, agent, head, city, address, phone, security_code, phone_two, organization_code, organization_time, license_code, license_time, tacitly, lcu
 							, legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
 						) values (
-							:name, :agent, :head, :city, :address, :phone, :security_code, :organization_code, :organization_time, :license_code, :license_time, :tacitly, :lcu
+							:name, :agent, :head, :city, :address, :phone, :security_code, :two_phone, :organization_code, :organization_time, :license_code, :license_time, :tacitly, :lcu
 							, :legal, :legal_email, :legal_city, :head_email, :agent_email, :postal, :postal2, :address2, :mie, :taxpayer_num
 						)";
 				break;
@@ -251,6 +254,7 @@ class CompanyForm extends CFormModel
 							head = :head,
 							address = :address,
 							phone = :phone,
+							phone_two = :two_phone,
 							security_code = :security_code,
 							organization_code = :organization_code,
 							organization_time = :organization_time,
@@ -286,6 +290,8 @@ class CompanyForm extends CFormModel
 			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
 		if (strpos($sql,':phone')!==false)
 			$command->bindParam(':phone',$this->phone,PDO::PARAM_STR);
+		if (strpos($sql,':two_phone')!==false)
+			$command->bindParam(':two_phone',$this->phone_two,PDO::PARAM_STR);
 		if (strpos($sql,':organization_code')!==false)
 			$command->bindParam(':organization_code',$this->organization_code,PDO::PARAM_STR);
 		if (strpos($sql,':organization_time')!==false)
