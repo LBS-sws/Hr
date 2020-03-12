@@ -1,8 +1,8 @@
 
 <?php if (!empty($model->reject_cause)): ?>
     <div class="form-group has-error">
-        <?php echo $form->labelEx($model,'reject_cause',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-6">
+        <?php echo $form->labelEx($model,'reject_cause',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-6">
             <?php echo $form->textArea($model, 'reject_cause',
                 array('readonly'=>(true),"rows"=>4)
             ); ?>
@@ -11,8 +11,8 @@
 <?php endif; ?>
 <?php if ($model->scenario!='new'): ?>
     <div class="form-group">
-        <?php echo TbHtml::label($model->getAttributeLabel("leave_code").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-        <div class="col-sm-4">
+        <?php echo TbHtml::label($model->getAttributeLabel("leave_code").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
+        <div class="col-lg-4">
             <?php echo $form->textField($model, 'leave_code',
                 array('readonly'=>(true))
             ); ?>
@@ -21,8 +21,8 @@
 <?php endif; ?>
 <?php if (get_class($model) == "LeaveForm"&&Yii::app()->user->validFunction('ZR06')&&!$model->getInputBool()): ?>
     <div class="form-group">
-        <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-        <div class="col-sm-4">
+        <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
+        <div class="col-lg-4">
             <?php echo $form->dropDownList($model, 'employee_id',LeaveForm::getBindEmployeeList($model->employee_id),
                 array('readonly'=>($model->getInputBool()),'id'=>'employee_id')
             ); ?>
@@ -30,24 +30,24 @@
     </div>
 <?php else:?>
     <div class="form-group">
-        <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-        <div class="col-sm-4">
+        <?php echo TbHtml::label($model->getAttributeLabel("employee_id").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
+        <div class="col-lg-4">
             <?php echo $form->hiddenField($model, 'employee_id',array('id'=>'employee_id')); ?>
             <?php echo TbHtml::textField("employee_name",YearDayList::getEmployeeNameToId($model->employee_id),array('readonly'=>true))?>
         </div>
     </div>
 <?php endif; ?>
 <div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("vacation_id").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-3">
+    <?php echo TbHtml::label($model->getAttributeLabel("vacation_id").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
+    <div class="col-lg-3">
         <?php echo $form->dropDownList($model, 'vacation_id',LeaveForm::getLeaveTypeList($model->city),
             array('readonly'=>($model->getInputBool()),"id"=>"leave_type")
         ); ?>
     </div>
 </div>
 <div class="form-group">
-    <?php echo TbHtml::label(Yii::t("contract","Apply Time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-7">
+    <?php echo TbHtml::label(Yii::t("contract","Apply Time").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
+    <div class="col-lg-7">
         <?php
         $leaveModel = new LeaveForm();
         $leaveModel->setAttributes($model->getAttributes());
@@ -134,8 +134,8 @@
 </script>
 <?php endif; ?>
 <div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("log_time").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-3">
+    <?php echo TbHtml::label($model->getAttributeLabel("log_time").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
+    <div class="col-lg-3">
         <div class="input-group">
             <?php echo $form->numberField($model, 'log_time',
                 array('readonly'=>(true),"id"=>"log_time")
@@ -146,8 +146,8 @@
 </div>
 <?php if (!empty($model->lcd)): ?>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'lcd',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'lcd',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'lcd',
                 array('readonly'=>(true))
             ); ?>
@@ -155,8 +155,8 @@
     </div>
 <?php endif; ?>
 <div class="form-group">
-    <?php echo TbHtml::label($model->getAttributeLabel("leave_cause").'<span class="required">*</span>',"",array('class'=>"col-sm-2 control-label"));?>
-    <div class="col-sm-6">
+    <?php echo TbHtml::label($model->getAttributeLabel("leave_cause").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
+    <div class="col-lg-6">
         <?php echo $form->textArea($model, 'leave_cause',
             array('readonly'=>($model->getInputBool()),"rows"=>4)
         ); ?>
@@ -166,14 +166,14 @@
 <?php if (!empty($model->user_lcu)): ?>
     <legend><?php echo Yii::t("fete","Audit Info")?></legend>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'user_lcu',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'user_lcu',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'user_lcu',
                 array('readonly'=>(true))
             ); ?>
         </div>
-        <?php echo $form->labelEx($model,'user_lcd',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'user_lcd',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'user_lcd',
                 array('readonly'=>(true))
             ); ?>
@@ -182,14 +182,14 @@
 <?php endif; ?>
 <?php if (!empty($model->area_lcu)): ?>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'area_lcu',
                 array('readonly'=>(true))
             ); ?>
         </div>
-        <?php echo $form->labelEx($model,'area_lcd',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'area_lcd',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'area_lcd',
                 array('readonly'=>(true))
             ); ?>
@@ -198,14 +198,14 @@
 <?php endif; ?>
 <?php if (!empty($model->head_lcu)): ?>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'head_lcu',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'head_lcu',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'head_lcu',
                 array('readonly'=>(true))
             ); ?>
         </div>
-        <?php echo $form->labelEx($model,'head_lcd',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'head_lcd',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'head_lcd',
                 array('readonly'=>(true))
             ); ?>
@@ -214,14 +214,14 @@
 <?php endif; ?>
 <?php if (!empty($model->you_lcu)): ?>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'you_lcu',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'you_lcu',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'you_lcu',
                 array('readonly'=>(true))
             ); ?>
         </div>
-        <?php echo $form->labelEx($model,'you_lcd',array('class'=>"col-sm-2 control-label")); ?>
-        <div class="col-sm-3">
+        <?php echo $form->labelEx($model,'you_lcd',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
             <?php echo $form->textField($model, 'you_lcd',
                 array('readonly'=>(true))
             ); ?>
