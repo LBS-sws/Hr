@@ -454,23 +454,38 @@ class SupportApplyForm extends CFormModel
                 case 2://申請中
                     $email->setSubject("支援单（".$this->support_code."） - 申請支援");
                     $status_remark = '申请备注:'.$this->apply_remark;
+                    $message.= "$status_remark<br>";
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("supportAudit/edit",array("index"=>$this->id))."'>快速访问</a><br>";
                     break;
                 case 6://已評分
                     $email->setSubject("支援单（".$this->support_code."） - 已評分");
                     $status_remark = '评分分数：'.sprintf("%.2f",$this->review_sum);
+                    $message.= "$status_remark<br>";
+                    $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
+                    $email->addEmailToStaffId($this->employee_id);
+                    $email->sent();//單獨發給支援的員工
+                    $email->resetToAddr();
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("supportAudit/edit",array("index"=>$this->id))."'>快速访问</a><br>";
                     break;
                 case 9://申請提前結束
                     $email->setSubject("支援单（".$this->support_code."） - 申請提前結束");
                     $status_remark = '申请备注:'.$this->early_remark;
+                    $message.= "$status_remark<br>";
+                    $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
+                    $email->addEmailToStaffId($this->employee_id);
+                    $email->sent();//單獨發給支援的員工
+                    $email->resetToAddr();
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("supportAudit/edit",array("index"=>$this->id))."'>快速访问</a><br>";
                     break;
                 case 10://申請續期
                     $email->setSubject("支援单（".$this->support_code."） - 申請續期");
                     $status_remark = '申请备注:'.$this->early_remark;
+                    $message.= "$status_remark<br>";
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>";
                     break;
                 default:
                     return false;
             }
-            $message.= "$status_remark<br>";
             $email->setMessage($message);
             $email->addEmailToPrefixNullCity("AY02");//有審核權限的人收到郵件
             $email->sent();

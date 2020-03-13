@@ -699,32 +699,65 @@ class SupportAuditForm extends CFormModel
                 case 4://排隊等候
                     $email->setSubject("支援单（".$this->support_code."） - 排队等候");
                     $status_remark = $this->audit_remark;
+                    $message.= "审核备注:$status_remark<br>";
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>";
+
                     break;
                 case 5://待評分
                     $email->setSubject("支援单（".$this->support_code."） - 待評分");
                     $status_remark = $this->audit_remark;
+                    $message.= "审核备注:$status_remark<br>";
+                    $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
+                    $email->addEmailToStaffId($this->employee_id);
+                    $email->sent();//單獨發給支援的員工
+                    $email->resetToAddr();
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportApply/edit",array("index"=>$this->id))."'>快速访问</a><br>";
+
                     break;
                 case 7://已完成
                     $email->setSubject("支援单（".$this->support_code."） - 已完成");
                     $email->addEmailToStaffId($this->employee_id);
                     $status_remark = $this->audit_remark;
+                    $message.= "审核备注:$status_remark<br>";
+                    $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
+                    $email->addEmailToStaffId($this->employee_id);
+                    $email->sent();//單獨發給支援的員工
+                    $email->resetToAddr();
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportApply/edit",array("index"=>$this->id))."'>快速访问</a><br>";
+
                     break;
                 case 8://拒絕提前結束
                     $email->setSubject("支援单（".$this->support_code."） - 拒絕提前結束");
                     $status_remark = $this->reject_remark;
+                    $message.= "审核备注:$status_remark<br>";
+                    $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
+                    $email->addEmailToStaffId($this->employee_id);
+                    $email->sent();//單獨發給支援的員工
+                    $email->resetToAddr();
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportApply/edit",array("index"=>$this->id))."'>快速访问</a><br>";
+
                     break;
                 case 11://拒絕續期
                     $email->setSubject("支援单（".$this->support_code."） - 拒絕續期");
                     $status_remark = $this->reject_remark;
+                    $message.= "审核备注:$status_remark<br>";
+                    $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
+                    $email->addEmailToStaffId($this->employee_id);
+                    $email->sent();//單獨發給支援的員工
+                    $email->resetToAddr();
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportApply/edit",array("index"=>$this->id))."'>快速访问</a><br>";
+
                     break;
                 case 12://回復、完成
                     $email->setSubject("支援单（".$this->support_code."） - 沒有支援，请和支援组联系");
                     $status_remark = $this->audit_remark;
+                    $message.= "审核备注:$status_remark<br>";
+                    $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportApply/edit",array("index"=>$this->id))."'>快速访问</a><br>";
+
                     break;
                 default:
                     return false;
             }
-            $message.= "审核备注:$status_remark<br>";
             $email->setMessage($message);
             $email->addEmailToPrefixAndOnlyCity("AY01",$this->apply_city);//該城市有申請權限的人收到郵件
             $email->sent();
