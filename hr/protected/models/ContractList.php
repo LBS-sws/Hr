@@ -13,6 +13,7 @@ class ContractList extends CListPageModel
 			'id'=>Yii::t('contract','ID'),
 			'city'=>Yii::t('contract','City'),
 			'name'=>Yii::t('contract','Contract Name'),
+			'retire'=>Yii::t('contract','judge retire'),
 		);
 	}
 
@@ -65,6 +66,7 @@ class ContractList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+					'retire'=>$record['retire']==1?Yii::t("misc","Yes"):Yii::t("misc","No"),
 					'city'=>WordForm::getCityNameToCode($record['city']),
 				);
 			}

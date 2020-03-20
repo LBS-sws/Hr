@@ -30,6 +30,16 @@ class TimerCommand extends CConsoleCommand {
         $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
         //echo "合同過期:$aaa<br>";
 
+        //echo "員工退休年齡(男60 女50):$aaa<br>";
+        $manDate = date("Y/m/d", strtotime("-60 year"));
+        $womanDate = date("Y/m/d", strtotime("-50 year"));
+        $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
+        $sql.= "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
+        $this->retireToMonth();//員工退休後是否簽署退休合同（提前一個月）
+        $this->retireToWeek();//員工退休後是否簽署退休合同（提前一個星期）
+        $this->retireToAgo();//員工退休後是否簽署退休合同（超過退休年齡未修改合同）
+
 
         $this->signedContract();//是否簽署合同
         $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
@@ -217,6 +227,67 @@ class TimerCommand extends CConsoleCommand {
         return false;
     }
 
+    //員工退休後是否簽署退休合同（提前一個月）
+    private function retireToMonth(){
+        $command = Yii::app()->db->createCommand();
+        $manDate = date("Y/m/d", strtotime("-60 year + 1 month"));
+        $womanDate = date("Y/m/d", strtotime("-50 year + 1 month"));
+        $firstManDay = date("Y/m/d",strtotime("-60 year + 1 week"));
+        $firstWomanDay = date("Y/m/d",strtotime("-50 year + 1 week"));
+        $sql = "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>下列员工即将到达退休年龄，请及时变更合同：</p>";
+            $arr = $this->getListToRetireList($description,$rows);
+            $arr["auth_list"] = array("ZE04","ZG02");
+            $arr["city_allow"] = false;
+            $arr["incharge"] = 0;
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
+    //員工退休後是否簽署退休合同（一個星期）
+    private function retireToWeek(){
+        $command = Yii::app()->db->createCommand();
+        $manDate = date("Y/m/d", strtotime("-60 year + 1 week"));
+        $womanDate = date("Y/m/d", strtotime("-50 year + 1 week"));
+        $firstManDay = date("Y/m/d",strtotime("-60 year"));
+        $firstWomanDay = date("Y/m/d",strtotime("-50 year"));
+        $sql = "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>下列员工即将到达退休年龄，请及时变更合同：</p>";
+            $arr = $this->getListToRetireList($description,$rows);
+            $arr["auth_list"] = array("ZE04","ZG02");
+            $arr["city_allow"] = true;
+            $arr["incharge"] = 0;
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
+    //員工退休後是否簽署退休合同（超過退休年齡）
+    private function retireToAgo(){
+        $command = Yii::app()->db->createCommand();
+        $manDate = date("Y/m/d", strtotime("-60 year"));
+        $womanDate = date("Y/m/d", strtotime("-50 year"));
+        $sql = "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>下列员工已超過退休年龄，请变更合同：</p>";
+            $arr = $this->getListToRetireList($description,$rows);
+            $arr["auth_list"] = array();
+            $arr["city_allow"] = true;
+            $arr["incharge"] = 1;
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
     //合同即将到期
     private function longTimeContract(){
         $command = Yii::app()->db->createCommand();
@@ -390,6 +461,32 @@ class TimerCommand extends CConsoleCommand {
                 $con_date = date("Y-m-d",strtotime($row["start_time"]))." - ".$row["end_time"];
             }
             $arr[$row["city"]]["table_body"][]="<tr><td>".$row["code"]."</td>"."<td>".$row["name"]."</td>"."<td>".$arr[$row["city"]]["city_name"]."</td>"."<td>".$row["entry_time"]."</td>"."<td>".$con_date."</td></tr>";
+        }
+        return $arr;
+    }
+
+    private function getListToRetireList($description,$rows){
+
+        $arr = array();
+        $arr["city_list"] = array();
+        $arr["title"] = $description;
+        $arr["table_head"] = "<thead><th>员工编号</th><th>员工姓名</th><th>出生日期</th><th>员工年龄</th><th>员工所在城市</th><th>员工入职日期</th><th>员工合同模板</th></thead>";
+        foreach ($rows as $row){
+            if(!in_array($row["city"],$this->city_list)){
+                $cityAllow = Email::getAllCityToMinCity($row["city"]);
+                $this->city_list = array_unique(array_merge($cityAllow,$this->city_list));
+            }
+            if(!key_exists($row["city"],$arr)){
+                $arr["city_list"][]=$row["city"];
+                $arr[$row["city"]]=array();
+                $arr[$row["city"]]["city_name"]=CGeneral::getCityName($row["city"]);
+            }
+            list($age,$month,$day) = explode("-",date("Y-m-d",strtotime($row["birth_time"])));
+            $age = date("Y")-$age;
+            $month = intval(date("m"))-intval($month);
+            $month = date("d")-$day<0?$month-1:$month;
+            $age = $month<0?$age-1:$age;
+            $arr[$row["city"]]["table_body"][]="<tr><td>".$row["code"]."</td>"."<td>".$row["name"]."</td>"."<td>".$row["birth_time"]."</td>"."<td>".$age."</td>"."<td>".$arr[$row["city"]]["city_name"]."</td>"."<td>".$row["entry_time"]."</td>"."<td>".$row["contract_name"]."</td></tr>";
         }
         return $arr;
     }

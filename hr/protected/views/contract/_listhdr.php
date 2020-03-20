@@ -10,4 +10,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('retire').$this->drawOrderArrow('retire'),'#',$this->createOrderLink('contract-list','retire'))
+			;
+		?>
+	</th>
 </tr>

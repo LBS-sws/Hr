@@ -488,5 +488,8 @@ return array(
     'Address of consignee'=>'收貨地址',
     'Phone of consignee'=>'聯繫電話',
     'Name of consignee'=>'收貨人姓名',
+
+    //2020-03-20
+    'judge retire'=>'退休合同',
     );
 ?>

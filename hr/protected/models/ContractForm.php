@@ -11,6 +11,7 @@ class ContractForm extends CFormModel
 	public $id;
 	public $name;
 	public $city;
+	public $retire;
 	public $word_arr=array();
 	/**
 	 * Declares customized attribute labels.
@@ -24,6 +25,7 @@ class ContractForm extends CFormModel
 			'name'=>Yii::t('contract','Contract Name'),
 			'city'=>Yii::t('misc','City'),
 			'word_arr'=>Yii::t('contract','Contract Word'),
+            'retire'=>Yii::t('contract','judge retire'),
 		);
 	}
 
@@ -34,7 +36,7 @@ class ContractForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, word_arr, city','safe'),
+            array('id, name, word_arr, city, retire','safe'),
 			array('name','required'),
 			array('city','required'),
 			array('word_arr','required'),
@@ -149,6 +151,7 @@ class ContractForm extends CFormModel
 				$this->id = $row['id'];
 				$this->name = $row['name'];
 				$this->city = $row['city'];
+				$this->retire = $row['retire'];
 				$this->word_arr =$this->getWordListToConId($row['id']);
 				break;
 			}
@@ -181,15 +184,16 @@ class ContractForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_contract(
-							name, city, lcu
+							name, city, retire, lcu
 						) values (
-							:name, :city, :lcu
+							:name, :city, :retire, :lcu
 						)";
 				break;
 			case 'edit':
 				$sql = "update hr_contract set
 							name = :name, 
 							city = :city, 
+							retire = :retire, 
 							luu = :luu 
 						where id = :id
 						";
@@ -201,6 +205,8 @@ class ContractForm extends CFormModel
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
 		if (strpos($sql,':name')!==false)
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
+		if (strpos($sql,':retire')!==false)
+			$command->bindParam(':retire',$this->retire,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);

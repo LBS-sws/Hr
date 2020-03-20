@@ -70,6 +70,15 @@ $this->pageTitle=Yii::app()->name . ' - Contract Form';
 			</div>
 
 			<div class="form-group">
+				<?php echo $form->labelEx($model,'retire',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo $form->dropDownList($model, 'retire',array(Yii::t("misc","No"),Yii::t("misc","Yes")),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+			</div>
+
+			<div class="form-group">
 				<?php echo $form->labelEx($model,'word_arr',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-6">
                     <table class="table table-bordered table-striped" id="wordArrTable">
