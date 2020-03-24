@@ -95,7 +95,7 @@ class EmployeeList extends CListPageModel
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
 					'phone'=>$record['phone'],
 					'status'=>$arr["status"],
-					'style'=>$arr["style"],
+					'style'=>$record['z_index'] == 0?"text-muted":$arr["style"],
                     'city'=>CGeneral::getCityName($record["city"]),
                     'entry_time'=>$record["entry_time"],
                     'year_day'=>$leaveSum,

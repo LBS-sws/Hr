@@ -35,7 +35,8 @@ class TimerCommand extends CConsoleCommand {
         $womanDate = date("Y/m/d", strtotime("-50 year"));
         $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
         $sql.= "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
-        Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
+        $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
+        echo "retire:$aa"."\r\n";
         $this->retireToMonth();//員工退休後是否簽署退休合同（提前一個月）
         $this->retireToWeek();//員工退休後是否簽署退休合同（提前一個星期）
         $this->retireToAgo();//員工退休後是否簽署退休合同（超過退休年齡未修改合同）
