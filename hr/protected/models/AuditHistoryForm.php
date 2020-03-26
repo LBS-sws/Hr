@@ -361,6 +361,7 @@ class AuditHistoryForm extends CFormModel
         ));
         if($this->scenario == "audit"){
             $this->finish();
+            $this->resetEmployeeStatusAndIndex();
         }
 
         //發送郵件
@@ -488,5 +489,32 @@ class AuditHistoryForm extends CFormModel
             $attachment_now["doc_id"]=$this->employee_id;
             $connection->createCommand()->update("docman$suffix.dm_master",$attachment_now,'id=:id', array(':id'=>$now_id));
         }
+    }
+
+    //刷新员工的状态及排序
+    private function resetEmployeeStatusAndIndex(){
+        $firstday = date("Y/m/d");
+        $lastday = date("Y/m/d",strtotime("$firstday + 1 month"));
+        $command = Yii::app()->db->createCommand();
+        $aaa = $command->update('hr_employee', array("z_index"=>2),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') <= '$firstday' and replace(test_end_time,'-', '/') >='$firstday'");//試用期
+        $command->reset();
+        //echo "試用期:$aaa<br>";
+        $aaa = $command->update('hr_employee', array("z_index"=>1),"staff_status=0 and test_type=1 and replace(test_start_time,'-', '/') >= '$firstday'");//未入職
+        $command->reset();
+        //echo "未入職:$aaa<br>";
+        $aaa = $command->update('hr_employee', array("z_index"=>5),"staff_status=0 and (test_type=0 or replace(test_end_time,'-', '/') <='$firstday')");//正式員工
+        $command->reset();
+        //echo "正式員工:$aaa<br>";
+        $aaa = $command->update('hr_employee', array("z_index"=>4),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') >='$firstday' and replace(end_time,'-', '/') <='$lastday'");//合同即將過期
+        $command->reset();
+        //echo "合同即將過期:$aaa<br>";
+        $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
+        //echo "合同過期:$aaa<br>";
+        //echo "員工退休年齡(男60 女50):$aaa<br>";
+        $manDate = date("Y/m/d", strtotime("-60 year"));
+        $womanDate = date("Y/m/d", strtotime("-50 year"));
+        $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
+        $sql.= "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
     }
 }
