@@ -38,12 +38,20 @@ class ReviewSearchList extends CListPageModel
 
     public function __construct($scenario='')
     {
-        if($this->year_type===3){
-            //$this->year_type = intval(date("m"))<7?1:2;
-            $this->year_type = 1;
-        }
         if($this->year === 3){
             $this->year = date("Y");
+        }
+        if($this->year_type===3){
+            $month = intval(date("m"));
+            if($month<3){
+                $this->year--;
+                $this->year_type = 1;
+            }elseif ($month<9){
+                $this->year--;
+                $this->year_type = 2;
+            }else{
+                $this->year_type = 1;
+            }
         }
         parent::__construct();
     }
