@@ -61,6 +61,10 @@
         $('#addTimeTable').delegate("#addLeaveTime","click",function () {
             var tBody = $("#addTimeTable>tbody:first");
             var num = tBody.data("num");
+            if(tBody.find("tr").length>4){
+                $("#fete_error").modal("show").find(".errorSummary>ul").html("<li>不能超过四个时间段</li>");
+                return false;
+            }
             tBody.data("num",num+1);
             var html = $("#leaveTrModel").html();
             html = html.replace(/#key#/g, "LeaveForm[addTime]["+num+"]");

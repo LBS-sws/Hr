@@ -58,6 +58,10 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                 ?>
             <?php endif; ?>
         <?php endif; ?>
+        <div class="pull-left text-red" style="padding-top: 7px;padding-left: 10px;">
+            <span>注：请假可以分段选择时间</span>
+            <a href="javascript:void (0);" data-toggle="modal" data-target="#helpdialog">（点击可查看示例）</a>
+        </div>
 	</div>
             <?php if ($model->status==4): ?>
                 <div class="btn-group pull-right" role="group">
@@ -197,6 +201,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 <?php
 $this->renderPartial('//site/removedialog');
 $this->renderPartial('//site/canceldialog');
+$this->renderPartial('//site/help',array('helpHtml'=>'<img width="100%" src="'.Yii::app()->baseUrl . "/images/pasted_2.png".'">'));
 ?>
 <?php
 Script::genFileUpload($model,$form->id,'LEAVE');
