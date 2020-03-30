@@ -95,6 +95,8 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 
             <div class="form-group">
                 <div class="col-sm-10 col-sm-offset-2 text-danger">
+                    手机用户请横屏操作
+                    <br>
                     半天请用0.5表示，未满半天按半天计算
                 </div>
             </div>

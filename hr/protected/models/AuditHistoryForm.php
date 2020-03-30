@@ -514,7 +514,7 @@ class AuditHistoryForm extends CFormModel
         $manDate = date("Y/m/d", strtotime("-60 year"));
         $womanDate = date("Y/m/d", strtotime("-50 year"));
         $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
-        $sql.= "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
     }
 }

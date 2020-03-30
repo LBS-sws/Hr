@@ -34,7 +34,7 @@ class TimerCommand extends CConsoleCommand {
         $manDate = date("Y/m/d", strtotime("-60 year"));
         $womanDate = date("Y/m/d", strtotime("-50 year"));
         $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
-        $sql.= "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
         echo "retire:$aa"."\r\n";
         $this->retireToMonth();//員工退休後是否簽署退休合同（提前一個月）
@@ -235,7 +235,7 @@ class TimerCommand extends CConsoleCommand {
         $womanDate = date("Y/m/d", strtotime("-50 year + 1 month"));
         $firstManDay = date("Y/m/d",strtotime("-60 year + 1 week"));
         $firstWomanDay = date("Y/m/d",strtotime("-50 year + 1 week"));
-        $sql = "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $sql = "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
         if($rows){
             $description = "<p>下列员工即将到达退休年龄，请及时变更合同：</p>";
@@ -256,7 +256,7 @@ class TimerCommand extends CConsoleCommand {
         $womanDate = date("Y/m/d", strtotime("-50 year + 1 week"));
         $firstManDay = date("Y/m/d",strtotime("-60 year"));
         $firstWomanDay = date("Y/m/d",strtotime("-50 year"));
-        $sql = "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $sql = "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
         if($rows){
             $description = "<p>下列员工即将到达退休年龄，请及时变更合同：</p>";
@@ -275,7 +275,7 @@ class TimerCommand extends CConsoleCommand {
         $command = Yii::app()->db->createCommand();
         $manDate = date("Y/m/d", strtotime("-60 year"));
         $womanDate = date("Y/m/d", strtotime("-50 year"));
-        $sql = "a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+        $sql = "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
         if($rows){
             $description = "<p>下列员工已超過退休年龄，请变更合同：</p>";
@@ -487,7 +487,16 @@ class TimerCommand extends CConsoleCommand {
             $month = intval(date("m"))-intval($month);
             $month = date("d")-$day<0?$month-1:$month;
             $age = $month<0?$age-1:$age;
-            $arr[$row["city"]]["table_body"][]="<tr><td>".$row["code"]."</td>"."<td>".$row["name"]."</td>"."<td>".$row["birth_time"]."</td>"."<td>".$age."</td>"."<td>".$arr[$row["city"]]["city_name"]."</td>"."<td>".$row["entry_time"]."</td>"."<td>".$row["contract_name"]."</td></tr>";
+            $html='<tr>';
+            $html.="<td>".$row["code"]."</td>";
+            $html.="<td>".$row["name"]."</td>";
+            $html.="<td>".$row["birth_time"]."</td>";
+            $html.="<td>".$age."</td>";
+            $html.="<td>".$arr[$row["city"]]["city_name"]."</td>";
+            $html.="<td>".$row["entry_time"]."</td>";
+            $html.="<td>".$row["contract_name"]."</td>";
+            $html.='</tr>';
+            $arr[$row["city"]]["table_body"][]=$html;
         }
         return $arr;
     }
