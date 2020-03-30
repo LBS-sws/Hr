@@ -203,7 +203,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 <?php
 $this->renderPartial('//site/removedialog');
 $this->renderPartial('//site/canceldialog');
-$this->renderPartial('//site/help',array('helpHtml'=>'<img width="100%" src="'.Yii::app()->baseUrl . "/images/pasted_2.png".'">'));
+$this->renderPartial('//site/help',array('helpHtml'=>'<img width="100%" class="responsive-image" src="'.Yii::app()->baseUrl . "/images/pasted_2.png".'">'));
 ?>
 <?php
 Script::genFileUpload($model,$form->id,'LEAVE');
