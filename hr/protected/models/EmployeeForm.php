@@ -410,6 +410,7 @@ class EmployeeForm extends CFormModel
                     $word->setValue("stafftestmonth2","/");
                     $word->setValue("stafftestday2","/");
                     $testNum = "/";//　
+                    $staff["staff"]["test_wage"]="/";
                 }
                 $word->setValue("stafftestwage",$staff["staff"]["test_wage"]);
                 $word->setValue("stafftest",$testNum);
