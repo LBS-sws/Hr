@@ -43,7 +43,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                 }
                 if($model->staff_status == 2){
                     echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','Rejected'), array(
-                        'submit'=>Yii::app()->createUrl('auditHistory/reject')));
+                        'data-toggle'=>'modal','data-target'=>'#jectdialog'));
                 }
             }
             ?>
@@ -193,18 +193,16 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                     ); ?>
                 </div>
             </div>
-
-            <legend></legend>
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'ject_remark',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-7">
-                    <?php echo $form->textArea($model, 'ject_remark',
-                        array('rows'=>3,'readonly'=>($model->scenario==1))
-                    ); ?>
-                </div>
-            </div>
         </div>
     </div>
+    <?php
+    $this->renderPartial('//site/ject',array(
+        'form'=>$form,
+        'model'=>$model,
+        'rejectName'=>"ject_remark",
+        'submit'=>Yii::app()->createUrl('AuditHistory/reject'),
+    ));
+    ?>
 </section>
 
 <?php

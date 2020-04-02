@@ -31,11 +31,11 @@ class AuditHistoryList extends CListPageModel
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $sql1 = "select * from hr_employee_operate
-                where finish != 1 AND staff_status != 1 AND city IN ($city_allow) 
+                where finish != 1 AND staff_status = 2 AND city IN ($city_allow) 
 			";
         $sql2 = "select count(id)
 				from hr_employee_operate 
-				where finish != 1 AND staff_status != 1 AND city IN ($city_allow) 
+				where finish != 1 AND staff_status = 2 AND city IN ($city_allow) 
 			";
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {

@@ -102,7 +102,7 @@ class AuditController extends Controller
             $model->attributes = $_POST['AuditForm'];
             if ($model->validate()) {
                 $model->saveData();
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Request Denied'));
                 $this->redirect(Yii::app()->createUrl('audit/edit',array('index'=>$model->id)));
             } else {
                 $message = CHtml::errorSummary($model);

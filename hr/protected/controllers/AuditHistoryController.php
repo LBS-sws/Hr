@@ -112,8 +112,8 @@ class AuditHistoryController extends Controller
             $model->attributes = $_POST['AuditHistoryForm'];
             if ($model->validate()) {
                 $model->saveData();
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('AuditHistory/edit',array('index'=>$model->id)));
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Request Denied'));
+                $this->redirect(Yii::app()->createUrl('AuditHistory/index'));
             } else {
                 $message = CHtml::errorSummary($model);
                 $model->historyList = AuditHistoryForm::getStaffHistoryList($model->employee_id);
