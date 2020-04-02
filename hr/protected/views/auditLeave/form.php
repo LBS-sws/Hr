@@ -66,6 +66,8 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 			<?php echo $form->hiddenField($model, 'status'); ?>
 			<?php echo $form->hiddenField($model, 'only'); ?>
             <?php echo $form->hiddenField($model, 'employee_name'); ?>
+            <?php echo $form->hiddenField($model, 'start_time'); ?>
+            <?php echo $form->hiddenField($model, 'end_time'); ?>
 
             <?php
             $this->renderPartial('//site/leaveform',array('model'=>$model,

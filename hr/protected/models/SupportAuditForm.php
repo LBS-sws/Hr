@@ -222,6 +222,9 @@ class SupportAuditForm extends CFormModel
             $this->apply_length = $apply_length;
             $length_type = $this->length_type == 1?"month":"day";
             $this->apply_end_date = date("Y/m/d", strtotime("$applyDate +$apply_length $length_type"));
+            if($length_type == "day"){
+                $this->apply_end_date = date("Y/m/d", strtotime("$this->apply_end_date -1 day"));
+            }
 
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")
                 ->where("id=:id and (status_type not in (1,7,8) or (status_type = 1 and lcu = '$uid')) ",array(":id"=>$this->id))->queryRow();

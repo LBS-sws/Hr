@@ -223,6 +223,9 @@ class SupportApplyController extends Controller
             $apply_length = $_POST['apply_length'];
             $length_type = $_POST['length_type'] == 1?"month":"day";
             $endDate = date("Y/m/d",strtotime("$apply_date + $apply_length $length_type"));
+            if($length_type == "day"){
+                $endDate = date("Y/m/d",strtotime("$endDate - 1 day"));
+            }
             $html = '';
             $model->apply_date = $apply_date;
             $model->apply_end_date = $endDate;

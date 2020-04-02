@@ -60,16 +60,16 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 
             <?php if (in_array($model->status_type,array(9,10))): ?>
                 <div class="form-group has-error">
-                    <?php echo $form->labelEx($model,'early_date'.$model->status_type,array('class'=>"col-sm-2 control-label")); ?>
-                    <div class="col-sm-3">
+                    <?php echo $form->labelEx($model,'early_date'.$model->status_type,array('class'=>"col-lg-2 control-label")); ?>
+                    <div class="col-lg-3">
                         <?php echo $form->textField($model, 'early_date',
                             array('class'=>'form-control','readonly'=>(true)));
                         ?>
                     </div>
                 </div>
                 <div class="form-group has-error">
-                    <?php echo $form->labelEx($model,'early_remark'.$model->status_type,array('class'=>"col-sm-2 control-label")); ?>
-                    <div class="col-sm-4">
+                    <?php echo $form->labelEx($model,'early_remark'.$model->status_type,array('class'=>"col-lg-2 control-label")); ?>
+                    <div class="col-lg-4">
                         <?php echo $form->textArea($model, 'early_remark',
                             array('rows'=>3,'readonly'=>(true))
                         ); ?>
@@ -79,8 +79,8 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 
 
             <div class="form-group">
-                <?php echo $form->labelEx($model,'support_code',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <?php echo $form->labelEx($model,'support_code',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
                     <?php echo $form->textField($model, 'support_code',
                         array('class'=>'form-control','readonly'=>(true)));
                     ?>
@@ -88,32 +88,32 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
             </div>
 
             <div class="form-group">
-                <?php echo $form->labelEx($model,'service_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
+                <?php echo $form->labelEx($model,'service_type',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-2">
                     <?php echo $form->dropDownList($model, 'service_type',SupportApplyList::getServiceList(),
                         array('readonly'=>(true))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'apply_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <?php echo $form->labelEx($model,'apply_type',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
                     <?php echo $form->dropDownList($model, 'apply_type',SupportApplyList::getApplyTypeList(),
                         array('readonly'=>($model->getReadonly()))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'apply_city',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <?php echo $form->labelEx($model,'apply_city',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
                     <?php echo $form->textField($model, 'city_name',
                         array('class'=>'form-control','readonly'=>(true)));
                     ?>
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'apply_date',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <?php echo $form->labelEx($model,'apply_date',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
@@ -125,8 +125,8 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'apply_end_date',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <?php echo $form->labelEx($model,'apply_end_date',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
                     <div class="input-group">
                         <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
@@ -138,8 +138,8 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'length_type',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
+                <?php echo $form->labelEx($model,'length_type',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-2">
                     <div class="input-group">
                         <?php echo $form->textField($model, 'apply_length',
                             array('rows'=>3,'readonly'=>(true),'id'=>"apply_length")
@@ -153,32 +153,32 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'privilege',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-2">
+                <?php echo $form->labelEx($model,'privilege',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-2">
                     <?php echo $form->dropDownList($model, 'privilege',SupportApplyList::getPrivilegeList(),
                         array('readonly'=>($model->getReadonly()),'id'=>'privilege')
                     ); ?>
                 </div>
             </div>
             <div class="form-group" id="privilege_user" style="<?php if($model->privilege != 1){ echo "display:none;";}?>">
-                <?php echo $form->labelEx($model,'privilege_user',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <?php echo $form->labelEx($model,'privilege_user',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
                     <?php echo $form->dropDownList($model, 'privilege_user',SupportApplyForm::getPrivilegeUserList($model->apply_city),
                         array('readonly'=>($model->getReadonly()))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'apply_remark',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-4">
+                <?php echo $form->labelEx($model,'apply_remark',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-4">
                     <?php echo $form->textArea($model, 'apply_remark',
                         array('rows'=>3,'readonly'=>(true))
                     ); ?>
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'audit_remark',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-4">
+                <?php echo $form->labelEx($model,'audit_remark',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-4">
                     <?php echo $form->textArea($model, 'audit_remark',
                         array('rows'=>3,'readonly'=>(true))
                     ); ?>
@@ -186,8 +186,8 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
             </div>
             <?php if (!empty($model->early_remark)): ?>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'early_remark',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-4">
+                <?php echo $form->labelEx($model,'early_remark',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-4">
                     <?php echo $form->textArea($model, 'early_remark',
                         array('rows'=>3,'readonly'=>(true))
                     ); ?>
@@ -195,8 +195,8 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
             </div>
             <?php endif ?>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
                     <?php echo $form->textField($model, 'employee_name',
                         array('rows'=>3,'readonly'=>(true))
                     ); ?>
@@ -205,8 +205,8 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 
             <?php if ($model->update_type==1): ?>
                 <div class="form-group has-error">
-                    <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
-                    <div class="col-sm-4">
+                    <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-lg-2 control-label")); ?>
+                    <div class="col-lg-6">
                         <?php echo $form->textArea($model, 'update_remark',
                             array('rows'=>3,'readonly'=>(true))
                         ); ?>

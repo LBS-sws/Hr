@@ -108,6 +108,7 @@ class SupportSearchForm extends CFormModel
             }else{
                 $this->length_type =2;
                 $this->apply_length = (strtotime($this->early_date) - strtotime($this->apply_date))/86400;
+                $this->apply_length ++;
                 $this->update_type = 1;
                 $this->update_remark .= "时间修改：".date("Y/m/d",strtotime($this->apply_date))." ~ ".date("Y/m/d",strtotime($this->apply_end_date))." 修改成 ".date("Y/m/d",strtotime($this->apply_date))." ~ ".date("Y/m/d",strtotime($this->early_date))."
 ";
