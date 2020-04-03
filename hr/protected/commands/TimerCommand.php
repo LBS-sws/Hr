@@ -30,6 +30,8 @@ class TimerCommand extends CConsoleCommand {
         $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
         //echo "合同過期:$aaa<br>";
 
+// 因台灣版不適用而加的判斷
+if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) {
         //echo "員工退休年齡(男60 女50):$aaa<br>";
         $manDate = date("Y/m/d", strtotime("-60 year"));
         $womanDate = date("Y/m/d", strtotime("-50 year"));
@@ -40,7 +42,7 @@ class TimerCommand extends CConsoleCommand {
         $this->retireToMonth();//員工退休後是否簽署退休合同（提前一個月）
         $this->retireToWeek();//員工退休後是否簽署退休合同（提前一個星期）
         $this->retireToAgo();//員工退休後是否簽署退休合同（超過退休年齡未修改合同）
-
+}
 
         $this->signedContract();//是否簽署合同
         $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
