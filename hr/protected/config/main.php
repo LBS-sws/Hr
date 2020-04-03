@@ -130,6 +130,7 @@ return array(
 		'envSuffix'=>'dev',
 		'employeeCode'=>'4',
         'yearLeave'=>'employee', //employee:年假根據員工信息的年假計算
+		'retire'=>true, //退休年齡判斷（暫時只區分台灣地區 false：台灣）
 		'appname'=>'LBS DMS (UAT)',
 		'appcolor'=>'skin-red-light',
 	),

@@ -510,11 +510,14 @@ class AuditHistoryForm extends CFormModel
         //echo "合同即將過期:$aaa<br>";
         $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
         //echo "合同過期:$aaa<br>";
-        //echo "員工退休年齡(男60 女50):$aaa<br>";
-        $manDate = date("Y/m/d", strtotime("-60 year"));
-        $womanDate = date("Y/m/d", strtotime("-50 year"));
-        $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
-        $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
-        $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
+
+        if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) {
+            //echo "員工退休年齡(男60 女50):$aaa<br>";
+            $manDate = date("Y/m/d", strtotime("-60 year"));
+            $womanDate = date("Y/m/d", strtotime("-50 year"));
+            $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
+            $sql .= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+            $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
+        }
     }
 }
