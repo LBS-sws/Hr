@@ -162,7 +162,7 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'apply_type',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo TbHtml::textField('apply_type', Yii::t("contract","renewal"),
+                        <?php echo TbHtml::textField('apply_type', Yii::t("contract","stationary point"),
                             array('class'=>'form-control','readonly'=>(true)));
                         ?>
                     </div>
