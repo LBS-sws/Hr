@@ -13,8 +13,9 @@ class VacationDayForm
     public $remain_bool=false;//该假期类型是否有规则
 
     protected $vacation_sum=0;//剩餘天數
-    protected $sumDay=0;//累計天數
+    protected $sumDay=0;//累計天數（不包含額外添加的年假）
     protected $useDay=0;//已使用天數
+    protected $extraDay=0;//累计年假的天數（人事系統的累計年假）
     protected $vacation_id_list=array();
     protected $start_time;
     protected $end_time;
@@ -163,6 +164,10 @@ class VacationDayForm
         return $this->useDay;
     }
 
+    public function getExtraDay(){
+        return $this->extraDay;
+    }
+
 
     //計算在假期規則裡是多少天假期
     private function foreachVacationSum($vacation_id){
@@ -244,6 +249,7 @@ class VacationDayForm
                 //var_dump($sum);
                 $this->vacation_sum+=$sum;
                 //$this->sumDay+=$sum;
+                $this->extraDay = $sum;
                 break;
         }
     }

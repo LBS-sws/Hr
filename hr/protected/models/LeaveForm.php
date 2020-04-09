@@ -277,7 +277,7 @@ class LeaveForm extends CFormModel
             $records["posi_name"]=DeptForm::getDeptToId($records["position"]);
             $model = new VacationDayForm($records["employee_id"],$records["vacation_id"],$records["start_time"]);
             $model->getVacationSum($records['lcd']);
-            $records["sumDay"]=$model->getSumDay();
+            $records["sumDay"]=$model->getSumDay()+$model->getExtraDay();
             $records["leaveNum"]=$model->getUseDay();
             return $records;
         }else{
