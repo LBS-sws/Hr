@@ -168,7 +168,7 @@ $(function(){
         if(!$(this).parents('.tab-pane.fade').hasClass('active')){
             $(this).parents('.tab-pane.fade').addClass('active in');
         }
-        var height = $(this).outerHeight();
+        var height = $(this).css('width','360px').outerHeight();
         $(this).parent('tr').height(height);
         $(this).css({
             'position':'absolute',

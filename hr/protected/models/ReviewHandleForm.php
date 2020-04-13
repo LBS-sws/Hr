@@ -269,8 +269,8 @@ class ReviewHandleForm extends CFormModel
                 $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][name]",$items['name']);
                 $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][num_ratio]",$items['num_ratio']);
                 $html.=TbHtml::hiddenField($className."[tem_s_ist][$set_id][four_with]",$items['four_with']);
-                $html.="<div class='form-group'><div class='col-sm-7 col-sm-offset-2'><table class='table table-bordered table-striped reviewTable' data-ratio='".$items['num_ratio']."' data-four='".$items['four_with']."'>";
-                $html.="<thead><tr><th colspan='2'>".$items['code']."（".$items['name']."）</th><th width='33%'>".Yii::t("contract","Scoring remark")."</th></tr></thead><tbody>";
+                $html.="<div class='form-group'><div class='col-sm-9 col-sm-offset-2'><table class='table table-bordered table-striped reviewTable' data-ratio='".$items['num_ratio']."' data-four='".$items['four_with']."'>";
+                $html.="<thead><tr><th colspan='2'>".$items['code']."（".$items['name']."）</th><th width='36%'>".Yii::t("contract","Scoring remark")."</th></tr></thead><tbody>";
 
                 foreach ($items['list'] as $key =>$item){
                     if(!is_array($item)){

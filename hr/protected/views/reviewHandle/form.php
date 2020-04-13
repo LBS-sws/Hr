@@ -276,7 +276,7 @@ function reviewSum(){
     if('".$model->review_type."' == 4){
         var sumOne = ((reviewNum-fourNum)/(reviewSum-fourSum))*100;
         sumOne = sumOne.toFixed(2);
-        var sumTwo = (fourNum/fourSum)*100;
+        var sumTwo = fourSum == 0?0:(fourNum/fourSum)*100;
         sumTwo = sumTwo.toFixed(2);
         var sumOne_per = sumOne*handle_per/100;
         sumOne_per = sumOne_per.toFixed(2);
