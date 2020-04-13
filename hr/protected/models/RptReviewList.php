@@ -132,31 +132,37 @@ class RptReviewList extends CReport {
                         return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
                 }
             }else{
+                /* 後續修改：把組別內總數修改成分配員工的總數（未分配的員工不參與差異性評分）
                 $maxCount = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee a")
                     ->leftJoin("hr_dept d","a.position = d.id")
                     ->where("a.department=:department and d.review_status=1",array(":department"=>$staff["department"]))->queryScalar();
                 if($maxCount<10){
                     $this->leave_list[$staff["department"]]=array('caseNum'=>3);
                     return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
-                }
-                $rankingArr = array(
-                    array("maxNum"=>round($maxCount*0.2),"list"=>array(),"leave"=>"I"),
-                    array("maxNum"=>round($maxCount*0.2),"list"=>array(),"leave"=>"II"),
-                    array("maxNum"=>round($maxCount*0.3),"list"=>array(),"leave"=>"III"),
-                    array("maxNum"=>round($maxCount*0.2),"list"=>array(),"leave"=>"IV"),
-                    array("maxNum"=>round($maxCount*0.1),"list"=>array(),"leave"=>"V"),
-                );
+                }*/
                 $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
                     ->leftJoin("hr_employee c","c.id = b.employee_id")
                     ->leftJoin("hr_dept e","c.position = e.id")
                     ->where("e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
                         array(":department"=>$staff["department"],":year"=>$arr["year"],":year_type"=>$arr["year_type"])
                     )->order("b.review_sum desc")->queryAll();
-                if($reviewRows && $maxCount == count($reviewRows)){
+                if(count($reviewRows)<10){ //少於10個人不參與差異性評分
+                    $this->leave_list[$staff["department"]]=array('caseNum'=>3);
+                    return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
+                }else{
+                    $maxCount = count($reviewRows);
+                    $rankingArr = array(
+                        array("maxNum"=>round($maxCount*0.2),"list"=>array(),"leave"=>"I"),
+                        array("maxNum"=>round($maxCount*0.2),"list"=>array(),"leave"=>"II"),
+                        array("maxNum"=>round($maxCount*0.3),"list"=>array(),"leave"=>"III"),
+                        array("maxNum"=>round($maxCount*0.2),"list"=>array(),"leave"=>"IV"),
+                        array("maxNum"=>round($maxCount*0.1),"list"=>array(),"leave"=>"V"),
+                    );
                     $this->leave_list[$staff["department"]]=array('caseNum'=>1,'list'=>array());
                     $leave = "待定";
                     foreach ($reviewRows as $review){
                         if($review['status_type']!=3){
+                            $leave = "待定";
                             $this->leave_list[$staff["department"]]['caseNum']=2;
                             break;
                         }else{
@@ -165,9 +171,6 @@ class RptReviewList extends CReport {
                         }
                     }
                     return $leave;
-                }else{
-                    $this->leave_list[$staff["department"]]=array('caseNum'=>2);
-                    return "待定";
                 }
             }
         }else{
