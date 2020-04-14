@@ -76,6 +76,8 @@ class DepartureForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $code_old;//員工編號（舊）
     public $group_type;//組別類型
+    public $wechat;//微信賬號
+    public $urgency_card;//緊急聯繫人身份證
     public $no_of_attm = array(
         'employ'=>0
     );
@@ -104,7 +106,7 @@ class DepartureForm extends CFormModel
             'staff_id'=>Yii::t('contract','Employee Belong'),
             'company_id'=>Yii::t('contract','Employee Contract Belong'),
             'contract_id'=>Yii::t('contract','Employee Contract'),
-            'address'=>Yii::t('contract','Address'),
+            'address'=>Yii::t('contract','Old Address'),
             'contact_address'=>Yii::t('contract','Contact Address'),
             'phone'=>Yii::t('contract','Employee Phone'),
             'phone2'=>Yii::t('contract','Emergency call'),
@@ -157,6 +159,8 @@ class DepartureForm extends CFormModel
             'emergency_user'=>Yii::t('contract','Emergency User'),
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
             'code_old'=>Yii::t('contract','Code Old'),
+            'wechat'=>Yii::t('contract','wechat'),
+            'urgency_card'=>Yii::t('contract','urgency card'),
 		);
 	}
 
@@ -324,11 +328,13 @@ class DepartureForm extends CFormModel
                 $this->emergency_user = $row['emergency_user'];
                 $this->emergency_phone = $row['emergency_phone'];
                 $this->code_old = $row['code_old'];
+                $this->group_type = $row['group_type'];
+                $this->wechat = $row['wechat'];
+                $this->urgency_card = $row['urgency_card'];
 				break;
 			}
 		}
         $this->scenario = "view";
 		return true;
 	}
-
 }

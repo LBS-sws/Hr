@@ -81,6 +81,9 @@ class HistoryForm extends CFormModel
     public $code_old;//員工編號（舊）
     public $group_type;//組別類型
     public $effect_time;//生效日期
+
+    public $wechat;//微信賬號
+    public $urgency_card;//緊急聯繫人身份證
     public $no_of_attm = array(
         'employee'=>0,
         'employ'=>0
@@ -169,6 +172,8 @@ class HistoryForm extends CFormModel
             'code_old'=>Yii::t('contract','Code Old'),
             'group_type'=>Yii::t('contract','group type'),
             'effect_time'=>Yii::t('contract','Effect Time'),
+            'wechat'=>Yii::t('contract','wechat'),
+            'urgency_card'=>Yii::t('contract','urgency card'),
 		);
 	}
 
@@ -180,7 +185,7 @@ class HistoryForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id,group_type,employee_id,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
-             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,user_card_date,emergency_user,emergency_phone,
+             start_time,wechat,urgency_card, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,user_card_date,emergency_user,emergency_phone,
              ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type, leave_reason, leave_time, code_old,
               education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, effect_time, change_city',
                 'safe'),
@@ -277,8 +282,8 @@ class HistoryForm extends CFormModel
 
 	public function validateCode($attribute, $params){
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id!=:id and code=:code ', array(':id'=>$this->employee_id,':code'=>$this->code))->queryAll();
-        if (count($rows) > 0){
+            ->where('id!=:id and code=:code ', array(':id'=>$this->employee_id,':code'=>$this->code))->queryRow();
+        if ($rows){
             $message = Yii::t('contract','Employee Code'). Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
         }
@@ -449,6 +454,8 @@ class HistoryForm extends CFormModel
                 $this->emergency_phone = $row['emergency_phone'];
                 $this->code_old = $row['code_old'];
                 $this->group_type = $row['group_type'];
+                $this->wechat = $row['wechat'];
+                $this->urgency_card = $row['urgency_card'];
                 $this->change_city = empty($row['change_city'])?$row['city']:$row['change_city'];
                 if($this->staff_status == 1 || $this->staff_status == 3){
                     $this->scenario = $row['operation'];

@@ -1,14 +1,14 @@
 
 <legend><?php echo Yii::t("contract","personal data");?></legend>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'name',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'name',
             array('size'=>100,'maxlength'=>100,'readonly'=>($readonly))
         ); ?>
     </div>
     <!--分割-->
-    <?php echo $form->labelEx($model,'sex',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'sex',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'sex',EmployList::getSexList(),
             array('disabled'=>($readonly))
@@ -16,7 +16,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'birth_time',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'birth_time',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <div class="input-group">
             <div class="input-group-addon">
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'address',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-5">
         <?php echo $form->textField($model, 'address',
             array('readonly'=>($readonly))
@@ -50,7 +50,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'contact_address',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'contact_address',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-5">
         <?php echo $form->textField($model, 'contact_address',
             array('readonly'=>($readonly))
@@ -64,7 +64,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'phone',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'phone',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'phone',
             array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
@@ -79,22 +79,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'emergency_user',array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-3">
-        <?php echo $form->textField($model, 'emergency_user',
-            array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
-        ); ?>
-    </div>
-    <!--分割-->
-    <?php echo $form->labelEx($model,'emergency_phone',array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-3">
-        <?php echo $form->textField($model, 'emergency_phone',
-            array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
-        ); ?>
-    </div>
-</div>
-<div class="form-group">
-    <?php echo $form->labelEx($model,'user_card',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'user_card',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'user_card',
             array('readonly'=>($readonly))
@@ -116,6 +101,36 @@
     </div>
 </div>
 <div class="form-group">
+    <?php echo $form->label($model,'wechat',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'wechat',
+            array('readonly'=>($readonly))
+        ); ?>
+    </div>
+    <!--分割-->
+    <?php echo $form->label($model,'urgency_card',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'urgency_card',
+            array('readonly'=>($readonly))
+        ); ?>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'emergency_user',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'emergency_user',
+            array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
+        ); ?>
+    </div>
+    <!--分割-->
+    <?php echo $form->labelEx($model,'emergency_phone',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'emergency_phone',
+            array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
+        ); ?>
+    </div>
+</div>
+<div class="form-group">
     <?php echo $form->labelEx($model,'empoyment_code',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'empoyment_code',
@@ -131,7 +146,7 @@
         ); ?>
     </div>
     <!--分割-->
-    <?php echo $form->labelEx($model,'household',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'household',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'household',EmployList::getNationList(),
             array('disabled'=>($readonly))
@@ -165,7 +180,7 @@
         </div>
     <?php endif; ?>
 
-    <?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->labelEx($model,'entry_time',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <div class="input-group">
             <div class="input-group-addon">
@@ -178,7 +193,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'staff_id',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'staff_id',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'staff_id',EmployForm::getCompanyToCity($model->staff_id),
             array('disabled'=>($readonly))
@@ -186,14 +201,14 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'department',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'department',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'department',DeptForm::getDeptListToCity("",$model->city),
             array('disabled'=>($readonly),"class"=>"","id"=>"department")
         ); ?>
     </div>
     <!--分割-->
-    <?php echo $form->labelEx($model,'position',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'position',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'position',DeptForm::getPosiList($model->department),
             array('disabled'=>($readonly),"class"=>"","id"=>"position")
@@ -287,7 +302,7 @@ if (!empty($contractNum)){
 }
 ?>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'fix_time',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'fix_time',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-5">
         <?php echo $form->inlineRadioButtonList($model, 'fix_time',EmployList::getFixTimeList(),
             array('disabled'=>($readonly),'class'=>"fixTime")
@@ -295,7 +310,7 @@ if (!empty($contractNum)){
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'time',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'time',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <div class="input-group">
             <div class="input-group-addon">
@@ -327,7 +342,7 @@ if (!empty($contractNum)){
 </div>
 <div class="form-group">
     <?php if (EmployForm::validateWageInput()): ?>
-        <?php echo $form->labelEx($model,'wage',array('class'=>"col-sm-2 control-label")); ?>
+        <?php echo $form->label($model,'wage',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
         <div class="col-sm-3">
             <?php echo $form->numberField($model, 'wage',
                 array('min'=>0,'readonly'=>($readonly))
@@ -337,7 +352,7 @@ if (!empty($contractNum)){
         <?php echo $form->hiddenField($model, 'wage'); ?>
     <?php endif; ?>
     <!--分割-->
-    <?php echo $form->labelEx($model,'year_day',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'year_day',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'year_day',
             array('readonly'=>($readonly))
@@ -345,14 +360,14 @@ if (!empty($contractNum)){
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'company_id',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'company_id',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'company_id',EmployForm::getCompanyToCity($model->company_id),
             array('disabled'=>($readonly))
         ); ?>
     </div>
     <!--分割-->
-    <?php echo $form->labelEx($model,'contract_id',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'contract_id',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'contract_id',EmployForm::getContractToCity($model->contract_id),
             array('disabled'=>($readonly))
@@ -360,7 +375,7 @@ if (!empty($contractNum)){
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'test_type',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'test_type',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'test_type',array(
             "1"=>Yii::t("contract","Have probation period"),
@@ -371,7 +386,7 @@ if (!empty($contractNum)){
 </div>
 <div class="test-div">
     <div class="form-group">
-        <?php echo $form->labelEx($model,'test_length',array('class'=>"col-sm-2 control-label required","label"=>$model->getAttributeLabel("test_length").'&nbsp;<span class="required">*</span>')); ?>
+        <?php echo $form->label($model,'test_length',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
         <div class="col-sm-3">
             <?php echo $form->dropDownList($model, 'test_length',EmployList::getMonthList(),
                 array('class'=>'test_add_time','disabled'=>($readonly))
@@ -379,7 +394,7 @@ if (!empty($contractNum)){
         </div>
     </div>
     <div class="form-group">
-        <?php echo $form->labelEx($model,'test_time',array('class'=>"col-sm-2 control-label required","label"=>$model->getAttributeLabel("test_time").'&nbsp;<span class="required">*</span>')); ?>
+        <?php echo $form->label($model,'test_time',array('class'=>"col-sm-2 control-label ","required"=>true)); ?>
         <div class="col-sm-3">
             <div class="input-group">
                 <div class="input-group-addon">
@@ -404,7 +419,7 @@ if (!empty($contractNum)){
     </div>
     <div class="form-group">
         <!--<span class="required">*</span>-->
-        <?php echo $form->labelEx($model,'test_wage',array('class'=>"col-sm-2 control-label required","label"=>$model->getAttributeLabel("test_wage").'&nbsp;<span class="required">*</span>')); ?>
+        <?php echo $form->label($model,'test_wage',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
         <div class="col-sm-3">
             <?php echo $form->numberField($model, 'test_wage',
                 array('min'=>0,'readonly'=>($readonly))

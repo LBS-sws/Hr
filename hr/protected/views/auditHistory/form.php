@@ -162,7 +162,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
             $this->renderPartial('//site/employform',array('model'=>$model,
                 'form'=>$form,
                 'model'=>$model,
-                'readonly'=>($model->scenario=='view'),
+                'readonly'=>(true),
             ));
             ?>
 
@@ -172,7 +172,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                 <?php echo $form->labelEx($model,'remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'remark',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'))
+                        array('rows'=>3,'readonly'=>(true))
                     ); ?>
                 </div>
             </div>
@@ -181,7 +181,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                 <?php echo $form->labelEx($model,'social_code',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textField($model, 'social_code',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>(true))
                     ); ?>
                 </div>
             </div>
@@ -189,7 +189,7 @@ $this->pageTitle=Yii::app()->name . ' - AuditHistory Form';
                 <?php echo $form->labelEx($model,'jj_card',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textField($model, 'jj_card',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>(true))
                     ); ?>
                 </div>
             </div>

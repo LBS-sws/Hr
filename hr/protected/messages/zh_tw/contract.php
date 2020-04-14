@@ -33,7 +33,7 @@ return array(
     'Agent'=>'代理人',
     'Company Name'=>'公司名字',
     'Company Head'=>'公司負責人',
-    'Company Agent'=>'公司代理人',
+    'Company Agent'=>'委託代理人',
     'Company Address'=>'公司地址',
     'Company Phone'=>'公司電話',
     'Company List'=>'公司列表',
@@ -56,6 +56,7 @@ return array(
     'Employee Belong'=>'員工歸屬',
     'Employee Contract'=>'員工合同',
     'Address'=>'地址',
+    'Old Address'=>'戶籍地址',
     'Contact Address'=>'通訊地址',
     'ID Card'=>'身份證號碼',
     'Department'=>'部門',
@@ -491,5 +492,8 @@ return array(
 
     //2020-03-20
     'judge retire'=>'退休合同',
+    'wechat'=>'微信賬號',
+    'urgency card'=>'緊急聯繫人身份證',
+    'Agent Address'=>'委託代理人地址',
     );
 ?>

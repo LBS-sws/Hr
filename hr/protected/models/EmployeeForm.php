@@ -74,6 +74,8 @@ class EmployeeForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $code_old;//員工編號（舊）
     public $group_type;//組別類型
+    public $wechat;//微信賬號
+    public $urgency_card;//緊急聯繫人身份證
     public $no_of_attm = array(
         'employ'=>0
     );
@@ -151,6 +153,8 @@ class EmployeeForm extends CFormModel
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
             'code_old'=>Yii::t('contract','Code Old'),
             'group_type'=>Yii::t('contract','group type'),
+            'wechat'=>Yii::t('contract','wechat'),
+            'urgency_card'=>Yii::t('contract','urgency card'),
 		);
 	}
 
@@ -162,11 +166,11 @@ class EmployeeForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, group_type, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
-             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
+             wechat,urgency_card,start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
              ld_card, sb_card, jj_card, attachment,nation, household, empoyment_code, social_code, fix_time,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
-			array('code','required'),
+			array('code,urgency_card,wechat','required'),
 			array('name','required'),
 			array('household','required'),
             array('staff_id','required'),
@@ -321,7 +325,7 @@ class EmployeeForm extends CFormModel
                 $word->setValue("companyaddress2",$staff["company"]["address2"]);//公司地址 2
                 $word->setValue("companyaddress",$staff["company"]["address"]);
                 $word->setValue("companyhead",$staff["company"]["head"]);
-                $word->setValue("companyagent",$staff["company"]["agent"]);
+                $word->setValue("companyagent",$staff["company"]["agent"]);//委託代理人
                 $word->setValue("companyphone",$staff["company"]["phone"]);
                 $word->setValue("companyprotectno",$staff["company"]["security_code"]);//劳动保障代码
                 $word->setValue("companyorgno",$staff["company"]["organization_code"]);//组织机构代码
@@ -341,18 +345,23 @@ class EmployeeForm extends CFormModel
                 $word->setValue("staffprovtype",Yii::t("contract",$staff["staff"]["household"]));//戶籍類型
                 $word->setValue("staffhealth",Yii::t("staff",$staff["staff"]["health"]));//身体状况
                 $word->setValue("staffworkexp",$staff["staff"]["experience"]);//工作经验
+                //2020-04-14新增（開始）
+                $word->setValue("staffwechat",$staff["staff"]["wechat"]);//微信賬號
+                $word->setValue("staffemergencycard",$staff["staff"]["urgency_card"]);//緊急聯絡人身份證
+                $word->setValue("companyagentaddress",$staff["company"]["agent_address"]);//委託代理人地址
+                //2020-04-14新增（結束）
 
-                $word->setValue("staffemail",$staff["staff"]["email"]);
-                $word->setValue("staffemergency",$staff["staff"]["emergency_user"]);
-                $word->setValue("staffemergencytelno",$staff["staff"]["emergency_phone"]);
+                $word->setValue("staffemail",$staff["staff"]["email"]);//員工郵箱
+                $word->setValue("staffemergency",$staff["staff"]["emergency_user"]);//紧急联络人姓名
+                $word->setValue("staffemergencytelno",$staff["staff"]["emergency_phone"]);//紧急联络人電話
 
-                $word->setValue("staffname",$staff["staff"]["name"]);
-                $word->setValue("staffcode",$staff["staff"]["code"]);
-                $word->setValue("staffgender",Yii::t("contract",$staff["staff"]["sex"]));
-                $word->setValue("staffidno",$staff["staff"]["user_card"]);
-                $word->setValue("staffprov",$staff["staff"]["address"]);
-                $word->setValue("staffaddress",$staff["staff"]["contact_address"]);
-                $word->setValue("stafftelno",$staff["staff"]["phone"]);
+                $word->setValue("staffname",$staff["staff"]["name"]);//員工名字
+                $word->setValue("staffcode",$staff["staff"]["code"]);//員工編號
+                $word->setValue("staffgender",Yii::t("contract",$staff["staff"]["sex"]));//性別
+                $word->setValue("staffidno",$staff["staff"]["user_card"]);//身份證號碼
+                $word->setValue("staffprov",$staff["staff"]["address"]);//戶籍地址
+                $word->setValue("staffaddress",$staff["staff"]["contact_address"]);//現住地址
+                $word->setValue("stafftelno",$staff["staff"]["phone"]);//手機號碼
                 $word->setValue("staffdept",DeptForm::getDeptToId($staff["staff"]["department"]));
                 $word->setValue("staffpost",DeptForm::getDeptToId($staff["staff"]["position"]));
                 $word->setValue("staffsalary",$staff["staff"]["wage"]);//stafftestwage
@@ -541,6 +550,8 @@ class EmployeeForm extends CFormModel
                 $this->emergency_phone = $row['emergency_phone'];
                 $this->code_old = $row['code_old'];
                 $this->group_type = $row['group_type'];
+                $this->wechat = $row['wechat'];
+                $this->urgency_card = $row['urgency_card'];
 				break;
 			}
 		}

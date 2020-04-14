@@ -71,6 +71,8 @@ class AuditForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $code_old;//員工編號（舊）
     public $group_type;//員工編號（舊）
+    public $wechat;//微信賬號
+    public $urgency_card;//緊急聯繫人身份證
     public $no_of_attm = array(
         'employ'=>0
     );
@@ -146,6 +148,8 @@ class AuditForm extends CFormModel
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
             'code_old'=>Yii::t('contract','Code Old'),
             'group_type'=>Yii::t('contract','group type'),
+            'wechat'=>Yii::t('contract','wechat'),
+            'urgency_card'=>Yii::t('contract','urgency card'),
 		);
 	}
 
@@ -266,6 +270,8 @@ class AuditForm extends CFormModel
                 $this->emergency_phone = $row['emergency_phone'];
                 $this->code_old = $row['code_old'];
                 $this->group_type = $row['group_type'];
+                $this->wechat = $row['wechat'];
+                $this->urgency_card = $row['urgency_card'];
 				break;
 			}
 		}
