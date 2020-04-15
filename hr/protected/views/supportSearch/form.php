@@ -5,6 +5,10 @@ if (empty($model->id)){
 $this->pageTitle=Yii::app()->name . ' - supportSearch';
 ?>
 <style>
+    tbody>tr{position: relative;}
+    select[readonly="readonly"]{pointer-events: none;}
+    td.remark{;min-width: 350px;}
+    tr.text-weight>td{font-weight: bold;}
 
     select[readonly="readonly"]{pointer-events: none;}
 </style>
@@ -236,6 +240,18 @@ if(Yii::app()->user->validRWFunction("AY02")&&$model->apply_type == 2&&in_array(
 
 
 $js = "
+$('td.remark').each(function(){
+    if(!$(this).parents('.tab-pane.fade').hasClass('active')){
+        $(this).parents('.tab-pane.fade').addClass('active in');
+    }
+    var height = $(this).css('width','360px').outerHeight();
+    $(this).parent('tr').height(height);
+    $(this).css({
+        'position':'absolute',
+        'height':height+'px'
+    });
+    $(this).parents('.tab-pane.fade').removeClass('active in');
+});
 $('#btnEarly,#btnRenewal').on('click',function(){
     var url = $(this).data('url');
     var label1 = $(this).data('label1');
