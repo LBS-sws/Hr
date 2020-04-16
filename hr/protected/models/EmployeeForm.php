@@ -319,6 +319,7 @@ class EmployeeForm extends CFormModel
                 $word = new Template($staff["word"],$bool,$contractBool,$staff["staff"]["city"]);
 
                 if(key_exists("city",$staff["company"])){//如果公司存在
+                    $word->setHeader("city",$staff["company"]["city_name"]);
                     $word->setValue("city",$staff["company"]["city_name"]);
                     $word->setValue("companyname",$staff["company"]["name"]);
                     $word->setValue("companyaddresspost2",$staff["company"]["postal2"]);//公司地址2 邮编
@@ -353,8 +354,8 @@ class EmployeeForm extends CFormModel
                 //2020-04-14新增（結束）
 
                 $word->setValue("staffemail",$staff["staff"]["email"]);//員工郵箱
-                $word->setValue("staffemergency",$staff["staff"]["emergency_user"]);//紧急联络人姓名
                 $word->setValue("staffemergencytelno",$staff["staff"]["emergency_phone"]);//紧急联络人電話
+                $word->setValue("staffemergency",$staff["staff"]["emergency_user"]);//紧急联络人姓名
 
                 $word->setValue("staffname",$staff["staff"]["name"]);//員工名字
                 $word->setValue("staffcode",$staff["staff"]["code"]);//員工編號

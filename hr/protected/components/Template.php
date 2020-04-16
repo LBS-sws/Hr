@@ -48,7 +48,8 @@ class Template {
      * @var string
      */
     private $_tempFileName;
-    
+    private $tempDocumentHeaders;//文檔的頁頭
+
     /**
      * Document XML
      * 
@@ -86,6 +87,13 @@ class Template {
 
         $this->_objZip = new ZipArchive();
         $this->_objZip->open($this->_tempFileName);
+        $index = 1;
+        while (false !== $this->_objZip->locateName($this->getHeaderName($index))) {
+            $this->tempDocumentHeaders[$index] = $this->fixBrokenMacros(
+            $this->_objZip->getFromName($this->getHeaderName($index))
+            );
+            $index++;
+        }
         $this->_documentXML = $this->_objZip->getFromName('word/document.xml');
         $this->_documentXML = explode('<w:body>',$this->_documentXML,2)[0];
         $this->_documentXML.="<w:body>";
@@ -148,6 +156,51 @@ class Template {
         }
     }
 
+    /**
+     * Finds parts of broken macros and sticks them together.
+     * Macros, while being edited, could be implicitly broken by some of the word processors.
+     *
+     * @param string $documentPart The document part in XML representation.
+     *
+     * @return string
+     */
+    protected function fixBrokenMacros($documentPart) {
+            $fixedDocumentPart = $documentPart;
+//        pp($fixedDocumentPart);
+            $fixedDocumentPart = preg_replace_callback(
+                '|\$[^{]*\{[^}]*\}|U', function ($match) {
+                return strip_tags($match[0]);
+            }, $fixedDocumentPart
+        );
+
+        return $fixedDocumentPart;
+    }
+    /**
+     * @return string
+     */
+    protected function getMainPartName() {
+        return 'word/document.xml';
+    }
+    /**
+     * Get the name of the footer file for $index.
+     *
+     * @param integer $index
+     *
+     * @return string
+     */
+    protected function getFooterName($index) {
+        return sprintf('word/footer%d.xml', $index);
+    }
+    /**
+     * Get the name of the header file for $index.
+     *
+     * @param integer $index
+     *
+     * @return string
+     */
+    protected function getHeaderName($index) {
+        return sprintf('word/header%d.xml', $index);
+    }
 
     /**
      * Set a Template value
@@ -159,6 +212,18 @@ class Template {
         //$search = '${'.$search.'}';
 
         $this->_documentXML = str_replace($search, $replace, $this->_documentXML);
+    }
+
+    /**
+         * Set a Template header
+         *
+         * @param mixed $search
+         * @param mixed $replace
+         */
+    public function setHeader($search, $replace) {
+        foreach ($this->tempDocumentHeaders as $index => $xml) {
+            $this->tempDocumentHeaders[$index] = str_replace($search, $replace, $xml);
+        }
     }
 
     /**
@@ -182,6 +247,9 @@ class Template {
             unlink($strFilename);
         }
 
+        foreach ($this->tempDocumentHeaders as $index => $xml) {
+            $this->_objZip->addFromString($this->getHeaderName($index), $xml);
+        }
         $this->_objZip->addFromString('word/document.xml', $this->_documentXML);
         
         // Close zip file
