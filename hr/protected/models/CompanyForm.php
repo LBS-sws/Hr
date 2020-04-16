@@ -17,7 +17,6 @@ class CompanyForm extends CFormModel
 	public $head;
 	public $head_email;//負責人郵箱
 	public $agent;//委託代理人
-	public $agent_address;//委托代理人地址
 	public $agent_email;//代理人郵箱
 	public $address;
 	public $postal;//郵政編碼
@@ -60,7 +59,6 @@ class CompanyForm extends CFormModel
 			'name'=>Yii::t('contract','Company Name'),
 			'head'=>Yii::t('contract','Company Head'),
 			'agent'=>Yii::t('contract','Company Agent'),
-			'agent_address'=>Yii::t('contract','Agent Address'),
 			'address'=>Yii::t('contract','Company Address'),
 			'phone'=>Yii::t('contract','Company Phone'),
 			'phone_two'=>Yii::t('contract','Phone of consignee'),
@@ -93,7 +91,7 @@ class CompanyForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, head, agent, phone_two, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time,
-            legal, agent_address, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
+            legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
             ','safe'),
 			array('name','required'),
 			array('city','required'),
@@ -135,9 +133,10 @@ class CompanyForm extends CFormModel
 	public function getCompanyToId($company_id){
 	    $arr=array("name"=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
-            ->where('id=:id', array(':id'=>$company_id))->queryAll();
-        if (count($rows) > 0){
-            $arr=$rows[0];
+            ->where('id=:id', array(':id'=>$company_id))->queryRow();
+        if ($rows){
+            $rows["city_name"]=CGeneral::getCityName($rows["city"]);
+            $arr=$rows;
         }
         return $arr;
     }
@@ -186,7 +185,6 @@ class CompanyForm extends CFormModel
                 $this->legal_city = $row['legal_city'];
                 $this->head_email = $row['head_email'];
                 $this->agent_email = $row['agent_email'];
-                $this->agent_address = $row['agent_address'];
                 $this->postal = $row['postal'];
                 $this->postal2 = $row['postal2'];
                 $this->address2 = $row['address2'];
@@ -243,10 +241,10 @@ class CompanyForm extends CFormModel
 			case 'new':
 				$sql = "insert into hr_company(
 							name, agent, head, city, address, phone, security_code, phone_two, organization_code, organization_time, license_code, license_time, tacitly, lcu
-							, legal, legal_email, legal_city, head_email, agent_email, agent_address, postal, postal2, address2, mie, taxpayer_num
+							, legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
 						) values (
 							:name, :agent, :head, :city, :address, :phone, :security_code, :two_phone, :organization_code, :organization_time, :license_code, :license_time, :tacitly, :lcu
-							, :legal, :legal_email, :legal_city, :head_email, :agent_email, :agent_address, :postal, :postal2, :address2, :mie, :taxpayer_num
+							, :legal, :legal_email, :legal_city, :head_email, :agent_email, :postal, :postal2, :address2, :mie, :taxpayer_num
 						)";
 				break;
 			case 'edit':
@@ -269,7 +267,6 @@ class CompanyForm extends CFormModel
 							postal2 = :postal2,
 							postal = :postal,
 							agent_email = :agent_email,
-							agent_address = :agent_address,
 							head_email = :head_email,
 							legal_city = :legal_city,
 							legal_email = :legal_email,
@@ -318,8 +315,6 @@ class CompanyForm extends CFormModel
             $command->bindParam(':head_email',$this->head_email,PDO::PARAM_STR);
         if (strpos($sql,':agent_email')!==false)
             $command->bindParam(':agent_email',$this->agent_email,PDO::PARAM_STR);
-        if (strpos($sql,':agent_address')!==false)
-            $command->bindParam(':agent_address',$this->agent_address,PDO::PARAM_STR);
         if (strpos($sql,':postal')!==false)
             $command->bindParam(':postal',$this->postal,PDO::PARAM_STR);
         if (strpos($sql,':postal2')!==false)

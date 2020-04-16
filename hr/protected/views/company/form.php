@@ -134,14 +134,6 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                 </div>
 			</div>
 			<div class="form-group">
-				<?php echo $form->labelEx($model,'agent_address',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-8">
-					<?php echo $form->textField($model, 'agent_address',
-						array('readonly'=>($model->scenario=='view'))
-					); ?>
-				</div>
-			</div>
-			<div class="form-group">
 				<?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-8">
 					<?php echo $form->textField($model, 'address',

@@ -318,18 +318,20 @@ class EmployeeForm extends CFormModel
                 $contractBool = $staff["staff"]["fix_time"] == "fixation";
                 $word = new Template($staff["word"],$bool,$contractBool,$staff["staff"]["city"]);
 
-                $word->setValue("city",$staff["company"]["city"]);
-                $word->setValue("companyname",$staff["company"]["name"]);
-                $word->setValue("companyaddresspost2",$staff["company"]["postal2"]);//公司地址2 邮编
-                $word->setValue("companyaddresspost",$staff["company"]["postal"]);//公司地址 邮编
-                $word->setValue("companyaddress2",$staff["company"]["address2"]);//公司地址 2
-                $word->setValue("companyaddress",$staff["company"]["address"]);
-                $word->setValue("companyhead",$staff["company"]["head"]);
-                $word->setValue("companyagent",$staff["company"]["agent"]);//委託代理人
-                $word->setValue("companyphone",$staff["company"]["phone"]);
-                $word->setValue("companyprotectno",$staff["company"]["security_code"]);//劳动保障代码
-                $word->setValue("companyorgno",$staff["company"]["organization_code"]);//组织机构代码
-                $word->setValue("companyregno",$staff["company"]["license_code"]);//证照编号
+                if(key_exists("city",$staff["company"])){//如果公司存在
+                    $word->setValue("city",$staff["company"]["city_name"]);
+                    $word->setValue("companyname",$staff["company"]["name"]);
+                    $word->setValue("companyaddresspost2",$staff["company"]["postal2"]);//公司地址2 邮编
+                    $word->setValue("companyaddresspost",$staff["company"]["postal"]);//公司地址 邮编
+                    $word->setValue("companyaddress2",$staff["company"]["address2"]);//公司地址 2
+                    $word->setValue("companyaddress",$staff["company"]["address"]);
+                    $word->setValue("companyhead",$staff["company"]["head"]);
+                    $word->setValue("companyagent",$staff["company"]["agent"]);//委託代理人
+                    $word->setValue("companyphone",$staff["company"]["phone"]);
+                    $word->setValue("companyprotectno",$staff["company"]["security_code"]);//劳动保障代码
+                    $word->setValue("companyorgno",$staff["company"]["organization_code"]);//组织机构代码
+                    $word->setValue("companyregno",$staff["company"]["license_code"]);//证照编号
+                }
                 
                 $word->setValue("staffprovpostcode",$staff["staff"]["address_code"]);//原住地址 邮编
                 $word->setValue("staffaddrpostcode",$staff["staff"]["contact_address_code"]);//通讯地址 邮编
@@ -348,7 +350,6 @@ class EmployeeForm extends CFormModel
                 //2020-04-14新增（開始）
                 $word->setValue("staffwechat",$staff["staff"]["wechat"]);//微信賬號
                 $word->setValue("staffemergencycard",$staff["staff"]["urgency_card"]);//緊急聯絡人身份證
-                $word->setValue("companyagentaddress",$staff["company"]["agent_address"]);//委託代理人地址
                 //2020-04-14新增（結束）
 
                 $word->setValue("staffemail",$staff["staff"]["email"]);//員工郵箱
