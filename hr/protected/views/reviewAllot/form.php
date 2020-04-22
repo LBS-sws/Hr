@@ -123,6 +123,7 @@ $this->renderPartial('//site/fileupload',$fileUpload);
     <?php echo $model->getRowOnly($model,":num",$model->getReviewManagerList($model->city),false,array("employee_id"=>"","num"=>""));?>
 </xmp>
 <?php
+Script::genFileUpload($model,$form->id,'REVIEW');
 
 $js = "
     var rowHtml = $('#readyOne').html();
