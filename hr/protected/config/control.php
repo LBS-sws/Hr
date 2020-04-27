@@ -14,4 +14,5 @@ return array(
 	'Search all support'=>array('access'=>'ZR11',),//查询所有支援
 	'Back to review'=>array('access'=>'ZR12',),//退回单个考核
 	'Back to leave and work'=>array('access'=>'ZR13',),//退回請假單及加班單
+	'sales group manage'=>array('access'=>'ZR14',),//銷售分組管理
 );

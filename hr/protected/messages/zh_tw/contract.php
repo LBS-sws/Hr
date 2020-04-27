@@ -495,5 +495,22 @@ return array(
     'wechat'=>'微信賬號',
     'urgency card'=>'緊急聯繫人身份證',
     'Agent Address'=>'委託代理人地址',
+
+    //2020-04-15
+    'group name'=>'銷售組別名稱',
+    'staff num'=>'組內人員總數',
+    'Sales Group List'=>'銷售分組列表',
+    'Sales Group Form'=>'銷售分組表單',
+    'Sales Staff List'=>'組內員工列表',
+    'Add Sales Group'=>'添加銷售分組',
+    'Del Sales Group'=>'刪除銷售分組',
+    'Add Staff Group'=>'添加組員',
+    'Del Staff Group'=>'刪除組員',
+
+    //2020-04-27
+    'bill sum'=>'開單額',
+    'bill count'=>'開單數量',
+    'average'=>'平均分',
+    'deviation'=>'所占比',
     );
 ?>

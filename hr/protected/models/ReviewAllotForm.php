@@ -114,8 +114,20 @@ class ReviewAllotForm extends CFormModel
                 $this->addError($attribute,$message);
             }else{
                 if($this->review_type == 3){
-                    if($this->change_num>10){
-                        $message = $this->getReviewStr($this->review_type)."不能大于10";
+                    $row = Yii::app()->db->createCommand()->select("group_id")
+                        ->from("hr_sales_staff")->where("employee_id=:id",array(":id"=>$this->employee_id))->queryRow();
+                    if($row){
+                        $model = new SalesReviewForm();
+                        $model->retrieveData($row["group_id"],$this->year,$this->year_type);
+                        $model->getTabList();
+                        foreach ($model->staff_list as $staff){
+                            if($staff["id"] == $this->employee_id){
+                                $this->change_num = sprintf("%.2f",($staff["ranking"]/6));
+                                return true;
+                            }
+                        }
+                    }else{
+                        $message = $this->getReviewStr($this->review_type)."：该员工未销售分组，无法分配";
                         $this->addError($attribute,$message);
                     }
                 }
@@ -144,6 +156,7 @@ class ReviewAllotForm extends CFormModel
 	        if($this->review_type == 3){
 	            $arr["max"] = 10;
 	            $arr["data-change"] = "three";
+	            $arr["readonly"] = true;
             }
             if(!empty($this->change_num)){
                 if($this->review_type == 3){
@@ -352,6 +365,25 @@ class ReviewAllotForm extends CFormModel
                 ->leftJoin("hr_vacation b","a.vacation_id = b.id")
                 ->where("a.employee_id= :id and a.status = 4 and b.sub_bool = 1 $dateSql",array(":id"=>$this->employee_id))->queryScalar();
             //var_dump($this->change_num);
+        }
+
+        if($this->review_type == 3){
+            $row = Yii::app()->db->createCommand()->select("group_id")
+                ->from("hr_sales_staff")->where("employee_id=:id",array(":id"=>$this->employee_id))->queryRow();
+            if($row){
+                $model = new SalesReviewForm();
+                $model->retrieveData($row["group_id"],$this->year,$this->year_type);
+                $model->getTabList();
+                foreach ($model->staff_list as $staff){
+                    if($staff["id"] == $this->employee_id){
+                        $this->change_num = sprintf("%.2f",($staff["ranking"]/6));
+                        return true;
+                    }
+                }
+            }else{
+                $this->change_num = "-1";
+                Dialog::message(Yii::t('dialog','Validation Message'), "该员工未销售分组，无法分配");
+            }
         }
     }
 

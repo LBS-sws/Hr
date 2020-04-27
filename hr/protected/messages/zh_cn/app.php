@@ -160,6 +160,10 @@ return array(
     'Search support employee'=>'员工支援概况',
     'Back to review'=>'退回单个考核',
     'Back to leave and work'=>'退回请假单及加班单',
+    'Sales Review'=>'销售成绩',
+    'sales group manage'=>'销售分组管理',
+    'Sales Group'=>'销售分组',
+    'Sales Review Search'=>'销售成绩查询',
 
     //沈超添加结束
 );

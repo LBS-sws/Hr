@@ -159,6 +159,10 @@ return array(
     'Search support employee'=>'員工支援概況',
     'Back to review'=>'退回單個考核',
     'Back to leave and work'=>'退回請假單及加班單',
+    'Sales Review'=>'銷售成績',
+    'sales group manage'=>'銷售分組管理',
+    'Sales Group'=>'銷售分組',
+    'Sales Review Search'=>'銷售成績查詢',
 
 //沈超添加結束
 );

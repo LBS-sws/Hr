@@ -179,6 +179,21 @@ return array(
             ),
         ),
     ),
+    //銷售評分
+    'Sales Review'=>array(
+        'access'=>'SR',
+        'icon'=>'fa-anchor',
+        'items'=>array(
+            'Sales Group'=>array( //銷售分組
+                'access'=>'SR01',
+                'url'=>'/SalesGroup/index',
+            ),
+            'Sales Review Search'=>array( //審核中央技术支持
+                'access'=>'SR02',
+                'url'=>'/SalesReview/index',
+            ),
+        ),
+    ),
     //中央技术支持
     'technical support'=>array(
         'access'=>'AY',
