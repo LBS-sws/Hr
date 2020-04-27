@@ -66,6 +66,12 @@ class DeptList extends CListPageModel
 				case 'city':
 					$clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
 					break;
+				case 'review_type':
+					$clause .= ' and review_type in '.$this->getReviewSqlLikeName($svalue);
+					break;
+				case 'dept_id':
+					$clause .= ' and dept_id in '.$this->getDeptSqlLikeName($svalue);
+					break;
 			}
 		}
 		
@@ -105,4 +111,36 @@ class DeptList extends CListPageModel
 		return true;
 	}
 
+    public function getReviewSqlLikeName($code)
+    {
+        $arr = array();
+        $reviewArr = DeptForm::getReviewType();
+        foreach ($reviewArr as $key=> $review){
+            if (strpos($review,$code)!==false){
+                array_push($arr,$key);
+            }
+        }
+        if(empty($arr)){
+            return "('')";
+        }else{
+            $arr = implode(",",$arr);
+            return "($arr)";
+        }
+    }
+
+    public function getDeptSqlLikeName($code)
+    {
+        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
+        $rows = Yii::app()->db->createCommand("select id from hr_dept where type=0 AND name like '%$code%'")->queryAll();
+        $arr = array();
+        foreach ($rows as $row){
+            array_push($arr,$row["id"]);
+        }
+        if(empty($arr)){
+            return "('')";
+        }else{
+            $arr = implode(",",$arr);
+            return "($arr)";
+        }
+    }
 }

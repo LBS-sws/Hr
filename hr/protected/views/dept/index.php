@@ -47,7 +47,11 @@ $this->pageTitle=Yii::app()->name . ' - Dept';
         'name',
         'city',
     );
-    if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
+    if($model->type == 1){
+        $search[] = 'dept_id';
+        $search[] = 'review_type';
+    }
+    //if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
    $this->widget('ext.layout.ListPageWidget', array(
         'title'=>$model->getTypeName().Yii::t('contract',' List'),
         'model'=>$model,
