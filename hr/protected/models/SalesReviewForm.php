@@ -45,8 +45,8 @@ class SalesReviewForm extends CFormModel
         $maxYear = end($this->year_list);
         $svcList = array("svc_A7","svc_B6","svc_C7","svc_D6","svc_E7","svc_F4","svc_G3");
         $svcSql = implode("','",$svcList);
-        $visitObjSql = "";
-        //$visitObjSql = " and sales$suffix.VisitObjDesc(b.visit_obj) like '%签单%'";
+        //$visitObjSql = "";
+        $visitObjSql = " and sales$suffix.VisitObjDesc(b.visit_obj) like '%签单%'";
         $rows = Yii::app()->db->createCommand()->select("a.field_value,a.field_id,b.visit_dt,b.username,")->from("sales$suffix.sal_visit_info a")
             ->leftJoin("sales$suffix.sal_visit b","b.id=a.visit_id")
             ->where("a.field_id in('$svcSql') and (a.field_value+0)>0 and date_format(b.visit_dt,'%Y/%m')>='$minYear' and date_format(b.visit_dt,'%Y/%m')<='$maxYear' $staffSql $visitObjSql",array(":id"=>$index))->queryAll();
