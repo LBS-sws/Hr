@@ -5,6 +5,10 @@ if (empty($model->id)&&$model->scenario == "edit"){
 $this->pageTitle=Yii::app()->name . ' - supportAudit';
 ?>
 <style>
+    tbody>tr{position: relative;}
+    select[readonly="readonly"]{pointer-events: none;}
+    td.remark{;min-width: 350px;}
+    tr.text-weight>td{font-weight: bold;}
 
     select[readonly="readonly"]{pointer-events: none;}
 </style>
@@ -312,6 +316,18 @@ $this->widget('bootstrap.widgets.TbModal', array(
 
 $link = Yii::app()->createUrl('supportAudit/audit');
 $js = "
+$('td.remark').each(function(){
+    if(!$(this).parents('.tab-pane.fade').hasClass('active')){
+        $(this).parents('.tab-pane.fade').addClass('active in');
+    }
+    var height = $(this).css('width','360px').outerHeight();
+    $(this).parent('tr').height(height);
+    $(this).css({
+        'position':'absolute',
+        'height':height+'px'
+    });
+    $(this).parents('.tab-pane.fade').removeClass('active in');
+});
 $('#btnConfirmData').on('click',function() {
 	var elm=$('#btnConfirm');
 	$('#removedialog').modal('hide');
