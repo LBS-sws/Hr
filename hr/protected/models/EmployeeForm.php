@@ -326,7 +326,8 @@ class EmployeeForm extends CFormModel
                     $word->setValue("companyaddresspost",$staff["company"]["postal"]);//公司地址 邮编
                     $word->setValue("companyaddress2",$staff["company"]["address2"]);//公司地址 2
                     $word->setValue("companyaddress",$staff["company"]["address"]);
-                    $word->setValue("companyhead",$staff["company"]["head"]);
+                    $word->setValue("companyhead",$staff["company"]["legal"]);//公司负责人  (后期修改：負責人不顯示，顯示法定代表人）
+                    $word->setValue("companylegal",$staff["company"]["legal"]);//法定代表人
                     $word->setValue("companyagent",$staff["company"]["agent"]);//委託代理人
                     $word->setValue("companyphone",$staff["company"]["phone"]);
                     $word->setValue("companyprotectno",$staff["company"]["security_code"]);//劳动保障代码

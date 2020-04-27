@@ -96,6 +96,7 @@ class CompanyForm extends CFormModel
 			array('name','required'),
 			array('city','required'),
 			array('name','validateName'),
+			array('legal','required'),
 			array('head','required'),
 			array('head_email','required'),
 			array('address','required'),
