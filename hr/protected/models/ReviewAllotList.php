@@ -3,8 +3,8 @@
 class ReviewAllotList extends CListPageModel
 {
 
-    public $year;
-    public $year_type;
+    public $year=3;
+    public $year_type=3;
 
 
 	/**
@@ -34,11 +34,20 @@ class ReviewAllotList extends CListPageModel
 	}
     public function __construct($scenario='')
     {
-        if(empty($this->year_type)){
-            $this->year_type = intval(date("m"))<7?1:2;
-        }
-        if(empty($this->year)){
+        if($this->year === 3){
             $this->year = date("Y");
+        }
+        if($this->year_type===3){
+            $month = intval(date("m"));
+            if($month<3){
+                $this->year--;
+                $this->year_type = 1;
+            }elseif ($month<9){
+                $this->year--;
+                $this->year_type = 2;
+            }else{
+                $this->year_type = 1;
+            }
         }
         parent::__construct();
     }
