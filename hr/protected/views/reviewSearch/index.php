@@ -31,7 +31,7 @@ $this->pageTitle=Yii::app()->name . ' - reviewSearch';
     $search_add_html.="<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
     $search_add_html .= TbHtml::dropDownList($modelName.'[year_type]',$model->year_type,$model->getYearTypeList(),
         array("class"=>"form-control"));
-    if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
+    if (!Yii::app()->user->isSingleCity()||Yii::app()->user->validFunction('ZR15')) $search[] = 'city_name';
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('contract','Employee List'),
         'model'=>$model,

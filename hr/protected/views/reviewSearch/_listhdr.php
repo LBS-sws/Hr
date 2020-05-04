@@ -11,7 +11,7 @@
         ?>
     </th>
 
-    <?php if (!Yii::app()->user->isSingleCity()): ?>
+    <?php if (!Yii::app()->user->isSingleCity()||Yii::app()->user->validFunction('ZR15')): ?>
     <th>
         <?php echo TbHtml::link($this->getLabelName('city').$this->drawOrderArrow('c.city'),'#',$this->createOrderLink('reviewSearch-list','c.city'))
         ;

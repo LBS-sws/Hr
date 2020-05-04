@@ -3,7 +3,7 @@
     <td><?php echo $this->needHrefButton('RE03', 'reviewSearch/view', 'view', array('index'=>$this->record['id'])); ?></td>
     <td><?php echo $this->record['code']; ?></td>
     <td><?php echo $this->record['name']; ?></td>
-    <?php if (!Yii::app()->user->isSingleCity()): ?>
+    <?php if (!Yii::app()->user->isSingleCity()||Yii::app()->user->validFunction('ZR15')): ?>
     <td><?php echo $this->record['city']; ?></td>
     <?php endif ?>
     <td><?php echo $this->record['department']; ?></td>
