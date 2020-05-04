@@ -143,6 +143,7 @@ return array(
     'Review Search'=>'查詢考核',
     'Review Set'=>'配置考核選項',
     'Review Template'=>'考核模板',
+    'Generation ask for leave'=>'代請假',
     'Search all review(local)'=>'查詢所有考核（本地）',
     'Search all review(all)'=>'查詢所有考核（所有）',
 

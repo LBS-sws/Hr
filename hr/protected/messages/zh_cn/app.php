@@ -144,6 +144,7 @@ return array(
     'Review Search'=>'查询考核',
     'Review Set'=>'配置考核选项',
     'Review Template'=>'考核模板',
+    'Generation ask for leave'=>'代请假',
     'Search all review(local)'=>'查询所有考核（本地）',
     'Search all review(all)'=>'查询所有考核（所有）',
 
