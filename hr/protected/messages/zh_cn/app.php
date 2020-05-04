@@ -144,7 +144,8 @@ return array(
     'Review Search'=>'查询考核',
     'Review Set'=>'配置考核选项',
     'Review Template'=>'考核模板',
-    'Search all review'=>'查询所有考核',
+    'Search all review(local)'=>'查询所有考核（本地）',
+    'Search all review(all)'=>'查询所有考核（所有）',
 
     'Vacation Type Config'=>'假期种类配置',
     'Review Template Employee'=>'员工绑定考核模板',

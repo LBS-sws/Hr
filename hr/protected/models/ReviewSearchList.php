@@ -83,9 +83,11 @@ class ReviewSearchList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         //FIND_IN_SET
         $expr_sql = " and b.status_type in (1,2,3)";
-        if(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
+        if(Yii::app()->user->validFunction('ZR15')){//所有權限（全部）
+            $expr_sql.=" ";
+        }elseif(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
             $expr_sql.=" and (FIND_IN_SET('$this->employee_id',b.id_s_list) or b.employee_id = '$this->employee_id' or b.lcu = '$this->employee_id')";
-        }else{
+        }else{//所有權限（本地）
             $expr_sql.=" and c.city IN ($city_allow) ";
         }
         if(!empty($this->year)){

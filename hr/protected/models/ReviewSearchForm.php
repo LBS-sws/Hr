@@ -126,7 +126,7 @@ class ReviewSearchForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         //,b.status_type,b.year,b.year_type,b.id as review_id
         $expr_sql = '';
-        if(!Yii::app()->user->validFunction('ZR09')){//沒有所有權限
+        if(!Yii::app()->user->validFunction('ZR09')&&!Yii::app()->user->validFunction('ZR15')){//沒有所有權限
             $expr_sql.=" and (FIND_IN_SET('$this->login_id',b.id_s_list) or b.employee_id = '$this->login_id' or b.lcu = '$this->login_id')";
         }
 		$row = Yii::app()->db->createCommand()

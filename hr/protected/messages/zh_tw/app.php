@@ -143,7 +143,8 @@ return array(
     'Review Search'=>'查詢考核',
     'Review Set'=>'配置考核選項',
     'Review Template'=>'考核模板',
-    'Search all review'=>'查詢所有考核',
+    'Search all review(local)'=>'查詢所有考核（本地）',
+    'Search all review(all)'=>'查詢所有考核（所有）',
 
     'Vacation Type Config'=>'假期種類配置',
     'Review Template Employee'=>'員工綁定考核模板',
