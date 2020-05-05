@@ -302,7 +302,7 @@ return array(
 
     //11-27
     'Taxpayer number'=>'納稅人識別號',
-    'Please handle the documents of the contract salary'=>'請同時手動處理【合同工資組成部分】文件',
+    'Please handle the documents of the contract salary'=>'請同時手動處理【薪酬確認書】文件',
     'You do not have salary change authority, please save the contact leader'=>'您沒有工資修改權限，請保存后聯繫領導。',
 
     //2018-04-24

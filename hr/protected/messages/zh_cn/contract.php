@@ -306,7 +306,7 @@ return array(
 
     //11-27
     'Taxpayer number'=>'纳税人识别号',
-    'Please handle the documents of the contract salary'=>'请同时手动处理【合同工资组成部分】文件',
+    'Please handle the documents of the contract salary'=>'请同时手动处理【薪酬确认书】文件',
     'You do not have salary change authority, please save the contact leader'=>'您没有工资修改权限，请保存后联系领导',
 
     //2018-04-24
