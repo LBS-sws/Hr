@@ -330,7 +330,7 @@ Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_
         <p><?php echo Yii::t("fete","6 points: the generic example has no obvious example, and there is room for further improvement, can give 6 points");?></p>
         <p><?php echo Yii::t("fete","7 points: 7 points for doing better than expected");?></p>
         <p><br><?php echo Yii::t("fete","8-9 points: for the city level managed by a colleague, he/she will be given 8 or 9 points according to the size of the city he/she manages, and 8 or 9 points must be supported by substantial examples in the evaluation period at that time");?></p>
-        <p><br><?php echo Yii::t("fete","10分：如果出色的例子多于3个，可以给10分（当然这个也不会轻易有同事达到，所以也十分罕有）");?></p>
+        <p><br><?php echo Yii::t("fete","10 points: if there are more than 3 outstanding examples, you can give 10 points (although this is not easily achieved by colleagues, so it is very rare).");?></p>
 
     </div>
 </div>

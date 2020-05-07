@@ -1,4 +1,5 @@
 <tr>
+    <th></th>
 	<th>
 		<?php echo TbHtml::link($this->getLabelName('code').$this->drawOrderArrow('b.code'),'#',$this->createOrderLink('salesStaff-list','b.code'))
 			;
@@ -19,7 +20,14 @@
 			;
 		?>
 	</th>
-    <?php if (Yii::app()->user->validRWFunction('SR01')): ?>
-	<th width="1%"></th>
-    <?php endif; ?>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('start_time').$this->drawOrderArrow('a.start_time'),'#',$this->createOrderLink('salesStaff-list','a.start_time'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('end_time').$this->drawOrderArrow('a.end_time'),'#',$this->createOrderLink('salesStaff-list','a.end_time'))
+			;
+		?>
+	</th>
 </tr>

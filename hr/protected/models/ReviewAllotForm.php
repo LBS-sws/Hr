@@ -122,7 +122,8 @@ class ReviewAllotForm extends CFormModel
                         $model->getTabList();
                         foreach ($model->staff_list as $staff){
                             if($staff["id"] == $this->employee_id){
-                                $this->change_num = sprintf("%.2f",($staff["ranking"]/6));
+                                $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
+                                $this->change_num = sprintf("%.2f",$ranking);
                                 return true;
                             }
                         }
@@ -376,7 +377,8 @@ class ReviewAllotForm extends CFormModel
                 $model->getTabList();
                 foreach ($model->staff_list as $staff){
                     if($staff["id"] == $this->employee_id){
-                        $this->change_num = sprintf("%.2f",($staff["ranking"]/6));
+                        $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
+                        $this->change_num = sprintf("%.2f",$ranking);
                         return true;
                     }
                 }

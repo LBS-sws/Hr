@@ -2,8 +2,12 @@
 
 class SalesStaffList extends CListPageModel
 {
+    public $id =0;
     public $index =0;
     public $employee_id =0;
+    public $time_off =0;
+    public $start_time;
+    public $end_time;
 
     protected $group_list=array();
 	/**
@@ -15,16 +19,35 @@ class SalesStaffList extends CListPageModel
     public function rules()
     {
         return array(
-            array('attr, employee_id, index, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter','safe',),
-            array('employee_id','validateDel','on'=>array("del")),
+            array('attr,start_time,end_time, employee_id, index, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter','safe',),
+            array('id','validateDel','on'=>array("del","edit")),
+            array('start_time','validateTime','on'=>array("add","edit")),
             array('index','validateIndex','on'=>array("add")),
             array('employee_id','validateStaff','on'=>array("add")),
         );
     }
 
+    public function validateTime($attribute, $params){
+        $this->time_off = 0;
+        if(!empty($this->start_time)){
+            $this->start_time.=strpos($this->start_time,'/')!==false?"/05":"-05";
+            $this->time_off = 1;
+        }
+        if(!empty($this->end_time)){
+            $this->end_time.=strpos($this->end_time,'/')!==false?"/05":"-05";
+            if($this->time_off == 1){
+                if(date("Y-m",strtotime($this->start_time))>date("Y-m",strtotime($this->end_time))){
+                    $message = "开始时间不能大于结束时间";
+                    $this->addError($attribute,$message);
+                }
+            }
+            $this->time_off = 1;
+        }
+    }
+
     public function validateDel($attribute, $params){
         $bool = Yii::app()->db->createCommand()->select("group_id")->from("hr_sales_staff")
-            ->where('id=:id',array(':id'=>$this->employee_id))->queryRow();
+            ->where('id=:id',array(':id'=>$this->id))->queryRow();
         if(!$bool){
             $message = "記錄不存在，請刷新重試";
             $this->addError($attribute,$message);
@@ -59,6 +82,19 @@ class SalesStaffList extends CListPageModel
         }
     }
 
+    public function retrieveForm($index){
+        $row = Yii::app()->db->createCommand()->select("*")->from("hr_sales_staff")
+            ->where("id=:id",array(":id"=>$index))->queryRow();
+        if($row){
+            $this->id = $row["id"];
+            $this->index = $row["group_id"];
+            $this->employee_id = $row["employee_id"];
+            $this->time_off = $row["time_off"];
+            $this->start_time = empty($row['start_time'])?"":date("Y-m",strtotime($row['start_time']));
+            $this->end_time = empty($row['end_time'])?"":date("Y-m",strtotime($row['end_time']));
+        }
+    }
+
 	public function attributeLabels()
 	{
 		return array(
@@ -68,6 +104,8 @@ class SalesStaffList extends CListPageModel
             'employee_id'=>Yii::t('contract','Employee Name'),
             'department_name'=>Yii::t('contract','Department'),
             'position_name'=>Yii::t('contract','Position'),
+            'start_time'=>Yii::t('contract','Start Time'),
+            'end_time'=>Yii::t('contract','End Time'),
 		);
 	}
 
@@ -80,7 +118,7 @@ class SalesStaffList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select a.id,b.code,b.name,c.name as position_name,d.name as department_name from hr_sales_staff a
+		$sql1 = "select a.id,a.start_time,a.end_time,b.code,b.name,c.name as position_name,d.name as department_name from hr_sales_staff a
                 LEFT JOIN hr_employee b ON a.employee_id=b.id 
                 LEFT JOIN hr_dept c ON b.position=c.id 
                 LEFT JOIN hr_dept d ON b.department=d.id 
@@ -133,6 +171,8 @@ class SalesStaffList extends CListPageModel
 					'id'=>$record['id'],
 					'code'=>$record['code'],
 					'name'=>$record['name'],
+					'start_time'=>empty($record['start_time'])?Yii::t("contract","unlimited"):date("Y-m",strtotime($record['start_time'])),
+					'end_time'=>empty($record['end_time'])?Yii::t("contract","unlimited"):date("Y-m",strtotime($record['end_time'])),
 					'department_name'=>$record['department_name'],
 					'position_name'=>$record['position_name']
 				);
@@ -161,7 +201,7 @@ class SalesStaffList extends CListPageModel
             foreach ($rows as $row){
                 $bool = Yii::app()->db->createCommand()->select("id")->from("hr_sales_staff")
                     ->where("employee_id=:id",array(":id"=>$row["id"]))->queryRow();
-                if(!$bool){
+                if(!$bool||$row["id"] == $this->employee_id){
                     $arr[$row["id"]] = $row["code"]." -- ".$row["name"];
                 }
             }
@@ -171,14 +211,29 @@ class SalesStaffList extends CListPageModel
     }
 
     public function saveData(){
-        if($this->getScenario()=="add"){
-            Yii::app()->db->createCommand()->insert("hr_sales_staff", array(
-                'group_id'=>$this->index,
-                'employee_id'=>$this->employee_id,
-                'lcu'=>Yii::app()->user->id,
-            ));
-        }elseif($this->getScenario()=="del"){
-            $rows = Yii::app()->db->createCommand()->delete('hr_sales_staff', 'id=:id', array(':id'=>$this->employee_id));
+        switch ($this->getScenario()){
+            case "add":
+                $addArr = array(
+                    'group_id'=>$this->index,
+                    'employee_id'=>$this->employee_id,
+                    'time_off'=>$this->time_off,
+                    'start_time'=>empty($this->start_time)?null:$this->start_time,
+                    'end_time'=>empty($this->end_time)?null:$this->end_time,
+                    'lcu'=>Yii::app()->user->id,
+                );
+                Yii::app()->db->createCommand()->insert("hr_sales_staff",$addArr);
+                $this->id = Yii::app()->db->getLastInsertID();
+                break;
+            case "del":
+                $rows = Yii::app()->db->createCommand()->delete('hr_sales_staff', 'id=:id', array(':id'=>$this->id));
+                break;
+            case "edit":
+                Yii::app()->db->createCommand()->update('hr_sales_staff', array(
+                    'time_off'=>$this->time_off,
+                    'start_time'=>empty($this->start_time)?null:$this->start_time,
+                    'end_time'=>empty($this->end_time)?null:$this->end_time,
+                ), 'id=:id', array(':id'=>$this->id));
+                break;
         }
     }
 }

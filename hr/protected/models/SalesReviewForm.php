@@ -37,23 +37,33 @@ class SalesReviewForm extends CFormModel
         $this->group_list = SalesGroupForm::getGroupListToId($index);
         $this->resetYearList();//重置年份區間
         $this->getGroupStaff($index);//獲取組內的員工
+        $staffKeyList = array_keys($this->staff_list);
         $staffSql = " and b.username = ''";
         if(!empty($this->staff_list)){
-            $staffSql = " and b.username in ('".implode("','",array_keys($this->staff_list))."') ";
+            $staffSql = " and b.username in ('".implode("','",$staffKeyList)."') ";
         }
         $minYear = current($this->year_list);
         $maxYear = end($this->year_list);
         $svcList = array("svc_A7","svc_B6","svc_C7","svc_D6","svc_E7","svc_F4","svc_G3");
         $svcSql = implode("','",$svcList);
-        //$visitObjSql = "";
+        $visitObjSql = "";
         $visitObjSql = " and sales$suffix.VisitObjDesc(b.visit_obj) like '%签单%'";
-        $rows = Yii::app()->db->createCommand()->select("a.field_value,a.field_id,b.visit_dt,b.username,")->from("sales$suffix.sal_visit_info a")
+        $rows = Yii::app()->db->createCommand()->select("a.field_value,a.field_id,b.visit_dt,b.username")->from("sales$suffix.sal_visit_info a")
             ->leftJoin("sales$suffix.sal_visit b","b.id=a.visit_id")
-            ->where("a.field_id in('$svcSql') and (a.field_value+0)>0 and date_format(b.visit_dt,'%Y/%m')>='$minYear' and date_format(b.visit_dt,'%Y/%m')<='$maxYear' $staffSql $visitObjSql",array(":id"=>$index))->queryAll();
+            ->where("b.id is not null and a.field_id in('$svcSql') and (a.field_value+0)>0 and date_format(b.visit_dt,'%Y/%m')>='$minYear' and date_format(b.visit_dt,'%Y/%m')<='$maxYear' $staffSql $visitObjSql",array(":id"=>$index))->queryAll();
 		if ($rows) {
 		    foreach ($rows as $row){
                 $year = date("Y/m",strtotime($row["visit_dt"]));
                 $username = $row["username"];
+                if(in_array($username,$staffKeyList)){
+                    $startTime = $this->staff_list[$username]['start_time'];
+                    $endTime = $this->staff_list[$username]['end_time'];
+                    if($year<$startTime||$year>$endTime){//超出員工的參與時間
+                        continue;
+                    }
+                }else{//員工不存在，不計算
+                    continue;
+                }
                 if(!key_exists($year,$this->form_list)){
                     $this->form_list[$year] = array('sum'=>0,'count'=>0,'item'=>array());
                 }
@@ -72,36 +82,106 @@ class SalesReviewForm extends CFormModel
 	public function getTableHeader($year){
 	    $html = "";
         $html.="<legend>".$year."</legend>";
-        $html.="<div class='form-group'><div class='col-sm-10 col-sm-offset-1'><table class='table table-bordered table-striped'>";
+        $html.="<div class='form-group'><div class='col-sm-12'><table class='table table-bordered table-striped'>";
         $html.="<thead><tr>";
         $html.="<th>".Yii::t("contract","Employee Code")."</th>";
         $html.="<th>".Yii::t("contract","Employee Name")."</th>";
         $html.="<th>".Yii::t("contract","bill sum")."</th>";
-        $html.="<th>".Yii::t("contract","average")."</th>";
+        $html.="<th>".Yii::t("contract","average num")."</th>";
         $html.="<th>".Yii::t("contract","deviation")."</th>";
-        $html.="<th>".Yii::t("contract","review score")."</th>";
-        $html.="<th>&nbsp;</th>";
+        $html.="<th class='text-danger'>".Yii::t("contract","review score")."</th>";
         $html.="<th>".Yii::t("contract","bill count")."</th>";
-        $html.="<th>".Yii::t("contract","average")."</th>";
+        $html.="<th>".Yii::t("contract","average num")."</th>";
         $html.="<th>".Yii::t("contract","deviation")."</th>";
-        $html.="<th>".Yii::t("contract","review score")."</th>";
-        $html.="<th>".Yii::t("contract","review number")."</th>";
+        $html.="<th class='text-danger'>".Yii::t("contract","review score")."</th>";
+        $html.="<th class='text-danger'>".Yii::t("contract","review number")."</th>";
         $html.="</tr></thead>";
         //$html.="</table></div></div>";
 
         return $html;
     }
 
+    public function getInstructionsList(){
+	    $html="";
+        $arr = array(
+            array('deviation'=>Yii::t("fete","30% Below"),
+                'instruction'=>Yii::t("fete","Performance is not worth any score (dereliction of duty)"),
+                'score'=>"0"
+            ),
+            array('deviation'=>"31%-45%",
+                'instruction'=>Yii::t("fete","Extremely poor performance (extremely disappointing performance)"),
+                'score'=>"1"
+            ),
+            array('deviation'=>"46%-60%",
+                'instruction'=>Yii::t("fete","Poor performance (disappointing performance)"),
+                'score'=>"2"
+            ),
+            array('deviation'=>"61%-75%",
+                'instruction'=>Yii::t("fete","Poor performance (poor performance, far from the company's standards)"),
+                'score'=>"3"
+            ),
+            array('deviation'=>"76%-90%",
+                'instruction'=>Yii::t("fete","Poor performance (poor performance, unsatisfactory overall performance)"),
+                'score'=>"4"
+            ),
+            array('deviation'=>"91%-99%",
+                'instruction'=>Yii::t("fete","Fair performance (effort, but not up to company standards)"),
+                'score'=>"5"
+            ),
+            array('deviation'=>"100%-110%",
+                'instruction'=>Yii::t("fete","Standard performance (performance up to company standards only)"),
+                'score'=>"6"
+            ),
+            array('deviation'=>"111%-130%",
+                'instruction'=>Yii::t("fete","Stable performance (excellent performance, overall performance is satisfactory)"),
+                'score'=>"7"
+            ),
+            array('deviation'=>"131%-150%",
+                'instruction'=>Yii::t("fete","Perform well (perform competently and meet the company's expectations)"),
+                'score'=>"8"
+            ),
+            array('deviation'=>"151%-200%",
+                'instruction'=>Yii::t("fete","Perform well (perform well, exceed the company's expectations)"),
+                'score'=>"9"
+            ),
+            array('deviation'=>Yii::t("fete","Over 200%"),
+                'instruction'=>Yii::t("fete","Exceptional performance (performance that is beyond the company's expectations)"),
+                'score'=>"10"
+            ),
+        );
+        foreach ($arr as $item){
+            $html.="<tr>";
+            $html.="<td>".$item["deviation"]."</td>";
+            $html.="<td>".$item["instruction"]."</td>";
+            $html.="<td>".$item["score"]."</td>";
+            $html.="</tr>";
+        }
+        return $html;
+    }
+
 	public function getTableBody($year){
 	    $html = "<tbody>";
-	    $count = count($this->staff_list);
+	    $count = 0;
+	    foreach ($this->staff_list as &$staff){//計算該年份有多少個員工
+            if($year>=$staff["start_time"]&&$year<=$staff["end_time"]){
+                $count++;
+            }
+        }
 	    foreach ($this->staff_list as &$staff){
+            if($year>=$staff["start_time"]&&$year<=$staff["end_time"]){
+                if(!key_exists("rankingCount",$staff)){
+                    $staff["rankingCount"]=0;
+                }
+                $staff["rankingCount"]++;
+            }else{
+                continue;
+            }
             $sum = isset($this->form_list[$year]["item"][$staff["user_id"]])?$this->form_list[$year]["item"][$staff["user_id"]]["sales_sum"]:0;
             $allSum = isset($this->form_list[$year]["sum"])?$this->form_list[$year]["sum"]:0;
-            $allSum = floatval(sprintf("%.2f",$allSum/$count));
+            $allSum = empty($count)?0:floatval(sprintf("%.2f",$allSum/$count));
             $num = isset($this->form_list[$year]["item"][$staff["user_id"]])?$this->form_list[$year]["item"][$staff["user_id"]]["sales_count"]:0;
             $allNum = isset($this->form_list[$year]["count"])?$this->form_list[$year]["count"]:0;
-            $allNum = floatval(sprintf("%.2f",$allNum/$count));
+            $allNum = empty($count)?0:floatval(sprintf("%.2f",$allNum/$count));
 
             if(!key_exists("ranking",$staff)){
                 $staff["ranking"]=0;
@@ -115,17 +195,17 @@ class SalesReviewForm extends CFormModel
             $rankingOne = round($rankingOne);
             $html.="<td>".$rankingOne."%</td>";
             $rankingOne = $this->getRankingToNum($rankingOne);
-            $html.="<td>".$rankingOne."</td>";
-            $html.="<td>&nbsp;</td>";
+            $html.="<td class='text-danger'><b>".$rankingOne."</b></td>";
+            //$html.="<td>&nbsp;</td>";
             $html.="<td>".$num."</td>";
             $html.="<td>$allNum</td>";
             $rankingTwo = empty($allNum)?0:($num/$allNum)*100;
             $rankingTwo = round($rankingTwo);
             $html.="<td>".$rankingTwo."%</td>";
             $rankingTwo = $this->getRankingToNum($rankingTwo);
-            $html.="<td>".$rankingTwo."</td>";
+            $html.="<td class='text-danger'><b>".$rankingTwo."</b></td>";
             $rankingSum = ($rankingTwo+$rankingOne)/2;
-            $html.="<td>$rankingSum</td>";
+            $html.="<td class='text-danger'><b>$rankingSum</b></td>";
             $html.="</tr>";
             $staff["ranking"]+=$rankingSum;
         }
@@ -192,7 +272,8 @@ class SalesReviewForm extends CFormModel
             $html.="<tr>";
             $html.="<td>".$staff["code"]."</td>";
             $html.="<td>".$staff["name"]."</td>";
-            $html.="<td>".sprintf("%.2f",($staff["ranking"]/6))."</td>";
+            $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
+            $html.="<td>".sprintf("%.2f",$ranking)."</td>";
             $html.="</tr>";
         }
         $html.="</tbody></table></div></div>";
@@ -212,7 +293,7 @@ class SalesReviewForm extends CFormModel
     }
 
     protected function getGroupStaff($index){
-        $rows = Yii::app()->db->createCommand()->select("b.code,b.name,b.id,c.user_id")->from("hr_sales_staff a")
+        $rows = Yii::app()->db->createCommand()->select("b.code,b.name,b.id,c.user_id,a.start_time,a.end_time")->from("hr_sales_staff a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->leftJoin("hr_binding c","c.employee_id = b.id")
             ->where('a.group_id=:group_id',array(':group_id'=>$index))->queryAll();
@@ -220,9 +301,13 @@ class SalesReviewForm extends CFormModel
             $arr = array();
             $key = 0;
             foreach ($rows as $row){
+                $startTime = $row['start_time'];
+                $endTime = $row['end_time'];
+                $startTime = empty($startTime) ? "0000/00" : date("Y/m", strtotime($startTime));
+                $endTime = empty($endTime) ? "9999/99" : date("Y/m", strtotime($endTime));
                 $key++;
                 $row["user_id"] = empty($row["user_id"])?"null".$key:$row["user_id"];
-                $arr[$row["user_id"]] = array("id"=>$row["id"],"code"=>$row["code"],"name"=>$row["name"],"user_id"=>$row["user_id"]);
+                $arr[$row["user_id"]] = array("id"=>$row["id"],"code"=>$row["code"],"name"=>$row["name"],"user_id"=>$row["user_id"],"start_time"=>$startTime,"end_time"=>$endTime,"rankingCount"=>0);
             }
             $this->staff_list = $arr;
         }else{

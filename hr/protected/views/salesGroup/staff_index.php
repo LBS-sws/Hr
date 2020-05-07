@@ -35,7 +35,7 @@ $this->pageTitle=Yii::app()->name . ' - salesStaff';
                 //var_dump(Yii::app()->session['rw_func']);
                 if (Yii::app()->user->validRWFunction('SR01'))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('contract','Add Staff Group'), array(
-                           'data-toggle'=>'modal','data-target'=>'#addSalesStaff'
+                        'submit'=>Yii::app()->createUrl('SalesGroup/staffAdd',array('index'=>$model->index))
                     ));
                 ?>
             </div>
@@ -66,41 +66,10 @@ echo $form->hiddenField($model,'orderField');
 echo $form->hiddenField($model,'orderType');
 ?>
 <?php $this->endWidget(); ?>
-<form class="form-horizontal" action="" id="staffForm" method="post">
 <?php
-$ftrbtn = array();
-$submit = Yii::app()->createUrl('salesGroup/addStaff');
-$ftrbtn[] = TbHtml::button(Yii::t('dialog','Close'), array('id'=>'btnWFClose','data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_DEFAULT,"class"=>"pull-left"));
-$ftrbtn[] = TbHtml::button(Yii::t('dialog','OK'), array('id'=>'btnWFSubmit','data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY,'submit' => $submit));
-$this->beginWidget('bootstrap.widgets.TbModal', array(
-    'id'=>'addSalesStaff',
-    'header'=>Yii::t('contract','Add Staff Group'),
-    'footer'=>$ftrbtn,
-    'show'=>false,
-));
-?>
-
-<div class="form-group">
-    <?php echo $form->hiddenField($model, 'index'); ?>
-    <?php echo $form->labelEx($model,"employee_id",array('class'=>"col-sm-2 control-label")); ?>
-    <div class="col-sm-9">
-        <?php echo $form->dropDownList($model, "employee_id",$model->getSalesList(),
-            array('readonly'=>($model->scenario=='view'))
-        );
-        ?>
-    </div>
-</div>
-
-<?php
-$this->endWidget();
-?>
-
-</form>
-
-<?php
-$this->renderPartial('//site/removedialog');
-?>
-<?php
+$js = "
+";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

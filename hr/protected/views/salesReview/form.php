@@ -61,6 +61,13 @@ $this->pageTitle=Yii::app()->name . ' - SalesReview';
 <?php
 
 $js = "
+    $('#prompt_button').on('click',function(){
+        if($('#prompt').hasClass('active')){
+            $('#prompt').removeClass('active');
+        }else{
+            $('#prompt').addClass('active');
+        }
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
@@ -72,3 +79,34 @@ Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_
 
 </div><!-- form -->
 
+
+
+<style>
+    .prompt{position: fixed;top:20%;right: 10px;border-radius:4px;min-width:25px;min-height:25px;box-shadow:0px 0px 2px rgba(0,0,0,0.4);z-index: 1;background: #fff;}
+    .prompt_div{padding: 25px;width: 530px;}
+    .prompt_div>p{margin-bottom: 3px;}
+    #prompt_button{position: absolute;left: 0px;top: 0px;bottom: 0px;width: 25px;cursor:pointer;}
+    #prompt_button>span{position: absolute;top:50%;left: 50%;margin-top: -7px;margin-left: -4px;}
+    .prompt.active .fa-angle-double-right:before{content: "\f100";}
+    .prompt.active>.prompt_div{display: none;}
+    @media (max-width: 768px){
+        .prompt_div{width: 100%;}
+    }
+</style>
+<div id="prompt" class="prompt">
+    <div id="prompt_button"><span class="fa fa-angle-double-right"></span></div>
+    <div class="prompt_div">
+        <table class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th width="23%"><?php echo Yii::t("contract","deviation");?></th>
+                <th><?php echo Yii::t("contract","instructions");?></th>
+                <th width="12%"><?php echo Yii::t("contract","review score");?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php echo $model->getInstructionsList();?>
+            </tbody>
+        </table>
+    </div>
+</div>

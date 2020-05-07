@@ -512,5 +512,8 @@ return array(
     'bill count'=>'開單數量',
     'average'=>'平均分',
     'deviation'=>'所占比',
+    'average num'=>'平均數',
+    'unlimited'=>'無限制',
+    'limited'=>'有限制',
     );
 ?>

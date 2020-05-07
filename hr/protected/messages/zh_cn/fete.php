@@ -181,5 +181,18 @@ return array(
     '7 points: 7 points for doing better than expected'=>"7分：如果比想象做的不错出色的给7分",
     '8-9 points: for the city level managed by a colleague, he/she will be given 8 or 9 points according to the size of the city he/she manages, and 8 or 9 points must be supported by substantial examples in the evaluation period at that time'=>"8-9分：同事在管理的城市水平上，按他所在管理城市的规模有相应高于要求的水平，会给8、 9分，8、9分必须在当时评核时段有实质例子支持",
     '10 points: if there are more than 3 outstanding examples, you can give 10 points (although this is not easily achieved by colleagues, so it is very rare).'=>"10分：如果出色的例子多于3个，可以给10分（当然这个也不会轻易有同事达到，所以也十分罕有）",
+    '30% Below'=>'30%以下',
+    'Over 200%'=>'200%以上',
+    'Performance is not worth any score (dereliction of duty)'=>'表现不值任何分数 (玩忽职守)',
+    'Extremely poor performance (extremely disappointing performance)'=>'表现极度恶劣 (表现令人极度失望)',
+    'Poor performance (disappointing performance)'=>'表现恶劣 (表现令人失望)',
+    'Poor performance (poor performance, far from the company\'s standards)'=>'表现差劲 (表现差劣， 与公司的标准相距甚大)',
+    'Poor performance (poor performance, unsatisfactory overall performance)'=>'表现欠佳 (表现不佳， 整体表现不满意)',
+    'Fair performance (effort, but not up to company standards)'=>'表现尚可 (表现努力， 但仍未达公司标准)',
+    'Standard performance (performance up to company standards only)'=>'表现达标 (表现仅达公司标准)',
+    'Stable performance (excellent performance, overall performance is satisfactory)'=>'表现平稳 (表现不俗， 整体表现满意)',
+    'Perform well (perform competently and meet the company\'s expectations)'=>'表现良好 (表现称职， 符合公司的期望)',
+    'Perform well (perform well, exceed the company\'s expectations)'=>'表现优秀 (表现出色， 超公司的期望)',
+    'Exceptional performance (performance that is beyond the company\'s expectations)'=>'表现卓越 (表现十分超卓， 远超于公司的期望)',
 );
 ?>

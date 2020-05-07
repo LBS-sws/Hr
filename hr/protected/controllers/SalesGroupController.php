@@ -29,7 +29,7 @@ class SalesGroupController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('staff','addStaff','delStaff'),
+                'actions'=>array('staff','saveStaff','delStaff','StaffAdd','StaffView','StaffEdit'),
                 'expression'=>array('SalesGroupController','allowReadWrite'),
             ),
             array('allow',
@@ -155,19 +155,40 @@ class SalesGroupController extends Controller
         $this->render('staff_index',array('model'=>$model));
     }
 
-    public function actionAddStaff()
+    public function actionStaffAdd($index)
+    {
+        $model = new SalesStaffList('add');
+        $model->index = $index;
+        $this->render('staff_form',array('model'=>$model));
+    }
+
+    public function actionStaffView($index)
+    {
+        $model = new SalesStaffList('view');
+        $model->retrieveForm($index);
+        $this->render('staff_form',array('model'=>$model));
+    }
+
+    public function actionStaffEdit($index)
+    {
+        $model = new SalesStaffList('edit');
+        $model->retrieveForm($index);
+        $this->render('staff_form',array('model'=>$model));
+    }
+
+    public function actionSaveStaff()
     {
         if (isset($_POST['SalesStaffList'])) {
-            $model = new SalesStaffList("add");
+            $model = new SalesStaffList($_POST['SalesStaffList']['scenario']);
             $model->attributes = $_POST['SalesStaffList'];
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('salesGroup/staff',array('index'=>$model->index)));
+                $this->redirect(Yii::app()->createUrl('salesGroup/staffEdit',array('index'=>$model->id)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->redirect(Yii::app()->createUrl('salesGroup/staff',array('index'=>$model->index)));
+                $this->render('staff_form',array('model'=>$model,));
             }
         }
     }
@@ -175,15 +196,16 @@ class SalesGroupController extends Controller
     public function actionDelStaff($index)
     {
         $model = new SalesStaffList("del");
-        $model->employee_id = $index;
+        $model->id = $index;
         if ($model->validate()) {
             $model->saveData();
             Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
             $this->redirect(Yii::app()->createUrl('salesGroup/staff',array('index'=>$model->index)));
         } else {
+            $model->setScenario($_POST['SalesStaffList']['scenario']);
             $message = CHtml::errorSummary($model);
             Dialog::message(Yii::t('dialog','Validation Message'), $message);
-            $this->redirect(Yii::app()->createUrl('salesGroup/staff',array('index'=>$model->index)));
+            $this->render('staff_form',array('model'=>$model));
         }
     }
 }
