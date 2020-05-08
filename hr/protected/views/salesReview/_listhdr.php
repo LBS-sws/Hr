@@ -5,9 +5,9 @@
 			;
 		?>
 	</th>
-	<th>
-		<?php echo TbHtml::link($this->getLabelName('staff_num').$this->drawOrderArrow('staff_num'),'#',$this->createOrderLink('salesReview-list','staff_num'))
-			;
-		?>
-	</th>
+    <th>
+        <?php
+        echo TbHtml::link($this->getLabelName('staff_num'),'javascript:void(0);');
+        ?>
+    </th>
 </tr>

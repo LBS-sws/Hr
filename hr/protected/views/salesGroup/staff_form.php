@@ -15,6 +15,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesGroup';
 
 <style>
     *[readonly]{pointer-events: none;}
+    .datepicker.datepicker-dropdown{z-index: 9999!important;}
 </style>
 <section class="content-header">
 	<h1>
@@ -81,7 +82,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesGroup';
                     ?>
                   </span>
                         <?php echo $form->textField($model, 'start_time',
-                            array('readonly'=>($model->scenario=='view'||empty($model->start_time)),'id'=>'start_time')
+                            array('readonly'=>($model->scenario=='view'||empty($model->start_time)),'id'=>'start_time',"autocomplete"=>"off")
                         ); ?>
                     </div><!-- /input-group -->
                 </div>
@@ -97,7 +98,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesGroup';
                     ?>
                   </span>
                         <?php echo $form->textField($model, 'end_time',
-                            array('readonly'=>($model->scenario=='view'||empty($model->end_time)),'id'=>'end_time')
+                            array('readonly'=>($model->scenario=='view'||empty($model->end_time)),'id'=>'end_time',"autocomplete"=>"off")
                         ); ?>
                     </div><!-- /input-group -->
                 </div>

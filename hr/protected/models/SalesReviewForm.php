@@ -292,11 +292,14 @@ class SalesReviewForm extends CFormModel
         }
     }
 
-    protected function getGroupStaff($index){
+    protected function getGroupStaff($index,$city=''){
+        if(empty($city)){
+            $city = Yii::app()->user->city();
+        }
         $rows = Yii::app()->db->createCommand()->select("b.code,b.name,b.id,c.user_id,a.start_time,a.end_time")->from("hr_sales_staff a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->leftJoin("hr_binding c","c.employee_id = b.id")
-            ->where('a.group_id=:group_id',array(':group_id'=>$index))->queryAll();
+            ->where('a.group_id=:group_id and b.city=:city',array(':group_id'=>$index,':city'=>$city))->queryAll();
         if($rows){
             $arr = array();
             $key = 0;

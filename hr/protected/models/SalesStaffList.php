@@ -122,13 +122,13 @@ class SalesStaffList extends CListPageModel
                 LEFT JOIN hr_employee b ON a.employee_id=b.id 
                 LEFT JOIN hr_dept c ON b.position=c.id 
                 LEFT JOIN hr_dept d ON b.department=d.id 
-                where a.group_id = '$index' 
+                where a.group_id = '$index' AND b.city = '$city' 
 			";
 		$sql2 = "select count(a.id) from hr_sales_staff a
                 LEFT JOIN hr_employee b ON a.employee_id=b.id 
                 LEFT JOIN hr_dept c ON b.position=c.id 
                 LEFT JOIN hr_dept d ON b.department=d.id 
-                where a.group_id = '$index' 
+                where a.group_id = '$index' AND b.city = '$city' 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

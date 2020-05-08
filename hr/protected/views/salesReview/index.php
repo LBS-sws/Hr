@@ -33,10 +33,10 @@ $this->pageTitle=Yii::app()->name . ' - salesReview';
         //城市搜索
     }
     $search_add_html .= TbHtml::dropDownList($modelName.'[year]',$model->year,ReviewAllotList::getYearList(),
-        array("class"=>"form-control"));
+        array("class"=>"form-control submit_select"));
     $search_add_html.="<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
     $search_add_html .= TbHtml::dropDownList($modelName.'[year_type]',$model->year_type,ReviewAllotList::getYearTypeList(),
-        array("class"=>"form-control"));
+        array("class"=>"form-control submit_select"));
 
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('contract','Sales Group List'),
@@ -59,6 +59,12 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+$js = "
+    $('.submit_select').on('change',function(){
+        $('form:first').submit();
+    });
+";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

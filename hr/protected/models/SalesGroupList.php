@@ -21,9 +21,8 @@ class SalesGroupList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select a.*,count(b.id) as staff_num from hr_sales_staff b
-                RIGHT JOIN hr_sales_group a ON a.id=b.group_id 
-                where (a.local=0 or (a.local=1 and a.city='$city'))  
+		$sql1 = "select a.* from hr_sales_group a
+                where (a.local=0 or (a.local=1 and a.city='$city')) 
 			";
 		$sql2 = "select count(a.id) from hr_sales_group a
                 where (a.local=0 or (a.local=1 and a.city='$city')) 
@@ -46,7 +45,11 @@ class SalesGroupList extends CListPageModel
 		
 		$order = "";
 		if (!empty($this->orderField)) {
-			$order .= " order by ".$this->orderField." ";
+		    if($this->orderField == 'staff_num'){
+                $order .= " order by a.id ";
+            }else{
+                $order .= " order by ".$this->orderField." ";
+            }
 			if ($this->orderType=='D') $order .= "desc ";
 		}else{
             $order .= " order by a.id desc ";
@@ -65,7 +68,7 @@ class SalesGroupList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'group_name'=>$record['group_name'],
-					'staff_num'=>$record['staff_num']
+					'staff_num'=>SalesGroupList::getGroupStaffNum($record['id'],$city)
 				);
 			}
 		}
@@ -73,4 +76,11 @@ class SalesGroupList extends CListPageModel
 		$session['salesGroup_01'] = $this->getCriteria();
 		return true;
 	}
+
+	public function getGroupStaffNum($group_id,$city){
+        $staff_num = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_sales_staff a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where('a.group_id=:group_id and b.city=:city',array(':group_id'=>$group_id,':city'=>$city))->queryScalar();
+        return $staff_num;
+    }
 }

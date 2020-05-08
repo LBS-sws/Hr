@@ -6,8 +6,8 @@
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('staff_num').$this->drawOrderArrow('staff_num'),'#',$this->createOrderLink('salesGroup-list','staff_num'))
-			;
+		<?php
+        echo TbHtml::link($this->getLabelName('staff_num'),'javascript:void(0);');
 		?>
 	</th>
     <?php if (Yii::app()->user->validFunction('ZR14')): ?>

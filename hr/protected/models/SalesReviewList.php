@@ -43,9 +43,8 @@ class SalesReviewList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        $sql1 = "select a.*,count(b.id) as staff_num from hr_sales_staff b
-                RIGHT JOIN hr_sales_group a ON a.id=b.group_id 
-                where (a.local=0 or (a.local=1 and a.city='$city'))  
+        $sql1 = "select a.* from hr_sales_group a
+                where (a.local=0 or (a.local=1 and a.city='$city')) 
 			";
         $sql2 = "select count(a.id) from hr_sales_group a
                 where (a.local=0 or (a.local=1 and a.city='$city')) 
@@ -81,7 +80,7 @@ class SalesReviewList extends CListPageModel
                 $this->attr[] = array(
                     'id'=>$record['id'],
                     'group_name'=>$record['group_name'],
-                    'staff_num'=>$record['staff_num']
+                    'staff_num'=>SalesGroupList::getGroupStaffNum($record['id'],$city)
                 );
             }
         }
