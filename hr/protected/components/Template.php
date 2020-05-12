@@ -48,7 +48,7 @@ class Template {
      * @var string
      */
     private $_tempFileName;
-    private $tempDocumentHeaders;//文檔的頁頭
+    private $tempDocumentHeaders=array();//文檔的頁頭
 
     /**
      * Document XML
@@ -221,8 +221,10 @@ class Template {
          * @param mixed $replace
          */
     public function setHeader($search, $replace) {
-        foreach ($this->tempDocumentHeaders as $index => $xml) {
-            $this->tempDocumentHeaders[$index] = str_replace($search, $replace, $xml);
+        if(!empty($this->tempDocumentHeaders)){
+            foreach ($this->tempDocumentHeaders as $index => $xml) {
+                $this->tempDocumentHeaders[$index] = str_replace($search, $replace, $xml);
+            }
         }
     }
 
@@ -247,8 +249,10 @@ class Template {
             unlink($strFilename);
         }
 
-        foreach ($this->tempDocumentHeaders as $index => $xml) {
-            $this->_objZip->addFromString($this->getHeaderName($index), $xml);
+        if(!empty($this->tempDocumentHeaders)){
+            foreach ($this->tempDocumentHeaders as $index => $xml) {
+                $this->_objZip->addFromString($this->getHeaderName($index), $xml);
+            }
         }
         $this->_objZip->addFromString('word/document.xml', $this->_documentXML);
         
