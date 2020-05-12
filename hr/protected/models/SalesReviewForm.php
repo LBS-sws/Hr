@@ -29,14 +29,14 @@ class SalesReviewForm extends CFormModel
 		);
 	}
 
-	public function retrieveData($index,$year,$year_type) {
+	public function retrieveData($index,$year,$year_type,$city='') {
         $suffix = Yii::app()->params['envSuffix'];
         $this->form_list=array();
 	    $this->year = !is_numeric($year)?2020:$year;
 	    $this->year_type = !is_numeric($year_type)?1:$year_type;
         $this->group_list = SalesGroupForm::getGroupListToId($index);
         $this->resetYearList();//重置年份區間
-        $this->getGroupStaff($index);//獲取組內的員工
+        $this->getGroupStaff($index,$city);//獲取組內的員工
         $staffKeyList = array_keys($this->staff_list);
         $staffSql = " and b.username = ''";
         if(!empty($this->staff_list)){

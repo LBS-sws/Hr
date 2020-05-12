@@ -5,6 +5,14 @@
 			;
 		?>
 	</th>
+
+    <?php if (!Yii::app()->user->isSingleCity()): ?>
+        <th>
+            <?php
+            echo TbHtml::link($this->getLabelName('city'),'javascript:void(0);');
+            ?>
+        </th>
+    <?php endif ?>
     <th>
         <?php
         echo TbHtml::link($this->getLabelName('staff_num'),'javascript:void(0);');

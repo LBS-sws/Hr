@@ -65,10 +65,10 @@ class SalesReviewController extends Controller
         $this->render('index',array('model'=>$model));
     }
 
-    public function actionView($index,$year,$year_type)
+    public function actionView($index,$year,$year_type,$city='')
     {
         $model = new SalesReviewForm('view');
-        if (empty($year)||empty($year_type)||!$model->retrieveData($index,$year,$year_type)) {
+        if (empty($year)||empty($year_type)||!$model->retrieveData($index,$year,$year_type,$city)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $this->render('form',array('model'=>$model,));

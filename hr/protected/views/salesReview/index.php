@@ -31,6 +31,9 @@ $this->pageTitle=Yii::app()->name . ' - salesReview';
     $modelName = get_class($model);
     if (!Yii::app()->user->isSingleCity()){
         //城市搜索
+        $search_add_html .= TbHtml::dropDownList($modelName.'[city]',$model->city,ReportY06Form::getCityList(),
+            array("class"=>"form-control submit_select"));
+        $search_add_html.="<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
     }
     $search_add_html .= TbHtml::dropDownList($modelName.'[year]',$model->year,ReviewAllotList::getYearList(),
         array("class"=>"form-control submit_select"));

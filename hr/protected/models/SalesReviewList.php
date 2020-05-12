@@ -3,6 +3,7 @@
 class SalesReviewList extends CListPageModel
 {
 
+    public $city;
     public $year;
     public $year_type;
 
@@ -16,12 +17,16 @@ class SalesReviewList extends CListPageModel
 	{
 		return array(
             'id'=>Yii::t('contract','ID'),
+            'city'=>Yii::t('contract','City'),
             'group_name'=>Yii::t('contract','group name'),
             'staff_num'=>Yii::t('contract','staff num'),
 		);
 	}
     public function __construct($scenario='')
     {
+        if(empty($this->city)){
+            $this->city = Yii::app()->user->city();
+        }
         if(empty($this->year_type)){
             $this->year_type = intval(date("m"))<7?1:2;
         }
@@ -34,14 +39,17 @@ class SalesReviewList extends CListPageModel
     public function rules()
     {
         return array(
-            array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter, year, year_type','safe',),
+            array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter, city, year, year_type','safe',),
         );
     }
 
     public function retrieveDataByPage($pageNum=1)
     {
         $suffix = Yii::app()->params['envSuffix'];
-        $city = Yii::app()->user->city();
+        if(empty($this->city)){
+            $this->city = Yii::app()->user->city();
+        }
+        $city = $this->city;
         $city_allow = Yii::app()->user->city_allow();
         $sql1 = "select a.* from hr_sales_group a
                 where (a.local=0 or (a.local=1 and a.city='$city')) 
@@ -76,9 +84,11 @@ class SalesReviewList extends CListPageModel
 
         $this->attr = array();
         if (count($records) > 0) {
+            $city_name = CGeneral::getCityName($city);
             foreach ($records as $k=>$record) {
                 $this->attr[] = array(
                     'id'=>$record['id'],
+                    'city_name'=>$city_name,
                     'group_name'=>$record['group_name'],
                     'staff_num'=>SalesGroupList::getGroupStaffNum($record['id'],$city)
                 );
@@ -99,6 +109,7 @@ class SalesReviewList extends CListPageModel
             'pageNum'=>$this->pageNum,
             'filter'=>$this->filter,
             'year'=>$this->year,
+            'city'=>$this->city,
             'year_type'=>$this->year_type,
         );
     }
