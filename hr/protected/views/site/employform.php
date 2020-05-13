@@ -108,7 +108,7 @@
         ); ?>
     </div>
     <!--分割-->
-    <?php echo $form->label($model,'urgency_card',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
+    <?php echo $form->label($model,'urgency_card',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'urgency_card',
             array('readonly'=>($readonly))

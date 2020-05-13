@@ -173,7 +173,7 @@ class EmployForm extends CFormModel
               education,wechat,urgency_card, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
                test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, user_card_date, emergency_user, emergency_phone',
                 'safe'),
-			array('entry_time,wechat,urgency_card','required','on'=>"audit"),
+			array('entry_time,wechat','required','on'=>"audit"),
 			array('name','required','on'=>"audit"),
 			array('household','required','on'=>"audit"),
 			array('staff_id','required','on'=>"audit"),
