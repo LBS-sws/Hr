@@ -44,9 +44,9 @@ class SalesReviewForm extends CFormModel
         }
         $minYear = current($this->year_list);
         $maxYear = end($this->year_list);
-        $svcList = array("svc_A7","svc_B6","svc_C7","svc_D6","svc_E7","svc_F4","svc_G3");
+        $svcList = array("svc_A7","svc_B6","svc_C7","svc_D6","svc_E7","svc_F4","svc_G3");//查詢該屬性的所有金額
+        $notList = array("svc_F4","svc_G3");//只計算次數，不計算金額
         $svcSql = implode("','",$svcList);
-        $visitObjSql = "";
         $visitObjSql = " and sales$suffix.VisitObjDesc(b.visit_obj) like '%签单%'";
         $rows = Yii::app()->db->createCommand()->select("a.field_value,a.field_id,b.visit_dt,b.username")->from("sales$suffix.sal_visit_info a")
             ->leftJoin("sales$suffix.sal_visit b","b.id=a.visit_id")
@@ -70,10 +70,12 @@ class SalesReviewForm extends CFormModel
                 if(!key_exists($username,$this->form_list[$year]['item'])){
                     $this->form_list[$year]['item'][$username] = array('sales_sum'=>0,'sales_count'=>0);
                 }
-                $this->form_list[$year]['sum']+=floatval($row["field_value"]);
                 $this->form_list[$year]['count']++;
-                $this->form_list[$year]['item'][$username]['sales_sum']+=floatval($row["field_value"]);
                 $this->form_list[$year]['item'][$username]['sales_count']++;
+                if(!in_array($row["field_id"],$notList)){
+                    $this->form_list[$year]['sum']+=floatval($row["field_value"]);
+                    $this->form_list[$year]['item'][$username]['sales_sum']+=floatval($row["field_value"]);
+                }
             }
 		}
 		return true;
