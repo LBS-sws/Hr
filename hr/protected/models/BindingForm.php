@@ -62,8 +62,9 @@ class BindingForm extends CFormModel
 	public function validateEmployee($attribute, $params){
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        $plusSql = PlusCityForm::getPlusEmployeeList()["plusSql"];
         $rows = Yii::app()->db->createCommand()->select("name,city")->from("hr_employee")
-            ->where("id=:id and city in ($city_allow) and staff_status=0 ", array(':id'=>$this->employee_id))->queryRow();
+            ->where("id=:id and (city in ($city_allow) or id in ($plusSql)) and staff_status=0 ", array(':id'=>$this->employee_id))->queryRow();
         if ($rows){
             $this->employee_name = $rows["name"];
             $this->city = $rows["city"];
@@ -73,12 +74,12 @@ class BindingForm extends CFormModel
         }
     }
     //獲取用戶表的所有用戶(相同城市)
-	public function getUserList(){
+	public function getUserList($username){
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
-        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("city in ($city_allow) and status='A'")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("(city in ($city_allow) or username='$username') and status='A'")->queryAll();
         $bindList = Yii::app()->db->createCommand()->select("user_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $bindList = array_column($bindList,"user_id");
         $arr = array(""=>"");
@@ -94,12 +95,14 @@ class BindingForm extends CFormModel
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $from = "hr_employee";
-        $rows = Yii::app()->db->createCommand()->select("id,name")->from($from)->where("city in ($city_allow) and staff_status=0")->queryAll();
+        $plusList = PlusCityForm::getPlusEmployeeList();
+        $rows = Yii::app()->db->createCommand()->select("id,name")->from($from)
+            ->where("(city in ($city_allow) or id in (:plusSql)) and staff_status=0",array(":plusSql"=>$plusList["plusSql"]))->queryAll();
         $bindList = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $arr = array(""=>"");
         $bindList = array_column($bindList,"employee_id");
         foreach ($rows as $row){
-            if(!in_array($row["id"],$bindList)){
+            if(!in_array($row["id"],$bindList)||in_array($row["id"],$plusList["plusRows"])){
                 $arr[$row["id"]] = $row["name"];
             }
         }
@@ -127,6 +130,15 @@ class BindingForm extends CFormModel
             ->leftJoin("hr_dept c","c.id = b.position")
             ->where("a.user_id=:user_id", array(':user_id'=>$username))->queryRow();
         if($rows){
+            if($rows["city"]!=Yii::app()->user->city()){
+                $plusList = Yii::app()->db->createCommand()->select("a.department,c.manager as c_manager")->from("hr_plus_city a")
+                    ->leftJoin("hr_dept c","c.id = a.position")
+                    ->where("a.employee_id=:id and a.city=:city", array(':id'=>$rows["id"],':city'=>Yii::app()->user->city()))->queryRow();
+                if($plusList){
+                    $rows["c_manager"] = $plusList["c_manager"];
+                    $rows["department"] = $plusList["department"];
+                }
+            }
             return $rows;
         }
 	    return array();
@@ -156,9 +168,10 @@ class BindingForm extends CFormModel
 	{
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        $plusList = PlusCityForm::getPlusEmployeeList();
         $rows = Yii::app()->db->createCommand()->select("a.*,b.city as employee_city")->from("hr_binding a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) ", array(':id'=>$index))->queryAll();
+            ->where("a.id=:id and (b.city in ($city_allow) or b.id in (:plusSql)) ", array(':id'=>$index,':plusSql'=>$plusList["plusSql"]))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)

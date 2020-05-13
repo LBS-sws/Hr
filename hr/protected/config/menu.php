@@ -246,6 +246,10 @@ return array(
 				'access'=>'ZC07',
 				'url'=>'/YearDay/index',
 			),
+			'employee plus city'=>array(
+				'access'=>'ZC13',
+				'url'=>'/plusCity/index',
+			),
 			'employee binding account'=>array(
 				'access'=>'ZC05',
 				'url'=>'/binding/index',

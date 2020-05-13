@@ -166,6 +166,7 @@ return array(
     'Sales Group'=>'銷售分組',
     'Sales Review Search'=>'銷售成績查詢',
 
+    'employee plus city'=>'員工暫屬城市',
 //沈超添加結束
 );
 ?>

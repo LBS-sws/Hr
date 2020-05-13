@@ -43,10 +43,19 @@ class AuditConfigForm extends CFormModel
     }
 
     public function getManager($staff_id){
-        $staffList = Yii::app()->db->createCommand()->select("a.department,c.manager as c_manager,a.group_type")->from("hr_employee a")
+        $staffList = Yii::app()->db->createCommand()->select("a.department,a.city,c.manager as c_manager,a.group_type")->from("hr_employee a")
             ->leftJoin("hr_dept c","c.id = a.position")
             ->where("a.id=:id", array(':id'=>$staff_id))->queryRow();
         if($staffList){
+            if($staffList["city"]!=Yii::app()->user->city()){
+                $plusList = Yii::app()->db->createCommand()->select("a.department,c.manager as c_manager")->from("hr_plus_city a")
+                    ->leftJoin("hr_dept c","c.id = a.position")
+                    ->where("a.employee_id=:id and a.city=:city", array(':id'=>$staff_id,':city'=>Yii::app()->user->city()))->queryRow();
+                if($plusList){
+                    $staffList["c_manager"] = $plusList["c_manager"];
+                    $staffList["department"] = $plusList["department"];
+                }
+            }
             return array(
                 "manager"=>$staffList["c_manager"],
                 "department"=>$staffList["department"],
@@ -66,6 +75,15 @@ class AuditConfigForm extends CFormModel
             ->leftJoin("hr_dept c","c.id = a.position")
             ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();
         if($staffList){
+            if($staffList["city"]!=Yii::app()->user->city()){
+                $plusList = Yii::app()->db->createCommand()->select("a.department,c.manager as c_manager")->from("hr_plus_city a")
+                    ->leftJoin("hr_dept c","c.id = a.position")
+                    ->where("a.employee_id=:id and a.city=:city", array(':id'=>$employee_id,':city'=>Yii::app()->user->city()))->queryRow();
+                if($plusList){
+                    $staffList["c_manager"] = $plusList["c_manager"];
+                    $staffList["department"] = $plusList["department"];
+                }
+            }
             $manager = $staffList["c_manager"];
             if(!empty($manager)){
                 $manager = intval($manager);
@@ -101,7 +119,7 @@ class AuditConfigForm extends CFormModel
                 ->leftJoin("hr_employee d","d.id = a.employee_id")
                 ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
                 ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
-                ->where("b.status='A' and c.system_id='$systemId' and c.a_read_write like '%ZA08%' and d.department='$department'")
+                ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%ZA08%' and d.department='$department'")
                 ->queryAll();
             if($workOne){
                 $workOne = array_column($workOne, 'user_id');
@@ -127,7 +145,7 @@ class AuditConfigForm extends CFormModel
                 ->leftJoin("hr_employee d","d.id = a.employee_id")
                 ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
                 ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
-                ->where("b.status='A' and c.system_id='$systemId' and c.a_read_write like '%ZA09%' and d.department='$department'")->queryAll();
+                ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%ZA09%' and d.department='$department'")->queryAll();
             if($leaveOne){
                 $leaveOne = array_column($leaveOne, 'user_id');
             }

@@ -515,5 +515,13 @@ return array(
     'average num'=>'平均數',
     'unlimited'=>'無限制',
     'limited'=>'有限制',
+
+    //2020-05-12
+    'plus city list'=>'暫屬城市列表',
+    'plus city form'=>'暫屬城市表單',
+    'original city'=>'原城市',
+    'plus city'=>'暫屬城市',
+    'plus dept'=>'暫屬部門',
+    'plus leader'=>'暫屬職位',
     );
 ?>

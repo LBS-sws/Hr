@@ -520,5 +520,13 @@ return array(
     'instructions'=>'说明',
     'unlimited'=>'无限制',
     'limited'=>'有限制',
+
+    //2020-05-12
+    'plus city list'=>'暂属城市列表',
+    'plus city form'=>'暂属城市表单',
+    'original city'=>'原城市',
+    'plus city'=>'暂属城市',
+    'plus dept'=>'暂属部门',
+    'plus leader'=>'暂属职位',
 );
 ?>

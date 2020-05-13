@@ -58,7 +58,7 @@ $this->pageTitle=Yii::app()->name . ' - Binding Form';
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<div class="form-group text-error">
                 <div class="col-sm-3 col-sm-offset-2">
-                    <p class="form-control-static text-danger">注意：员工与账号为一对一关系</p>
+                    <p class="form-control-static text-danger">注意：登陆账号只能绑定一个员工</p>
                 </div>
 			</div>
 			<div class="form-group">
@@ -72,7 +72,7 @@ $this->pageTitle=Yii::app()->name . ' - Binding Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'user_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'user_id',$model->getUserList(),
+                    <?php echo $form->dropDownList($model, 'user_id',$model->getUserList($model->user_id),
                         array('disabled'=>($model->scenario=='view'))
                     ); ?>
                 </div>

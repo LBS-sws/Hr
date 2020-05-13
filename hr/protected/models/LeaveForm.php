@@ -402,7 +402,7 @@ class LeaveForm extends CFormModel
         $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.city as s_city,b.staff_type,b.name as employee_name,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
             ->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow)",array(":id"=>$index))->queryAll();
+            ->where("a.id=:id",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];

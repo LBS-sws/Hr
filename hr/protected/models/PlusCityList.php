@@ -1,6 +1,6 @@
 <?php
 
-class BindingList extends CListPageModel
+class PlusCityList extends CListPageModel
 {
 	/**
 	 * Declares customized attribute labels.
@@ -11,11 +11,12 @@ class BindingList extends CListPageModel
 	{
 		return array(	
 			'id'=>Yii::t('contract','ID'),
+			'employee_code'=>Yii::t('contract','Employee Code'),
 			'employee_name'=>Yii::t('contract','Employee Name'),
-			'employee_city'=>Yii::t('contract','Employee City'),
-			'user_city'=>Yii::t('contract','User City'),
-			'user_name'=>Yii::t('contract','Account number'),
-            'city_name'=>Yii::t('contract','City'),
+			'original_city'=>Yii::t('contract','original city'),
+			'city'=>Yii::t('contract','plus city'),
+			'plus_department'=>Yii::t('contract','plus dept'),
+			'plus_position'=>Yii::t('contract','plus leader'),
 		);
 	}
 
@@ -24,32 +25,39 @@ class BindingList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        $plusSql = PlusCityForm::getPlusEmployeeList()["plusSql"];
-		$sql1 = "select a.id,b.name,b.city as employee_city,d.city as user_city,d.disp_name from hr_binding a 
+		$sql1 = "select a.*,b.code as employee_code,b.name as employee_name,b.city as original_city,d.name as plus_department,e.name as plus_position from hr_plus_city a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
-                LEFT JOIN security$suffix.sec_user d ON d.username = a.user_id
-                where (b.city IN ($city_allow) or b.id in ($plusSql)) 
+                LEFT JOIN hr_dept d ON a.department = d.id
+                LEFT JOIN hr_dept e ON a.position = e.id
+                where b.city IN ($city_allow) 
 			";
-        $sql2 = "select count(a.id) from hr_binding a 
+        $sql2 = "select count(a.id) from hr_plus_city a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
-                LEFT JOIN security$suffix.sec_user d ON d.username = a.user_id
-                where (b.city IN ($city_allow) or b.id in ($plusSql)) 
+                LEFT JOIN hr_dept d ON a.department = d.id
+                LEFT JOIN hr_dept e ON a.position = e.id
+                where b.city IN ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
+				case 'employee_code':
+					$clause .= General::getSqlConditionClause('b.code',$svalue);
+					break;
 				case 'employee_name':
 					$clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
-                case 'employee_city':
+                case 'original_city':
                     $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
-                case 'user_city':
-                    $clause .= ' and d.city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                case 'city':
+                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
-				case 'user_name':
-					$clause .= General::getSqlConditionClause('d.disp_name',$svalue);
+				case 'plus_department':
+					$clause .= General::getSqlConditionClause('d.name',$svalue);
+					break;
+				case 'plus_position':
+					$clause .= General::getSqlConditionClause('e.name',$svalue);
 					break;
 			}
 		}
@@ -69,20 +77,21 @@ class BindingList extends CListPageModel
 		
 		$list = array();
 		$this->attr = array();
-		$userList = CompanyForm::getUserList();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'employee_name'=>$record['name'],
-                    'employee_city'=>CGeneral::getCityName($record["employee_city"]),
-					'user_name'=>$record['disp_name'],
-                    'user_city'=>CGeneral::getCityName($record["user_city"]),
+					'employee_code'=>$record['employee_code'],
+					'employee_name'=>$record['employee_name'],
+                    'original_city'=>CGeneral::getCityName($record["original_city"]),
+                    'city'=>CGeneral::getCityName($record["city"]),
+					'plus_position'=>$record['plus_position'],
+					'plus_department'=>$record['plus_department'],
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['binding_01'] = $this->getCriteria();
+		$session['plusCity_01'] = $this->getCriteria();
 		return true;
 	}
 
