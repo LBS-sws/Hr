@@ -189,6 +189,7 @@ class HistoryForm extends CFormModel
              ld_card, sb_card, jj_card,test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time, opr_type, leave_reason, leave_time, code_old,
               education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, effect_time, change_city',
                 'safe'),
+            array('entry_time,emergency_user,emergency_phone','required'),
 			array('update_remark','required'),
 			array('code','required'),
 			array('household','required'),

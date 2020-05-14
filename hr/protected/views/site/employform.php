@@ -71,7 +71,7 @@
         ); ?>
     </div>
     <!--分割-->
-    <?php echo $form->labelEx($model,'phone2',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'phone2',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'phone2',
             array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
@@ -101,7 +101,7 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->label($model,'wechat',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
+    <?php echo $form->label($model,'wechat',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'wechat',
             array('readonly'=>($readonly))
@@ -116,14 +116,14 @@
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'emergency_user',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'emergency_user',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'emergency_user',
             array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
         ); ?>
     </div>
     <!--分割-->
-    <?php echo $form->labelEx($model,'emergency_phone',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'emergency_phone',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'emergency_phone',
             array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))

@@ -170,7 +170,7 @@ class EmployeeForm extends CFormModel
              ld_card, sb_card, jj_card, attachment,nation, household, empoyment_code, social_code, fix_time,
               education, experience, english, technology, other, year_day, email, remark, price1, price2, price3, image_user, image_code, image_work, image_other',
                 'safe'),
-			array('code,wechat','required'),
+            array('code,entry_time,emergency_user,emergency_phone','required'),
 			array('name','required'),
 			array('household','required'),
             array('staff_id','required'),
