@@ -25,7 +25,7 @@ class SupportSearchController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('early'),
+                'actions'=>array('early','delete'),
                 'expression'=>array('SupportSearchController','allowReadWrite'),
             ),
             array('allow',
@@ -86,6 +86,22 @@ class SupportSearchController extends Controller
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl('supportSearch/view',array("index"=>$model->id)));
+            }
+        }
+    }
+
+    //刪除
+    public function actionDelete(){
+        $model = new SupportSearchForm('delete');
+        if (isset($_POST['SupportSearchForm'])) {
+            $model->attributes = $_POST['SupportSearchForm'];
+            if($model->deleteValidate()){
+                $model->deleteData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('supportSearch/index'));
+            }else{
+                Dialog::message(Yii::t('dialog','Information'), "內容不存在");
+                $this->render('form',array('model'=>$model));
             }
         }
     }

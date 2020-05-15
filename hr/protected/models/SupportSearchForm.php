@@ -200,6 +200,21 @@ class SupportSearchForm extends CFormModel
     }
 
 
+    public function deleteValidate(){
+        $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")
+            ->where("id=:id",array(":id"=>$this->id))->queryRow();
+        if($row){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function deleteData(){
+        Yii::app()->db->createCommand()->delete('hr_apply_support', 'id=:id', array(':id'=>$this->id));
+        Yii::app()->db->createCommand()->delete('hr_apply_support_history', 'support_id=:id', array(':id'=>$this->id));
+    }
+
     public function saveData(){
         Yii::app()->db->createCommand()->update('hr_apply_support', array(
             'length_type'=>2,

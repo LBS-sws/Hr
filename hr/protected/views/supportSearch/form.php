@@ -39,6 +39,12 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('supportSearch/index')));
 		?>
+        <?php if (Yii::app()->user->validRWFunction("AY02")): ?>
+            <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                    'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+            );
+            ?>
+        <?php endif; ?>
 	</div>
 	<div class="btn-group pull-right" role="group">
         <?php if (Yii::app()->user->validRWFunction("AY02")&&$model->apply_type == 2&&in_array($model->status_type,array(5,6,8,11))): ?>
@@ -233,6 +239,9 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 </section>
 
 <?php
+$this->renderPartial('//site/removedialog');
+?>
+<?php
 $this->renderPartial('//site/history',array('tableHtml'=>SupportSearchForm::getHistoryHtml($model->id)));
 if(Yii::app()->user->validRWFunction("AY02")&&$model->apply_type == 2&&in_array($model->status_type,array(5,6,8,11))){
     $this->renderPartial('//site/earlydialog',array('form'=>$form,'model'=>$model));
@@ -275,6 +284,8 @@ $js = Script::genDatePicker(array(
     'early_date',
 ));
 Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
+$js = Script::genDeleteData(Yii::app()->createUrl('supportSearch/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>
