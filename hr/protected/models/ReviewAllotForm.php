@@ -131,6 +131,19 @@ class ReviewAllotForm extends CFormModel
                         $message = $this->getReviewStr($this->review_type)."：该员工未销售分组，无法分配";
                         $this->addError($attribute,$message);
                     }
+                }elseif ($this->year>=2020){ //計算員工請了幾天假期
+                    if($this->year_type == 1){
+                        $startTime = $this->year."/04";
+                        $endTime = $this->year."/09";
+                    }else{
+                        $startTime = $this->year."/10";
+                        $endTime = ($this->year+1)."/03";
+                    }
+                    $dateSql = "and date_format(a.start_time,'%Y/%m')>='$startTime' and date_format(a.start_time,'%Y/%m')<='$endTime'";
+                    $this->change_num = Yii::app()->db->createCommand()->select("sum(a.log_time)")
+                        ->from("hr_employee_leave a")
+                        ->leftJoin("hr_vacation b","a.vacation_id = b.id")
+                        ->where("a.employee_id= :id and a.status = 4 and b.sub_bool = 1 $dateSql",array(":id"=>$this->employee_id))->queryScalar();
                 }
             }
         }else{
@@ -158,6 +171,8 @@ class ReviewAllotForm extends CFormModel
 	            $arr["max"] = 10;
 	            $arr["data-change"] = "three";
 	            $arr["readonly"] = true;
+            }elseif ($this->year>=2020){
+                $arr["readonly"] = true;
             }
             if(!empty($this->change_num)){
                 if($this->review_type == 3){
