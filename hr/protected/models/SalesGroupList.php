@@ -13,6 +13,8 @@ class SalesGroupList extends CListPageModel
             'id'=>Yii::t('contract','ID'),
             'group_name'=>Yii::t('contract','group name'),
             'staff_num'=>Yii::t('contract','staff num'),
+            'local'=>Yii::t('contract','group restrict'),
+            'city'=>Yii::t('user','City'),
 		);
 	}
 
@@ -21,11 +23,16 @@ class SalesGroupList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        if(Yii::app()->user->validFunction('ZR14')){
+            $sqlExpr = "a.id>0";
+        }else{
+            $sqlExpr = "(a.local=0 or (a.local=1 and a.city='$city'))";
+        }
 		$sql1 = "select a.* from hr_sales_group a
-                where (a.local=0 or (a.local=1 and a.city='$city')) 
+                where $sqlExpr 
 			";
 		$sql2 = "select count(a.id) from hr_sales_group a
-                where (a.local=0 or (a.local=1 and a.city='$city')) 
+                where $sqlExpr 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -37,8 +44,8 @@ class SalesGroupList extends CListPageModel
 				case 'set_name':
 					$clause .= General::getSqlConditionClause('a.set_name',$svalue);
 					break;
-                case 'city_name':
-                    $clause .= ' and a.code in '.WordForm::getCityCodeSqlLikeName($svalue);
+                case 'city':
+                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
 			}
 		}
@@ -68,6 +75,8 @@ class SalesGroupList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'group_name'=>$record['group_name'],
+					'city'=>CGeneral::getCityName($record['city']),
+					'local'=>empty($record['local'])?Yii::t("contract","default"):Yii::t("contract","local"),
 					'staff_num'=>SalesGroupList::getGroupStaffNum($record['id'],$city)
 				);
 			}

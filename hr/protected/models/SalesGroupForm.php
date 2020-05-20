@@ -12,6 +12,7 @@ class SalesGroupForm extends CFormModel
         return array(
             'id'=>Yii::t('contract','ID'),
             'group_name'=>Yii::t('contract','group name'),
+            'local'=>Yii::t('contract','group restrict'),
         );
 	}
 
@@ -32,13 +33,19 @@ class SalesGroupForm extends CFormModel
         if(!empty($this->id)){
             $id = $this->id;
         }
+        //var_dump($id);die();
         $this->city = Yii::app()->user->city();
-        $this->local = 0;
-        $rows = Yii::app()->db->createCommand()->select("id")->from("hr_sales_group")
-            ->where('group_name=:group_name and id!=:id',
-                array(':group_name'=>$this->group_name,':id'=>$id))->queryAll();
-        if(count($rows)>0){
-            $message = Yii::t('contract','group name'). Yii::t('contract',' can not repeat');
+        if($this->local === 0){
+            $rows = Yii::app()->db->createCommand()->select("id,group_name")->from("hr_sales_group")
+                ->where('group_name=:group_name and id!=:id',
+                    array(':group_name'=>$this->group_name,':id'=>$id))->queryRow();
+        }else{
+            $rows = Yii::app()->db->createCommand()->select("id")->from("hr_sales_group")
+                ->where('group_name=:group_name and id!=:id and (local=0 or (local=1 and city=:city))',
+                    array(':group_name'=>$this->group_name,':id'=>$id,':city'=>$this->city))->queryRow();
+        }
+        if($rows){
+            $message = Yii::t('contract','group name'). Yii::t('contract',' can not repeat')."- id:".$rows["id"];
             $this->addError($attribute,$message);
         }
     }
@@ -99,12 +106,14 @@ class SalesGroupForm extends CFormModel
                 $sql = "insert into hr_sales_group(
 							group_name,local,city, lcu
 						) values (
-							:group_name,0,:city, :lcu
+							:group_name,:local,:city, :lcu
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_sales_group set
 							group_name = :group_name, 
+							local = :local, 
+							city = :city, 
 							luu = :luu
 						where id = :id
 						";
@@ -118,6 +127,8 @@ class SalesGroupForm extends CFormModel
         $command=$connection->createCommand($sql);
         if (strpos($sql,':id')!==false)
             $command->bindParam(':id',$this->id,PDO::PARAM_INT);
+        if (strpos($sql,':local')!==false)
+            $command->bindParam(':local',$this->local,PDO::PARAM_INT);
         //log_bool,max_log,sub_bool,sub_multiple
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$city,PDO::PARAM_STR);

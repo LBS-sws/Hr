@@ -3,9 +3,12 @@
 
 	<td><?php echo $this->drawEditButton('SR01', 'salesGroup/staff', 'salesGroup/staff', array('index'=>$this->record['id'])); ?></td>
 
-
-
     <td><?php echo $this->record['group_name']; ?></td>
+    <?php if (Yii::app()->user->validFunction('ZR14')): ?>
+        <td><?php echo $this->record['local']; ?></td>
+        <td><?php echo $this->record['city']; ?></td>
+    <?php endif; ?>
+
     <td><?php echo $this->record['staff_num']; ?></td>
 
 

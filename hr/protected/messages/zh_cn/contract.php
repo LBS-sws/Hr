@@ -528,5 +528,6 @@ return array(
     'plus city'=>'暂属城市',
     'plus dept'=>'暂属部门',
     'plus leader'=>'暂属职位',
+    'group restrict'=>'分组限制',
 );
 ?>
