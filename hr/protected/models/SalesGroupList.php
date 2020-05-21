@@ -22,17 +22,11 @@ class SalesGroupList extends CListPageModel
 	{
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
-        $city_allow = Yii::app()->user->city_allow();
-        if(Yii::app()->user->validFunction('ZR14')){
-            $sqlExpr = "a.id>0";
-        }else{
-            $sqlExpr = "(a.local=0 or (a.local=1 and a.city='$city'))";
-        }
 		$sql1 = "select a.* from hr_sales_group a
-                where $sqlExpr 
+                where a.city='$city'  
 			";
 		$sql2 = "select count(a.id) from hr_sales_group a
-                where $sqlExpr 
+                where a.city='$city'  
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

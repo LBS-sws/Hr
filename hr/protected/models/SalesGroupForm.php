@@ -35,15 +35,9 @@ class SalesGroupForm extends CFormModel
         }
         //var_dump($id);die();
         $this->city = Yii::app()->user->city();
-        if($this->local === 0){
-            $rows = Yii::app()->db->createCommand()->select("id,group_name")->from("hr_sales_group")
-                ->where('group_name=:group_name and id!=:id',
-                    array(':group_name'=>$this->group_name,':id'=>$id))->queryRow();
-        }else{
-            $rows = Yii::app()->db->createCommand()->select("id")->from("hr_sales_group")
-                ->where('group_name=:group_name and id!=:id and (local=0 or (local=1 and city=:city))',
-                    array(':group_name'=>$this->group_name,':id'=>$id,':city'=>$this->city))->queryRow();
-        }
+        $rows = Yii::app()->db->createCommand()->select("id,group_name")->from("hr_sales_group")
+            ->where('group_name=:group_name and id!=:id and city=:city',
+                array(':group_name'=>$this->group_name,':id'=>$id,':city'=>$this->city))->queryRow();
         if($rows){
             $message = Yii::t('contract','group name'). Yii::t('contract',' can not repeat')."- id:".$rows["id"];
             $this->addError($attribute,$message);
@@ -52,8 +46,9 @@ class SalesGroupForm extends CFormModel
 
 	public function retrieveData($index) {
         $suffix = Yii::app()->params['envSuffix'];
+        $city = Yii::app()->user->city();
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_sales_group")
-            ->where("id=:id",array(":id"=>$index))->queryRow();
+            ->where("id=:id and city='$city'",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->city = $row['city'];
@@ -106,13 +101,13 @@ class SalesGroupForm extends CFormModel
                 $sql = "insert into hr_sales_group(
 							group_name,local,city, lcu
 						) values (
-							:group_name,:local,:city, :lcu
+							:group_name,1,:city, :lcu
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_sales_group set
 							group_name = :group_name, 
-							local = :local, 
+							local = 1, 
 							city = :city, 
 							luu = :luu
 						where id = :id

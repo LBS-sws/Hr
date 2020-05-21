@@ -52,10 +52,10 @@ class SalesReviewList extends CListPageModel
         $city = $this->city;
         $city_allow = Yii::app()->user->city_allow();
         $sql1 = "select a.* from hr_sales_group a
-                where (a.local=0 or (a.local=1 and a.city='$city')) 
+                where a.city='$city'  
 			";
         $sql2 = "select count(a.id) from hr_sales_group a
-                where (a.local=0 or (a.local=1 and a.city='$city')) 
+                where a.city='$city'  
 			";
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {

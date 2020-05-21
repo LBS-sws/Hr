@@ -39,9 +39,6 @@ $this->pageTitle=Yii::app()->name . ' - salesGroup';
     $search = array(
         'group_name',
     );
-    if(Yii::app()->user->validFunction('ZR14')){
-        $search[]='city';
-    }
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('contract','Sales Group List'),
         'model'=>$model,
