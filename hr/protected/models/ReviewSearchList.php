@@ -43,14 +43,23 @@ class ReviewSearchList extends CListPageModel
         }
         if($this->year_type===3){
             $month = intval(date("m"));
-            if($month<3){
-                $this->year--;
-                $this->year_type = 1;
-            }elseif ($month<9){
-                $this->year--;
-                $this->year_type = 2;
+            if(Yii::app()->params['retire']) {//非台灣版
+                if($month<3){
+                    $this->year--;
+                    $this->year_type = 1;
+                }elseif ($month<9){
+                    $this->year--;
+                    $this->year_type = 2;
+                }else{
+                    $this->year_type = 1;
+                }
             }else{
-                $this->year_type = 1;
+                if($month>=6||$month<=11){
+                    $this->year_type = 1;
+                }else{
+                    $this->year = $month!=12?$this->year-1:$this->year;
+                    $this->year_type = 2;
+                }
             }
         }
         parent::__construct();
@@ -228,11 +237,20 @@ class ReviewSearchList extends CListPageModel
 
 
     public function getYearTypeList(){
-        return array(
-            0=>Yii::t("misc","All"),
-            1=>Yii::t("contract","first half year"),
-            2=>Yii::t("contract","last half year")
-        );
+        if(!Yii::app()->params['retire']){
+            $arr = array(
+                0=>Yii::t("misc","All"),
+                1=>Yii::t("fete","first half year"),
+                2=>Yii::t("fete","last half year")
+            );
+        }else{
+            $arr = array(
+                0=>Yii::t("misc","All"),
+                1=>Yii::t("contract","first half year"),
+                2=>Yii::t("contract","last half year")
+            );
+        }
+        return $arr;
     }
 
     public function getYearList(){

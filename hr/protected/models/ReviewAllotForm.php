@@ -113,37 +113,47 @@ class ReviewAllotForm extends CFormModel
                 $message = $this->getReviewStr($this->review_type).Yii::t('contract',' can not be empty');
                 $this->addError($attribute,$message);
             }else{
-                if($this->review_type == 3){
-                    $row = Yii::app()->db->createCommand()->select("group_id")
-                        ->from("hr_sales_staff")->where("employee_id=:id",array(":id"=>$this->employee_id))->queryRow();
-                    if($row){
-                        $model = new SalesReviewForm();
-                        $model->retrieveData($row["group_id"],$this->year,$this->year_type);
-                        $model->getTabList();
-                        foreach ($model->staff_list as $staff){
-                            if($staff["id"] == $this->employee_id){
-                                $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
-                                $this->change_num = sprintf("%.2f",$ranking);
-                                return true;
+                switch ($this->review_type){
+                    case 2://技術員
+                        if(Yii::app()->params['retire']){//非台灣版
+                            if($this->year_type == 1){
+                                $startTime = $this->year."/04";
+                                $endTime = $this->year."/09";
+                            }else{
+                                $startTime = $this->year."/10";
+                                $endTime = ($this->year+1)."/03";
+                            }
+                            $dateSql = "and date_format(a.start_time,'%Y/%m')>='$startTime' and date_format(a.start_time,'%Y/%m')<='$endTime'";
+                            $this->change_num = Yii::app()->db->createCommand()->select("sum(a.log_time)")
+                                ->from("hr_employee_leave a")
+                                ->leftJoin("hr_vacation b","a.vacation_id = b.id")
+                                ->where("a.employee_id= :id and a.status = 4 and b.sub_bool = 1 $dateSql",array(":id"=>$this->employee_id))->queryScalar();
+                        }
+                        break;
+                    case 3://銷售
+                        $row = Yii::app()->db->createCommand()->select("group_id")
+                            ->from("hr_sales_staff")->where("employee_id=:id",array(":id"=>$this->employee_id))->queryRow();
+                        if($row){
+                            $model = new SalesReviewForm();
+                            $model->retrieveData($row["group_id"],$this->year,$this->year_type);
+                            $model->getTabList();
+                            foreach ($model->staff_list as $staff){
+                                if($staff["id"] == $this->employee_id){
+                                    $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
+                                    $this->change_num = sprintf("%.2f",$ranking);
+                                    return true;
+                                }
+                            }
+                        }else{
+                            if(Yii::app()->params['retire']){//非台灣版必須分組
+                                $message = $this->getReviewStr($this->review_type)."：该员工未销售分组，无法分配";
+                                $this->addError($attribute,$message);
                             }
                         }
-                    }else{
-                        $message = $this->getReviewStr($this->review_type)."：该员工未销售分组，无法分配";
-                        $this->addError($attribute,$message);
-                    }
-                }elseif ($this->year>=2020){ //計算員工請了幾天假期
-                    if($this->year_type == 1){
-                        $startTime = $this->year."/04";
-                        $endTime = $this->year."/09";
-                    }else{
-                        $startTime = $this->year."/10";
-                        $endTime = ($this->year+1)."/03";
-                    }
-                    $dateSql = "and date_format(a.start_time,'%Y/%m')>='$startTime' and date_format(a.start_time,'%Y/%m')<='$endTime'";
-                    $this->change_num = Yii::app()->db->createCommand()->select("sum(a.log_time)")
-                        ->from("hr_employee_leave a")
-                        ->leftJoin("hr_vacation b","a.vacation_id = b.id")
-                        ->where("a.employee_id= :id and a.status = 4 and b.sub_bool = 1 $dateSql",array(":id"=>$this->employee_id))->queryScalar();
+                        break;
+                }
+                if($this->review_type == 3&&Yii::app()->params['retire']){
+                }elseif ($this->review_type == 2&&$this->year>=2020){ //計算員工請了幾天假期
                 }
             }
         }else{
@@ -170,9 +180,9 @@ class ReviewAllotForm extends CFormModel
 	        if($this->review_type == 3){
 	            $arr["max"] = 10;
 	            $arr["data-change"] = "three";
-	            $arr["readonly"] = true;
+	            $arr["readonly"] = (Yii::app()->params['retire']||$this->getReadonly())?true:false;
             }elseif ($this->year>=2020){
-                $arr["readonly"] = true;
+                $arr["readonly"] = (Yii::app()->params['retire']||$this->getReadonly())?true:false;
             }
             if(!empty($this->change_num)){
                 if($this->review_type == 3){
@@ -368,12 +378,22 @@ class ReviewAllotForm extends CFormModel
         }
 
         if($this->change_num === null&&$this->review_type == 2){
-            if($this->year_type == 1){
-                $startTime = $this->year."/04";
-                $endTime = $this->year."/09";
-            }else{
-                $startTime = $this->year."/10";
-                $endTime = ($this->year+1)."/03";
+            if(Yii::app()->params['retire']){
+                if($this->year_type == 1){
+                    $startTime = $this->year."/04";
+                    $endTime = $this->year."/09";
+                }else{
+                    $startTime = $this->year."/10";
+                    $endTime = ($this->year+1)."/03";
+                }
+            }else{//台灣版
+                if($this->year_type == 1){
+                    $startTime = $this->year."/01";
+                    $endTime = $this->year."/06";
+                }else{
+                    $startTime = $this->year."/07";
+                    $endTime = $this->year."/12";
+                }
             }
             $dateSql = "and date_format(a.start_time,'%Y/%m')>='$startTime' and date_format(a.start_time,'%Y/%m')<='$endTime'";
             $this->change_num = Yii::app()->db->createCommand()->select("sum(a.log_time)")
@@ -398,8 +418,10 @@ class ReviewAllotForm extends CFormModel
                     }
                 }
             }else{
-                $this->change_num = "-1";
-                Dialog::message(Yii::t('dialog','Validation Message'), "该员工未销售分组，无法分配");
+                if(Yii::app()->params['retire']){//非台灣版必須分組
+                    $this->change_num = "-1";
+                    Dialog::message(Yii::t('dialog','Validation Message'), "该员工未销售分组，无法分配");
+                }
             }
         }
     }

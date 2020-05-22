@@ -190,5 +190,9 @@ return array(
     'Perform well (perform competently and meet the company\'s expectations)'=>'表現良好 (表現稱職， 符合公司的期望)',
     'Perform well (perform well, exceed the company\'s expectations)'=>'表現優秀 (表現出色， 超公司的期望)',
     'Exceptional performance (performance that is beyond the company\'s expectations)'=>'表現卓越 (表現十分超卓， 遠超於公司的期望)',
+
+    //2020-05-22
+    'first half year'=>'1月-6月',
+    'last half year'=>'7月-12月',
 );
 ?>
