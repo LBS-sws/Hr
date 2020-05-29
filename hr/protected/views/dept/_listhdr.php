@@ -34,6 +34,9 @@
         echo "<th>";
         echo TbHtml::link($this->getLabelName('review_type').$this->drawOrderArrow('review_type'),'#',$this->createOrderLink('dept-list','review_type'));
         echo "</th>";
+        echo "<th>";
+        echo TbHtml::link($this->getLabelName('manager_type').$this->drawOrderArrow('manager_type'),'#',$this->createOrderLink('dept-list','manager_type'));
+        echo "</th>";
     }
     ?>
 </tr>

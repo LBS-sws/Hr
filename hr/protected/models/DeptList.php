@@ -21,6 +21,7 @@ class DeptList extends CListPageModel
 			'dept_class'=>Yii::t('contract','Job category'),
             'review_status'=>Yii::t('contract','dept review'),
             'review_type'=>Yii::t('contract','review type'),
+            'manager_type'=>Yii::t('contract','manager type'),
 		);
 	}
 	public function getTypeName(){
@@ -101,6 +102,7 @@ class DeptList extends CListPageModel
 					'dept_id'=>$record['dept_id'],
 					'review_status'=>empty($record['review_status'])?Yii::t("contract","not Participate"):Yii::t("contract","Participate"),
 					'review_type'=>DeptForm::getReviewType($record['review_type']),
+					'manager_type'=>DeptForm::getManagerTypeLeave($record['manager_type'],true),
 					'dept_class'=>Yii::t("staff",$record['dept_class']),
                     'acc'=>$this->getTypeAcc()
 				);

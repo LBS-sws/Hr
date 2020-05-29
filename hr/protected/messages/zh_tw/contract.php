@@ -524,5 +524,10 @@ return array(
     'plus dept'=>'暫屬部門',
     'plus leader'=>'暫屬職位',
     'group restrict'=>'分組限制',
+
+    //2020-05-27
+    'assistant manager'=>'副經理',
+    'sales manager'=>'經理',
+    'manager type'=>'銷售經理判斷',
     );
 ?>

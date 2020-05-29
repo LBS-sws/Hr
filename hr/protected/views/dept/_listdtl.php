@@ -27,6 +27,9 @@
         echo "<td>";
         echo DeptForm::getDeptToId($this->record['review_type']);
         echo "</td>";
+        echo "<td>";
+        echo DeptForm::getDeptToId($this->record['manager_type']);
+        echo "</td>";
     }
     ?>
 </tr>
