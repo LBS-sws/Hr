@@ -447,5 +447,21 @@ class Email {
 
         return $cityList;
     }
+
+    //中央支援郵箱，需要添加額外郵箱地址
+    public function addSupportPreEmail(){
+        $email_address = array(
+            array('email'=>"tak@lbsgroup.com.cn",'username'=>"tak"),
+            array('email'=>"shunman@lbsgroup.com.cn",'username'=>"shunman")
+        );
+        foreach ($email_address as $email){
+            if(!in_array($email["email"],$this->to_addr)){
+                $this->to_addr[] = $email["email"];
+            }
+            if(!in_array($email["username"],$this->to_user)){	//因通知記錄需要
+                $this->to_user[] = $email["username"];
+            }
+        }
+    }
 }
 ?>

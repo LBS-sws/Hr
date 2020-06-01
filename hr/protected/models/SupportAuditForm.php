@@ -698,11 +698,13 @@ class SupportAuditForm extends CFormModel
             if(!empty($this->employee_name)){
                 $message.= "支援员工:".$this->employee_name."<br>";
             }
+            $messagePre = $message;
             switch ($this->status_type){
                 case 4://排隊等候
                     $email->setSubject("支援单（".$this->support_code."） - 排队等候");
                     $status_remark = $this->audit_remark;
                     $message.= "审核备注:$status_remark<br>";
+                    $messagePre = $message;
                     $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>";
 
                     break;
@@ -710,6 +712,7 @@ class SupportAuditForm extends CFormModel
                     $email->setSubject("支援单（".$this->support_code."） - 待評分");
                     $status_remark = $this->audit_remark;
                     $message.= "审核备注:$status_remark<br>";
+                    $messagePre = $message;
                     $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
                     $email->addEmailToStaffId($this->employee_id);
                     $email->sent();//單獨發給支援的員工
@@ -722,6 +725,7 @@ class SupportAuditForm extends CFormModel
                     $email->addEmailToStaffId($this->employee_id);
                     $status_remark = $this->audit_remark;
                     $message.= "审核备注:$status_remark<br>";
+                    $messagePre = $message;
                     $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
                     $email->addEmailToStaffId($this->employee_id);
                     $email->sent();//單獨發給支援的員工
@@ -733,6 +737,7 @@ class SupportAuditForm extends CFormModel
                     $email->setSubject("支援单（".$this->support_code."） - 拒絕提前結束");
                     $status_remark = $this->reject_remark;
                     $message.= "审核备注:$status_remark<br>";
+                    $messagePre = $message;
                     $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
                     $email->addEmailToStaffId($this->employee_id);
                     $email->sent();//單獨發給支援的員工
@@ -744,6 +749,7 @@ class SupportAuditForm extends CFormModel
                     $email->setSubject("支援单（".$this->support_code."） - 拒絕續期");
                     $status_remark = $this->reject_remark;
                     $message.= "审核备注:$status_remark<br>";
+                    $messagePre = $message;
                     $email->setMessage($message."<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>");
                     $email->addEmailToStaffId($this->employee_id);
                     $email->sent();//單獨發給支援的員工
@@ -755,6 +761,7 @@ class SupportAuditForm extends CFormModel
                     $email->setSubject("支援单（".$this->support_code."） - 沒有支援，请和支援组联系");
                     $status_remark = $this->audit_remark;
                     $message.= "审核备注:$status_remark<br>";
+                    $messagePre = $message;
                     $message.="<a href='".Yii::app()->createAbsoluteUrl("SupportApply/edit",array("index"=>$this->id))."'>快速访问</a><br>";
 
                     break;
@@ -764,6 +771,13 @@ class SupportAuditForm extends CFormModel
             $email->setMessage($message);
             $email->addEmailToPrefixAndOnlyCity("AY01",$this->apply_city);//該城市有申請權限的人收到郵件
             $email->sent();
+            //後續要求 - 需要額外發送郵件（開始）
+            $messagePre.="<a href='".Yii::app()->createAbsoluteUrl("SupportSearch/view",array("index"=>$this->id))."'>快速访问</a><br>";
+            $email->setMessage($messagePre);
+            $email->resetToAddr();
+            $email->addSupportPreEmail();
+            $email->sent();
+            //後續要求 - 需要額外發送郵件（結束）
             Yii::app()->db->createCommand()->insert('hr_apply_support_history', array(
                 'support_id'=>$this->id,
                 'start_date'=>$this->apply_date,

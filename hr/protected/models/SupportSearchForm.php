@@ -246,6 +246,7 @@ class SupportSearchForm extends CFormModel
             $status_remark = $this->early_remark;
             $message.= "审核备注:$status_remark<br>";
             $email->setMessage($message);
+            $email->addSupportPreEmail();
             $email->addEmailToStaffId($this->employee_id);
             $email->addEmailToPrefixAndOnlyCity("AY01",$this->apply_city);//該城市有申請權限的人收到郵件
             $email->sent();
