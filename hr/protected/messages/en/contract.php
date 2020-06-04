@@ -323,6 +323,12 @@ return array(
 //    'wage list(Convenient)'=>'工资单（快捷操作）',
 //    'The payroll is completed this month'=>'本月工资单全部完成',
 //    'Staff to be produced'=>'待制作工资单的员工数量',
-//    'Apply Date'=>'录入日期',
+    //2020-06-04
+    'For Audit'=>'Submit',
+    'leave_title_1'=>'Mobile phone users please horizontal screen operation',
+    'leave_title_2'=>'0.5 represent half day leave, and Minimum leave application is half day. ',
+    'day.'=>'Day(s)',
+    'Start Time'=>'From',
+    'End Time'=>'To',
 );
 ?>

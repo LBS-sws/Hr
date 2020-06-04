@@ -59,8 +59,8 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
             <?php endif; ?>
         <?php endif; ?>
         <div class="pull-left text-red" style="padding-top: 7px;padding-left: 10px;">
-            <span>注：请假可以分段选择时间</span>
-            <a href="javascript:void (0);" data-toggle="modal" data-target="#helpdialog">（点击可查看示例）</a>
+            <span><?php echo Yii::t('contract','Note: Leave can be selected in stages'); ?></span>
+            <a href="javascript:void (0);" data-toggle="modal" data-target="#helpdialog"><?php echo Yii::t('contract','（Click to see an example）'); ?></a>
         </div>
 	</div>
             <?php if ($model->status==4): ?>
@@ -95,9 +95,9 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 
             <div class="form-group">
                 <div class="col-sm-10 col-sm-offset-2 text-danger">
-                    手机用户请横屏操作
+                    <?php echo Yii::t('contract','leave_title_1'); ?>
                     <br>
-                    半天请用0.5表示，未满半天按半天计算
+                    <?php echo Yii::t('contract','leave_title_2'); ?>
                 </div>
             </div>
             <?php
@@ -188,15 +188,15 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
         <div class="modal-content">
             <div class="modal-header">
                 <button class="close" data-dismiss="modal" type="button">×</button>
-                <h4 class="modal-title">验证信息</h4></div><div class="modal-body"><p></p>
+                <h4 class="modal-title"><?php echo Yii::t("dialog","Validation Message");?></h4></div><div class="modal-body"><p></p>
                 <div class="errorSummary">
-                    <p>请更正下列输入错误:</p>
+                    <p><?php echo Yii::t("yii","Please fix the following input errors:");?></p>
                     <ul>
                     </ul>
                 </div>
                 <p></p>
             </div>
-            <div class="modal-footer"><button data-dismiss="modal" class="btn btn-primary" name="yt4" type="button">确定</button></div>
+            <div class="modal-footer"><button data-dismiss="modal" class="btn btn-primary" name="yt4" type="button"><?php echo Yii::t("dialog.php","OK");?></button></div>
         </div>
     </div>
 </div>

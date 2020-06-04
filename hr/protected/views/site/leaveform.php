@@ -62,7 +62,7 @@
             var tBody = $("#addTimeTable>tbody:first");
             var num = tBody.data("num");
             if(tBody.find("tr").length>4){
-                $("#fete_error").modal("show").find(".errorSummary>ul").html("<li>不能超过四个时间段</li>");
+                $("#fete_error").modal("show").find(".errorSummary>ul").html("<li><?php echo Yii::t('contract','No more than four time periods');?></li>");
                 return false;
             }
             tBody.data("num",num+1);
@@ -144,7 +144,7 @@
             <?php echo $form->numberField($model, 'log_time',
                 array('readonly'=>(true),"id"=>"log_time")
             ); ?>
-            <span class="input-group-addon">天</span>
+            <span class="input-group-addon"><?php echo Yii::t('contract','day.'); ?></span>
         </div>
     </div>
 </div>

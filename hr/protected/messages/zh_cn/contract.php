@@ -534,5 +534,13 @@ return array(
     'assistant manager'=>'副经理',
     'sales manager'=>'经理',
     'manager type'=>'销售经理判断',
+
+    //2020-06-04
+    'leave_title_1'=>'手机用户请横屏操作',
+    'leave_title_2'=>'半天请用0.5表示，未满半天按半天计算',
+    'Note: Leave can be selected in stages'=>'注：请假可以分段选择时间',
+    '（Click to see an example）'=>'（点击可查看示例）',
+    'No more than four time periods'=>'不能超过四个时间段',
+    'day.'=>'天',
 );
 ?>

@@ -142,7 +142,7 @@ class LeaveList extends CListPageModel
 					'lcd'=>CGeneral::toDateTime($record['lcd']),
 					'start_time'=>date("Y/m/d",strtotime($record['start_time'])),
 					'end_time'=>date("Y/m/d",strtotime($record['end_time'])),
-					'log_time'=>$record['log_time']."天",
+					'log_time'=>$record['log_time'].Yii::t("contract","day."),
 					'vacation_id'=>VacationForm::getVacationNameToId($record['vacation_id']),
 					'status'=>$colorList["status"],
                     'city'=>CGeneral::getCityName($record["s_city"]),

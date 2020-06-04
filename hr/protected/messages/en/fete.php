@@ -163,5 +163,14 @@ return array(
 //    'you'=>'你',
 
 //    'Regular overtime'=>'常规加班',
+    //2020-06-04
+    'Ask leave Form'=>'Leave Application',
+    'Leave Cause'=>'Reason & Remark',
+    'Ask leave List'=>'Leave Application List',
+    'Leave Code'=>'Code',
+    'apply for time'=>'Application Date',
+    'Log Date'=>'Day(s)',
+    'Fete List'=>'Holiday list',
+    'Vacation config'=>' Leave setting',
 );
 ?>

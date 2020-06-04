@@ -529,5 +529,13 @@ return array(
     'assistant manager'=>'副經理',
     'sales manager'=>'經理',
     'manager type'=>'銷售經理判斷',
+
+    //2020-06-04
+    'leave_title_1'=>'手機用戶請橫屏操作',
+    'leave_title_2'=>'半天請用0.5表示，未滿半天按半天計算',
+    'Note: Leave can be selected in stages'=>'註：請假可以分段選擇時間',
+    '（Click to see an example）'=>'（點擊可查看示例）',
+    'No more than four time periods'=>'不能超過四個時間段',
+    'day.'=>'天',
     );
 ?>
