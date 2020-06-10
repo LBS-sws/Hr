@@ -196,7 +196,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
                 </div>
                 <p></p>
             </div>
-            <div class="modal-footer"><button data-dismiss="modal" class="btn btn-primary" name="yt4" type="button"><?php echo Yii::t("dialog.php","OK");?></button></div>
+            <div class="modal-footer"><button data-dismiss="modal" class="btn btn-primary" name="yt4" type="button"><?php echo Yii::t("dialog","OK");?></button></div>
         </div>
     </div>
 </div>
