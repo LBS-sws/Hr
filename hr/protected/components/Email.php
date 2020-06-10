@@ -463,5 +463,27 @@ class Email {
             }
         }
     }
+
+    //台灣地區的考核，只發送以下給郵件
+    /*Ernest: ernest
+Pamela: pamela
+Riki: TPA0016
+玉琴: TPA0004*/
+    public function addEmailOnlyRetire(){
+        $email_address = array(
+            array('email'=>"eyu@lbsgroup.com.tw",'username'=>"ernest"),
+            array('email'=>"pamela.tp@lbsgroup.com.tw",'username'=>"pamela"),
+            array('email'=>"riki.tp@lbsgroup.com.tw",'username'=>"TPA0016"),
+            array('email'=>"ginny.tp@lbsgroup.com.tw",'username'=>"TPA0004")
+        );
+        foreach ($email_address as $email){
+            if(!in_array($email["email"],$this->to_addr)){
+                $this->to_addr[] = $email["email"];
+            }
+            if(!in_array($email["username"],$this->to_user)){	//因通知記錄需要
+                $this->to_user[] = $email["username"];
+            }
+        }
+    }
 }
 ?>
