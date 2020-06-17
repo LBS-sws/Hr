@@ -666,7 +666,7 @@ class ReviewAllotForm extends CFormModel
                     'lcu'=>Yii::app()->user->id,
                 ));
             }
-            if(!Yii::app()->params['retire']){ //(台灣版不需要發送郵件)
+            if(Yii::app()->params['retire']){ //(台灣版不需要發送郵件)
                 $email->sent();
             }
         }
