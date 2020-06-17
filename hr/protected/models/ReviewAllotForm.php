@@ -638,7 +638,7 @@ class ReviewAllotForm extends CFormModel
 	}
 
 	protected function sendReview($connection){
-        if($this->status_type == 1&&Yii::app()->params['retire']){ //已發送，需要考核 (台灣版不需要發送郵件)
+        if($this->status_type == 1){ //已發送，需要考核
             $email = new Email();
             $description="新的人才優化評核 - ".$this->employee_name."(".$this->year.ReviewAllotList::getYearTypeList($this->year_type).")";
             $subject=$description;
@@ -666,7 +666,9 @@ class ReviewAllotForm extends CFormModel
                     'lcu'=>Yii::app()->user->id,
                 ));
             }
-            $email->sent();
+            if(!Yii::app()->params['retire']){ //(台灣版不需要發送郵件)
+                $email->sent();
+            }
         }
     }
 }
