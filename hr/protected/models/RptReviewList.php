@@ -57,7 +57,7 @@ class RptReviewList extends CReport {
                 $cond_staff = " and a.id in ($cond_staff)";
             } 
 		}
-        $sql = "select a.id,a.name,a.position,a.department,a.code,b.name as city_name,a.entry_time,d.name as dept_name,d.review_status,d.review_type ,e.name as ment_name 
+        $sql = "select a.staff_leader,a.id,a.name,a.position,a.department,a.code,b.name as city_name,a.entry_time,d.name as dept_name,d.review_status,d.review_type ,e.name as ment_name 
                 from hr_employee a 
                 LEFT JOIN security$suffix.sec_city b ON a.city = b.code
                 LEFT JOIN hr_dept d ON a.position = d.id
@@ -116,7 +116,7 @@ class RptReviewList extends CReport {
 
     protected function getReviewLeave($staff,$arr){
 	    //review_status
-        if($staff["review_status"]==1){ //差異性評分
+        if($staff["review_status"]==1&&$staff["staff_leader"]=="Nil"){ //差異性評分
             if(key_exists($staff["department"],$this->leave_list)){
                 switch ($this->leave_list[$staff["department"]]['caseNum']){
                     case 1://差異性評分（評分完成）
@@ -143,7 +143,7 @@ class RptReviewList extends CReport {
                 $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
                     ->leftJoin("hr_employee c","c.id = b.employee_id")
                     ->leftJoin("hr_dept e","c.position = e.id")
-                    ->where("e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
+                    ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
                         array(":department"=>$staff["department"],":year"=>$arr["year"],":year_type"=>$arr["year_type"])
                     )->order("b.review_sum desc")->queryAll();
                 if(count($reviewRows)<10){ //少於10個人不參與差異性評分
