@@ -145,6 +145,7 @@ return array(
             ),
 		),
 	),
+    //考核
     'review'=>array(
         'access'=>'RE',
         'icon'=>'fa-life-ring',
@@ -176,6 +177,28 @@ return array(
             'Email Hint'=>array( //郵件提醒
                 'access'=>'RE07',
                 'url'=>'/Email/index',
+            ),
+        ),
+    ),
+    //老總年度考核
+    'Boss Year Audit'=>array(
+        'access'=>'BA',
+        'icon'=>'fa-coffee',
+        'items'=>array(
+            //考核申請
+            'Boss Apply'=>array(
+                'access'=>'BA01',
+                'url'=>'/bossApply/index',
+            ),
+            //考核查詢
+            'Boss Search'=>array(
+                'access'=>'BA02',
+                'url'=>'/bossSearch/index',
+            ),
+            //考核審批
+            'Boss Audit'=>array(
+                'access'=>'BA03',
+                'url'=>'/bossAudit/index',
             ),
         ),
     ),

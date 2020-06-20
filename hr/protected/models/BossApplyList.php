@@ -1,0 +1,131 @@
+<?php
+
+class BossApplyList extends CListPageModel
+{
+    public $employee_id;//員工id
+	/**
+	 * Declares customized attribute labels.
+	 * If not declared here, an attribute would have a label that is
+	 * the same as its name with the first letter in upper case.
+	 */
+	public function attributeLabels()
+	{
+		return array(
+            'name'=>Yii::t('contract','Employee Name'),
+            'code'=>Yii::t('contract','Employee Code'),
+            'audit_year'=>Yii::t('contract','audit year'),
+            'results_a'=>Yii::t('contract','Results (A)'),
+            'results_b'=>Yii::t('contract','Results (B)'),
+            'results_c'=>Yii::t('contract','Results (C)'),
+            'results_sum'=>Yii::t('contract','Sum Results'),
+            'status_type'=>Yii::t('contract','Status'),
+		);
+	}
+
+    //驗證賬號是否綁定員工
+    public function validateEmployee(){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("employee_id,employee_name")->from("hr_binding")
+            ->where('user_id=:user_id',
+                array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            $this->employee_id = $rows["employee_id"];
+            return true;
+        }
+        return false;
+    }
+
+	public function retrieveDataByPage($pageNum=1)
+	{
+        $suffix = Yii::app()->params['envSuffix'];
+        $city_allow = Yii::app()->user->city_allow();
+		$sql1 = "select b.name,b.code,a.* from hr_boss_audit a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id 
+                where a.employee_id = '$this->employee_id' 
+			";
+		$sql2 = "select count(a.id)
+				from hr_boss_audit a 
+                LEFT JOIN hr_employee b ON a.employee_id = b.id 
+                where a.employee_id = '$this->employee_id' 
+			";
+		$clause = "";
+		if (!empty($this->searchField) && !empty($this->searchValue)) {
+			$svalue = str_replace("'","\'",$this->searchValue);
+			switch ($this->searchField) {
+				case 'audit_year':
+					$clause .= General::getSqlConditionClause('a.audit_year',$svalue);
+					break;
+				case 'code':
+					$clause .= General::getSqlConditionClause('b.code',$svalue);
+					break;
+				case 'name':
+					$clause .= General::getSqlConditionClause('b.name',$svalue);
+					break;
+			}
+		}
+		
+		$order = "";
+		if (!empty($this->orderField)) {
+			$order .= " order by ".$this->orderField." ";
+			if ($this->orderType=='D') $order .= "desc ";
+		}
+
+		$sql = $sql2.$clause;
+		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
+		
+		$sql = $sql1.$clause.$order;
+		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
+		$records = Yii::app()->db->createCommand($sql)->queryAll();
+
+		$this->attr = array();
+		if (count($records) > 0) {
+			foreach ($records as $k=>$record) {
+                $arrList = $this->statusToColor($record['status_type']);
+				$this->attr[] = array(
+					'id'=>$record['id'],
+					'code'=>$record['code'],
+					'name'=>$record['name'],
+                    'results_a'=>empty($record['results_a'])?0:floatval($record['results_a'])*0.5,
+                    'results_b'=>empty($record['results_b'])?0:floatval($record['results_b'])*0.35,
+					'results_c'=>$record['results_c']."%",
+					'results_sum'=>$record['results_sum']."%",
+					'audit_year'=>$record['audit_year'],
+					'status_type'=>$arrList['status'],
+					'style'=>$arrList['style'],
+				);
+			}
+		}
+		$session = Yii::app()->session;
+		$session['bossApply_01'] = $this->getCriteria();
+		return true;
+	}
+    //根據狀態獲取顏色
+    public function statusToColor($status){
+        switch ($status){
+            case 0:
+                return array(
+                    "status"=>Yii::t("contract","Draft"),
+                    "style"=>""
+                );
+            case 1:
+                return array(
+                    "status"=>Yii::t("contract","pending approval"),//已發送，等待審核
+                    "style"=>" text-primary"
+                );
+            case 2:
+                return array(
+                    "status"=>Yii::t("contract","Finish"),//審核通過
+                    "style"=>" text-success"
+                );
+            case 3:
+                return array(
+                    "status"=>Yii::t("contract","Rejected"),//拒絕
+                    "style"=>" text-danger"
+                );
+        }
+        return array(
+            "status"=>$status,
+            "style"=>""
+        );
+    }
+}

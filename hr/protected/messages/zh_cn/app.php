@@ -168,6 +168,10 @@ return array(
     'Sales Review Search'=>'销售成绩查询',
 
     'employee plus city'=>'员工暂属城市',
+    'Boss Year Audit'=>'老总年度考核',
+    'Boss Apply'=>'申请年度考核',
+    'Boss Search'=>'查询年度考核',
+    'Boss Audit'=>'审批年度考核',
     //沈超添加结束
 );
 ?>

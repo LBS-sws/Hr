@@ -167,6 +167,10 @@ return array(
     'Sales Review Search'=>'銷售成績查詢',
 
     'employee plus city'=>'員工暫屬城市',
+    'Boss Year Audit'=>'老總年度考核',
+    'Boss Apply'=>'申請年度考核',
+    'Boss Search'=>'查詢年度考核',
+    'Boss Audit'=>'審批年度考核',
 //沈超添加結束
 );
 ?>

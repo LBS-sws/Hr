@@ -1,0 +1,169 @@
+<?php
+
+/**
+ * Created by PhpStorm.
+ * User: 沈超
+ * Date: 2020/6/15
+ * Time: 13:42
+ */
+class BossReviewC
+{
+    public $ready=true;//禁止用戶修改
+    public $className="";//表單的name前綴
+    public $audit_year;//考核年限
+    public $listX=array();
+    public $listY=array();
+    public $json_text=array();
+    public $scoreSum=0;
+    protected $searchBool = false;
+
+    public function __construct($model='',$searchBool=false)
+    {
+        if(!empty($model)){
+            $this->json_text = $model->json_text;
+            $this->audit_year = $model->audit_year;
+            $this->ready = $model->getInputBool();
+            $this->className = get_class($model);
+        }
+        $this->searchBool = $searchBool;
+        $this->setListX();
+        $this->setListY();
+        if(!key_exists("three",$this->json_text)){
+            $this->json_text["three"] = array("list"=>array(),'count'=>'','sum'=>'');
+        }
+    }
+
+    protected function setListX(){
+        $this->listX = array(
+            array('value'=>'three_one','name'=>Yii::t("contract","three_one")),
+            array('value'=>'three_two','name'=>Yii::t("contract","three_two")),
+            array('value'=>'three_three','name'=>Yii::t("contract","three_three")),
+            array('value'=>'three_four','name'=>Yii::t("contract","three_four"))
+        );
+    }
+
+    protected function setListY(){
+        $this->listY = array();
+    }
+
+    public function validateJson(&$model,$bool=true){
+        $sum = 0;
+        if(!key_exists("three",$this->json_text)){
+            $message = Yii::t('contract',"(C)Optional project section")." - ".Yii::t('contract',' can not be empty');
+            $model->addError('json_text',$message);
+            return false;
+        }else{
+            if($bool&&(empty($this->json_text["three"]['count'])||!is_numeric($this->json_text["three"]['count']))){
+                $message = Yii::t('contract',"three_three")." - ".Yii::t('contract',' can not be empty');
+                $model->addError('json_text',$message);
+                return false;
+            }
+            if(isset($this->json_text["three"]['list'])){
+                if($bool&&count($this->json_text["three"]['list'])<3){
+                    $message = Yii::t('contract',"(C)Optional project section")." - 至少填写三条";
+                    $model->addError('json_text',$message);
+                    return false;
+                }
+                foreach ($this->json_text["three"]['list'] as $row){
+                    if($bool&&(empty($row['three_four'])||!is_numeric($row['three_four']))){
+                        $message = Yii::t('contract',"three_four")." - ".Yii::t('contract',' can not be empty');
+                        $model->addError('json_text',$message);
+                        return false;
+                    }else{
+                        $sum+=empty($row['three_four'])?0:floatval($row['three_four']);
+                    }
+                }
+            }else{
+                if($bool){
+                    $message = Yii::t('contract',"(C)Optional project section")." - ".Yii::t('contract',' can not be empty');
+                    $model->addError('json_text',$message);
+                    return false;
+                }
+            }
+            $sum = empty($this->json_text["three"]['count'])?0:($sum/$this->json_text["three"]['count'])*15;
+            $sum = floatval(sprintf("%.2f",$sum));
+            $this->json_text["three"]['sum'] = $sum;
+            if($this->json_text["three"]['sum']>15){
+                $message = Yii::t('contract',"(C)Optional project section")." - 不能大于15";
+                $model->addError('json_text',$message);
+                return false;
+            }
+        }
+        $this->scoreSum = $sum;
+    }
+
+    public function getTableHtml(){
+        $html="<p>&nbsp;</p><div class='col-lg-10 col-lg-offset-1'>";
+        $html.="<p><b>".Yii::t("contract","table_remark_0")."</b></p>";
+        $html.="<p>".Yii::t("contract","table_remark_1")."</p>";
+        $html.="<p>".Yii::t("contract","table_remark_2")."</p>";
+        $html.="<p>".Yii::t("contract","table_remark_3")."</p>";
+        $html.="<p>".Yii::t("contract","table_remark_4")."</p>";
+        $html.="<p>".Yii::t("contract","table_remark_5")."</p>";
+        $html.="</div>";
+        $html.="<div class='form-group'><div class='col-lg-10 col-lg-offset-1'><table id='table_three' class='table table-bordered table-striped'>";
+        $html.="<thead><tr>";
+        $html.="<th width='28%'>".Yii::t("contract","three_one")."</th>";
+        $html.="<th width='28%'>".Yii::t("contract","three_two")."</th>";
+        $html.="<th width='28%'>".Yii::t("contract","three_three")."</th>";
+        $html.="<th width='16%'>".Yii::t("contract","three_four")."</th>";
+        if(!$this->ready){
+            $html.="<th width='1%'>".Yii::t("contract","Operation")."</th>";
+        }
+        $html.="</tr></thead><tbody data-num=':rowCount:'>";
+
+        if(isset($this->json_text["three"]["list"])){
+            $html = str_replace(":rowCount:",count($this->json_text["three"]["list"]),$html);
+            foreach ($this->json_text["three"]["list"] as $key =>$list){
+                $html.=$this->getRowHtml($this->ready,$list,$key);
+            }
+        }
+
+        $html.=$this->getRowHtml($this->ready);
+        $html.="</tbody>";
+
+        $html.="<tfoot><tr><td colspan='2'>&nbsp;</td>";
+        $html.="<td><div class='input-group'>";
+        $html.=TbHtml::numberField($this->className."[json_text][three][count]",$this->json_text["three"]["count"],array('readonly'=>$this->ready,'id'=>"three_count"));
+        $html.="<span class='input-group-addon'>%</span></div></td>";
+        $html.="<td><div class='input-group'>";
+        $html.=TbHtml::numberField($this->className."[json_text][three][sum]",$this->json_text["three"]["sum"],array('readonly'=>true,'id'=>"three_sum"));
+        $html.="<span class='input-group-addon'>%</span></div></td>";
+        if(!$this->ready){
+            $html.="<td>".TbHtml::button(Yii::t("misc","Add"),array("class"=>"btn btn-primary","id"=>"addRow"))."</td>";
+        }
+        $html.="</tr></tfoot>";
+        if(!$this->ready){
+        }
+        $html.="</table></div></div>";
+        return $html;
+    }
+
+
+    protected function getRowHtml($ready=false,$list=array(),$num=''){
+        if(empty($list)){
+            $list = array('three_one'=>'','three_two'=>'','three_three'=>'','three_four'=>'');
+        }
+        if($num===''||!is_numeric($num)){
+            $html="<tr id='trTemplate' style='display: none'>";
+            $name = ":inputName:";
+        }else{
+            $html="<tr>";
+            $name = $this->className."[json_text][three][list][$num]";
+        }
+
+        $html.="<td>".TbHtml::textArea($name."[three_one]",$list["three_one"],array('readonly'=>$ready))."</td>";
+        $html.="<td>".TbHtml::textArea($name."[three_two]",$list["three_two"],array('readonly'=>$ready))."</td>";
+        $html.="<td>".TbHtml::textArea($name."[three_three]",$list["three_three"],array('readonly'=>$ready))."</td>";
+        $html.="<td><div class='input-group'>";
+        $html.=TbHtml::numberField($name."[three_four]",$list["three_four"],array('readonly'=>$ready,'class'=>'changeThreeFour'));
+        $html.="<span class='input-group-addon'>%</span></div></td>";
+
+        if(!$this->ready){
+            $html.="<td>".TbHtml::button(Yii::t("misc","Delete"),array("class"=>"btn btn-default deleteRow"))."</td>";
+        }
+        $html.="</tr>";
+
+        return $html;
+    }
+}

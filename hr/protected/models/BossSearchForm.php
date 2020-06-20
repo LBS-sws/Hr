@@ -1,0 +1,143 @@
+<?php
+
+class BossSearchForm extends CFormModel
+{
+	public $id;
+	public $employee_id;
+	public $lcu;
+	public $code;
+	public $name;
+	public $city;
+	public $audit_year;
+	public $apply_date;
+	public $status_type=0;
+	public $reject_remark;
+	public $json_text=array();
+	public $results_sum;
+	public $results_a;
+	public $results_b;
+	public $results_c;
+
+	public function attributeLabels()
+	{
+		return array(
+            'name'=>Yii::t('contract','Employee Name'),
+            'code'=>Yii::t('contract','Employee Code'),
+            'audit_year'=>Yii::t('contract','audit year'),
+            'results_sum'=>Yii::t('contract','Sum Results'),
+            'status_type'=>Yii::t('contract','Status'),
+            'reject_remark'=>Yii::t('contract','Rejected Remark'),
+		);
+	}
+
+	/**
+	 * Declares the validation rules.
+	 */
+	public function rules()
+	{
+		return array(
+			array('id,employee_id,json_text,audit_year,reject_remark','safe'),
+            array('id','required')
+		);
+	}
+
+	public function retrieveData($index) {
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("a.*,c.city,b.code as employee_code,b.name as employee_name")
+            ->from("hr_boss_audit a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("security$suffix.sec_user c","a.lcu = c.username")
+            ->where("a.id=:id and a.status_type = 2",array(":id"=>$index))->queryRow();
+		if ($row) {
+            $this->id = $row['id'];
+            $this->employee_id = $row['employee_id'];
+            $this->lcu = $row['lcu'];
+            $this->code = $row['employee_code'];
+            $this->name = $row['employee_name'];
+            $this->city = $row['city'];
+            $this->apply_date = $row['apply_date'];
+            $this->audit_year = $row['audit_year'];
+            $this->json_text = json_decode($row['json_text'],true);
+            $this->reject_remark = $row['reject_remark'];
+            $this->status_type = $row['status_type'];
+            $this->results_sum = $row['results_sum'];
+            $this->results_a = $row['results_a'];
+            $this->results_b = $row['results_b'];
+            $this->results_c = $row['results_c'];
+		}
+		return true;
+	}
+
+    //刪除驗證
+    public function deleteValidate(){
+        return false;
+    }
+
+	public function saveData($str='')
+	{
+		$connection = Yii::app()->db;
+		$transaction=$connection->beginTransaction();
+		try {
+			$this->saveGoods($connection);
+			$transaction->commit();
+		}
+		catch(Exception $e) {
+			$transaction->rollback();
+			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
+		}
+	}
+
+	protected function saveGoods(&$connection) {
+		$sql = '';
+        switch ($this->scenario) {
+            case 'audit':
+                break;
+            case 'reject':
+                $sql = "update hr_boss_audit set
+							status_type = 3, 
+							reject_remark = :reject_remark, 
+							luu = :luu
+						where id = :id AND status_type = 1
+						";
+                break;
+        }
+		if (empty($sql)) return false;
+
+        $city = Yii::app()->user->city();
+        $uid = Yii::app()->user->id;
+
+        $command=$connection->createCommand($sql);
+        if (strpos($sql,':id')!==false)
+            $command->bindParam(':id',$this->id,PDO::PARAM_INT);
+        if (strpos($sql,':results_a')!==false)
+            $command->bindParam(':results_a',$this->results_a,PDO::PARAM_INT);
+        if (strpos($sql,':results_b')!==false)
+            $command->bindParam(':results_b',$this->results_b,PDO::PARAM_INT);
+        if (strpos($sql,':results_c')!==false)
+            $command->bindParam(':results_c',$this->results_c,PDO::PARAM_INT);
+        if (strpos($sql,':results_sum')!==false)
+            $command->bindParam(':results_sum',$this->results_sum,PDO::PARAM_INT);
+        if (strpos($sql,':reject_remark')!==false)
+            $command->bindParam(':reject_remark',$this->reject_remark,PDO::PARAM_STR);
+        if (strpos($sql,':json_text')!==false){
+            $json_text = json_encode($this->json_text);
+            $command->bindParam(':json_text',$json_text,PDO::PARAM_LOB);
+        }
+
+        if (strpos($sql,':luu')!==false)
+            $command->bindParam(':luu',$uid,PDO::PARAM_STR);
+        $command->execute();
+
+        if ($this->scenario=='new'){
+            $this->id = Yii::app()->db->getLastInsertID();
+        }
+
+		return true;
+	}
+
+	//判斷輸入框能否修改
+	public function getInputBool(){
+        return true;
+    }
+}

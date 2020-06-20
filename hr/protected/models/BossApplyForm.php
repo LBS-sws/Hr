@@ -1,0 +1,389 @@
+<?php
+
+class BossApplyForm extends CFormModel
+{
+	public $id;
+	public $employee_id;
+	public $lcu;
+	public $code;
+	public $name;
+	public $city;
+	public $audit_year;
+	public $apply_date;
+	public $status_type=0;
+	public $reject_remark;
+	public $json_text=array();
+	public $results_sum;
+	public $results_a;
+	public $results_b;
+	public $results_c;
+
+	public function attributeLabels()
+	{
+		return array(
+            'name'=>Yii::t('contract','Employee Name'),
+            'code'=>Yii::t('contract','Employee Code'),
+            'audit_year'=>Yii::t('contract','audit year'),
+            'results_sum'=>Yii::t('contract','Sum Results'),
+            'status_type'=>Yii::t('contract','Status'),
+            'reject_remark'=>Yii::t('contract','Rejected Remark'),
+		);
+	}
+
+	/**
+	 * Declares the validation rules.
+	 */
+	public function rules()
+	{
+		return array(
+			array('id,employee_id,json_text,audit_year,reject_remark','safe'),
+            array('audit_year','required','on'=>array("add","new","edit")),
+            array('json_text','required','on'=>array("new","edit")),
+            array('employee_id','validateStaff','on'=>array("new","edit")),
+            array('id','validateID','on'=>array("new","edit")),
+            array('json_text','validateJson','on'=>array("new","edit")),
+            array('reject_remark','required','on'=>array("reject")),
+		);
+	}
+
+    public function validateID($attribute, $params){
+	    if(!is_numeric($this->audit_year)){
+            $message = Yii::t('contract','audit year')."只能為數字";
+            $this->addError($attribute,$message);
+            return false;
+        }
+        $row = Yii::app()->db->createCommand()->select("id")->from("hr_boss_audit")
+            ->where('employee_id=:id and audit_year=:year',
+                array(':id'=>$this->employee_id,':year'=>$this->audit_year)
+            )->queryRow();
+	    if($this->getScenario()=='new'&&$row){
+            $message = "該考核已存在，不允許重複添加";
+            $this->addError($attribute,$message);
+            return false;
+        }
+        if ($this->getScenario()=='edit'&&!$row){
+            $message = "該考核不存在，無法修改";
+            $this->addError($attribute,$message);
+            return false;
+        }
+    }
+
+    public function validateStaff($attribute, $params){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("a.employee_id,b.code,b.name,b.city")->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where('a.user_id=:user_id',
+                array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            $this->employee_id = $rows["employee_id"];
+            $this->code = $rows["code"];
+            $this->name = $rows["name"];
+            $this->city = Yii::app()->user->city();
+            $this->lcu = $uid;
+        }else{
+            $message = "員工不存在，請於管理員聯繫";
+            $this->addError($attribute,$message);
+        }
+    }
+
+    public function validateJson($attribute, $params){
+	    if(!empty($this->json_text)){
+	        $bool = $this->status_type==1;
+	        //A類驗證
+            $bossReviewA = new BossReviewA($this);
+            $bossReviewA->validateJson($this,$bool);
+            $this->json_text = $bossReviewA->json_text;
+            $this->results_a = $bossReviewA->scoreSum;
+            //B類驗證
+            $bossReviewB = new BossReviewB($this);
+            $bossReviewB->validateJson($this,$bool);
+            $this->json_text = $bossReviewB->json_text;
+            $this->results_b = $bossReviewB->scoreSum;
+            //C類驗證
+            $bossReviewC = new BossReviewC($this);
+            $bossReviewC->validateJson($this,$bool);
+            $this->json_text = $bossReviewC->json_text;
+            $this->results_c = $bossReviewC->scoreSum;
+
+            $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+        }
+    }
+
+    public function getBossApplyYearHtml(){
+        $rows = Yii::app()->db->createCommand()->select("a.audit_year")->from("hr_boss_audit a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("b.id=:id",array(":id"=>$this->employee_id))->queryAll();
+        if($rows){
+            $rows = array_column($rows,"audit_year");
+        }else{
+            $rows = array();
+        }
+        $year = date("Y");
+        $html = "<select class='form-control submit_select' name='year'>";
+        for($i=$year-3;$i<$year+4;$i++){
+            if(in_array($i,$rows)){
+                $html.="<option value='$i' disabled>".$i.Yii::t("contract"," year")." - ".Yii::t("contract","applied")."</option>";
+            }else{
+                if($i == $year){
+                    $html.="<option value='$i' selected>".$i.Yii::t("contract"," year")."</option>";
+                }else{
+                    $html.="<option value='$i'>".$i.Yii::t("contract"," year")."</option>";
+                }
+            }
+        }
+        $html.="</select>";
+        return $html;
+    }
+
+	public function retrieveData($index) {
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("a.*,c.city,b.code as employee_code,b.name as employee_name")
+            ->from("hr_boss_audit a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("security$suffix.sec_user c","a.lcu = c.username")
+            ->where("a.id=:id and b.id=:employee_id",array(":id"=>$index,":employee_id"=>$this->employee_id))->queryRow();
+		if ($row) {
+            $this->id = $row['id'];
+            $this->employee_id = $row['employee_id'];
+            $this->lcu = $row['lcu'];
+            $this->code = $row['employee_code'];
+            $this->name = $row['employee_name'];
+            $this->city = $row['city'];
+            $this->apply_date = $row['apply_date'];
+            $this->audit_year = $row['audit_year'];
+            $this->json_text = json_decode($row['json_text'],true);
+            $this->reject_remark = $row['reject_remark'];
+            $this->status_type = $row['status_type'];
+            $this->results_sum = $row['results_sum'];
+            $this->results_a = $row['results_a'];
+            $this->results_b = $row['results_b'];
+            $this->results_c = $row['results_c'];
+		}
+		return true;
+	}
+
+	public function getAjaxPlanYear($data){
+        $type = key_exists("type",$data)?$data['type']:"planYearA";
+        $name = key_exists("name",$data)?$data['name']:"";
+        $value = key_exists("value",$data)?$data['value']:0;
+        $value = floatval($value);
+        $one_1 = key_exists("one_1",$data)?$data['one_1']:0;
+        $one_1 = floatval($one_1);
+        $cofNow = key_exists("cofNow",$data)?$data['cofNow']:0;
+        $cofNow = floatval($cofNow);
+        $one_11 = key_exists("one_11",$data)?$data['one_11']:0;
+        $one_11 = floatval($one_11);
+        if($type === "planYearB"){
+            $arr = $this->planYearB($name,$value,$one_1,$cofNow,$one_11);
+        }else{
+            $arr = $this->planYearA($name,$value,$one_1,$cofNow,$one_11);
+        }
+        return $arr;
+    }
+
+    //$one_11:佔比
+    protected function planYearB($name,$value,$one_1,$cofNow,$one_11){
+        $arr = array();
+        $bossReviewCof = new BossReviewCof($name);
+        $arr["two_3"] = $bossReviewCof->getClassCof($value,$one_1,$name);//系數
+        $one_5 = $bossReviewCof->getClassLadder($arr["two_3"],$cofNow,$name,$one_1);//階梯落差
+        $arr["two_5"] = abs($one_5);//階梯落差
+        $one_5 = $one_5>0?$one_5*0.03:$one_5*0.08;
+        $arr["two_6"] = $one_5;//落差系数
+        $arr["two_7"] = $arr["two_3"]+$arr["two_6"];//实际系数
+        $arr["two_9"] = ($arr["two_7"]*$one_11)."%";//得分
+        return $arr;
+    }
+
+    protected function planYearA($name,$value,$one_1,$cofNow,$one_11){
+        $arr = array();
+        $bossReviewCof = new BossReviewCof($name);
+        if(in_array($name,array("one_six","one_seven","one_eight"))){
+            $one_4 = $value;
+            $arr["one_4"]= "\\";
+        }else{
+            $one_4 = empty($one_1)?0:($value-$one_1)/$one_1;
+            $one_4 = intval($one_4*100);
+            $arr["one_4"]= $one_4."%";
+        }
+        $arr["one_5"] = $bossReviewCof->getClassCof($one_4,$one_1,$name);//系數
+        $one_8 = $bossReviewCof->getClassLadder($arr["one_5"],$cofNow,$name,$one_1);//階梯落差
+        $arr["one_8"] = abs($one_8);//階梯落差
+        $one_8 = $one_8>0?$one_8*0.03:$one_8*0.08;
+        $arr["one_9"] = $one_8;//落差系数
+        $arr["one_10"] = $arr["one_5"]+$arr["one_9"];//实际系数
+        $arr["one_12"] = ($arr["one_10"]*$one_11)."%";//得分
+        return $arr;
+    }
+
+	public function getContractTabList(){
+        $list = array(
+            array(
+                "name"=>Yii::t("contract","(A)Goal setting part"),
+                "class"=>"BossReviewA"
+            ),
+            array(
+                "name"=>Yii::t("contract","(B)Other details"),
+                "class"=>"BossReviewB"
+            ),
+            array(
+                "name"=>Yii::t("contract","(C)Optional project section"),
+                "class"=>"BossReviewC"
+            )
+        );
+        return $list;
+    }
+
+    public function getTabList($model,$searchBool=false){
+        $list = $this->getContractTabList();
+        $tabs = array();
+        foreach ($list as $key=>$item){
+            $className = $item["class"];
+            $bossReviewModel = new $className($model,$searchBool);
+            $html = $bossReviewModel->getTableHtml();
+            $tabs[] = array(
+                'id'=>"table_id_".$className,
+                'label'=>$item["name"],
+                'content'=>$html,
+                'active'=>$key == 0?true:false,
+            );
+        }
+        return $tabs;
+    }
+
+    //刪除驗證
+    public function deleteValidate(){
+        return false;
+    }
+
+	public function saveData($str='')
+	{
+		$connection = Yii::app()->db;
+		$transaction=$connection->beginTransaction();
+		try {
+			$this->saveGoods($connection);
+			$transaction->commit();
+		}
+		catch(Exception $e) {
+			$transaction->rollback();
+			throw new CHttpException(404,'Cannot update. ('.$e->getMessage().')');
+		}
+	}
+
+	protected function saveGoods(&$connection) {
+		$sql = '';
+        switch ($this->scenario) {
+            case 'delete':
+                $sql = "delete from hr_boss_audit where id = :id and status_type in(0,3)";
+                break;
+            case 'new':
+                $sql = "insert into hr_boss_audit(
+							employee_id,results_a,results_b, results_c, results_sum, status_type, audit_year, json_text, city, apply_date, lcu
+						) values (
+							:employee_id,:results_a,:results_b, :results_c, :results_sum, :status_type, :audit_year, :json_text, :city, :apply_date, :lcu
+						)";
+                break;
+            case 'edit':
+                $sql = "update hr_boss_audit set
+							results_a = :results_a, 
+							results_b = :results_b, 
+							results_c = :results_c, 
+							results_sum = :results_sum, 
+							status_type = :status_type, 
+							json_text = :json_text, 
+							city = :city, 
+							reject_remark = '', 
+							apply_date = :apply_date,
+							luu = :luu
+						where id = :id and status_type in(0,3)
+						";
+                break;
+        }
+		if (empty($sql)) return false;
+
+        $city = Yii::app()->user->city();
+        $uid = Yii::app()->user->id;
+
+        $command=$connection->createCommand($sql);
+        if (strpos($sql,':id')!==false)
+            $command->bindParam(':id',$this->id,PDO::PARAM_INT);
+        //employee_id,results_a,results_b, results_c, results_sum, status_type, audit_year, json_text, city, apply_date, lcu
+        if (strpos($sql,':employee_id')!==false)
+            $command->bindParam(':employee_id',$this->employee_id,PDO::PARAM_INT);
+        if (strpos($sql,':results_a')!==false)
+            $command->bindParam(':results_a',$this->results_a,PDO::PARAM_INT);
+        if (strpos($sql,':results_b')!==false)
+            $command->bindParam(':results_b',$this->results_b,PDO::PARAM_INT);
+        if (strpos($sql,':results_c')!==false)
+            $command->bindParam(':results_c',$this->results_c,PDO::PARAM_INT);
+        if (strpos($sql,':results_sum')!==false)
+            $command->bindParam(':results_sum',$this->results_sum,PDO::PARAM_INT);
+        if (strpos($sql,':status_type')!==false)
+            $command->bindParam(':status_type',$this->status_type,PDO::PARAM_INT);
+        if (strpos($sql,':audit_year')!==false)
+            $command->bindParam(':audit_year',$this->audit_year,PDO::PARAM_INT);
+        if (strpos($sql,':json_text')!==false){
+            $json_text = json_encode($this->json_text);
+            $command->bindParam(':json_text',$json_text,PDO::PARAM_LOB);
+        }
+        if (strpos($sql,':apply_date')!==false){
+            $this->apply_date = date('Y-m-d H:i:s');
+            $command->bindParam(':apply_date',$this->apply_date,PDO::PARAM_STR);
+        }
+
+        if (strpos($sql,':city')!==false)
+            $command->bindParam(':city',$city,PDO::PARAM_STR);
+        if (strpos($sql,':luu')!==false)
+            $command->bindParam(':luu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':lcu')!==false)
+            $command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+        $command->execute();
+
+        if ($this->scenario=='new'){
+            $this->id = Yii::app()->db->getLastInsertID();
+        }
+
+		return true;
+	}
+
+    private function lenStr($id){
+        $code = strval($id);
+        $str = "B";
+        for($i = 0;$i < 5-strlen($code);$i++){
+            $str.="0";
+        }
+        $str .= $code;
+        return $str;
+    }
+
+    //驗證賬號是否綁定員工
+    public function validateEmployee(){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("a.employee_id,b.code,b.name,b.city")->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where('a.user_id=:user_id',
+                array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            $this->employee_id = $rows["employee_id"];
+            $this->code = $rows["code"];
+            $this->name = $rows["name"];
+            $this->city = Yii::app()->user->city();
+            $this->lcu = $uid;
+            return true;
+        }
+        return false;
+    }
+
+	//判斷輸入框能否修改
+	public function getInputBool(){
+        if($this->getScenario() == "view"){
+            return true;
+        }
+        if(!in_array($this->status_type,array(0,3))){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
