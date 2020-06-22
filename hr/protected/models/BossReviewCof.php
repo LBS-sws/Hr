@@ -30,7 +30,7 @@ class BossReviewCof
                 return $this->getLadderToMin($cofOld,$cofNow);
             case "one_five"://IB服务生意年金额
                 return $this->getLadderToMax($cofOld,$cofNow);
-            case "one_six"://收款率(%) -- 有兩個0.2
+            case "one_six"://收款率(%)
                 return $this->getLadderToMax($cofOld,$cofNow);
             case "one_seven"://服务单的停单比例(%)
                 return $this->getLadderToMax($cofOld,$cofNow)*(-1);
@@ -435,7 +435,7 @@ class BossReviewCof
                 array('min'=>24,'value'=>0.725),
                 array('min'=>30,'value'=>0.8),
                 array('min'=>36,'value'=>0.875),
-                array('min'=>36,'value'=>0.95)
+                array('min'=>42,'value'=>0.95)
             );
         }
         foreach ($arr as $list){
@@ -446,13 +446,13 @@ class BossReviewCof
         return 1;
     }
 
-    //收款率係數 13 (特殊情況-1)
+    //收款率係數 13
     public function getSixCof($value){
         $value = floatval($value);
         $arr = array(
             array('min'=>89,'value'=>0),
-            array('min'=>90,'value'=>0.125),
-            array('min'=>92,'value'=>0.2),
+            array('min'=>90,'value'=>0.05),
+            array('min'=>92,'value'=>0.125),
             array('min'=>93,'value'=>0.2),
             array('min'=>95,'value'=>0.275),
             array('min'=>96,'value'=>0.35),

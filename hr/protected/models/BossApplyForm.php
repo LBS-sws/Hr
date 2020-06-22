@@ -344,8 +344,30 @@ class BossApplyForm extends CFormModel
             $this->id = Yii::app()->db->getLastInsertID();
         }
 
+        $this->sendEmail();//發送郵件
 		return true;
 	}
+
+    protected function sendEmail(){
+        if($this->status_type == 1){
+            $email = new Email();
+            $cityName = CGeneral::getCityName($this->city);
+            $description="老总年度考核申请 - ".$this->name."（".$cityName."）";
+            $subject=$description;
+            $message="<p>员工编号：".$this->code."</p>";
+            $message.="<p>员工姓名：".$this->name."</p>";
+            $message.="<p>员工城市：".$cityName."</p>";
+            $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
+            $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
+            $message.="<p>得分（C）项：".$this->results_c."</p>";
+            $message.="<p>总得分：".$this->results_sum."</p>";
+            $email->setDescription($description);
+            $email->setMessage($message);
+            $email->setSubject($subject);
+            $email->addEmailToPrefixNullCity('BA03');
+            $email->sent();
+        }
+    }
 
     private function lenStr($id){
         $code = strval($id);
