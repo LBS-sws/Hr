@@ -39,7 +39,7 @@ class ReviewAllotList extends CListPageModel
         }
         if($this->year_type===3){
             $month = intval(date("m"));
-            if(Yii::app()->params['retire']) {//非台灣版
+            if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])) {//非台灣版
                 if($month<3){
                     $this->year--;
                     $this->year_type = 1;
@@ -332,15 +332,15 @@ class ReviewAllotList extends CListPageModel
     }
 
     public function getYearTypeList($num=-1){
-        if(!Yii::app()->params['retire']){
-            $arr = array(
-                1=>Yii::t("fete","first half year"),
-                2=>Yii::t("fete","last half year")
-            );
-        }else{
+        if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
             $arr = array(
                 1=>Yii::t("contract","first half year"),
                 2=>Yii::t("contract","last half year")
+            );
+        }else{
+            $arr = array(
+                1=>Yii::t("fete","first half year"),
+                2=>Yii::t("fete","last half year")
             );
         }
 	    if($num === -1){

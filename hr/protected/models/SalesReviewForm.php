@@ -286,13 +286,13 @@ class SalesReviewForm extends CFormModel
     protected function resetYearList(){
 	    $year = $this->year;
 	    if($this->year_type == 1){
-            if(Yii::app()->params['retire']){//非台灣版
+            if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版
                 $this->year_list = array("$year"."/04","$year"."/05","$year"."/06","$year"."/07","$year"."/08","$year"."/09");
             }else{
                 $this->year_list = array("$year"."/01","$year"."/02","$year"."/03","$year"."/04","$year"."/05","$year"."/06");
             }
         }else{
-            if(Yii::app()->params['retire']){//非台灣版
+            if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版
                 $this->year_list = array("$year"."/10","$year"."/11","$year"."/12");
                 $year++;
                 $this->year_list = array_merge($this->year_list,array("$year"."/01","$year"."/02","$year"."/03"));

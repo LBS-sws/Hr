@@ -455,7 +455,7 @@ class ReviewHandleForm extends CFormModel
         }
         foreach ($rows as $row){
             if (key_exists("handle_id",$row)){
-                if(Yii::app()->params['retire']){ //台灣地區不發送郵件
+                if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){ //台灣地區不發送郵件
                     $email->addEmailToStaffId($row['handle_id']);//添加考核人郵箱
                 }
             }
@@ -503,7 +503,7 @@ class ReviewHandleForm extends CFormModel
         $email->setDescription($description);
         $email->setMessage($message);
         $email->setSubject($subject);
-        if(Yii::app()->params['retire']){ //台灣地區
+        if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){ //台灣地區
             $email->addEmailToStaffId($this->employee_id);//添加備考人郵箱
         }else{
             $email->addEmailOnlyRetire();//,统一发至中央资源部

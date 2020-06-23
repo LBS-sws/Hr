@@ -115,7 +115,7 @@ class ReviewAllotForm extends CFormModel
             }else{
                 switch ($this->review_type){
                     case 2://技術員
-                        if(Yii::app()->params['retire']){//非台灣版
+                        if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版
                             if($this->year_type == 1){
                                 $startTime = $this->year."/04";
                                 $endTime = $this->year."/09";
@@ -145,15 +145,12 @@ class ReviewAllotForm extends CFormModel
                                 }
                             }
                         }else{
-                            if(Yii::app()->params['retire']){//非台灣版必須分組
+                            if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版必須分組
                                 $message = $this->getReviewStr($this->review_type)."：该员工未销售分组，无法分配";
                                 $this->addError($attribute,$message);
                             }
                         }
                         break;
-                }
-                if($this->review_type == 3&&Yii::app()->params['retire']){
-                }elseif ($this->review_type == 2&&$this->year>=2020){ //計算員工請了幾天假期
                 }
             }
         }else{
@@ -174,15 +171,16 @@ class ReviewAllotForm extends CFormModel
 	public function returnChangeReviewType(){
 	    $html='';
 	    $className = get_class($this);
+	    $bool = Yii::app()->params['retire']||!isset(Yii::app()->params['retire']);
 	    if(in_array($this->review_type,array(2,3))){
 	        $change_num = '';
 	        $arr = array("readonly"=>$this->getReadonly(),"min"=>0,"id"=>"changeTwo","data-change"=>"two");
 	        if($this->review_type == 3){
 	            $arr["max"] = 10;
 	            $arr["data-change"] = "three";
-	            $arr["readonly"] = (Yii::app()->params['retire']||$this->getReadonly())?true:false;
+	            $arr["readonly"] = ($bool||$this->getReadonly())?true:false;
             }elseif ($this->year>=2020){
-                $arr["readonly"] = (Yii::app()->params['retire']||$this->getReadonly())?true:false;
+                $arr["readonly"] = ($bool||$this->getReadonly())?true:false;
             }
             if(!empty($this->change_num)){
                 if($this->review_type == 3){
@@ -378,7 +376,7 @@ class ReviewAllotForm extends CFormModel
         }
 
         if($this->change_num === null&&$this->review_type == 2){
-            if(Yii::app()->params['retire']){
+            if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
                 if($this->year_type == 1){
                     $startTime = $this->year."/04";
                     $endTime = $this->year."/09";
@@ -418,7 +416,7 @@ class ReviewAllotForm extends CFormModel
                     }
                 }
             }else{
-                if(Yii::app()->params['retire']){//非台灣版必須分組
+                if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版必須分組
                     $this->change_num = "-1";
                     Dialog::message(Yii::t('dialog','Validation Message'), "该员工未销售分组，无法分配");
                 }
@@ -666,7 +664,7 @@ class ReviewAllotForm extends CFormModel
                     'lcu'=>Yii::app()->user->id,
                 ));
             }
-            if(Yii::app()->params['retire']){ //(台灣版不需要發送郵件)
+            if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){ //(台灣版不需要發送郵件)
                 $email->sent();
             }
         }
