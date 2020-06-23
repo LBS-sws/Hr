@@ -531,11 +531,11 @@ class ReviewSearchForm extends CFormModel
         if($this->status_type==3&&$bool){
             switch ($this->review_type){
                 case 2:
-                    $footList[] = array("code"=>"F","name"=>Yii::t("contract","Percentage Sum")."（E*85%）","list"=>array());
+                    $footList[] = array("code"=>"F","pre"=>0.85,"name"=>Yii::t("contract","Percentage Sum")."（E*85%）","list"=>array());
                     break;
                 case 4:
                     if(!empty($this->with_foot["sumNum"][0])){ //含有四有
-                        $footList[] = array("code"=>"F","name"=>Yii::t("contract","Percentage Sum")."（E*90%）","list"=>array());
+                        $footList[] = array("code"=>"F","pre"=>0.9,"name"=>Yii::t("contract","Percentage Sum")."（E*90%）","list"=>array());
                     }
                     break;
             }
@@ -565,17 +565,25 @@ class ReviewSearchForm extends CFormModel
                 }
             }
         }
+        $sum = 0;
         foreach ($footList as $list){
             $html.="<tr>";
             $html.="<th>".$list["code"]."</th>";
             $html.="<th>".$list["name"]."</th>";
-            $sum = 0;
+            if($list["code"]!=="F"){
+                $sum = 0;
+            }
             foreach($list["list"] as $item){
                 $html.="<th>".$item."</th>";
-                $sum+=floatval($item);
+                if($list["code"]!=="F"){
+                    $sum+=floatval($item);
+                }
             }
             if(strstr($item,"%")){
                 $sum.="%";
+            }
+            if($list["code"]=="F"){
+                $sum =round($sum*$list["pre"],2);
             }
             $html.="<th>".$sum."</th>";
             $html.="</tr>";

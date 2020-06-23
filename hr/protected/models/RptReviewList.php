@@ -31,9 +31,17 @@ class RptReviewList extends CReport {
         $year_type = $this->criteria['YEARTYPE'];
         $dateTime = ReviewAllotList::getReviewDateTime($year,$year_type);
         if($year_type == 1){
-            $year_period = "$year 4月 - $year 9月";
+            if(Yii::app()->params['retire']===false){
+                $year_period = "$year 1月 - $year 6月";
+            }else{
+                $year_period = "$year 4月 - $year 9月";
+            }
         }else{
-            $year_period = "$year 10月 - ".($year+1)." 3月";
+            if(Yii::app()->params['retire']===false){
+                $year_period = "$year 7月 - ".($year+1)." 12月";
+            }else{
+                $year_period = "$year 10月 - ".($year+1)." 3月";
+            }
         }
 
 		$city = $this->criteria['CITY'];
