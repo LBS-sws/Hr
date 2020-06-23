@@ -113,6 +113,10 @@ class ReviewAllotForm extends CFormModel
                 $message = $this->getReviewStr($this->review_type).Yii::t('contract',' can not be empty');
                 $this->addError($attribute,$message);
             }else{
+                if(Yii::app()->params['retire']===false || $this->year<2020){ //台灣地區或者2020年以前可以手動修改
+                    $this->change_num = empty($this->change_num)?0:$this->change_num;
+                    return true;
+                }
                 switch ($this->review_type){
                     case 2://技術員
                         if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版
@@ -128,6 +132,7 @@ class ReviewAllotForm extends CFormModel
                                 ->from("hr_employee_leave a")
                                 ->leftJoin("hr_vacation b","a.vacation_id = b.id")
                                 ->where("a.employee_id= :id and a.status = 4 and b.sub_bool = 1 $dateSql",array(":id"=>$this->employee_id))->queryScalar();
+                            $this->change_num = empty($this->change_num)?0:$this->change_num;
                         }
                         break;
                     case 3://銷售
@@ -399,6 +404,7 @@ class ReviewAllotForm extends CFormModel
                 ->leftJoin("hr_vacation b","a.vacation_id = b.id")
                 ->where("a.employee_id= :id and a.status = 4 and b.sub_bool = 1 $dateSql",array(":id"=>$this->employee_id))->queryScalar();
             //var_dump($this->change_num);
+            $this->change_num = empty($this->change_num)?0:$this->change_num;
         }
 
         if($this->review_type == 3){
