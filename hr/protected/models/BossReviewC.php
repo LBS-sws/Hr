@@ -93,7 +93,7 @@ class BossReviewC
     }
 
     public function getTableHtml(){
-        $html="<p>&nbsp;</p><div class='col-lg-10 col-lg-offset-1'>";
+        $html="<p>&nbsp;</p><div class='col-lg-12'>";
         $html.="<p><b>".Yii::t("contract","table_remark_0")."</b></p>";
         $html.="<p>".Yii::t("contract","table_remark_1")."</p>";
         $html.="<p>".Yii::t("contract","table_remark_2")."</p>";
@@ -101,7 +101,7 @@ class BossReviewC
         $html.="<p>".Yii::t("contract","table_remark_4")."</p>";
         $html.="<p>".Yii::t("contract","table_remark_5")."</p>";
         $html.="</div>";
-        $html.="<div class='form-group'><div class='col-lg-10 col-lg-offset-1'><table id='table_three' class='table table-bordered table-striped'>";
+        $html.="<div class='form-group'><div class='col-lg-12'><table id='table_three' class='table table-bordered table-striped'>";
         $html.="<thead><tr>";
         $html.="<th width='28%'>".Yii::t("contract","three_one")."</th>";
         $html.="<th width='28%'>".Yii::t("contract","three_two")."</th>";

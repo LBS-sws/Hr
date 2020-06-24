@@ -14,24 +14,24 @@ class BossReviewB extends BossReview
             array('value'=>'two_one','name'=>Yii::t("contract","two_one")),//优化人才评核
             array('value'=>'two_two','name'=>Yii::t("contract","two_two")),//月报表分数
             array('value'=>'two_three','name'=>Yii::t("contract","two_three")),//质检拜访量
-            array('value'=>'two_four','name'=>Yii::t("contract","two_four")),//高效客诉解决效率
+            array('value'=>'two_four','name'=>Yii::t("contract","two_four"),'pro_str'=>"%"),//高效客诉解决效率
             array('value'=>'two_five','name'=>Yii::t("contract","two_five")),//总经理回馈次数
-            array('value'=>'two_six','name'=>Yii::t("contract","two_six")),//提交销售5步曲数量培训销售部分
-            array('value'=>'two_seven','name'=>Yii::t("contract","two_seven"))//提交销售5步曲数量培训销售经理部分
+            array('value'=>'two_six','name'=>Yii::t("contract","two_six"),'pro_str'=>"%"),//提交销售5步曲数量培训销售部分
+            array('value'=>'two_seven','name'=>Yii::t("contract","two_seven"),'pro_str'=>"%")//提交销售5步曲数量培训销售经理部分
         );
     }
 
     protected function setListY(){
         $this->listY = array(
-            array('value'=>'two_1','name'=>($this->audit_year-1).Yii::t("contract","one_1"),'function'=>"getOldYear","width"=>"120px"),//2018年度数据
-            array('value'=>'two_2','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px"),//预计2019年目标数据
+            array('value'=>'two_1','name'=>($this->audit_year-1).Yii::t("contract","one_1"),'function'=>"getOldYear","width"=>"120px",'pro_str'=>"%"),//2018年度数据
+            array('value'=>'two_2','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px",'pro_str'=>"%"),//预计2019年目标数据
             array('value'=>'two_3','name'=>Yii::t("contract","one_5"),'function'=>"getPlanYearCof","width"=>"100px"),//系数
-            array('value'=>'two_4','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px"),//2019年实际达成数据
+            array('value'=>'two_4','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px",'pro_str'=>"%"),//2019年实际达成数据
             array('value'=>'two_5','name'=>Yii::t("contract","one_8"),'function'=>"getLadderDiffer","width"=>"100px"),//阶梯落差
             array('value'=>'two_6','name'=>Yii::t("contract","one_9"),'function'=>"getLadderCof","width"=>"100px"),//落差系数
             array('value'=>'two_7','name'=>Yii::t("contract","one_10"),'function'=>"getNowCof","width"=>"100px"),//实际系数
-            array('value'=>'two_8','name'=>Yii::t("contract","one_11"),'function'=>"getSumRate","width"=>"100px"),//占比（%）
-            array('value'=>'two_9','name'=>Yii::t("contract","three_four"),'function'=>"getSumNumber","width"=>"100px"),//得分
+            array('value'=>'two_8','name'=>Yii::t("contract","one_11"),'function'=>"getSumRate","width"=>"100px",'static_str'=>"%"),//占比（%）
+            array('value'=>'two_9','name'=>Yii::t("contract","three_four"),'function'=>"getSumNumber","width"=>"100px",'static_str'=>"%"),//得分
             array('value'=>'two_10','name'=>Yii::t("contract","Remark"),'function'=>"getRemark","width"=>"160px")//备注
         );
     }
@@ -77,6 +77,9 @@ class BossReviewB extends BossReview
             $html ="<input type='number' name='$name' value='$value' data-name='$type' $ready class='form-control planYearB'/>";
         }
 
+        if(in_array($type,array("two_four","two_six","two_seven"))){
+            $html="<div class='input-group'>$html<span class='input-group-addon'>%</span></div>";
+        }
         $this->json_text[$type][$str] = $value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$html);
     }

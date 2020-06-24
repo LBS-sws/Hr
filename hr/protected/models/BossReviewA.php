@@ -16,26 +16,26 @@ class BossReviewA extends BossReview
             array('value'=>'one_three','name'=>Yii::t("contract","one_three")),//年新业务生意额目标
             array('value'=>'one_four','name'=>Yii::t("contract","one_four")),//IA服务生意年金额
             array('value'=>'one_five','name'=>Yii::t("contract","one_five")),//IB服务生意年金额
-            array('value'=>'one_six','name'=>Yii::t("contract","one_six")),//收款率(%)
-            array('value'=>'one_seven','name'=>Yii::t("contract","one_seven")),//服务单的停单比例(%)
+            array('value'=>'one_six','name'=>Yii::t("contract","one_six"),'pro_str'=>"%"),//收款率(%)
+            array('value'=>'one_seven','name'=>Yii::t("contract","one_seven"),'pro_str'=>"%"),//服务单的停单比例(%)
             array('value'=>'one_eight','name'=>Yii::t("contract","one_eight"))//技术员每月平均生产力
         );
     }
 
     protected function setListY(){
         $this->listY = array(
-            array('value'=>'one_1','name'=>($this->audit_year-1).Yii::t("contract","one_1"),'function'=>"getOldYear","width"=>"120px"),//2018年度数据
-            array('value'=>'one_2','name'=>($this->audit_year-1).Yii::t("contract","one_2"),'function'=>"getOldAgoYear","width"=>"160px"),//2018年度增长百分比
-            array('value'=>'one_3','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px"),//预计2019年目标数据
-            array('value'=>'one_4','name'=>Yii::t("contract","one_4"),'function'=>"getPlanYearRate","width"=>"140px"),//预计增长百分比
+            array('value'=>'one_1','name'=>($this->audit_year-1).Yii::t("contract","one_1"),'function'=>"getOldYear","width"=>"120px",'pro_str'=>"%"),//2018年度数据
+            array('value'=>'one_2','name'=>($this->audit_year-1).Yii::t("contract","one_2"),'function'=>"getOldAgoYear","width"=>"160px",'static_str'=>"%"),//2018年度增长百分比
+            array('value'=>'one_3','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px",'pro_str'=>"%"),//预计2019年目标数据
+            array('value'=>'one_4','name'=>Yii::t("contract","one_4"),'function'=>"getPlanYearRate","width"=>"120px",'static_str'=>"%"),//预计增长百分比
             array('value'=>'one_5','name'=>Yii::t("contract","one_5"),'function'=>"getPlanYearCof","width"=>"100px"),//系数
-            array('value'=>'one_6','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px"),//2019年实际达成数据
-            array('value'=>'one_7','name'=>Yii::t("contract","one_7"),'function'=>"getNowYearRate","width"=>"160px"),//实际达成百分比
+            array('value'=>'one_6','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px",'pro_str'=>"%"),//2019年实际达成数据
+            array('value'=>'one_7','name'=>Yii::t("contract","one_7"),'function'=>"getNowYearRate","width"=>"120px",'static_str'=>"%"),//实际达成百分比
             array('value'=>'one_8','name'=>Yii::t("contract","one_8"),'function'=>"getLadderDiffer","width"=>"100px"),//阶梯落差
             array('value'=>'one_9','name'=>Yii::t("contract","one_9"),'function'=>"getLadderCof","width"=>"100px"),//落差系数
             array('value'=>'one_10','name'=>Yii::t("contract","one_10"),'function'=>"getNowCof","width"=>"100px"),//实际系数
-            array('value'=>'one_11','name'=>Yii::t("contract","one_11"),'function'=>"getSumRate","width"=>"100px"),//占比（%）
-            array('value'=>'one_12','name'=>Yii::t("contract","three_four"),'function'=>"getSumNumber","width"=>"100px"),//得分
+            array('value'=>'one_11','name'=>Yii::t("contract","one_11"),'function'=>"getSumRate","width"=>"100px",'static_str'=>"%"),//占比（%）
+            array('value'=>'one_12','name'=>Yii::t("contract","three_four"),'function'=>"getSumNumber","width"=>"100px",'static_str'=>"%"),//得分
             array('value'=>'one_13','name'=>Yii::t("contract","Remark"),'function'=>"getRemark","width"=>"160px")//备注
         );
     }
@@ -122,6 +122,9 @@ class BossReviewA extends BossReview
             $html ="<input type='number' name='$name' value='' data-name='$type' $ready class='form-control planYearA'/>";
         }else{
             $html ="<input type='number' name='$name' value='$value' data-name='$type' $ready class='form-control planYearA'/>";
+        }
+        if(in_array($type,array("one_six","one_seven"))){
+            $html="<div class='input-group'>$html<span class='input-group-addon'>%</span></div>";
         }
 
         $this->json_text[$type][$str] = $value;

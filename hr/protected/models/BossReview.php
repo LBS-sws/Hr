@@ -94,6 +94,11 @@ class BossReview
             foreach ($this->listY as $key => $listY){
                 if($this->searchBool){
                     $searchText = !isset($this->json_text[$listX["value"]][$listY["value"]])?0:$this->json_text[$listX["value"]][$listY["value"]];
+                    if(isset($listY["static_str"])&&$searchText!=="\\"){
+                        $searchText.=$listY["static_str"];
+                    }elseif(isset($listY["pro_str"])&&isset($listX["pro_str"])&&$listX["pro_str"]==$listY["pro_str"]){
+                        $searchText.=$listY["pro_str"];
+                    }
                     $html.="<td>".$searchText."</td>";
                     continue;
                 }
@@ -279,10 +284,17 @@ class BossReview
 
     //員工考核分數
     public function valueStaffReview($employee_id,$year){
-        $row = Yii::app()->db->createCommand()->select("sum(review_sum)")->from("hr_review")
+        $sum = 0;
+        $rows = Yii::app()->db->createCommand()->select("review_sum")->from("hr_review")
             ->where("status_type=3 and employee_id=:employee_id and year=:year",array(":year"=>$year,":employee_id"=>$employee_id))
-            ->queryScalar();
-        return empty($row)?0:$row;
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $sum+=floatval($row["review_sum"]);
+            }
+            $sum = $sum/count($rows);
+        }
+        return $sum;
     }
 
     //总经理回馈次数

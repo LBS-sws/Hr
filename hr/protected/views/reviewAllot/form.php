@@ -162,7 +162,7 @@ $js = "
     $('#changeTwo').keyup(function(){
         var value = $(this).val();
         var change = $(this).data('change');
-        if(value!=''){
+        if(!isNaN(value)){
             if(change == 'three'){
                 value *=10;
                 value = parseFloat(value).toFixed(2);
@@ -173,6 +173,7 @@ $js = "
             $('#change_value').val(value);
         }
     });
+    $('#changeTwo').trigger('keyup');
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
