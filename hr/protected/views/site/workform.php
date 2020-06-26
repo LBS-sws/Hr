@@ -158,7 +158,7 @@
                 success: function(data){
                     if(data.status == 1){
                         $("#work_time_div").html(data.html);
-                        $('.changeDateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+                        $('.changeDateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: '<?php echo Yii::app()->language;?>'});
                     }else{
                         $("#work_time_div").html("");
                     }
@@ -177,7 +177,7 @@
             html = html.replace(/#hours_end#/g, "WorkForm[addTime]["+num+"][hours_end]");
             html = "<tr>"+html+"</tr>";
             tBody.append(html);
-            $('.changeDateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+            $('.changeDateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: '<?php echo Yii::app()->language;?>'});
         });
 
         $('#work_time_div').delegate(".delWages","click",function () {

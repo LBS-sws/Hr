@@ -69,7 +69,7 @@
             var html = $("#leaveTrModel").html();
             html = html.replace(/#key#/g, "LeaveForm[addTime]["+num+"]");
             html = $("<tr>"+html+"</tr>");
-            html.find('.dateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+            html.find('.dateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: '<?php echo Yii::app()->language;?>'});
             tBody.append(html);
         });
 
@@ -84,7 +84,7 @@
             $(this).parents("tr:first").remove();
         });
 
-        $('.dateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+        $('.dateTime').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: '<?php echo Yii::app()->language;?>'});
 
 
         $('#addTimeTable').delegate(".s_time,.e_time,.s_long,.e_long",'change',function(){
