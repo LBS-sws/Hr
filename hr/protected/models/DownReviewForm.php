@@ -230,6 +230,7 @@ class DownReviewForm {
 
 
     protected function setRowBody(){
+        $remarkStr = $this->getStrToNum($this->end_num+1);
         foreach ($this->model->tem_s_ist as $set_id => $proRow){
             $footArr = array(
                 'sum'=>array(),
@@ -262,11 +263,16 @@ class DownReviewForm {
                 $this->setRowContent("A".$this->row,$key);
                 $this->setRowContent("B".$this->row,$row["name"]);
                 $sum = 0;
+                $remark='';
                 foreach ($this->review_rows as $i=>$reviewRow){
                     $str = $this->getStrToNum($i+2);
                     if($reviewRow["show_bool"]){
                         $value = $reviewRow["tem_s_ist"][$set_id]['list'][$row['id']]["value"];
                         $value*=$proRow['num_ratio'];
+                        if(isset($reviewRow["tem_s_ist"][$set_id]['list'][$row['id']]["remark"])){
+                            $remark.=$remark==""?"":"\n";
+                            $remark.=$reviewRow["handle_name"]."：".$reviewRow["tem_s_ist"][$set_id]['list'][$row['id']]["remark"];
+                        }
                     }else{
                         $value = 0;
                     }
@@ -276,6 +282,8 @@ class DownReviewForm {
                     $this->setBoxStyle($str.$this->row,false,0,"center");//
                 }
                 $this->setRowContent($this->end_str.$this->row,$sum);//總分
+                $this->setRowContent($remarkStr.$this->row,$remark);//備註
+                $this->objPHPExcel->getActiveSheet()->getStyle($remarkStr.$this->row)->getAlignment()->setWrapText(true);
                 $this->setBoxStyle($this->end_str.$this->row,false,0,"center");//
             }
 
