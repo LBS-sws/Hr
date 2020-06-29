@@ -29,6 +29,10 @@ class Email {
         $this->subject = $subject;
     }
 
+    public function getSubject(){
+        return $this->subject;
+    }
+
     public function getToAddr(){
         return $this->to_addr;
     }
@@ -446,6 +450,15 @@ class Email {
         }
 
         return $cityList;
+    }
+
+    //需要添加額外郵箱地址(支點郵件通知)
+    public function addSupportPreEmailToEmployeeId($employee_id){
+        $row = Yii::app()->db->createCommand()->select("support_city")->from("hr_apply_support_email")
+            ->where("employee_id=:id",array(":id"=>$employee_id))->queryRow();
+        if($row){
+            $this->addEmailToPrefixAndOnlyCity("AY01",$row["support_city"]);
+        }
     }
 
     //中央支援郵箱，需要添加額外郵箱地址

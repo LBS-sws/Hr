@@ -595,5 +595,7 @@ return array(
     'table_remark_3'=>'3.創新管理團隊的方法',
     'table_remark_4'=>'4.創新優化集團現有系統，提高運營效率',
     'table_remark_5'=>'5.客戶質量的把控和優化',
+
+    'support city'=>'支點城市',
     );
 ?>

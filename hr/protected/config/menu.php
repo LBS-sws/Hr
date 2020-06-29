@@ -5,35 +5,43 @@ return array(
 		'access'=>'ZA',
 		'icon'=>'fa-pencil-square-o',
 		'items'=>array(
+		    //公司资料
             'Company Info'=>array(
                 'access'=>'ZA02',
                 'url'=>'/company/index',
             ),
+            //配置工资单
             'Wages Config'=>array(
                 'access'=>'ZA03',
                 'url'=>'/wages/index',
             ),
+            //制作工资单
             'Wages Make'=>array(
                 'access'=>'ZA04',
                 'url'=>'/makeWages/index',
             ),
+            //加班申请
             'apply for work overtime'=>array(
                 'access'=>'ZA05',
                 'url'=>'/work/index',
             ),
+            //请假申请
             'Application for leave'=>array(
                 'access'=>'ZA06',
                 'url'=>'/leave/index',
             ),
+            //奖金申请
             'Reward Apply'=>array(
                 'access'=>'ZA07',
                 'url'=>'/reward/index',
             ),
+            //加班审核
             'audit for work overtime'=>array(
                 'access'=>'ZA08',
                 //'url'=>'/employer/index',
                 'url'=>'/auditWork/index?only=1',
             ),
+            //请假审核
             'audit for leave'=>array(
                 'access'=>'ZA09',
                 'url'=>'/auditLeave/index?only=1',
@@ -45,18 +53,22 @@ return array(
 		'access'=>'ZD',
 		'icon'=>'fa-file-pdf-o',
 		'items'=>array(
+            //补充协议
 			'Supplemental Agreement'=>array(
 				'access'=>'ZD03',
 				'url'=>'/agreement/index',
 			),
+            //合同文档
 			'Contract Word'=>array(
 				'access'=>'ZD01',
 				'url'=>'/word/index',
 			),
+            //合同模板列表
 			'Contract List'=>array(
 				'access'=>'ZD02',
 				'url'=>'/contract/index',
 			),
+            //常用表格下载
             'Common forms download'=>array(
                 'access'=>'ZD04',//YB07
                 'url'=>'/downForm/index',
@@ -88,18 +100,22 @@ return array(
 				'access'=>'ZE04',
 				'url'=>'/history/index',
 			),
+            //加班审核
             'audit for work overtime'=>array(
                 'access'=>'ZE05',
                 'url'=>'/auditWork/index?only=2',
             ),
+            //请假审核
             'audit for leave'=>array(
                 'access'=>'ZE06',
                 'url'=>'/auditLeave/index?only=2',
             ),
+            //技术员评估
             'Staff appraisal'=>array(
                 'access'=>'ZE07',
                 'url'=>'/assess/index',
             ),
+            //锦旗列表
             'Pennants List'=>array(
                 'access'=>'ZE08',
                 'url'=>'/prize/index',
@@ -126,19 +142,23 @@ return array(
 				'access'=>'ZG03',
 				'url'=>'/auditWages/index',
 			),
+            //加班审核
             'audit for work overtime'=>array(
                 'access'=>'ZG04',
                 //'url'=>'/employer/index',
                 'url'=>'/auditWork/index?only=3',
             ),
+            //请假审核
             'audit for leave'=>array(
                 'access'=>'ZG05',
                 'url'=>'/auditLeave/index?only=3',
             ),
+            //奖金审核
             'Reward Audit'=>array(
                 'access'=>'ZG06',
                 'url'=>'/auditReward/index',
             ),
+            //锦旗审核
             'Pennants Audit'=>array(
                 'access'=>'ZG07',
                 'url'=>'/auditPrize/index',
@@ -237,6 +257,10 @@ return array(
             'Search support employee'=>array( //員工支援概況
                 'access'=>'AY04',
                 'url'=>'/SupportEmployee/index',
+            ),
+            'Email support employee'=>array( //員工支點分配
+                'access'=>'AY05',
+                'url'=>'/SupportEmail/index',
             ),
         ),
     ),

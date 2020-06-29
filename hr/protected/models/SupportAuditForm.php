@@ -709,6 +709,14 @@ class SupportAuditForm extends CFormModel
 
                     break;
                 case 5://待評分
+                    //後續要求 - 給支點發送郵件（開始）
+                    $email->setSubject("通知：员工（".$this->employee_name."）支援到".$this->city_name);
+                    $email->setMessage($messagePre);
+                    $email->resetToAddr();
+                    $email->addSupportPreEmailToEmployeeId($this->employee_id);
+                    $email->sent();
+                    $email->resetToAddr();
+                    //後續要求 - 給支點發送郵件（結束）
                     $email->setSubject("支援单（".$this->support_code."） - 待評分");
                     $status_remark = $this->audit_remark;
                     $message.= "审核备注:$status_remark<br>";

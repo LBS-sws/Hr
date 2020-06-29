@@ -171,6 +171,8 @@ return array(
     'Boss Apply'=>'申請年度考核',
     'Boss Search'=>'查詢年度考核',
     'Boss Audit'=>'審批年度考核',
+
+    'Email support employee'=>'員工支點分配',
 //沈超添加結束
 );
 ?>

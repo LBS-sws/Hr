@@ -600,5 +600,7 @@ return array(
     'table_remark_3'=>'3.创新管理团队的方法',
     'table_remark_4'=>'4.创新优化集团现有系统，提高运营效率',
     'table_remark_5'=>'5.客户质量的把控和优化',
+
+    'support city'=>'支点城市',
 );
 ?>
