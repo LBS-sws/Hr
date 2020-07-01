@@ -173,6 +173,7 @@ return array(
     'Boss Audit'=>'審批年度考核',
 
     'Email support employee'=>'員工支點分配',
+    'Setting KPI'=>'KPI設置',
 //沈超添加結束
 );
 ?>

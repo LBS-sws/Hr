@@ -220,6 +220,11 @@ return array(
                 'access'=>'BA03',
                 'url'=>'/bossAudit/index',
             ),
+            //KPI設置
+            'Setting KPI'=>array(
+                'access'=>'BA04',
+                'url'=>'/bossKPI/index',
+            ),
         ),
     ),
     //銷售評分

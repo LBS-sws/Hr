@@ -1,0 +1,569 @@
+/*
+Navicat MySQL Data Transfer
+
+Source Server         : localhost_3306
+Source Server Version : 50620
+Source Host           : localhost:3306
+Source Database       : hrdev
+
+Target Server Type    : MYSQL
+Target Server Version : 50620
+File Encoding         : 65001
+
+Date: 2020-07-01 17:36:12
+*/
+
+SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for hr_kpi
+-- ----------------------------
+DROP TABLE IF EXISTS `hr_kpi`;
+CREATE TABLE `hr_kpi` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `kpi_name` varchar(255) NOT NULL,
+  `kpi_str` varchar(255) DEFAULT NULL,
+  `rate_type` int(11) DEFAULT '0' COMMENT '百分比類型：0：不是  1：是',
+  `size_type` int(11) DEFAULT '0' COMMENT '0:小于等于  1：大于等于',
+  `sum_bool` int(11) NOT NULL DEFAULT '0' COMMENT '是否開啟金額分類0：否  1：是',
+  `luu` varchar(255) DEFAULT NULL,
+  `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='老總年度考核KPI配置';
+
+-- ----------------------------
+-- Records of hr_kpi
+-- ----------------------------
+INSERT INTO `hr_kpi` VALUES ('1', 'one_one', '年生意额增长目标', '0', '0', '1', '', '2020-07-01 15:59:52');
+INSERT INTO `hr_kpi` VALUES ('2', 'one_two', '年利润额增长目标', '0', '0', '1', null, '2020-07-01 15:49:55');
+INSERT INTO `hr_kpi` VALUES ('3', 'one_three', '年新业务生意额目标', '0', '0', '1', null, '2020-07-01 15:51:40');
+INSERT INTO `hr_kpi` VALUES ('4', 'one_four', 'IA服务生意年金额', '0', '0', '1', null, '2020-07-01 15:54:21');
+INSERT INTO `hr_kpi` VALUES ('5', 'one_five', 'IB服务生意年金额', '0', '0', '1', null, '2020-07-01 15:55:52');
+INSERT INTO `hr_kpi` VALUES ('6', 'one_six', '收款率', '1', '0', '0', '', '2020-07-01 15:59:50');
+INSERT INTO `hr_kpi` VALUES ('7', 'one_seven', '服务单的停单比例', '1', '1', '0', null, '2020-07-01 16:05:20');
+INSERT INTO `hr_kpi` VALUES ('8', 'one_eight', '技术员每月平均生产力', '0', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('9', 'two_one', '优化人才评核', '0', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('10', 'two_two', '月报表分数', '0', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('11', 'two_three', '质检拜访量', '0', '0', '1', null, '2020-07-01 16:11:02');
+INSERT INTO `hr_kpi` VALUES ('12', 'two_four', '高效客诉解决效率', '1', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('13', 'two_five', '总经理回馈次数', '0', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('14', 'two_six', '提交销售5步曲数量培训销售部分', '1', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('15', 'two_seven', '提交销售5步曲数量培训销售经理部分', '1', '0', '0', null, '2020-07-01 15:00:07');
+
+-- ----------------------------
+-- Table structure for hr_kpi_min
+-- ----------------------------
+DROP TABLE IF EXISTS `hr_kpi_min`;
+CREATE TABLE `hr_kpi_min` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `kpi_id` int(11) NOT NULL,
+  `sum_id` int(11) DEFAULT NULL,
+  `min_num` float(11,4) NOT NULL,
+  `kpi_value` float(11,4) NOT NULL,
+  `other_bool` int(2) DEFAULT '0' COMMENT '0:參與循環  1：其它',
+  `lcu` varchar(255) DEFAULT NULL,
+  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=484 DEFAULT CHARSET=utf8 COMMENT='根據最小值獲取唯一KPI';
+
+-- ----------------------------
+-- Records of hr_kpi_min
+-- ----------------------------
+INSERT INTO `hr_kpi_min` VALUES ('26', '1', '7', '-18.0000', '0.0000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('27', '1', '7', '-7.0000', '0.0500', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('28', '1', '7', '5.0000', '0.1250', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('29', '1', '7', '11.0000', '0.2000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('30', '1', '7', '17.0000', '0.2750', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('31', '1', '7', '23.0000', '0.3500', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('32', '1', '7', '29.0000', '0.4250', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('33', '1', '7', '35.0000', '0.5000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('34', '1', '7', '41.0000', '0.5750', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('35', '1', '7', '47.0000', '0.6500', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('36', '1', '7', '53.0000', '0.7250', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('37', '1', '7', '59.0000', '0.8000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('38', '1', '7', '71.0000', '0.8750', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('39', '1', '7', '83.0000', '0.9500', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('40', '1', '7', '0.0000', '1.0000', '1', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('41', '1', '8', '-24.0000', '0.0000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('42', '1', '8', '-15.0000', '0.0500', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('43', '1', '8', '-5.0000', '0.1250', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('44', '1', '8', '0.0000', '0.2000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('45', '1', '8', '5.0000', '0.2750', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('46', '1', '8', '10.0000', '0.3500', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('47', '1', '8', '15.0000', '0.4250', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_min` VALUES ('48', '1', '8', '20.0000', '0.5000', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('49', '1', '8', '25.0000', '0.5750', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('50', '1', '8', '30.0000', '0.6500', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('51', '1', '8', '35.0000', '0.7250', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('52', '1', '8', '40.0000', '0.8000', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('53', '1', '8', '50.0000', '0.8750', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('54', '1', '8', '60.0000', '0.9500', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('55', '1', '8', '0.0000', '1.0000', '1', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('56', '1', '9', '-19.0000', '0.0000', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('57', '1', '9', '-12.0000', '0.0500', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('58', '1', '9', '-4.0000', '0.1250', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('59', '1', '9', '0.0000', '0.2000', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('60', '1', '9', '4.0000', '0.2750', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('61', '1', '9', '8.0000', '0.3500', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('62', '1', '9', '11.0000', '0.4250', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('63', '1', '9', '15.0000', '0.5000', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('64', '1', '9', '19.0000', '0.5750', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('65', '1', '9', '23.0000', '0.6500', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('66', '1', '9', '27.0000', '0.7250', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('67', '1', '9', '31.0000', '0.8000', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('68', '1', '9', '39.0000', '0.8750', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('69', '1', '9', '47.0000', '0.9500', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('70', '1', '9', '0.0000', '1.0000', '1', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_min` VALUES ('71', '1', '10', '-7.0000', '0.0000', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('72', '1', '10', '-4.0000', '0.0500', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('73', '1', '10', '0.0000', '0.1250', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('74', '1', '10', '2.0000', '0.2000', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('75', '1', '10', '4.0000', '0.2750', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('76', '1', '10', '6.0000', '0.3500', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('77', '1', '10', '8.0000', '0.4250', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('78', '1', '10', '10.0000', '0.5000', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('79', '1', '10', '12.0000', '0.5750', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('80', '1', '10', '14.0000', '0.6500', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('81', '1', '10', '16.0000', '0.7250', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('82', '1', '10', '18.0000', '0.8000', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('83', '1', '10', '22.0000', '0.8750', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('84', '1', '10', '26.0000', '0.9500', '0', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('85', '1', '10', '0.0000', '1.0000', '1', null, '2020-07-01 15:46:08');
+INSERT INTO `hr_kpi_min` VALUES ('86', '2', '11', '-22.0000', '0.0000', '0', null, '2020-07-01 15:49:38');
+INSERT INTO `hr_kpi_min` VALUES ('87', '2', '11', '-11.0000', '0.0500', '0', null, '2020-07-01 15:49:38');
+INSERT INTO `hr_kpi_min` VALUES ('88', '2', '11', '1.0000', '0.1250', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('89', '2', '11', '6.0000', '0.2000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('90', '2', '11', '12.0000', '0.2750', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('91', '2', '11', '18.0000', '0.3500', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('92', '2', '11', '24.0000', '0.4250', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('93', '2', '11', '30.0000', '0.5000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('94', '2', '11', '36.0000', '0.5750', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('95', '2', '11', '42.0000', '0.6500', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('96', '2', '11', '48.0000', '0.7250', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('97', '2', '11', '54.0000', '0.8000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('98', '2', '11', '66.0000', '0.8750', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('99', '2', '11', '78.0000', '0.9500', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('100', '2', '11', '0.0000', '1.0000', '1', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('101', '2', '12', '-19.0000', '0.0000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('102', '2', '12', '-10.0000', '0.0500', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('103', '2', '12', '0.0000', '0.1250', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('104', '2', '12', '5.0000', '0.2000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('105', '2', '12', '10.0000', '0.2750', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('106', '2', '12', '15.0000', '0.3500', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('107', '2', '12', '20.0000', '0.4250', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('108', '2', '12', '25.0000', '0.5000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('109', '2', '12', '30.0000', '0.5750', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('110', '2', '12', '35.0000', '0.6500', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('111', '2', '12', '40.0000', '0.7250', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('112', '2', '12', '45.0000', '0.8000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('113', '2', '12', '50.0000', '0.8750', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('114', '2', '12', '55.0000', '0.9500', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_min` VALUES ('115', '2', '12', '0.0000', '1.0000', '1', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('116', '2', '13', '-15.0000', '0.0000', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('117', '2', '13', '-8.0000', '0.0500', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('118', '2', '13', '0.0000', '0.1250', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('119', '2', '13', '4.0000', '0.2000', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('120', '2', '13', '8.0000', '0.2750', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('121', '2', '13', '12.0000', '0.3500', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('122', '2', '13', '16.0000', '0.4250', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('123', '2', '13', '20.0000', '0.5000', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('124', '2', '13', '24.0000', '0.5750', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('125', '2', '13', '28.0000', '0.6500', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('126', '2', '13', '32.0000', '0.7250', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('127', '2', '13', '36.0000', '0.8000', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('128', '2', '13', '44.0000', '0.8750', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('129', '2', '13', '52.0000', '0.9500', '0', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('130', '2', '13', '0.0000', '1.0000', '1', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_min` VALUES ('131', '3', '14', '-7.0000', '0.0000', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('132', '3', '14', '0.0000', '0.1250', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('133', '3', '14', '4.0000', '0.2000', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('134', '3', '14', '8.0000', '0.2750', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('135', '3', '14', '12.0000', '0.3500', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('136', '3', '14', '16.0000', '0.4250', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('137', '3', '14', '20.0000', '0.5000', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('138', '3', '14', '24.0000', '0.5750', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('139', '3', '14', '28.0000', '0.6500', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('140', '3', '14', '32.0000', '0.7250', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('141', '3', '14', '36.0000', '0.8000', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('142', '3', '14', '44.0000', '0.8750', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('143', '3', '14', '52.0000', '0.9500', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_min` VALUES ('144', '3', '14', '0.0000', '1.0000', '1', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('145', '3', '15', '-11.0000', '0.0000', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('146', '3', '15', '-4.0000', '0.1250', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('147', '3', '15', '-1.0000', '0.2000', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('148', '3', '15', '3.0000', '0.2750', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('149', '3', '15', '7.0000', '0.3500', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('150', '3', '15', '11.0000', '0.4250', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('151', '3', '15', '15.0000', '0.5000', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('152', '3', '15', '19.0000', '0.5750', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('153', '3', '15', '23.0000', '0.6500', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('154', '3', '15', '27.0000', '0.7250', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('155', '3', '15', '31.0000', '0.8000', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('156', '3', '15', '39.0000', '0.8750', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('157', '3', '15', '47.0000', '0.9500', '0', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('158', '3', '15', '0.0000', '1.0000', '1', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_min` VALUES ('159', '4', '16', '-7.0000', '0.0000', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('160', '4', '16', '0.0000', '0.1250', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('161', '4', '16', '4.0000', '0.2000', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('162', '4', '16', '8.0000', '0.2750', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('163', '4', '16', '12.0000', '0.3500', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('164', '4', '16', '16.0000', '0.4250', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('165', '4', '16', '20.0000', '0.5000', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('166', '4', '16', '24.0000', '0.5750', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('167', '4', '16', '28.0000', '0.6500', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('168', '4', '16', '32.0000', '0.7250', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('169', '4', '16', '36.0000', '0.8000', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('170', '4', '16', '44.0000', '0.8750', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('171', '4', '16', '52.0000', '0.9500', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('172', '4', '16', '0.0000', '1.0000', '1', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_min` VALUES ('173', '4', '17', '-11.0000', '0.0000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('174', '4', '17', '-4.0000', '0.1250', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('175', '4', '17', '-1.0000', '0.2000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('176', '4', '17', '3.0000', '0.2750', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('177', '4', '17', '7.0000', '0.3500', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('178', '4', '17', '11.0000', '0.4250', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('179', '4', '17', '15.0000', '0.5000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('180', '4', '17', '19.0000', '0.5750', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('181', '4', '17', '23.0000', '0.6500', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('182', '4', '17', '27.0000', '0.7250', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('183', '4', '17', '31.0000', '0.8000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('184', '4', '17', '39.0000', '0.8750', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('185', '4', '17', '47.0000', '0.9500', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('186', '4', '17', '0.0000', '1.0000', '1', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('187', '4', '18', '-15.0000', '0.0000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('188', '4', '18', '-8.0000', '0.1250', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('189', '4', '18', '-2.0000', '0.2000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('190', '4', '18', '1.0000', '0.2750', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('191', '4', '18', '4.0000', '0.3500', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('192', '4', '18', '7.0000', '0.4250', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('193', '4', '18', '10.0000', '0.5000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('194', '4', '18', '13.0000', '0.5750', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('195', '4', '18', '16.0000', '0.6500', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('196', '4', '18', '19.0000', '0.7250', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('197', '4', '18', '22.0000', '0.8000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_min` VALUES ('198', '4', '18', '28.0000', '0.8750', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('199', '4', '18', '34.0000', '0.9500', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('200', '4', '18', '0.0000', '1.0000', '1', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('201', '4', '19', '-2.0000', '0.0000', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('202', '4', '19', '0.0000', '0.1250', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('203', '4', '19', '1.0000', '0.2000', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('204', '4', '19', '2.0000', '0.2750', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('205', '4', '19', '4.0000', '0.3500', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('206', '4', '19', '6.0000', '0.4250', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('207', '4', '19', '8.0000', '0.5000', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('208', '4', '19', '10.0000', '0.5750', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('209', '4', '19', '12.0000', '0.6500', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('210', '4', '19', '14.0000', '0.7250', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('211', '4', '19', '16.0000', '0.8000', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('212', '4', '19', '19.0000', '0.8750', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('213', '4', '19', '22.0000', '0.9500', '0', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('214', '4', '19', '0.0000', '1.0000', '1', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_min` VALUES ('215', '5', '20', '-23.0000', '0.0000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('216', '5', '20', '-10.0000', '0.0500', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('217', '5', '20', '4.0000', '0.1250', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('218', '5', '20', '11.0000', '0.2000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('219', '5', '20', '18.0000', '0.2750', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('220', '5', '20', '25.0000', '0.3500', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('221', '5', '20', '33.0000', '0.4250', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('222', '5', '20', '40.0000', '0.5000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('223', '5', '20', '47.0000', '0.5750', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('224', '5', '20', '54.0000', '0.6500', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('225', '5', '20', '61.0000', '0.7250', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('226', '5', '20', '68.0000', '0.8000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('227', '5', '20', '82.0000', '0.8750', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('228', '5', '20', '95.0000', '0.9500', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('229', '5', '20', '0.0000', '1.0000', '1', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('230', '5', '21', '-13.0000', '0.0000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('231', '5', '21', '-4.0000', '0.0500', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('232', '5', '21', '6.0000', '0.1250', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('233', '5', '21', '11.0000', '0.2000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('234', '5', '21', '16.0000', '0.2750', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('235', '5', '21', '21.0000', '0.3500', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('236', '5', '21', '26.0000', '0.4250', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('237', '5', '21', '30.0000', '0.5000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_min` VALUES ('238', '5', '21', '35.0000', '0.5750', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('239', '5', '21', '40.0000', '0.6500', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('240', '5', '21', '44.0000', '0.7250', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('241', '5', '21', '49.0000', '0.8000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('242', '5', '21', '59.0000', '0.8750', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('243', '5', '21', '69.0000', '0.9500', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('244', '5', '21', '0.0000', '1.0000', '1', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('245', '5', '22', '-15.0000', '0.0000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('246', '5', '22', '-8.0000', '0.0500', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('247', '5', '22', '0.0000', '0.1250', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('248', '5', '22', '4.0000', '0.2000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('249', '5', '22', '8.0000', '0.2750', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('250', '5', '22', '12.0000', '0.3500', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('251', '5', '22', '16.0000', '0.4250', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('252', '5', '22', '20.0000', '0.5000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('253', '5', '22', '24.0000', '0.5750', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('254', '5', '22', '28.0000', '0.6500', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('255', '5', '22', '32.0000', '0.7250', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('256', '5', '22', '40.0000', '0.8000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('257', '5', '22', '48.0000', '0.8750', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('258', '5', '22', '56.0000', '0.9500', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('259', '5', '22', '0.0000', '1.0000', '1', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('260', '5', '23', '-12.0000', '0.0000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('261', '5', '23', '-7.0000', '0.0500', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('262', '5', '23', '-1.0000', '0.1250', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('263', '5', '23', '2.0000', '0.2000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_min` VALUES ('264', '5', '23', '5.0000', '0.2750', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('265', '5', '23', '8.0000', '0.3500', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('266', '5', '23', '12.0000', '0.4250', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('267', '5', '23', '15.0000', '0.5000', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('268', '5', '23', '18.0000', '0.5750', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('269', '5', '23', '21.0000', '0.6500', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('270', '5', '23', '24.0000', '0.7250', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('271', '5', '23', '30.0000', '0.8000', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('272', '5', '23', '36.0000', '0.8750', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('273', '5', '23', '42.0000', '0.9500', '0', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('274', '5', '23', '0.0000', '1.0000', '1', null, '2020-07-01 15:55:44');
+INSERT INTO `hr_kpi_min` VALUES ('275', '6', null, '89.0000', '0.0000', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('276', '6', null, '90.0000', '0.0500', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('277', '6', null, '92.0000', '0.1250', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('278', '6', null, '93.0000', '0.2000', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('279', '6', null, '95.0000', '0.2750', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('280', '6', null, '96.0000', '0.3500', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('281', '6', null, '97.0000', '0.4250', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('282', '6', null, '98.0000', '0.5000', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('283', '6', null, '99.0000', '0.5750', '0', null, '2020-07-01 15:59:30');
+INSERT INTO `hr_kpi_min` VALUES ('284', '6', null, '100.0000', '0.6500', '0', null, '2020-07-01 15:59:31');
+INSERT INTO `hr_kpi_min` VALUES ('285', '6', null, '101.0000', '0.7250', '0', null, '2020-07-01 15:59:31');
+INSERT INTO `hr_kpi_min` VALUES ('286', '6', null, '102.0000', '0.8000', '0', null, '2020-07-01 15:59:31');
+INSERT INTO `hr_kpi_min` VALUES ('287', '6', null, '104.0000', '0.8750', '0', null, '2020-07-01 15:59:31');
+INSERT INTO `hr_kpi_min` VALUES ('288', '6', null, '106.0000', '0.9500', '0', null, '2020-07-01 15:59:31');
+INSERT INTO `hr_kpi_min` VALUES ('289', '6', null, '0.0000', '1.0000', '1', null, '2020-07-01 15:59:31');
+INSERT INTO `hr_kpi_min` VALUES ('290', '7', null, '5.5000', '0.0000', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('291', '7', null, '5.1000', '0.0500', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('292', '7', null, '4.6000', '0.1250', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('293', '7', null, '4.3000', '0.2000', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('294', '7', null, '4.0000', '0.2750', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('295', '7', null, '3.7000', '0.3500', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('296', '7', null, '3.4000', '0.4250', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('297', '7', null, '3.1000', '0.5000', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('298', '7', null, '2.8000', '0.5750', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('299', '7', null, '2.5000', '0.6500', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('300', '7', null, '2.2000', '0.7250', '0', null, '2020-07-01 16:05:44');
+INSERT INTO `hr_kpi_min` VALUES ('301', '7', null, '1.9000', '0.8000', '0', null, '2020-07-01 16:05:45');
+INSERT INTO `hr_kpi_min` VALUES ('302', '7', null, '1.4000', '0.8750', '0', null, '2020-07-01 16:05:45');
+INSERT INTO `hr_kpi_min` VALUES ('303', '7', null, '0.9000', '0.9500', '0', null, '2020-07-01 16:05:45');
+INSERT INTO `hr_kpi_min` VALUES ('304', '7', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:05:45');
+INSERT INTO `hr_kpi_min` VALUES ('305', '8', null, '13000.0000', '0.0000', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('306', '8', null, '17000.0000', '0.0500', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('307', '8', null, '21000.0000', '0.1250', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('308', '8', null, '23000.0000', '0.2000', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('309', '8', null, '25000.0000', '0.2750', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('310', '8', null, '27000.0000', '0.3500', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('311', '8', null, '29000.0000', '0.4250', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('312', '8', null, '31000.0000', '0.5000', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('313', '8', null, '33000.0000', '0.5750', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('314', '8', null, '35000.0000', '0.6500', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('315', '8', null, '37000.0000', '0.7250', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('316', '8', null, '39000.0000', '0.8000', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('317', '8', null, '43000.0000', '0.8750', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('318', '8', null, '47000.0000', '0.9500', '0', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('319', '8', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:06:45');
+INSERT INTO `hr_kpi_min` VALUES ('320', '9', null, '50.0000', '0.0000', '0', null, '2020-07-01 16:07:38');
+INSERT INTO `hr_kpi_min` VALUES ('321', '9', null, '55.0000', '0.0500', '0', null, '2020-07-01 16:07:38');
+INSERT INTO `hr_kpi_min` VALUES ('322', '9', null, '58.0000', '0.1250', '0', null, '2020-07-01 16:07:38');
+INSERT INTO `hr_kpi_min` VALUES ('323', '9', null, '60.0000', '0.2000', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('324', '9', null, '62.0000', '0.2750', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('325', '9', null, '64.0000', '0.3500', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('326', '9', null, '66.0000', '0.4250', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('327', '9', null, '68.0000', '0.5000', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('328', '9', null, '70.0000', '0.5750', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('329', '9', null, '72.0000', '0.6500', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('330', '9', null, '74.0000', '0.7250', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('331', '9', null, '76.0000', '0.8000', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('332', '9', null, '79.0000', '0.8750', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('333', '9', null, '81.0000', '0.9500', '0', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('334', '9', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:07:39');
+INSERT INTO `hr_kpi_min` VALUES ('335', '10', null, '50.0000', '0.0000', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('336', '10', null, '52.0000', '0.0500', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('337', '10', null, '55.0000', '0.1250', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('338', '10', null, '57.0000', '0.2000', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('339', '10', null, '59.0000', '0.2750', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('340', '10', null, '61.0000', '0.3500', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('341', '10', null, '63.0000', '0.4250', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('342', '10', null, '65.0000', '0.5000', '0', null, '2020-07-01 16:08:40');
+INSERT INTO `hr_kpi_min` VALUES ('343', '10', null, '67.0000', '0.5750', '0', null, '2020-07-01 16:08:41');
+INSERT INTO `hr_kpi_min` VALUES ('344', '10', null, '69.0000', '0.6500', '0', null, '2020-07-01 16:08:41');
+INSERT INTO `hr_kpi_min` VALUES ('345', '10', null, '71.0000', '0.7250', '0', null, '2020-07-01 16:08:41');
+INSERT INTO `hr_kpi_min` VALUES ('346', '10', null, '73.0000', '0.8000', '0', null, '2020-07-01 16:08:41');
+INSERT INTO `hr_kpi_min` VALUES ('347', '10', null, '76.0000', '0.8750', '0', null, '2020-07-01 16:08:41');
+INSERT INTO `hr_kpi_min` VALUES ('348', '10', null, '79.0000', '0.9500', '0', null, '2020-07-01 16:08:41');
+INSERT INTO `hr_kpi_min` VALUES ('349', '10', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:08:41');
+INSERT INTO `hr_kpi_min` VALUES ('350', '11', '24', '10.0000', '0.0000', '0', null, '2020-07-01 16:11:06');
+INSERT INTO `hr_kpi_min` VALUES ('351', '11', '24', '15.0000', '0.1250', '0', null, '2020-07-01 16:11:06');
+INSERT INTO `hr_kpi_min` VALUES ('352', '11', '24', '20.0000', '0.2000', '0', null, '2020-07-01 16:11:06');
+INSERT INTO `hr_kpi_min` VALUES ('353', '11', '24', '30.0000', '0.2750', '0', null, '2020-07-01 16:11:06');
+INSERT INTO `hr_kpi_min` VALUES ('354', '11', '24', '40.0000', '0.3500', '0', null, '2020-07-01 16:11:06');
+INSERT INTO `hr_kpi_min` VALUES ('355', '11', '24', '50.0000', '0.4250', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('356', '11', '24', '100.0000', '0.5000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('357', '11', '24', '150.0000', '0.5750', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('358', '11', '24', '200.0000', '0.6500', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('359', '11', '24', '250.0000', '0.7250', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('360', '11', '24', '300.0000', '0.8000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('361', '11', '24', '400.0000', '0.8750', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('362', '11', '24', '500.0000', '0.9500', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('363', '11', '24', '0.0000', '1.0000', '1', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('364', '11', '25', '10.0000', '0.0000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('365', '11', '25', '15.0000', '0.0500', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('366', '11', '25', '20.0000', '0.1250', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('367', '11', '25', '30.0000', '0.2000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('368', '11', '25', '40.0000', '0.2750', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('369', '11', '25', '50.0000', '0.3500', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('370', '11', '25', '100.0000', '0.4250', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('371', '11', '25', '150.0000', '0.5000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('372', '11', '25', '200.0000', '0.5750', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('373', '11', '25', '250.0000', '0.6500', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('374', '11', '25', '300.0000', '0.7250', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('375', '11', '25', '400.0000', '0.8000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('376', '11', '25', '500.0000', '0.8750', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('377', '11', '25', '750.0000', '0.9500', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('378', '11', '25', '0.0000', '1.0000', '1', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('379', '11', '26', '70.0000', '0.0000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('380', '11', '26', '50.0000', '0.0500', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_min` VALUES ('381', '11', '26', '100.0000', '0.1250', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('382', '11', '26', '150.0000', '0.2000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('383', '11', '26', '200.0000', '0.2750', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('384', '11', '26', '250.0000', '0.3500', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('385', '11', '26', '300.0000', '0.4250', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('386', '11', '26', '400.0000', '0.5000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('387', '11', '26', '500.0000', '0.5750', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('388', '11', '26', '750.0000', '0.6500', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('389', '11', '26', '1000.0000', '0.7250', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('390', '11', '26', '1250.0000', '0.8000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('391', '11', '26', '2000.0000', '0.8750', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('392', '11', '26', '2250.0000', '0.9500', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('393', '11', '26', '0.0000', '1.0000', '1', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('394', '11', '27', '150.0000', '0.0000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('395', '11', '27', '200.0000', '0.0500', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('396', '11', '27', '250.0000', '0.1250', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('397', '11', '27', '300.0000', '0.2000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('398', '11', '27', '400.0000', '0.2750', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('399', '11', '27', '500.0000', '0.3500', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('400', '11', '27', '750.0000', '0.4250', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('401', '11', '27', '1000.0000', '0.5000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('402', '11', '27', '1250.0000', '0.5750', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('403', '11', '27', '1750.0000', '0.6500', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('404', '11', '27', '2000.0000', '0.7250', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('405', '11', '27', '2250.0000', '0.8000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('406', '11', '27', '2500.0000', '0.8750', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_min` VALUES ('407', '11', '27', '2750.0000', '0.9500', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('408', '11', '27', '0.0000', '1.0000', '1', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('409', '11', '28', '200.0000', '0.0000', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('410', '11', '28', '250.0000', '0.0500', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('411', '11', '28', '300.0000', '0.1250', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('412', '11', '28', '400.0000', '0.2000', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('413', '11', '28', '500.0000', '0.2750', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('414', '11', '28', '750.0000', '0.3500', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('415', '11', '28', '1000.0000', '0.4250', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('416', '11', '28', '1250.0000', '0.5000', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('417', '11', '28', '1750.0000', '0.5750', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('418', '11', '28', '2000.0000', '0.6500', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('419', '11', '28', '2250.0000', '0.7250', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('420', '11', '28', '2500.0000', '0.8000', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('421', '11', '28', '2750.0000', '0.8750', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('422', '11', '28', '3000.0000', '0.9500', '0', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('423', '11', '28', '0.0000', '1.0000', '1', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_min` VALUES ('424', '12', null, '54.0000', '0.0000', '0', null, '2020-07-01 16:13:55');
+INSERT INTO `hr_kpi_min` VALUES ('425', '12', null, '58.0000', '0.0500', '0', null, '2020-07-01 16:13:55');
+INSERT INTO `hr_kpi_min` VALUES ('426', '12', null, '63.0000', '0.1250', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('427', '12', null, '67.0000', '0.2000', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('428', '12', null, '70.0000', '0.2750', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('429', '12', null, '73.0000', '0.3500', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('430', '12', null, '76.0000', '0.4250', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('431', '12', null, '79.0000', '0.5000', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('432', '12', null, '82.0000', '0.5750', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('433', '12', null, '85.0000', '0.6500', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('434', '12', null, '87.0000', '0.7250', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('435', '12', null, '90.0000', '0.8000', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('436', '12', null, '93.0000', '0.8750', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('437', '12', null, '98.0000', '0.9500', '0', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('438', '12', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:13:56');
+INSERT INTO `hr_kpi_min` VALUES ('439', '13', null, '40.0000', '0.0000', '0', null, '2020-07-01 16:14:50');
+INSERT INTO `hr_kpi_min` VALUES ('440', '13', null, '70.0000', '0.0500', '0', null, '2020-07-01 16:14:50');
+INSERT INTO `hr_kpi_min` VALUES ('441', '13', null, '101.0000', '0.1250', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('442', '13', null, '117.0000', '0.2000', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('443', '13', null, '133.0000', '0.2750', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('444', '13', null, '149.0000', '0.3500', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('445', '13', null, '165.0000', '0.4250', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('446', '13', null, '181.0000', '0.5000', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('447', '13', null, '197.0000', '0.5750', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('448', '13', null, '213.0000', '0.6500', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('449', '13', null, '229.0000', '0.7250', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('450', '13', null, '245.0000', '0.8000', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('451', '13', null, '276.0000', '0.8750', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('452', '13', null, '307.0000', '0.9500', '0', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('453', '13', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:14:51');
+INSERT INTO `hr_kpi_min` VALUES ('454', '14', null, '6.0000', '0.0000', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('455', '14', null, '15.0000', '0.0500', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('456', '14', null, '25.0000', '0.1250', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('457', '14', null, '30.0000', '0.2000', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('458', '14', null, '35.0000', '0.2750', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('459', '14', null, '40.0000', '0.3500', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('460', '14', null, '45.0000', '0.4250', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('461', '14', null, '50.0000', '0.5000', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('462', '14', null, '55.0000', '0.5750', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('463', '14', null, '60.0000', '0.6500', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('464', '14', null, '65.0000', '0.7250', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('465', '14', null, '70.0000', '0.8000', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('466', '14', null, '80.0000', '0.8750', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('467', '14', null, '90.0000', '0.9500', '0', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('468', '14', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:15:49');
+INSERT INTO `hr_kpi_min` VALUES ('469', '15', null, '6.0000', '0.0000', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('470', '15', null, '15.0000', '0.0500', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('471', '15', null, '25.0000', '0.1250', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('472', '15', null, '30.0000', '0.2000', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('473', '15', null, '35.0000', '0.2750', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('474', '15', null, '40.0000', '0.3500', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('475', '15', null, '45.0000', '0.4250', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('476', '15', null, '50.0000', '0.5000', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('477', '15', null, '55.0000', '0.5750', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('478', '15', null, '60.0000', '0.6500', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('479', '15', null, '65.0000', '0.7250', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('480', '15', null, '70.0000', '0.8000', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('481', '15', null, '80.0000', '0.8750', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('482', '15', null, '90.0000', '0.9500', '0', null, '2020-07-01 16:16:43');
+INSERT INTO `hr_kpi_min` VALUES ('483', '15', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:16:44');
+
+-- ----------------------------
+-- Table structure for hr_kpi_sum
+-- ----------------------------
+DROP TABLE IF EXISTS `hr_kpi_sum`;
+CREATE TABLE `hr_kpi_sum` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `kpi_id` int(11) NOT NULL,
+  `min_sum` int(11) NOT NULL,
+  `other_bool` int(2) DEFAULT '0' COMMENT '0:參與循環  1：其它',
+  `lcu` varchar(255) DEFAULT NULL,
+  `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='根據生意額區分不同KPI列表';
+
+-- ----------------------------
+-- Records of hr_kpi_sum
+-- ----------------------------
+INSERT INTO `hr_kpi_sum` VALUES ('7', '1', '2400000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_sum` VALUES ('8', '1', '7200000', '0', null, '2020-07-01 15:46:06');
+INSERT INTO `hr_kpi_sum` VALUES ('9', '1', '14400000', '0', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_sum` VALUES ('10', '1', '0', '1', null, '2020-07-01 15:46:07');
+INSERT INTO `hr_kpi_sum` VALUES ('11', '2', '2400000', '0', null, '2020-07-01 15:49:38');
+INSERT INTO `hr_kpi_sum` VALUES ('12', '2', '14400000', '0', null, '2020-07-01 15:49:39');
+INSERT INTO `hr_kpi_sum` VALUES ('13', '2', '0', '1', null, '2020-07-01 15:49:40');
+INSERT INTO `hr_kpi_sum` VALUES ('14', '3', '2400000', '0', null, '2020-07-01 15:51:31');
+INSERT INTO `hr_kpi_sum` VALUES ('15', '3', '0', '1', null, '2020-07-01 15:51:32');
+INSERT INTO `hr_kpi_sum` VALUES ('16', '4', '2400000', '0', null, '2020-07-01 15:54:14');
+INSERT INTO `hr_kpi_sum` VALUES ('17', '4', '7200000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_sum` VALUES ('18', '4', '14400000', '0', null, '2020-07-01 15:54:15');
+INSERT INTO `hr_kpi_sum` VALUES ('19', '4', '0', '1', null, '2020-07-01 15:54:16');
+INSERT INTO `hr_kpi_sum` VALUES ('20', '5', '2400000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_sum` VALUES ('21', '5', '7200000', '0', null, '2020-07-01 15:55:42');
+INSERT INTO `hr_kpi_sum` VALUES ('22', '5', '14400000', '0', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_sum` VALUES ('23', '5', '0', '1', null, '2020-07-01 15:55:43');
+INSERT INTO `hr_kpi_sum` VALUES ('24', '11', '2400000', '0', null, '2020-07-01 16:11:06');
+INSERT INTO `hr_kpi_sum` VALUES ('25', '11', '7200000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_sum` VALUES ('26', '11', '14400000', '0', null, '2020-07-01 16:11:07');
+INSERT INTO `hr_kpi_sum` VALUES ('27', '11', '24000000', '0', null, '2020-07-01 16:11:08');
+INSERT INTO `hr_kpi_sum` VALUES ('28', '11', '0', '1', null, '2020-07-01 16:11:09');

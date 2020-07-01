@@ -597,5 +597,14 @@ return array(
     'table_remark_5'=>'5.客戶質量的把控和優化',
 
     'support city'=>'支點城市',
+    'Scope'=>'範圍',
+    'kpi list'=>'KPI列表',
+    'kpi form'=>'KPI表單',
+    'kpi name'=>'KPI名稱',
+    'kpi number'=>'年生意額',
+    'kpi value'=>'KPI數值',
+    'kpi type'=>'KPI大小選擇',
+    'kpi sum bool'=>'年生意額限制',
+    'kpi detail'=>'KPI配置詳情',
     );
 ?>

@@ -65,7 +65,7 @@ class BossReviewC
                     return false;
                 }
                 foreach ($this->json_text["three"]['list'] as $row){
-                    if($bool&&(empty($row['three_four'])||!is_numeric($row['three_four']))){
+                    if($bool&&(!isset($row['three_four'])||$row['three_four']===""||!is_numeric($row['three_four']))){
                         $message = Yii::t('contract',"three_four")." - ".Yii::t('contract',' can not be empty');
                         $model->addError('json_text',$message);
                         return false;

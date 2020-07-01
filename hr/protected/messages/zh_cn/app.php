@@ -174,6 +174,7 @@ return array(
     'Boss Audit'=>'审批年度考核',
 
     'Email support employee'=>'员工支点分配',
+    'Setting KPI'=>'KPI设置',
     //沈超添加结束
 );
 ?>

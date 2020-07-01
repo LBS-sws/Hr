@@ -135,7 +135,7 @@ class BossReviewA extends BossReview
         if(in_array($type,array("one_one","one_two","one_three","one_four","one_five"))){
             $value = floatval($this->json_text[$type]["one_1"]);
             $value = empty($value)?0:($this->json_text[$type]["one_3"]-$value)/$value;
-            $value = intval($value*100);
+            $value = round($value*100);
             $name = $this->className."[json_text][".$type."]"."[".$str."]";
             $html ="<input readonly type='text' name='$name' value='$value%' class='form-control planYearRate'/>";
 

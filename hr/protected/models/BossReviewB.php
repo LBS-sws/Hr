@@ -50,7 +50,7 @@ class BossReviewB extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_four"://高效客诉解决效率 00038  00036
                 $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year-1,array("00038","00036"));
-                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
                 break;
             case "two_five"://总经理回馈次数
                 $this->json_text[$type][$str] = $this->valueFeedback($this->username,$this->audit_year-1);
@@ -58,10 +58,10 @@ class BossReviewB extends BossReview
                 break;
             case "two_six"://提交销售5步曲数量培训销售部分
                 $this->json_text[$type][$str] = $this->valueSalesOne($this->audit_year-1,$this->city);
-                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "two_seven"://提交销售5步曲数量培训销售经理部分
                 $this->json_text[$type][$str] = $this->valueSalesTwo($this->audit_year-1,$this->city);
-                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
         }
         $this->json_text[$type][$str] = 0;
         return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
@@ -107,7 +107,7 @@ class BossReviewB extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_four"://高效客诉解决效率 00038  00036
                 $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year,array("00038","00036"));
-                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
                 break;
             case "two_five"://总经理回馈次数
                 $this->json_text[$type][$str] = $this->valueFeedback($this->username,$this->audit_year);
@@ -115,10 +115,10 @@ class BossReviewB extends BossReview
                 break;
             case "two_six"://提交销售5步曲数量培训销售部分
                 $this->json_text[$type][$str] = $this->valueSalesOne($this->audit_year,$this->city);
-                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "two_seven"://提交销售5步曲数量培训销售经理部分
                 $this->json_text[$type][$str] = $this->valueSalesTwo($this->audit_year,$this->city);
-                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
         }
         $this->json_text[$type][$str] = 0;
         return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
