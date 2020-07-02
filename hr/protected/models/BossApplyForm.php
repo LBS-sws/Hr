@@ -138,10 +138,9 @@ class BossApplyForm extends CFormModel
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
-        $row = Yii::app()->db->createCommand()->select("a.*,c.city,b.code as employee_code,b.name as employee_name")
+        $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->leftJoin("security$suffix.sec_user c","a.lcu = c.username")
             ->where("a.id=:id and b.id=:employee_id",array(":id"=>$index,":employee_id"=>$this->employee_id))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
@@ -357,6 +356,7 @@ class BossApplyForm extends CFormModel
             $message="<p>员工编号：".$this->code."</p>";
             $message.="<p>员工姓名：".$this->name."</p>";
             $message.="<p>员工城市：".$cityName."</p>";
+            $message.="<p>考核年份：".$this->audit_year."年</p>";
             $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
             $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
             $message.="<p>得分（C）项：".$this->results_c."</p>";

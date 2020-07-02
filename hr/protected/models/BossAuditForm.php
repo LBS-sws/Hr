@@ -44,10 +44,9 @@ class BossAuditForm extends CFormModel
 	}
 
     public function validateID($attribute, $params){
-        $row = Yii::app()->db->createCommand()->select("*")->from("hr_boss_audit")
-            ->where('id=:id and status_type = 1',
-                array(':id'=>$this->id)
-            )->queryRow();
+        $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")->from("hr_boss_audit a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where('a.id=:id and a.status_type = 1',array(':id'=>$this->id))->queryRow();
         if (!$row){
             $message = "該考核不存在，無法修改";
             $this->addError($attribute,$message);
@@ -55,6 +54,8 @@ class BossAuditForm extends CFormModel
         }else{
             $this->json_text = json_decode($row["json_text"],true);
             $this->employee_id = $row['employee_id'];
+            $this->code = $row['employee_code'];
+            $this->name = $row['employee_name'];
             $this->lcu = $row['lcu'];
             $this->city = $row['city'];
             $this->audit_year = $row['audit_year'];
@@ -87,10 +88,9 @@ class BossAuditForm extends CFormModel
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
-        $row = Yii::app()->db->createCommand()->select("a.*,c.city,b.code as employee_code,b.name as employee_name")
+        $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->leftJoin("security$suffix.sec_user c","a.lcu = c.username")
             ->where("a.id=:id and a.status_type in (0,1)",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
@@ -202,6 +202,7 @@ class BossAuditForm extends CFormModel
         $message="<p>员工编号：".$this->code."</p>";
         $message.="<p>员工姓名：".$this->name."</p>";
         $message.="<p>员工城市：".$cityName."</p>";
+        $message.="<p>考核年份：".$this->audit_year."年</p>";
         if($this->getScenario() == "audit"){
             $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
             $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";

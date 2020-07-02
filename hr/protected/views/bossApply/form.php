@@ -88,9 +88,18 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     </div>
                 </div>
             </div>
-            <legend><?php echo Yii::t("contract","review number");?>：<span id="sum_label">0*50% + 0*35% + 0% = 0%</span></legend>
+            <?php if ($model->status_type==2): ?>
+                <legend>
+                    <?php echo Yii::t("contract","review number");?>：
+                    <span id="sum_label" data-num="no">
+                    <?php echo $model->results_a."*50% + ".$model->results_b."*35% + ".$model->results_c."% = ".$model->results_sum."%";?>
+                    </span>
+                </legend>
+            <?php else:?>
+                <legend><?php echo Yii::t("contract","review number");?>：<span id="sum_label">0*50% + 0*35% + 0% = 0%</span></legend>
+            <?php endif; ?>
             <?php
-            $tabs = $model->getTabList($model);
+            $tabs = $model->getTabList($model,$model->status_type == 2);
             $this->widget('bootstrap.widgets.TbTabs', array(
                 'tabs'=>$tabs,
             ));
@@ -100,6 +109,9 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 </section>
 <script>
     function resetTableSum() {
+        if($("#sum_label").data("num") =="no"){
+            return false;
+        }
         var sum = 0;
         var sum_a = 0;
         var sum_b = 0;

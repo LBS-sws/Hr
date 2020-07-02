@@ -44,10 +44,9 @@ class BossSearchForm extends CFormModel
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
-        $row = Yii::app()->db->createCommand()->select("a.*,c.city,b.code as employee_code,b.name as employee_name")
+        $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->leftJoin("security$suffix.sec_user c","a.lcu = c.username")
             ->where("a.id=:id and a.status_type = 2",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
