@@ -1,7 +1,4 @@
 <?php
-if (empty($model->id)&&$model->scenario == "edit"){
-    $this->redirect(Yii::app()->createUrl('bossSearch/index'));
-}
 $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 ?>
 
@@ -30,6 +27,14 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 				'submit'=>Yii::app()->createUrl('bossSearch/index')));
 		?>
 	</div>
+
+            <?php if (Yii::app()->user->validFunction('ZR15')): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-backward"></span> '.Yii::t('contract','send back'), array(
+                        'submit'=>Yii::app()->createUrl('bossSearch/back')));
+                    ?>
+                </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">

@@ -36,6 +36,10 @@ class BossSearchController extends Controller
                 'actions'=>array('index','view'),
                 'expression'=>array('BossSearchController','allowReadOnly'),
             ),
+            array('allow',
+                'actions'=>array('back'),
+                'expression'=>array('BossSearchController','allowBack'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
@@ -48,6 +52,10 @@ class BossSearchController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('BA02');
+    }
+
+    public static function allowBack() {
+        return Yii::app()->user->validFunction('ZR15');
     }
 
     public function actionIndex($pageNum=0){
@@ -83,6 +91,21 @@ class BossSearchController extends Controller
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $this->render('form',array('model'=>$model,));
+        }
+    }
+
+    public function actionBack()
+    {
+        $model = new BossSearchForm('back');
+        $model->attributes = $_POST['BossSearchForm'];
+        if ($model->validate()) {
+            $model->saveData();
+            Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','finish to send back'));
+            $this->redirect(Yii::app()->createUrl('bossSearch/index'));
+        } else {
+            $message = CHtml::errorSummary($model);
+            Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            $this->redirect(Yii::app()->createUrl('bossSearch/edit',array('index'=>$model->id)));
         }
     }
 }

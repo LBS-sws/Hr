@@ -36,10 +36,21 @@ class BossSearchForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,employee_id,json_text,audit_year,reject_remark','safe'),
-            array('id','required')
+			array('id','safe'),
+            array('id','required'),
+            array('id','validateId','on'=>array('back'))
 		);
 	}
+
+
+    public function validateId($attribute, $params){
+        $rows = Yii::app()->db->createCommand()->select("id")->from("hr_boss_audit")
+            ->where('id=:id and status_type=2',array(':id'=>$this->id))->queryRow();
+        if(!$rows){
+            $message = Yii::t('contract','audit year'). Yii::t('contract',' can not repeat');
+            $this->addError($attribute,$message);
+        }
+    }
 
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
@@ -90,14 +101,11 @@ class BossSearchForm extends CFormModel
 	protected function saveGoods(&$connection) {
 		$sql = '';
         switch ($this->scenario) {
-            case 'audit':
-                break;
-            case 'reject':
+            case 'back':
                 $sql = "update hr_boss_audit set
-							status_type = 3, 
-							reject_remark = :reject_remark, 
+							status_type = 0, 
 							luu = :luu
-						where id = :id AND status_type = 1
+						where id = :id AND status_type = 2
 						";
                 break;
         }
@@ -109,28 +117,10 @@ class BossSearchForm extends CFormModel
         $command=$connection->createCommand($sql);
         if (strpos($sql,':id')!==false)
             $command->bindParam(':id',$this->id,PDO::PARAM_INT);
-        if (strpos($sql,':results_a')!==false)
-            $command->bindParam(':results_a',$this->results_a,PDO::PARAM_INT);
-        if (strpos($sql,':results_b')!==false)
-            $command->bindParam(':results_b',$this->results_b,PDO::PARAM_INT);
-        if (strpos($sql,':results_c')!==false)
-            $command->bindParam(':results_c',$this->results_c,PDO::PARAM_INT);
-        if (strpos($sql,':results_sum')!==false)
-            $command->bindParam(':results_sum',$this->results_sum,PDO::PARAM_INT);
-        if (strpos($sql,':reject_remark')!==false)
-            $command->bindParam(':reject_remark',$this->reject_remark,PDO::PARAM_STR);
-        if (strpos($sql,':json_text')!==false){
-            $json_text = json_encode($this->json_text);
-            $command->bindParam(':json_text',$json_text,PDO::PARAM_LOB);
-        }
 
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
-
-        if ($this->scenario=='new'){
-            $this->id = Yii::app()->db->getLastInsertID();
-        }
 
 		return true;
 	}
