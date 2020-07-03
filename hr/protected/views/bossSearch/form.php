@@ -28,7 +28,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		?>
 	</div>
 
-            <?php if (Yii::app()->user->validFunction('ZR15')): ?>
+            <?php if (Yii::app()->user->validFunction('ZR16')): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php echo TbHtml::button('<span class="fa fa-backward"></span> '.Yii::t('contract','send back'), array(
                         'submit'=>Yii::app()->createUrl('bossSearch/back')));

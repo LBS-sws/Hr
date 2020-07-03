@@ -16,5 +16,5 @@ return array(
 	'Back to review'=>array('access'=>'ZR12',),//退回单个考核
 	'Back to leave and work'=>array('access'=>'ZR13',),//退回請假單及加班單
 	'sales group manage'=>array('access'=>'ZR14',),//銷售分組管理
-	'Back to boss review'=>array('access'=>'ZR15',),//退回老總年度考核
+	'Back to boss review'=>array('access'=>'ZR16',),//退回老總年度考核
 );

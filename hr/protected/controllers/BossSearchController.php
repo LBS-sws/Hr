@@ -55,7 +55,7 @@ class BossSearchController extends Controller
     }
 
     public static function allowBack() {
-        return Yii::app()->user->validFunction('ZR15');
+        return Yii::app()->user->validFunction('ZR16');
     }
 
     public function actionIndex($pageNum=0){
