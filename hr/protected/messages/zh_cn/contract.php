@@ -611,5 +611,8 @@ return array(
     'kpi type'=>'KPI大小选择',
     'kpi sum bool'=>'年生意额限制',
     'kpi detail'=>'KPI配置详情',
+
+    'Insurance Documents'=>'保险文件资料',
+    'Qualification  Documents'=>'资质资料',
 );
 ?>

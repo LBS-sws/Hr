@@ -47,9 +47,21 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 	</div>
             <div class="btn-group pull-right" role="group">
                 <?php
+                $counter = ($model->no_of_attm['company3'] > 0) ? ' <span id="doccompany3" class="label label-info">'.$model->no_of_attm['company3'].'</span>' : ' <span id="doccompany3"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('contract','Insurance Documents').$counter, array(
+                        'name'=>'btnCompany3','id'=>'btnCompany3','data-toggle'=>'modal','data-target'=>'#fileuploadcompany3',)
+                );
+                ?>
+                <?php
+                $counter = ($model->no_of_attm['company2'] > 0) ? ' <span id="doccompany2" class="label label-info">'.$model->no_of_attm['company2'].'</span>' : ' <span id="doccompany2"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('contract','Qualification  Documents').$counter, array(
+                        'name'=>'btnCompany2','id'=>'btnCompany2','data-toggle'=>'modal','data-target'=>'#fileuploadcompany2',)
+                );
+                ?>
+                <?php
                 $counter = ($model->no_of_attm['company'] > 0) ? ' <span id="doccompany" class="label label-info">'.$model->no_of_attm['company'].'</span>' : ' <span id="doccompany"></span>';
                 echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadcompany',)
+                        'name'=>'btnCompany','id'=>'btnCompany','data-toggle'=>'modal','data-target'=>'#fileuploadcompany',)
                 );
                 ?>
             </div>
@@ -250,10 +262,23 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 	</div>
 </section>
 
-<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+<?php
+$this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
     'doctype'=>'COMPANY',
     'header'=>Yii::t('dialog','File Attachment'),
+    'ronly'=>($model->scenario=='view'),
+));
+$this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'COMPANY2',
+    'header'=>Yii::t('contract','Qualification  Documents'),
+    'ronly'=>($model->scenario=='view'),
+));
+$this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'COMPANY3',
+    'header'=>Yii::t('contract','Insurance Documents'),
     'ronly'=>($model->scenario=='view'),
 ));
 ?>
@@ -262,6 +287,8 @@ $this->renderPartial('//site/removedialog');
 ?>
 <?php
 Script::genFileUpload($model,$form->id,'COMPANY');
+Script::genFileUpload($model,$form->id,'COMPANY2');
+Script::genFileUpload($model,$form->id,'COMPANY3');
 
 if ($model->scenario!='view') {
     $js = Script::genDatePicker(array(

@@ -606,5 +606,8 @@ return array(
     'kpi type'=>'KPI大小選擇',
     'kpi sum bool'=>'年生意額限制',
     'kpi detail'=>'KPI配置詳情',
+
+    'Insurance Documents'=>'保險文件資料',
+    'Qualification  Documents'=>'資質資料',
     );
 ?>

@@ -36,16 +36,22 @@ class CompanyForm extends CFormModel
 
 
 
-    public $no_of_attm = array(
-        'company'=>0
-    );
-    public $docType = 'COMPANY';
-    public $docMasterId = array(
-        'company'=>0
-    );
+    //public $docType = 'COMPANY';
     public $files;
+    public $docMasterId = array(
+        'company'=>0,
+        'company2'=>0,
+        'company3'=>0,
+    );
     public $removeFileId = array(
-        'company'=>0
+        'company'=>0,
+        'company2'=>0,
+        'company3'=>0,
+    );
+    public $no_of_attm = array(
+        'company'=>0,
+        'company2'=>0,
+        'company3'=>0,
     );
 	/**
 	 * Declares customized attribute labels.
@@ -158,7 +164,9 @@ class CompanyForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $sql = "select a.* ,
-				docman$suffix.countdoc('COMPANY',id) as companydoc
+				docman$suffix.countdoc('COMPANY',id) as companydoc,
+				docman$suffix.countdoc('COMPANY2',id) as companydoc2,
+				docman$suffix.countdoc('COMPANY3',id) as companydoc3
 				from hr_company a
 				where a.id=$index AND a.city in ($city_allow)";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
@@ -192,6 +200,8 @@ class CompanyForm extends CFormModel
                 $this->mie = $row['mie'];
                 $this->taxpayer_num = $row['taxpayer_num'];
                 $this->no_of_attm['company'] = $row['companydoc'];
+                $this->no_of_attm['company2'] = $row['companydoc2'];
+                $this->no_of_attm['company3'] = $row['companydoc3'];
 				break;
 			}
 		}
@@ -205,6 +215,11 @@ class CompanyForm extends CFormModel
 		try {
 			$this->saveStaff($connection);
             $this->updateDocman($connection,'COMPANY');
+            $this->updateDocman($connection,'COMPANY2');
+            $this->updateDocman($connection,'COMPANY3');
+            if($this->getScenario() == 'new'){
+                $this->setScenario('edit');
+            }
 			$transaction->commit();
 
 			//默認公司自動化
@@ -225,7 +240,6 @@ class CompanyForm extends CFormModel
                 $docman->masterId = $this->docMasterId[$docidx];
                 $docman->updateDocId($connection, $this->docMasterId[$docidx]);
             }
-            $this->scenario = "edit";
         }
     }
 

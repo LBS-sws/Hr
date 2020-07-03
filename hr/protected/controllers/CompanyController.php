@@ -132,7 +132,7 @@ class CompanyController extends Controller
             $model->attributes = $_POST['CompanyForm'];
 
             $id = ($_POST['CompanyForm']['scenario']=='new') ? 0 : $model->id;
-            $docman = new DocMan($model->docType,$id,get_class($model));
+            $docman = new DocMan($doctype,$id,get_class($model));
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
             $docman->fileUpload();
@@ -147,7 +147,7 @@ class CompanyController extends Controller
         if (isset($_POST['CompanyForm'])) {
             $model->attributes = $_POST['CompanyForm'];
 
-            $docman = new DocMan($model->docType,$model->id,'CompanyForm');
+            $docman = new DocMan($doctype,$model->id,'CompanyForm');
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
             echo $docman->genTableFileList(false);
