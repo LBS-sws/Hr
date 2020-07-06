@@ -341,7 +341,7 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where($sql)->queryAll();
         if($rows){
-            $description = "<p>請檢查下列中央技術支援是否已經回饋：</p>";
+            $description = "<p>请对以下中央技术支援同事进行评分：</p>";
             $arr = $this->getListToSupportList($description,$rows);
             $arr["auth_list"] = array("AY01");
             $arr["city_allow"] = false;
