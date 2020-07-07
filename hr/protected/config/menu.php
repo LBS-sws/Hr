@@ -326,6 +326,10 @@ return array(
                 'access'=>'ZC11',
                 'url'=>'/auditLeave/index?only=4',
             ),
+            'Config System'=>array(//開發者配置
+                'access'=>'ZC14',
+                'url'=>'/configSystem/index',
+            ),
 		),
 	),
 	'Report'=>array(

@@ -176,6 +176,7 @@ return array(
     'Email support employee'=>'员工支点分配',
     'Setting KPI'=>'KPI设置',
     'Back to boss review'=>'退回老总年度考核',
+    'Config System'=>'开发者配置',
     //沈超添加结束
 );
 ?>

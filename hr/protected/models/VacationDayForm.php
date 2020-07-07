@@ -11,6 +11,7 @@ class VacationDayForm
     public $vaca_type;
     public $diffMonth=0;
     public $remain_bool=false;//该假期类型是否有规则
+    public $yearLeaveType=0;//年假的計算方式（2020-07-07）0：正常  1：新加坡  2：吉隆坡
 
     protected $vacation_sum=0;//剩餘天數
     protected $sumDay=0;//累計天數（不包含額外添加的年假）
@@ -34,10 +35,26 @@ class VacationDayForm
     }
 
     public function init(){
+        $this->setYearLeaveType();
         if(!empty($this->employee_id)){
             $this->setEmployeeList($this->employee_id);
         }
         $this->setVacationId($this->vacation_id);
+    }
+
+    public function setYearLeaveType($int=-1){
+        if(in_array($int,array(0,1,2))){
+            $this->yearLeaveType = $int;
+        }else{
+            $suffix = Yii::app()->params['envSuffix'];
+            $row = Yii::app()->db->createCommand()->select("set_value")->from("hr$suffix.hr_setting")
+                ->where('set_name="yearLeaveType"')->queryRow();
+            if($row){
+                if(in_array($row["set_value"],array(0,1,2))){
+                    $this->yearLeaveType = $row["set_value"];
+                }
+            }
+        }
     }
 
     public function setEmployeeList($employee_id){
@@ -69,6 +86,7 @@ class VacationDayForm
             $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
                 ->where("vaca_type=:vaca_type",array(":vaca_type"=>$this->year_type))->queryRow();
             if($row){
+                $this->vaca_type = $row["vaca_type"];
                 $this->vacation_id = $row["id"];
                 $this->vacation_list = $row;
                 if($row['ass_bool'] == 1){ //有關聯假期規則
@@ -174,7 +192,6 @@ class VacationDayForm
         if ($this->error_bool){
             return false;
         }
-        $yearLeave = Yii::app()->params['yearLeave'];
         $suffix = Yii::app()->params['envSuffix'];
         if(empty($this->vacation_list)){
             $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
@@ -182,36 +199,136 @@ class VacationDayForm
             if($row['ass_bool'] == 1){ //有關聯假期規則
                 $this->vacation_id_list = explode(",",$row['ass_id']);
             }
+            $this->vaca_type = $row["vaca_type"];
             $this->vacation_id_list[] = $row["id"];
-        }else{
-            $row = $this->vacation_list;
+            $this->vacation_list = $row;
         }
-        if($row){
-            if($row["vaca_type"]==$this->year_type&&$yearLeave === "employee"){
-                $this->remain_bool = true;
-                $this->addEmployeeNum();//年假根據員工信息計算
-            }else{
-                $this->addRulesNum($row);//假期規則添加天數
-                $this->sumDay=$this->vacation_sum;
+
+        if($this->vaca_type==$this->year_type){ //年假類型
+            $this->remain_bool = true;
+            switch ($this->yearLeaveType){
+                case 0://正常（大陸版、台灣版）
+                    $this->addEmployeeNum();//年假根據員工信息計算
+                    break;
+                case 1://1：新加坡
+                    $this->addEmployeeNumToOne();
+                    break;
+                case 2://  2：吉隆坡
+                    $this->addEmployeeNumToTwo();
+                    break;
             }
-            $this->addYearLeaveNum($row);//根據假期種類，分別對待
-        }else{ //沒有年假配置，但計算方式是員工年假計算
-            if($vacation_id==$this->year_type&&$yearLeave === "employee"){
-                $this->remain_bool = true;
-                $this->addEmployeeNum();//年假根據員工信息計算
-                $this->addYearLeaveNum(array("vaca_type"=>$this->year_type));//根據假期種類，分別對待
-            }else{
-                $this->error_bool = true;
-            }
+            $this->addYearLeaveNum();//根據假期種類，分別對待
+        }else{
+            $this->addRulesNum($this->vacation_list);//假期規則添加天數
+            $this->sumDay=$this->vacation_sum;
         }
     }
 
-    //累計年假
+    //根據員工信息添加年假
     private function addEmployeeNum(){
         if($this->employee_list){
             $this->sumDay=$this->employee_list["year_day"];
             if($this->diffMonth>=12){
                 $this->vacation_sum=$this->employee_list["year_day"];
+            }else{
+                $this->vacation_sum=0;
+            }
+        }
+    }
+
+    //递归计算累计的年假
+    private function foreachYearAddSum($foreachYear,$sumDay=0){
+        if(!empty($this->time)){
+            $thisYear = intval(date("Y",strtotime($this->time)));
+            $thisMonth = intval(date("m",strtotime($this->time)));
+            $thisDay = intval(date("d",strtotime($this->time)));
+        }else{
+            $thisYear = intval(date("Y"));
+            $thisMonth = intval(date("m"));
+            $thisDay = intval(date("d"));
+        }
+        $staffYear = intval(date("Y",strtotime($this->employee_list["entry_time"])));
+        $staffMonth = intval(date("m",strtotime($this->employee_list["entry_time"])));
+        $staffDay = intval(date("d",strtotime($this->employee_list["entry_time"])));
+        if($foreachYear>$thisYear){
+            if(intval($sumDay)!=floatval($sumDay)){
+                return round(floatval($sumDay),1);
+            }else{
+                return floatval($sumDay);
+            }
+        }else{
+            if($foreachYear==$thisYear){ //循環的最後一次
+                if($thisYear == $staffYear){//只循環一次(入職的第一年)
+                    $diffMonth =$staffDay>$thisDay?($thisMonth-$staffMonth-1):$thisMonth-$staffMonth;
+                    $diffDay = strtotime("$thisYear/$thisMonth/$thisDay")-strtotime($this->employee_list["entry_time"]);
+                    $diffDay = $diffDay/(60*60*24);
+                }else{
+                    $diffMonth =$thisMonth;
+                    $diffDay = strtotime("$thisYear/$thisMonth/$thisDay")-strtotime("$thisYear/01/01");
+                    $diffDay = $diffDay/(60*60*24);
+                }
+            }elseif($staffYear==$foreachYear){//循環開始的第一年
+                $diffMonth = 12-$staffMonth;//間隔月份
+                $diffDay = strtotime("$staffYear/12/31")-strtotime($this->employee_list["entry_time"]);//間隔天數
+                $diffDay = $diffDay/(60*60*24);
+            }else{//循環的中間年
+                $diffMonth = 12;//間隔月份
+                $diffDay = 365;//間隔天數
+            }
+            switch ($this->yearLeaveType){
+                case 1://新加坡
+                    $sumDay = $sumDay>10?10:$sumDay;//累計的年假不允許超過10天
+                    $sumDay+=floatval($this->employee_list["year_day"])/12*$diffMonth;
+                    break;
+                case 2://吉隆坡
+                    $num = floatval($this->employee_list["year_day"])/2;
+                    $sumDay = $sumDay>$num?$num:$sumDay;//累計年假不能超過自身年假的一半
+                    $sumDay+=floatval($this->employee_list["year_day"])/365*$diffDay;
+                    break;
+            }
+            if($foreachYear!=$thisYear){ //如果不是最後一次循環
+                $this->setSumDayToForeachYear($sumDay,$foreachYear);
+            }
+
+            $foreachYear++;
+            return $this->foreachYearAddSum($foreachYear,$sumDay);
+        }
+    }
+    private function setSumDayToForeachYear(&$sumDay,$foreachYear){
+        //系統手動添加的累計年假
+        $suffix = Yii::app()->params['envSuffix'];
+        $sum = Yii::app()->db->createCommand()->select("sum(add_num)")->from("hr$suffix.hr_staff_year")
+            ->where("employee_id=:employee_id and year=:year",array(":employee_id"=>$this->employee_id,":year"=>$foreachYear))->queryScalar();
+        $sumDay+=$sum;
+        //用掉的年假
+        $sum = Yii::app()->db->createCommand()->select("sum(log_time)")->from("hr$suffix.hr_employee_leave")
+            ->where("employee_id=:employee_id and status NOT IN (0,3) and date_format(start_time,'%Y')=:year",
+                array(":employee_id"=>$this->employee_id,":year"=>$foreachYear))->queryScalar();
+        $sumDay-=$sum;
+    }
+
+    //根據員工信息添加年假（新加坡）
+    private function addEmployeeNumToOne(){
+        if($this->employee_list){
+            $this->sumDay=$this->employee_list["year_day"];
+            if($this->diffMonth>=3){
+                $foreachYear = date("Y",strtotime($this->employee_list["entry_time"]));
+                $foreachYear = intval($foreachYear);
+                $this->vacation_sum=$this->foreachYearAddSum($foreachYear);
+            }else{
+                $this->vacation_sum=0;
+            }
+        }
+    }
+
+    //根據員工信息添加年假（吉隆坡）
+    private function addEmployeeNumToTwo(){
+        if($this->employee_list){
+            $this->sumDay=$this->employee_list["year_day"];
+            if($this->diffMonth>=3){
+                $foreachYear = date("Y",strtotime($this->employee_list["entry_time"]));
+                $foreachYear = intval($foreachYear);
+                $this->vacation_sum=$this->foreachYearAddSum($foreachYear);
             }else{
                 $this->vacation_sum=0;
             }
@@ -239,8 +356,8 @@ class VacationDayForm
     }
 
     //累計年假
-    private function addYearLeaveNum($vacation_list){
-        switch ($vacation_list["vaca_type"]){
+    private function addYearLeaveNum($vacation_list=''){
+        switch ($this->vaca_type){
             case $this->year_type://年假（需要添加累計年假的天數）
                 $year = date("Y",strtotime($this->start_time));
                 $suffix = Yii::app()->params['envSuffix'];
