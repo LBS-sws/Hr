@@ -26,16 +26,20 @@ class VacationDayForm
 
     protected $error_bool = false;
 
-    public function __construct($employee_id='',$vacation_id='E',$time='')
+    public function __construct($employee_id='',$vacation_id='',$time='',$vaca_type='E')
     {
         $time = empty($time)?date("Y/m/d"):$time;
         $this->employee_id = $employee_id;
         $this->vacation_id = $vacation_id;
+        $this->vaca_type = empty($vacation_id)?$vaca_type:"";
         $this->time = $time;
         $this->init();
     }
 
     public function init(){
+        if(!empty($this->vacation_id)){
+            $this->setVacationId($this->vacation_id);
+        }
         if(!empty($this->employee_id)){
             $this->setEmployeeList($this->employee_id);
         }
@@ -68,10 +72,12 @@ class VacationDayForm
             $this->error_bool = false;
             $this->sumDay = 0;
             $this->useDay = 0;
-            if(($this->vacation_id == $this->year_type||$this->vaca_type == $this->year_type)&&$this->city != $rows["city"]){
+            if($this->vaca_type == $this->year_type&&$this->city != $rows["city"]){
                 $this->city = $rows["city"];
                 $this->setYearLeaveType();
-                $this->setVacationId($this->vacation_id);
+                $this->setVacationType();
+            }else{
+                $this->city = $rows["city"];
             }
         }else{
             $this->error_bool = true;
@@ -82,10 +88,10 @@ class VacationDayForm
         return $this->error_bool;
     }
 
-    public function setVacationId($vacation_id){
+    private function setVacationType(){
         $this->vacation_list = '';
         $this->vacation_id_list = array();
-        if ($vacation_id === $this->year_type){ //特別處理年假
+        if ($this->vaca_type == $this->year_type){ //特別處理年假
             $suffix = Yii::app()->params['envSuffix'];
             $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
                 ->where("vaca_type=:vaca_type and (city=:city OR only='default') ",
@@ -101,6 +107,30 @@ class VacationDayForm
             }else{
                 $this->error_bool = true;
             }
+        }
+        $this->vacation_sum = 0;
+        $this->remain_bool = false;
+        $this->error_bool = false;
+        $this->sumDay = 0;
+        $this->useDay = 0;
+    }
+
+    private function setVacationId($vacation_id){
+        $this->vacation_list = '';
+        $this->vacation_id_list = array();
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
+            ->where("id=:id",array(":id"=>$vacation_id))->queryRow();
+        if($row){
+            $this->vaca_type = $row["vaca_type"];
+            $this->vacation_id = $row["id"];
+            $this->vacation_list = $row;
+            if($row['ass_bool'] == 1){ //有關聯假期規則
+                $this->vacation_id_list = explode(",",$row['ass_id']);
+            }
+            $this->vacation_id_list[] = $row["id"];
+        }else{
+            $this->error_bool = true;
         }
         $this->vacation_sum = 0;
         $this->remain_bool = false;
