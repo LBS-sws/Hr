@@ -10,6 +10,7 @@ class ConfigSystemList extends CListPageModel
 	public function attributeLabels()
 	{
         return array(
+            'set_city'=>"配置城市",
             'set_name'=>"配置名称",
             'set_value'=>"配置的值"
         );
@@ -18,7 +19,7 @@ class ConfigSystemList extends CListPageModel
 	public function retrieveDataByPage($pageNum=1)
 	{
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select id,set_value,set_name from hr_setting 
+		$sql1 = "select id,set_value,set_city,set_name from hr_setting 
                 where id>0 
 			";
 		$sql2 = "select count(id)
@@ -56,6 +57,7 @@ class ConfigSystemList extends CListPageModel
 			foreach ($records as $k=>$record) {
 				$this->attr[] = array(
 					'id'=>$record['id'],
+					'set_city'=>CGeneral::getCityName($record['set_city']),
 					'set_name'=>$record['set_name'],
 					'set_value'=>$record['set_value']
 				);

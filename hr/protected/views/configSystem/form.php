@@ -58,6 +58,15 @@ $this->pageTitle=Yii::app()->name . ' - ConfigSystem Form';
 				</div>
 			</div>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'set_city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-4">
+                    <?php echo $form->dropDownList($model, 'set_city',CGeneral::getCityList(),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'set_name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-4">

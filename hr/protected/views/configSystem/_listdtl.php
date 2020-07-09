@@ -5,6 +5,7 @@
 
 
 
+    <td><?php echo $this->record['set_city']; ?></td>
     <td><?php echo $this->record['set_name']; ?></td>
     <td><?php echo $this->record['set_value']; ?></td>
 </tr>

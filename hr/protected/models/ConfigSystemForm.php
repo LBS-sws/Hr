@@ -3,12 +3,14 @@
 class ConfigSystemForm extends CFormModel
 {
 	public $id;
+	public $set_city;
 	public $set_name;
 	public $set_value;
 
 	public function attributeLabels()
 	{
 		return array(
+            'set_city'=>"配置城市",
             'set_name'=>"配置名称",
             'set_value'=>"配置的值"
 		);
@@ -20,7 +22,8 @@ class ConfigSystemForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, set_name,set_value','safe'),
+			array('id, set_city, set_name,set_value','safe'),
+            array('set_city','required'),
             array('set_name','required'),
             array('set_name','validateName'),
             array('set_value','required'),
@@ -33,8 +36,8 @@ class ConfigSystemForm extends CFormModel
             $id = $this->id;
         }
         $row = Yii::app()->db->createCommand()->select("id")->from("hr_setting")
-            ->where('set_name=:set_name and id!=:id',
-                array(':set_name'=>$this->set_name,':id'=>$id))->queryRow();
+            ->where('set_name=:set_name and id!=:id and set_city=:set_city',
+                array(':set_name'=>$this->set_name,':set_city'=>$this->set_city,':id'=>$id))->queryRow();
         if($row){
             $message = "配置名称". Yii::t('contract',' can not repeat');
             $this->addError($attribute,$message);
@@ -43,11 +46,12 @@ class ConfigSystemForm extends CFormModel
 
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
-		$rows = Yii::app()->db->createCommand()->select("id,set_value,set_name")
+		$rows = Yii::app()->db->createCommand()->select("id,set_value,set_city,set_name")
             ->from("hr_setting")->where("id=:id",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
+                $this->set_city = $row['set_city'];
                 $this->set_name = $row['set_name'];
                 $this->set_value = $row['set_value'];
                 break;
@@ -83,13 +87,14 @@ class ConfigSystemForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_setting(
-							set_name,set_value
+							set_name,set_value,set_city
 						) values (
-							:set_name,:set_value
+							:set_name,:set_value,:set_city
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_setting set
+							set_city = :set_city, 
 							set_name = :set_name, 
 							set_value = :set_value
 						where id = :id
@@ -109,6 +114,8 @@ class ConfigSystemForm extends CFormModel
             $command->bindParam(':set_value',$this->set_value,PDO::PARAM_INT);
         if (strpos($sql,':set_name')!==false)
             $command->bindParam(':set_name',$this->set_name,PDO::PARAM_STR);
+        if (strpos($sql,':set_city')!==false)
+            $command->bindParam(':set_city',$this->set_city,PDO::PARAM_STR);
         $command->execute();
 
         if ($this->scenario=='new'){

@@ -8,10 +8,11 @@ class VacationDayForm
     public $employee_list;
     public $vacation_list;//後期修改，不循環查詢（2019-10-28）
     public $time;
+    public $city;//員工所在城市
     public $vaca_type;
     public $diffMonth=0;
     public $remain_bool=false;//该假期类型是否有规则
-    public $yearLeaveType=0;//年假的計算方式（2020-07-07）0：正常  1：新加坡  2：吉隆坡
+    public $yearLeaveType=0;//年假的計算方式（2020-07-07）0：正常  1:新加坡  2:吉隆坡）
 
     protected $vacation_sum=0;//剩餘天數
     protected $sumDay=0;//累計天數（不包含額外添加的年假）
@@ -35,11 +36,9 @@ class VacationDayForm
     }
 
     public function init(){
-        $this->setYearLeaveType();
         if(!empty($this->employee_id)){
             $this->setEmployeeList($this->employee_id);
         }
-        $this->setVacationId($this->vacation_id);
     }
 
     public function setYearLeaveType($int=-1){
@@ -48,7 +47,7 @@ class VacationDayForm
         }else{
             $suffix = Yii::app()->params['envSuffix'];
             $row = Yii::app()->db->createCommand()->select("set_value")->from("hr$suffix.hr_setting")
-                ->where('set_name="yearLeaveType"')->queryRow();
+                ->where('set_name="yearLeaveType" and set_city=:city',array(":city"=>$this->city))->queryRow();
             if($row){
                 if(in_array($row["set_value"],array(0,1,2))){
                     $this->yearLeaveType = $row["set_value"];
@@ -69,6 +68,11 @@ class VacationDayForm
             $this->error_bool = false;
             $this->sumDay = 0;
             $this->useDay = 0;
+            if(($this->vacation_id == $this->year_type||$this->vaca_type == $this->year_type)&&$this->city != $rows["city"]){
+                $this->city = $rows["city"];
+                $this->setYearLeaveType();
+                $this->setVacationId($this->vacation_id);
+            }
         }else{
             $this->error_bool = true;
         }
@@ -84,7 +88,8 @@ class VacationDayForm
         if ($vacation_id === $this->year_type){ //特別處理年假
             $suffix = Yii::app()->params['envSuffix'];
             $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
-                ->where("vaca_type=:vaca_type",array(":vaca_type"=>$this->year_type))->queryRow();
+                ->where("vaca_type=:vaca_type and (city=:city OR only='default') ",
+                    array(":vaca_type"=>$this->year_type,":city"=>$this->city))->queryRow();
             if($row){
                 $this->vaca_type = $row["vaca_type"];
                 $this->vacation_id = $row["id"];
@@ -121,7 +126,7 @@ class VacationDayForm
                     $diffMonth--;
                 }
                 $this->diffMonth = $diffMonth;
-                
+
                 if($this->yearLeaveType == 0){
                     //大陸版的一年：員工月份為起點
                     if(date("m-d",$time)>=date("m-d",$entry_time)){
@@ -202,7 +207,7 @@ class VacationDayForm
         $suffix = Yii::app()->params['envSuffix'];
         if(empty($this->vacation_list)){
             $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
-                ->where('id=:id',array(':id'=>$vacation_id))->queryRow();
+                ->where('id=:id and (city=:city OR only="default")',array(':id'=>$vacation_id,':city'=>$this->city))->queryRow();
             if($row['ass_bool'] == 1){ //有關聯假期規則
                 $this->vacation_id_list = explode(",",$row['ass_id']);
             }
