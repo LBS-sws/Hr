@@ -121,12 +121,19 @@ class VacationDayForm
                     $diffMonth--;
                 }
                 $this->diffMonth = $diffMonth;
-                if(date("m-d",$time)>=date("m-d",$entry_time)){
-                    $this->start_time = $year.date("/m/d",$entry_time);
-                    $this->end_time = (intval($year)+1).date("/m/d",$entry_time);
+                
+                if($this->yearLeaveType == 0){
+                    //大陸版的一年：員工月份為起點
+                    if(date("m-d",$time)>=date("m-d",$entry_time)){
+                        $this->start_time = $year.date("/m/d",$entry_time);
+                        $this->end_time = (intval($year)+1).date("/m/d",$entry_time);
+                    }else{
+                        $this->start_time = (intval($year)-1).date("/m/d",$entry_time);
+                        $this->end_time = $year.date("/m/d",$entry_time);
+                    }
                 }else{
-                    $this->start_time = (intval($year)-1).date("/m/d",$entry_time);
-                    $this->end_time = $year.date("/m/d",$entry_time);
+                    $this->start_time = $year."/01/01";
+                    $this->end_time = $year."/12/31";
                 }
             }else{
                 $this->diffMonth = 0;
@@ -163,7 +170,7 @@ class VacationDayForm
             $vacation_id_list = implode(",",$this->vacation_id_list);
             $statusSql.=" and vacation_id in ($vacation_id_list)";
         }else{
-            $statusSql.=" and vacation_id in ('".$this->year_type."')";
+            $statusSql.=" and vacation_id in ('".$this->vacation_id."')";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $sum = Yii::app()->db->createCommand()->select("sum(log_time)")->from("hr$suffix.hr_employee_leave")
