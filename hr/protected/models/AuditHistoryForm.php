@@ -356,6 +356,10 @@ class AuditHistoryForm extends CFormModel
                 ), 'id=:id', array(':id'=>$this->id));
                 break;
         }
+        if($this->scenario == "audit"){
+            $this->finish();
+            $this->resetEmployeeStatusAndIndex();
+        }
 
         //記錄
         Yii::app()->db->createCommand()->insert('hr_employee_history', array(
@@ -365,11 +369,6 @@ class AuditHistoryForm extends CFormModel
             "lcu"=>$uid,
             "lcd"=>$lud,
         ));
-        if($this->scenario == "audit"){
-            $this->finish();
-            $this->resetEmployeeStatusAndIndex();
-        }
-
         //發送郵件
         $this->sendEmail();
 	}
@@ -454,6 +453,8 @@ class AuditHistoryForm extends CFormModel
         Yii::app()->db->createCommand()->update('hr_employee', $staffNew, 'id=:id', array(':id'=>$this->employee_id));
         Yii::app()->db->createCommand()->update('hr_employee_operate', $staff, 'id=:id', array(':id'=>$this->id));
 
+        //修改流程的記錄的時間
+        Yii::app()->db->createCommand()->update('hr_employee_history', array('lud'=>$date), 'history_id=:id',array(":id"=>$this->id));
         //交換員工附件
         $this->replaceAttachment();
     }

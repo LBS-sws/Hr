@@ -48,6 +48,8 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
         $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
         $this->contractAgoSendEmail();//合同過期10天后（合同已過期）給饒總發送郵件
 
+        $this->contractAgainSendEmail();//合同续期10天后未更新附加提示，城市、老总
+
         //加班、請假批准后的郵件提示（開始)
         $this->leaveThreeSendEmail();
         $this->leaveSevenSendEmail();
@@ -173,6 +175,7 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
                 }
                 $message="";
                 foreach ($this->send_list as $send){
+                    $maxBool = false;//最大權限
                     $html = "";
                     $city_list = $send["city_allow"]?$this->city_list:array($user["city"]); //判斷是否需要查詢下級城市
                     $bool = array_intersect($this->city_list,$send["city_list"]);
@@ -181,21 +184,24 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
                             $joeEmail = $email->getJoeEmail();
                             if($user["email"]==$joeEmail){//用戶是繞生
                                 $bool=1;//繞生不需要城市驗證
+                                $maxBool = true;
                                 $city_list = $send["city_list"];//繞生收到所有城市的郵件
                             }
                         }
                     }
-                    if(empty($bool)){
-                        continue;//該城市沒有提示信息
-                    }
-                    if(!empty($send["auth_list"])){
-                        if(!$this->arrSearchStr($send["auth_list"],$user["a_read_write"])){
-                            continue;//用戶權限不一致
+                    if(!$maxBool){
+                        if(empty($bool)){
+                            continue;//該城市沒有提示信息
                         }
-                    }
-                    if(!empty($send["incharge"])){//incharge：1 需要boss身份  0：不需要驗證
-                        if(empty($user["incharge"])){
-                            continue;//該用戶不是boss
+                        if(!empty($send["auth_list"])){
+                            if(!$this->arrSearchStr($send["auth_list"],$user["a_read_write"])){
+                                continue;//用戶權限不一致
+                            }
+                        }
+                        if(!empty($send["incharge"])){//incharge：1 需要boss身份  0：不需要驗證
+                            if(empty($user["incharge"])){
+                                continue;//該用戶不是boss
+                            }
                         }
                     }
                     $html.=$send["title"];
@@ -346,6 +352,30 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
             $arr["auth_list"] = array("AY01");
             $arr["city_allow"] = false;
             $arr["incharge"] = 0;
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
+    //合同续期10天后未更新附加提示，城市、老总
+    private function contractAgainSendEmail(){
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstDay = date("Y/m/d");
+        $firstDay = date("Y/m/d",strtotime("$firstDay - 10 day"));
+        $sql = "b.staff_status=0 and a.lcd < a.lud and a.status='contract' and date_format(a.lud,'%Y/%m/%d') <='$firstDay'";
+        //id,lcd,city,fix_time,start_time,end_time,code,name,entry_time
+        $rows = $command->select("b.id,b.city,b.fix_time,b.start_time,b.end_time,b.code,b.name,b.entry_time,a.lud as lcd")
+            ->from("hr_employee_history a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>請檢查下列员工的是否簽署续签合同：</p>";
+            $arr = $this->getListToStaffList($description,$rows,true);
+            $arr["auth_list"] = array("ZE03","ZG02");
+            $arr["city_allow"] = true;
+            $arr["incharge"] = 0;
+            $arr["joeEmail"] = true;//繞生收到郵件
             if(count($arr)>6){
                 $this->send_list[] = $arr;
             }
