@@ -19,6 +19,8 @@ class AuditWorkForm extends CFormModel
     public $z_index;
     public $status;
     public $audit_remark;
+    public $pers_lcu;
+    public $pers_lcd;
     public $user_lcu;
     public $user_lcd;
     public $area_lcu;
@@ -60,6 +62,8 @@ class AuditWorkForm extends CFormModel
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
+            'pers_lcu'=>Yii::t('fete','personnel lcu'),
+            'pers_lcd'=>Yii::t('fete','personnel lcd'),
             'user_lcu'=>Yii::t('fete','user lcu'),
             'user_lcd'=>Yii::t('fete','user lcd'),
             'area_lcu'=>Yii::t('fete','area lcu'),
@@ -141,12 +145,15 @@ class AuditWorkForm extends CFormModel
             $staff_id = 0;
             $department = 0;
         }
-        $sql = " a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only and a.id=:id";
+        $sql = " a.status in (1,3) AND a.z_index =$only and a.id=:id";
         switch ($only){
             case 1: //部門審核
                 $sql.=" AND b.department = '$department' ";
                 break;
             case 2: //主管
+                $sql.=" AND b.city = '$city' ";
+                break;
+            case 5: //人事
                 $sql.=" AND b.city = '$city' ";
                 break;
             case 3: //總監
@@ -176,6 +183,8 @@ class AuditWorkForm extends CFormModel
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
                 $this->status = $row['status'];
+                $this->pers_lcu = isset($row['pers_lcu'])?$row['pers_lcu']:"";
+                $this->pers_lcd = isset($row['pers_lcd'])?$row['pers_lcd']:"";
                 $this->user_lcu = $row['user_lcu'];
                 $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
@@ -255,6 +264,10 @@ class AuditWorkForm extends CFormModel
                 $clause="you_lcu = :you_lcu, you_lcd = :you_lcd, ";
                 $auditSql = "status = 4,";
                 break;
+            case 5: //你
+                $clause="pers_lcu = :pers_lcu, pers_lcd = :pers_lcd, ";
+                $only = 0;
+                break;
             default:
                 throw new CHttpException(404,'數據異常');
                 return false;
@@ -315,6 +328,10 @@ class AuditWorkForm extends CFormModel
         if (strpos($sql,':log_time')!==false)
             $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
 
+        if (strpos($sql,':pers_lcu')!==false)
+            $command->bindParam(':pers_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':pers_lcd')!==false)
+            $command->bindParam(':pers_lcd',date("Y-m-d"),PDO::PARAM_STR);
         if (strpos($sql,':user_lcu')!==false)
             $command->bindParam(':user_lcu',$uid,PDO::PARAM_STR);
         if (strpos($sql,':user_lcd')!==false)
@@ -356,6 +373,10 @@ class AuditWorkForm extends CFormModel
                 $description="加班二次审核 - ".$row["name"];
                 $subject="加班二次审核 - ".$row["name"];
                 $email->addEmailToPrefixAndOnlyCity("ZE05",$row["city"]);
+            }elseif ($this->z_index == 1){
+                $description="加班二次审核 - ".$row["name"];
+                $subject="加班二次审核 - ".$row["name"];
+                $email->addEmailToPrefixAndPoi("ZP02",$row["department"],$row["group_type"]);
             }else{
                 $description="加班审核通过 - ".$row["name"];
                 $subject="加班审核通过 - ".$row["name"];

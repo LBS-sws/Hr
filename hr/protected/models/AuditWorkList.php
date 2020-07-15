@@ -7,6 +7,7 @@ class AuditWorkList extends CListPageModel
         2=>"ZE05",
         3=>"ZG04",
         4=>"ZC10",
+        5=>"ZP01",
     );
 
     public $only = 1;//1：地區審核  2：總部審核
@@ -33,7 +34,7 @@ class AuditWorkList extends CListPageModel
     }
 
     public function getAcc(){
-        if(!in_array($this->only,array(1,2,3,4))){
+        if(!key_exists($this->only,self::$assList)){
             $this->only = 1;
         }
         return self::$assList[$this->only];
@@ -54,11 +55,11 @@ class AuditWorkList extends CListPageModel
         $city = Yii::app()->user->city();
         $sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
-                where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
+                where a.status in (1,3) AND a.z_index =$only 
 			";
         $sql2 = "select count(a.id)
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
-				where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
+				where a.status in (1,3) AND a.z_index =$only 
 			";
         switch ($only){
             case 1: //部門審核
@@ -66,6 +67,10 @@ class AuditWorkList extends CListPageModel
                 $sql2.=" AND b.department = '$department' ";
                 break;
             case 2: //主管
+                $sql1.=" AND b.city = '$city' ";
+                $sql2.=" AND b.city = '$city' ";
+                break;
+            case 5: //人事
                 $sql1.=" AND b.city = '$city' ";
                 $sql2.=" AND b.city = '$city' ";
                 break;

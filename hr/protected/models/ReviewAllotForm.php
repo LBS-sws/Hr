@@ -114,7 +114,11 @@ class ReviewAllotForm extends CFormModel
                 $this->addError($attribute,$message);
             }else{
                 if(Yii::app()->params['retire']===false || $this->year<2020){ //台灣地區或者2020年以前可以手動修改
-                    $this->change_num = empty($this->change_num)?0:$this->change_num;
+                    $this->change_num = empty($this->change_num)?0:floatval($this->change_num);
+                    if($this->review_type==3&&$this->change_num>10){
+                        $message = $this->getReviewStr($this->review_type)."不能大於10";
+                        $this->addError($attribute,$message);
+                    }
                     return true;
                 }
                 switch ($this->review_type){

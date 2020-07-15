@@ -16,6 +16,8 @@ class LeaveForm extends CFormModel
 	public $z_index;//1:部門審核、2：主管、3：總監、4：你
 	public $status;
 	public $audit_remark;
+    public $pers_lcu;
+    public $pers_lcd;
     public $user_lcu;
     public $user_lcd;
 	public $area_lcu;
@@ -60,6 +62,8 @@ class LeaveForm extends CFormModel
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
+            'pers_lcu'=>Yii::t('fete','personnel lcu'),
+            'pers_lcd'=>Yii::t('fete','personnel lcd'),
             'user_lcu'=>Yii::t('fete','user lcu'),
             'user_lcd'=>Yii::t('fete','user lcd'),
             'area_lcu'=>Yii::t('fete','area lcu'),
@@ -420,6 +424,9 @@ class LeaveForm extends CFormModel
                 $this->end_time_lg = $row['end_time_lg'];
                 $this->state = LeaveForm::translationState($row['z_index']);
                 $this->status = $row['status'];
+                $this->pers_lcu = isset($row['pers_lcu'])?$row['pers_lcu']:"";
+                $this->pers_lcd = isset($row['pers_lcd'])?$row['pers_lcd']:"";
+                $this->user_lcu = $row['user_lcu'];
                 $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
                 $this->area_lcd = $row['area_lcd'];
@@ -450,6 +457,8 @@ class LeaveForm extends CFormModel
                 return "總監審核（審核 → 審核）";
             case 4:
                 return "最高審核（系統設置 → 審核）";
+            case 5:
+                return "人事審核（人事 → 審核）";
             default:
                 return $str;
         }
@@ -703,6 +712,7 @@ class LeaveForm extends CFormModel
                 2=>"ZE06",
                 3=>"ZG05",
                 4=>"ZC11",
+                5=>"ZP02",
             );
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
@@ -724,6 +734,9 @@ class LeaveForm extends CFormModel
                     $email->addEmailToPrefixAndPoi($assType,$row["department"],$row["group_type"]);
                     break;
                 case 2:
+                    $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
+                    break;
+                case 5:
                     $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
                     break;
                 default:

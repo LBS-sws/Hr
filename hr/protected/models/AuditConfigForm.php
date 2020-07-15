@@ -75,6 +75,9 @@ class AuditConfigForm extends CFormModel
             ->leftJoin("hr_dept c","c.id = a.position")
             ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();
         if($staffList){
+            $personnelBool = Yii::app()->db->createCommand()->select("id")->from("hr_setting")
+                ->where("set_name='personnelType' and set_city=:set_city and set_value=2",
+                    array(':set_city'=>$staffList['city']))->queryRow();
             if($staffList["city"]!=Yii::app()->user->city()){
                 $plusList = Yii::app()->db->createCommand()->select("a.department,c.manager as c_manager")->from("hr_plus_city a")
                     ->leftJoin("hr_dept c","c.id = a.position")
@@ -84,12 +87,17 @@ class AuditConfigForm extends CFormModel
                     $staffList["department"] = $plusList["department"];
                 }
             }
-            $manager = $staffList["c_manager"];
-            if(!empty($manager)){
-                $manager = intval($manager);
-                if(in_array($manager,array(1,2,3,4))){
-                    $manager++;
-                    $manager = $manager>=4?4:$manager;
+            $manager = empty($staffList["c_manager"])?0:intval($staffList["c_manager"]);
+            //var_dump($manager);die();
+            if(in_array($manager,array(1,2,3,4))){
+                $manager++;
+                $manager = $manager>=4?4:$manager;
+            }elseif($personnelBool){
+                $type = empty($auditType)?"ZP01":"ZP02";
+                if(Yii::app()->user->validRWFunction($type)){
+                    $manager = 2;
+                }else{
+                    $manager = 5;
                 }
             }else{
                 $manager = 1;

@@ -76,8 +76,28 @@
     </div>
 </div>
 
-<?php if (!empty($model->user_lcu)): ?>
+<?php if (!empty($model->pers_lcu)): ?>
     <legend><?php echo Yii::t("fete","Audit Info")?></legend>
+    <div class="form-group">
+        <?php echo $form->labelEx($model,'pers_lcu',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
+            <?php echo $form->textField($model, 'pers_lcu',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+        <?php echo $form->labelEx($model,'pers_lcd',array('class'=>"col-lg-2 control-label")); ?>
+        <div class="col-lg-3">
+            <?php echo $form->textField($model, 'pers_lcd',
+                array('readonly'=>(true))
+            ); ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if (!empty($model->user_lcu)): ?>
+    <?php if (empty($model->pers_lcu)): ?>
+    <legend><?php echo Yii::t("fete","Audit Info")?></legend>
+    <?php endif; ?>
     <div class="form-group">
         <?php echo $form->labelEx($model,'user_lcu',array('class'=>"col-lg-2 control-label")); ?>
         <div class="col-lg-3">

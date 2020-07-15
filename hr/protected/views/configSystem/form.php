@@ -55,6 +55,7 @@ $this->pageTitle=Yii::app()->name . ' - ConfigSystem Form';
 			<div class="form-group">
 				<div class="col-sm-4 col-sm-offset-2">
                     <p class="form-control-static">1、yearLeaveType的值：（0：正常年假計算 1、新加坡 2、吉隆坡）</p>
+                    <p class="form-control-static">2、personnelType的值：（0：正常加班請假 2、吉隆坡）</p>
 				</div>
 			</div>
 

@@ -7,6 +7,7 @@ class AuditLeaveList extends CListPageModel
         2=>"ZE06",
         3=>"ZG05",
         4=>"ZC11",
+        5=>"ZP02",
     );
 
     public $only = 1;//1：地區審核  2：總部審核
@@ -52,12 +53,12 @@ class AuditLeaveList extends CListPageModel
         $sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city
               from hr_employee_leave a 
               LEFT JOIN hr_employee b ON a.employee_id = b.id
-              where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
+              where a.status in (1,3) AND a.z_index =$only 
 			";
         $sql2 = "select count(a.id)
 				from hr_employee_leave a 
 				LEFT JOIN hr_employee b ON a.employee_id = b.id
-				where a.status in (1,3) and b.id !=$staff_id AND a.z_index =$only 
+				where a.status in (1,3) AND a.z_index =$only 
 			";
         switch ($only){
             case 1: //部門審核
@@ -71,6 +72,10 @@ class AuditLeaveList extends CListPageModel
             case 3: //總監
                 $sql1.=" AND b.city in ($city_allow) ";
                 $sql2.=" AND b.city in ($city_allow) ";
+                break;
+            case 5: //人事
+                $sql1.=" AND b.city = '$city' ";
+                $sql2.=" AND b.city = '$city' ";
                 break;
         }
         $clause = "";

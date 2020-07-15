@@ -198,5 +198,9 @@ return array(
     //2020-05-22
     'first half year'=>'1月-6月',
     'last half year'=>'7月-12月',
+
+    //2020-07-15
+    'personnel lcu'=>'人事经理',
+    'personnel lcd'=>'人事经理审核时间',
 );
 ?>

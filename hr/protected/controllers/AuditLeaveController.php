@@ -13,6 +13,7 @@ class AuditLeaveController extends Controller
         2=>"ZE06",
         3=>"ZG05",
         4=>"ZC11",
+        5=>"ZP02",
     );
 
     public function filters()
@@ -54,7 +55,7 @@ class AuditLeaveController extends Controller
     public static function allowReadWrite() {
         if(array_key_exists("only",$_GET)){
             $only = $_GET["only"];
-            if(!in_array($only,array(1,2,3,4))){
+            if(!key_exists($only,self::$assList)){
                 $only = 1;
             }
         }else{
@@ -66,7 +67,7 @@ class AuditLeaveController extends Controller
     public static function allowReadOnly() {
         if(array_key_exists("only",$_GET)){
             $only = $_GET["only"];
-            if(!in_array($only,array(1,2,3,4))){
+            if(!key_exists($only,self::$assList)){
                 $only = 1;
             }
         }else{
@@ -105,7 +106,7 @@ class AuditLeaveController extends Controller
 		Yii::app()->session['active_func'] = $this->function_id;
 
         $model = new AuditLeaveForm('edit');
-        if(!in_array($only,array(1,2,3,4))){
+        if(!key_exists($only,self::$assList)){
             $only = 1;
         }
         $model->only = $only;
@@ -122,7 +123,7 @@ class AuditLeaveController extends Controller
 		Yii::app()->session['active_func'] = $this->function_id;
 
         $model = new AuditLeaveForm('view');
-        if(!in_array($only,array(1,2,3,4))){
+        if(!key_exists($only,self::$assList)){
             $only = 1;
         }
         $model->only = $only;

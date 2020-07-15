@@ -13,6 +13,7 @@ class AuditWorkController extends Controller
         2=>"ZE05",
         3=>"ZG04",
         4=>"ZC10",
+        5=>"ZP01",
     );
 
     public function filters()
@@ -54,7 +55,7 @@ class AuditWorkController extends Controller
     public static function allowReadWrite() {
         if(array_key_exists("only",$_GET)){
             $only = $_GET["only"];
-            if(!in_array($only,array(1,2,3,4))){
+            if(!key_exists($only,self::$assList)){
                 $only = 1;
             }
         }else{
@@ -66,7 +67,7 @@ class AuditWorkController extends Controller
     public static function allowReadOnly() {
         if(array_key_exists("only",$_GET)){
             $only = $_GET["only"];
-            if(!in_array($only,array(1,2,3,4))){
+            if(!key_exists($only,self::$assList)){
                 $only = 1;
             }
         }else{
@@ -103,7 +104,7 @@ class AuditWorkController extends Controller
  		$this->function_id = self::$assList[$only];
 		Yii::app()->session['active_func'] = $this->function_id;
        $model = new AuditWorkForm('edit');
-        if(!in_array($only,array(1,2,3,4))){
+        if(!key_exists($only,self::$assList)){
             $only = 1;
         }
         $model->only = $only;
@@ -119,7 +120,7 @@ class AuditWorkController extends Controller
 		$this->function_id = self::$assList[$only];
 		Yii::app()->session['active_func'] = $this->function_id;
         $model = new AuditWorkForm('view');
-        if(!in_array($only,array(1,2,3,4))){
+        if(!key_exists($only,self::$assList)){
             $only = 1;
         }
         $model->only = $only;

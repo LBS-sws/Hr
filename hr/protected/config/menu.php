@@ -48,6 +48,23 @@ return array(
             ),
 		),
 	),
+    //人事
+    'Personnel Audit'=>array(
+        'access'=>'ZP',
+        'icon'=>'fa-beer',
+        'items'=>array(
+            //加班审核
+            'audit for work overtime'=>array(
+                'access'=>'ZP01',
+                'url'=>'/auditWork/index?only=5',
+            ),
+            //请假审核
+            'audit for leave'=>array(
+                'access'=>'ZP02',
+                'url'=>'/auditLeave/index?only=5',
+            ),
+        )
+    ),
     //合同模塊
 	'Contract'=>array(
 		'access'=>'ZD',

@@ -18,6 +18,8 @@ class WorkForm extends CFormModel
 	public $status;
 	public $city;
     public $audit_remark;
+    public $pers_lcu;
+    public $pers_lcd;
     public $user_lcu;
     public $user_lcd;
 	public $area_lcu;
@@ -62,6 +64,8 @@ class WorkForm extends CFormModel
             'end_time'=>Yii::t('contract','End Time'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
+            'pers_lcu'=>Yii::t('fete','personnel lcu'),
+            'pers_lcd'=>Yii::t('fete','personnel lcd'),
             'user_lcu'=>Yii::t('fete','user lcu'),
             'user_lcd'=>Yii::t('fete','user lcd'),
             'area_lcu'=>Yii::t('fete','area lcu'),
@@ -243,6 +247,8 @@ class WorkForm extends CFormModel
                 $this->log_time = $row['log_time'];
                 $this->z_index = $row['z_index'];
                 $this->status = $row['status'];
+                $this->pers_lcu = isset($row['pers_lcu'])?$row['pers_lcu']:"";
+                $this->pers_lcd = isset($row['pers_lcd'])?$row['pers_lcd']:"";
                 $this->user_lcu = $row['user_lcu'];
                 $this->user_lcd = $row['user_lcd'];
                 $this->area_lcu = $row['area_lcu'];
@@ -487,6 +493,7 @@ class WorkForm extends CFormModel
                 2=>"ZE05",
                 3=>"ZG04",
                 4=>"ZC10",
+                5=>"ZP01",
             );
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
@@ -509,6 +516,9 @@ class WorkForm extends CFormModel
                     $email->addEmailToPrefixAndPoi($assType,$row["department"],$row["group_type"]);
                     break;
                 case 2:
+                    $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
+                    break;
+                case 5:
                     $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
                     break;
                 default:

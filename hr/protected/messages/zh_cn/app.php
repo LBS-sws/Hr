@@ -177,6 +177,7 @@ return array(
     'Setting KPI'=>'KPI设置',
     'Back to boss review'=>'退回老总年度考核',
     'Config System'=>'开发者配置',
+    'Personnel Audit'=>'人事',
     //沈超添加结束
 );
 ?>
