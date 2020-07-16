@@ -266,7 +266,14 @@ class AuditWorkForm extends CFormModel
                 break;
             case 5: //你
                 $clause="pers_lcu = :pers_lcu, pers_lcd = :pers_lcd, ";
+                $assList = AuditConfigForm::getAccessAndCity($staffList["city"],$staffList["department"]);
                 $only = 0;
+                foreach ($assList as $key=>$keyBool){
+                    if($keyBool){
+                        $only = $key-1;
+                        break;
+                    }
+                }
                 break;
             default:
                 throw new CHttpException(404,'數據異常');
@@ -373,10 +380,6 @@ class AuditWorkForm extends CFormModel
                 $description="加班二次审核 - ".$row["name"];
                 $subject="加班二次审核 - ".$row["name"];
                 $email->addEmailToPrefixAndOnlyCity("ZE05",$row["city"]);
-            }elseif ($this->z_index == 1){
-                $description="加班二次审核 - ".$row["name"];
-                $subject="加班二次审核 - ".$row["name"];
-                $email->addEmailToPrefixAndPoi("ZP02",$row["department"],$row["group_type"]);
             }else{
                 $description="加班审核通过 - ".$row["name"];
                 $subject="加班审核通过 - ".$row["name"];

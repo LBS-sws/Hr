@@ -339,7 +339,7 @@ class LeaveController extends Controller
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
         $command = Yii::app()->db->createCommand();
-        $workOne = $command->select("a.user_id,a.employee_id,d.name")->from("hr_binding a")
+        $workOne = $command->select("a.user_id,a.employee_id,d.name,b.city")->from("hr_binding a")
             ->leftJoin("hr_employee d","d.id = a.employee_id")
             ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
             ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
@@ -349,17 +349,14 @@ class LeaveController extends Controller
     }
 
     //
-    public function actionTest2($index){
-        $index = is_numeric($index)?$index:0;
+    public function actionTest2($city){
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
         $command = Yii::app()->db->createCommand();
-        $workOne = $command->select("a.user_id,a.employee_id,d.name")->from("hr_binding a")
-            ->leftJoin("hr_employee d","d.id = a.employee_id")
-            ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
-            ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
-            ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%ZA09%' and d.department='$index'")
-            ->queryAll();
-        var_dump($workOne);
+        $workTwo = $command->select("a.username")->from("security$suffix.sec_user a")
+            ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
+            ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZE05%' and a.city=:city",
+                array(':city'=>$city))->queryAll();
+        var_dump($workTwo);
     }
 }

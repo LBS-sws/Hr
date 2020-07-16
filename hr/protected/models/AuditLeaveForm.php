@@ -247,7 +247,14 @@ class AuditLeaveForm extends CFormModel
                 break;
             case 5: //人事審核
                 $clause="pers_lcu = :pers_lcu, pers_lcd = :pers_lcd, ";
+                $assList = AuditConfigForm::getAccessAndCity($staffList["city"],$staffList["department"],1);
                 $only = 0;
+                foreach ($assList as $key=>$keyBool){
+                    if($keyBool){
+                        $only = $key-1;
+                        break;
+                    }
+                }
                 break;
             default:
                 throw new CHttpException(404,'數據異常');
@@ -356,10 +363,6 @@ class AuditLeaveForm extends CFormModel
                 $description="请假单二次审核 - ".$row["name"];
                 $subject="请假单二次审核 - ".$row["name"];
                 $email->addEmailToPrefixAndOnlyCity("ZE06",$row["city"]);
-            }elseif($this->z_index == 1){
-                $description="请假单二次审核 - ".$row["name"];
-                $subject="请假单二次审核 - ".$row["name"];
-                $email->addEmailToPrefixAndPoi("ZA09",$row["department"],$row["group_type"]);
             }else{
                 $description="请假单审核通过 - ".$row["name"];
                 $subject="请假单审核通过 - ".$row["name"];
