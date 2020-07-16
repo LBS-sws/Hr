@@ -154,8 +154,10 @@ class BossReviewA extends BossReview
             $value = $this->json_text[$type]["one_4"];
         }
         $value = $this->cofModel->getClassCof($value,$this->countPrice,$type);//系數
+        $kpiData = $this->cofModel->getKPIListStr();
+        $kpiType = $this->cofModel->size_type;
         $name = $this->className."[json_text][".$type."]"."[".$str."]";
-        $html ="<input readonly type='text' name='$name' value='$value' class='form-control planYearCof'/>";
+        $html ="<input readonly type='text' name='$name' value='$value' data-name='$type' data-kpi='$kpiData' data-size='$kpiType' class='form-control planYearCof changeCofWindow'/>";
 
         $this->json_text[$type][$str] = $value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$html);

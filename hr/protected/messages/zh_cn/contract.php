@@ -614,5 +614,8 @@ return array(
 
     'Insurance Documents'=>'保险文件资料',
     'Qualification  Documents'=>'资质资料',
+
+    'ratio value'=>'对比值',
+    'KPI Attachment'=>'各KPI系数文档',
 );
 ?>

@@ -29,17 +29,25 @@ class BossApplyController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','add','new','save','audit','ajaxPlanYear'),
+                'actions'=>array('edit','add','new','save','audit','ajaxPlanYear','fileDownload'),
                 'expression'=>array('BossApplyController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view'),
+                'actions'=>array('index','view','fileDownload'),
                 'expression'=>array('BossApplyController','allowReadOnly'),
+            ),
+            array('allow',
+                'actions'=>array('fileupload','fileRemove'),
+                'expression'=>array('BossApplyController','allowFileWrite'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public static function allowFileWrite() {
+        return Yii::app()->user->validRWFunction('BA04');
     }
 
     public static function allowReadWrite() {
@@ -164,5 +172,42 @@ class BossApplyController extends Controller
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }
+    }
+
+
+    public function actionFileupload($doctype) {
+        $model = new BossApplyList();
+        if (isset($_POST['BossApplyList'])) {
+            $model->attributes = $_POST['BossApplyList'];
+
+            $id = $model->id;
+            $docman = new DocMan($model->docType,$id,get_class($model));
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+            $docman->fileUpload();
+            echo $docman->genTableFileList(Yii::app()->user->validRWFunction('BA04'));
+        } else {
+            echo "NIL";
+        }
+    }
+
+    public function actionFileRemove($doctype) {
+        $model = new BossApplyList();
+        if (isset($_POST['BossApplyList'])) {
+            $model->attributes = $_POST['BossApplyList'];
+
+            $docman = new DocMan($model->docType,$model->id,get_class($model));
+            $docman->masterId = $model->docMasterId[strtolower($doctype)];
+            $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+            echo $docman->genTableFileList(Yii::app()->user->validRWFunction('BA04'));
+        } else {
+            echo "NIL";
+        }
+    }
+
+    public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
+        $docman = new DocMan($doctype,$docId,'BossApplyList');
+        $docman->masterId = $mastId;
+        $docman->fileDownload($fileId);
     }
 }

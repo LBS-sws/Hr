@@ -9,6 +9,8 @@
 class BossReviewCof
 {
     public $class_id='';//
+    public $size_type=0;//
+    public $kpi_list=array();
 
     public function __construct($class_id='')
     {
@@ -42,12 +44,14 @@ class BossReviewCof
 
     public function getClassCof($value,$price='',$class_id=''){
         if(!is_numeric($value)||$value ===""){
-            return 0;
+            $value = 0;
         }
         $kpiRow = Yii::app()->db->createCommand()->select("id,kpi_name,size_type,sum_bool")->from("hr_kpi")
             ->where("kpi_name=:kpi_name",array(":kpi_name"=>$class_id))->queryRow();
         if($kpiRow){
             $kpiList = $this->getKPIList($kpiRow,$price);
+            $this->size_type = $kpiRow["size_type"];
+            $this->kpi_list = $kpiList;
             if($kpiRow["size_type"]==1){
                 return $this->foreachListToMax($kpiList,$value,'min_num','kpi_value');
             }else{
@@ -55,6 +59,17 @@ class BossReviewCof
             }
         }
         return 0;
+    }
+
+    public function getKPIListStr(){
+        $str = "";
+        if(is_array($this->kpi_list)){
+            foreach ($this->kpi_list as $list){
+                $str.=empty($str)?"":",";
+                $str.=floatval($list["min_num"]).":".floatval($list["kpi_value"]);
+            }
+        }
+        return $str;
     }
 
     protected function getKPIList($row,$price=''){

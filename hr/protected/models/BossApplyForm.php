@@ -167,6 +167,8 @@ class BossApplyForm extends CFormModel
         $name = key_exists("name",$data)?$data['name']:"";
         $value = key_exists("value",$data)?$data['value']:0;
         $value = floatval($value);
+        $one_0 = key_exists("one_0",$data)?$data['one_0']:0;
+        $one_0 = floatval($one_0);
         $one_1 = key_exists("one_1",$data)?$data['one_1']:0;
         $one_1 = floatval($one_1);
         $cofNow = key_exists("cofNow",$data)?$data['cofNow']:0;
@@ -176,7 +178,7 @@ class BossApplyForm extends CFormModel
         if($type === "planYearB"){
             $arr = $this->planYearB($name,$value,$one_1,$cofNow,$one_11);
         }else{
-            $arr = $this->planYearA($name,$value,$one_1,$cofNow,$one_11);
+            $arr = $this->planYearA($name,$value,$one_1,$cofNow,$one_11,$one_0);
         }
         return $arr;
     }
@@ -195,14 +197,14 @@ class BossApplyForm extends CFormModel
         return $arr;
     }
 
-    protected function planYearA($name,$value,$one_1,$cofNow,$one_11){
+    protected function planYearA($name,$value,$one_1,$cofNow,$one_11,$one_0){
         $arr = array();
         $bossReviewCof = new BossReviewCof($name);
         if(in_array($name,array("one_six","one_seven","one_eight"))){
             $one_4 = $value;
             $arr["one_4"]= "\\";
         }else{
-            $one_4 = empty($one_1)?0:($value-$one_1)/$one_1;
+            $one_4 = empty($one_0)?0:($value-$one_0)/$one_0;
             $one_4 = round($one_4*100);
             $arr["one_4"]= $one_4."%";
         }

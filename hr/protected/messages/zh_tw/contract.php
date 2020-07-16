@@ -609,5 +609,8 @@ return array(
 
     'Insurance Documents'=>'保險文件資料',
     'Qualification  Documents'=>'資質資料',
+
+    'ratio value'=>'對比值',
+    'KPI Attachment'=>'各KPI系數文檔',
     );
 ?>

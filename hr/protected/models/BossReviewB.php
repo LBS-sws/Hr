@@ -87,8 +87,11 @@ class BossReviewB extends BossReview
     public function getPlanYearCof($type,$str){
         $value = $this->json_text[$type]["two_2"];
         $value = $this->cofModel->getClassCof($value,$this->countPrice,$type);//系數
+        $kpiData = $this->cofModel->getKPIListStr();
+        $kpiType = $this->cofModel->size_type;
         $name = $this->className."[json_text][".$type."]"."[".$str."]";
-        $html ="<input readonly type='text' name='$name' value='$value' class='form-control planYearBCof'/>";
+        $html ="<input readonly type='text' name='$name' value='$value' data-name='$type' data-kpi='$kpiData' data-size='$kpiType' class='form-control planYearBCof changeCofWindow'/>";
+
 
         $this->json_text[$type][$str] = $value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$html);

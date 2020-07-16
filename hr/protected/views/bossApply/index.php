@@ -33,6 +33,15 @@ $this->pageTitle=Yii::app()->name . ' - bossApply';
                     ));
                 ?>
             </div>
+
+            <div class="btn-group pull-right" role="group">
+                <?php
+                $counter = ($model->no_of_attm['bosskpi'] > 0) ? ' <span id="docbosskpi" class="label label-info">'.$model->no_of_attm['bosskpi'].'</span>' : ' <span id="docbosskpi"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('contract','KPI Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadbosskpi',)
+                );
+                ?>
+            </div>
         </div></div>
     <?php
     $search = array(
@@ -52,6 +61,13 @@ $this->pageTitle=Yii::app()->name . ' - bossApply';
     ));
     ?>
 </section>
+<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'BOSSKPI',
+    'header'=>Yii::t('contract','KPI Attachment'),
+    'ronly'=>($model->scenario=='view'||!Yii::app()->user->validRWFunction('BA04')),
+));
+?>
 <?php
 echo $form->hiddenField($model,'pageNum');
 echo $form->hiddenField($model,'totalRow');
@@ -61,6 +77,7 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+Script::genFileUpload($model,$form->id,'BOSSKPI');
 $js = "
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);

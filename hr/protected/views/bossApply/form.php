@@ -14,9 +14,11 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 )); ?>
 
 <style>
-    *[readonly]{pointer-events: none;}
     .table-responsive th{white-space: nowrap;}
     .table-responsive>table{table-layout:fixed}
+    #moveCofWindow{position: absolute;top: 0px;left: 0px;width: 275px;box-shadow: -4px 3px 5px rgba(0,0,0,0.1);background: #fff;z-index: 999}
+    #moveCofWindow>.arrow-left{position: absolute;top: 50%;left: -5px;margin-top:-3px;border-right: 6px solid #fff;border-top: 6px solid transparent;border-bottom: 6px solid transparent;width: 0px;height: 0px;}
+    #moveCofWindow>table{margin: 0px;}
 </style>
 <section class="content-header">
 	<h1>
@@ -128,6 +130,75 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
         sum = sum.toFixed(2);
         $("#sum_label").text(sum_a+"*50% + "+sum_b+"*35% + "+sum_c+"% = "+sum+"%");
     }
+    function changeCofWindow() {
+        $(".changeCofWindow").mouseout(function () {
+            $("#moveCofWindow").remove();
+        });
+        $(".changeCofWindow").mouseover(function () {
+            $("#moveCofWindow").remove();
+            var dataName = $(this).data("name");
+            var kpiData = $(this).data("kpi");
+            var kpiType = $(this).data("size");
+            var html="<div id='moveCofWindow'>";
+            html+="<span class='arrow-left'></span><table class='table table-bordered table-hover'><thead><tr>";
+            var num=0,left,top;
+            var oldCof = $(this).val();
+            var nowCof = $(this).parents('tr:first').find('input[name$="[cofNow]"]').eq(0).val();
+            var nameArr =["one_eight","two_one","two_two","two_three","two_five"];
+            var ratio_value = "<?php echo Yii::t('contract','ratio value');?>";
+            html+="<th width='70%' class='text-center'>"+ratio_value+"</th><th class='text-center'>";
+            html+="<?php echo Yii::t('contract','one_5');?>";
+            html+="</th></tr></thead><tbody>";
+            kpiData = kpiData.split(",");
+            kpiType = kpiType == 1?">=":"<=";
+            $.each(kpiData,function (i,val) {
+                var list = val.split(":");
+                var str = "",className="";
+                if(nameArr.indexOf(dataName)<0){
+                    list[0]+="%";
+                }
+                if(i==0){
+                    str = ratio_value+kpiType+" "+list[0];
+                }else if(i == kpiData.length-1){
+                    if(kpiType == ">="){
+                        str =ratio_value+"<"+num;
+                    }else{
+                        str =ratio_value+">"+num;
+                    }
+                }else{
+                    if(kpiType == ">="){
+                        str =list[0]+"<= "+ratio_value+" <"+num;
+                    }else{
+                        str =num+"< "+ratio_value+" <="+list[0];
+                    }
+                }
+                if(list[1] == oldCof){
+                    className = "success";
+                }
+                if(list[1] == nowCof){
+                    className = "warning";
+                }
+                html+="<tr class='"+className+"'><td class='text-center'>"+str+"</td><td class='text-center'>"+list[1]+"</td></tr>";
+                num = list[0];
+            });
+            html+="</tbody></table></div>";
+            html = $(html);
+            $("body").append(html);
+            left = $(this).offset().left+$(this).outerWidth()+5;
+            top = $(this).offset().top+($(this).outerHeight()-html.outerHeight())/2;
+            var maxTop = $("body").outerHeight();
+            var delTop=0;
+            if(top+html.outerHeight()>maxTop){
+                delTop = top+html.outerHeight()-maxTop;
+            }
+            top -=delTop;
+            $("#moveCofWindow>.arrow-left").css({"margin-top":delTop+"px"})
+            html.css({
+                "left":left+"px",
+                "top":top+"px"
+            });
+        });
+    }
 </script>
 <?php
 $content = "<p>".Yii::t('contract','confirmed and submitted, it cannot be modified after submission?')."</p>";
@@ -144,12 +215,14 @@ $this->widget('bootstrap.widgets.TbModal', array(
 ?>
 <?php
 $js = "
+changeCofWindow();
     $('.planYearA,.planYearB').on('keyup',function(){
         var name = $(this).data('name');
         var tr = $(this).parents('tr:first');
         var one_1 = $('input[name=\"BossApplyForm[json_text][one_one][one_1]\"]').eq(0).val();
         var cofNow = tr.find('input[name$=\"[cofNow]\"]').eq(0).val();
-        var data,one_11,type;
+        var data,one_11,one_0,type;
+        one_0 = tr.find('input[name$=\"[one_1]\"]').eq(0).val();
         if($(this).hasClass('planYearA')){
             type = 'planYearA';
             one_11 = tr.find('input[name$=\"[one_11]\"]').eq(0).val();
@@ -162,6 +235,7 @@ $js = "
                 value:$(this).val(),
                 one_1:one_1,
                 one_11:one_11,
+                one_0:one_0,
                 type:type,
                 cofNow:cofNow
             };

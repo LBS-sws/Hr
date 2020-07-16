@@ -2,12 +2,24 @@
 
 class BossApplyList extends CListPageModel
 {
+    public $id =1;
     public $employee_id;//員工id
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
 	 * the same as its name with the first letter in upper case.
 	 */
+    public $no_of_attm = array(
+        'bosskpi'=>0
+    );
+    public $docType = 'BOSSKPI';
+    public $docMasterId = array(
+        'bosskpi'=>0
+    );
+    public $files;
+    public $removeFileId = array(
+        'bosskpi'=>0
+    );
 	public function attributeLabels()
 	{
 		return array(
@@ -21,6 +33,12 @@ class BossApplyList extends CListPageModel
             'status_type'=>Yii::t('contract','Status'),
 		);
 	}
+    public function rules(){
+        return array(
+            array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter','safe',),
+            array('files, removeFileId, docMasterId, no_of_attm','safe'),
+        );
+    }
 
     //驗證賬號是否綁定員工
     public function validateEmployee(){
@@ -95,6 +113,7 @@ class BossApplyList extends CListPageModel
 				);
 			}
 		}
+        $this->no_of_attm['bosskpi'] = Yii::app()->db->createCommand("select docman$suffix.countdoc('BOSSKPI',$this->id)")->queryScalar();
 		$session = Yii::app()->session;
 		$session['bossApply_01'] = $this->getCriteria();
 		return true;
