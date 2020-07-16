@@ -29,7 +29,7 @@ class LeaveController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','delete','save','audit','fileupload','fileRemove','ajaxYearDay'),
+                'actions'=>array('new','edit','delete','save','audit','fileupload','fileRemove','ajaxYearDay','test','test2'),
                 'expression'=>array('LeaveController','allowReadWrite'),
             ),
             array('allow',
@@ -331,5 +331,35 @@ class LeaveController extends Controller
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }
+    }
+
+    //
+    public function actionTest($index){
+        $index = is_numeric($index)?$index:0;
+        $systemId = Yii::app()->params['systemId'];
+        $suffix = Yii::app()->params['envSuffix'];
+        $command = Yii::app()->db->createCommand();
+        $workOne = $command->select("a.user_id,a.employee_id,d.name")->from("hr_binding a")
+            ->leftJoin("hr_employee d","d.id = a.employee_id")
+            ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
+            ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
+            ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%ZA08%' and d.department='$index'")
+            ->queryAll();
+        var_dump($workOne);
+    }
+
+    //
+    public function actionTest2($index){
+        $index = is_numeric($index)?$index:0;
+        $systemId = Yii::app()->params['systemId'];
+        $suffix = Yii::app()->params['envSuffix'];
+        $command = Yii::app()->db->createCommand();
+        $workOne = $command->select("a.user_id,a.employee_id,d.name")->from("hr_binding a")
+            ->leftJoin("hr_employee d","d.id = a.employee_id")
+            ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
+            ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
+            ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%ZA09%' and d.department='$index'")
+            ->queryAll();
+        var_dump($workOne);
     }
 }
