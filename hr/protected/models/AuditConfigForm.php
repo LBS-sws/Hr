@@ -92,12 +92,27 @@ class AuditConfigForm extends CFormModel
             if(in_array($manager,array(1,2,3,4))){
                 $manager++;
                 $manager = $manager>=4?4:$manager;
-            }elseif($personnelBool){
+            }elseif($personnelBool){ //後續因為新加波添加人事審核（部門審核之前）
                 $type = empty($auditType)?"ZP01":"ZP02";
-                if(Yii::app()->user->validRWFunction($type)){
-                    $manager = 2;
-                }else{
+                $systemId = Yii::app()->params['systemId'];
+                $suffix = Yii::app()->params['envSuffix'];
+                $personnelList = Yii::app()->db->createCommand()->select("a.employee_id")->from("hr_binding a")
+                    ->leftJoin("hr_employee d","d.id = a.employee_id")
+                    ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
+                    ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
+                    ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%$type%' and d.city=:city",
+                        array(":city"=>$staffList['city'])
+                    )->queryAll();
+                if($personnelList){ //存在人事審核的權限
                     $manager = 5;
+                    foreach ($personnelList as $perList){
+                        if($perList["employee_id"] == $employee_id){//當申請人有人事系統的審核權限時
+                            $manager = 2;
+                            break;
+                        }
+                    }
+                }else{
+                    $manager = 1;
                 }
             }else{
                 $manager = 1;
