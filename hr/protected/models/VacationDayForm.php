@@ -212,7 +212,9 @@ class VacationDayForm
             ->where("employee_id=:employee_id $statusSql and date_format(start_time,'%Y/%m/%d')>=:start_time and date_format(start_time,'%Y/%m/%d')<:end_time",
                 array(":employee_id"=>$this->employee_id,":start_time"=>$this->start_time,":end_time"=>$this->end_time))->queryScalar();
 
-        $this->vacation_sum=bcsub($this->vacation_sum,$sum);
+        //bcsub(); 函数不可以，沒安裝php-bcmath扩展
+        $this->vacation_sum = strval($this->vacation_sum);
+        $this->vacation_sum-=$sum;
         $this->useDay = $sum;
     }
 
