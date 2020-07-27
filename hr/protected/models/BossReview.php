@@ -245,7 +245,7 @@ class BossReview
 
     //服务单的停单比例
     public function valueStopToRate($city,$year,$arr = array("00017","00002")){
-        //00017:今月停單生意額   00002:今月生意額  rate = 今月停單/今月的生意額
+        //00017:今月停單生意額   00002:今月生意額  rate = 今月停單/今月的生意額 * 100
         $rows = $this->getValueListToArr($arr,$city,$year);
         $sum = 0;
         if($rows){
@@ -253,6 +253,7 @@ class BossReview
                 $row["valueOne"] = floatval($row["valueOne"]);
                 $row["valueTwo"] = floatval($row["valueTwo"]);
                 $count = empty($row["valueTwo"])?0:$row["valueOne"]/$row["valueTwo"];
+                $count*=100;
                 $sum+=$count;
             }
             $sum = $sum/count($rows);
@@ -262,7 +263,7 @@ class BossReview
 
     //收款比例
     public function valueOnToRate($city,$year){
-        //00021:今月收款额   00002:今月生意額  rate = 今月收款额/上月的生意額
+        //00021:今月收款额   00002:今月生意額  rate = 今月收款额/上月的生意額 * 100
         $rows = $this->getValueListToArr(array("00021","00002"),$city,$year);
         $sum = 0;
         if($rows){
@@ -275,6 +276,7 @@ class BossReview
                 $row["valueOne"] = floatval($row["valueOne"]);
                 $valueTwo = $key==0?$valueTwo:floatval($rows[$key-1]["valueTwo"]);
                 $count = empty($valueTwo)?0:$row["valueOne"]/$valueTwo;
+                $count*=100;
                 $sum+=$count;
             }
             $sum = $sum/count($rows);
@@ -298,11 +300,11 @@ class BossReview
     }
 
     //总经理回馈次数
-    public function valueFeedback($username,$year){
+    public function valueFeedback($city,$year){
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()->select("count(*)")->from("swoper$suffix.swo_mgr_feedback")
-            ->where("date_format(request_dt,'%Y')=:year AND username=:username AND status='Y' AND (DATEDIFF(feedback_dt,request_dt)=0 OR DATEDIFF(feedback_dt,request_dt)=1)",
-                array(":year"=>$year,":username"=>$username)
+            ->where("date_format(request_dt,'%Y')=:year AND city=:city AND status='Y' AND (DATEDIFF(feedback_dt,request_dt)=0 OR DATEDIFF(feedback_dt,request_dt)=1)",
+                array(":year"=>$year,":city"=>$city)
             )
             ->queryScalar();
         return empty($row)?0:$row;

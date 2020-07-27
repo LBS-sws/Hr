@@ -187,7 +187,7 @@ class BossReviewA extends BossReview
                 $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year);//今月停單/今月的生意額
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "one_eight"://技术员每月平均生产力
-                $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00018");
+                $this->json_text[$type][$str] = $this->valueAverage($this->city,$this->audit_year,"00018");
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
         }
     }

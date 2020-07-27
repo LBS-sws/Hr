@@ -53,7 +53,7 @@ class BossReviewB extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
                 break;
             case "two_five"://总经理回馈次数
-                $this->json_text[$type][$str] = $this->valueFeedback($this->username,$this->audit_year-1);
+                $this->json_text[$type][$str] = $this->valueFeedback($this->city,$this->audit_year-1);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
                 break;
             case "two_six"://提交销售5步曲数量培训销售部分
@@ -113,7 +113,7 @@ class BossReviewB extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
                 break;
             case "two_five"://总经理回馈次数
-                $this->json_text[$type][$str] = $this->valueFeedback($this->username,$this->audit_year);
+                $this->json_text[$type][$str] = $this->valueFeedback($this->city,$this->audit_year);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
                 break;
             case "two_six"://提交销售5步曲数量培训销售部分
