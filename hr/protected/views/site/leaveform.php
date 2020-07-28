@@ -96,13 +96,8 @@
                 var start_hour = $(this).find(".s_long:first").val();
                 var end_hour = $(this).find(".e_long:first").val();
                 hours+=sumTimeLogToLeave(start_day,end_day,start_hour,end_hour);
-                if($('#log_time').attr('readonly')==undefined){
-                    return false;
-                }
             });
-            if($('#log_time').attr('readonly')=="readonly"){
-                $('#log_time').val(hours);
-            }
+            $('#log_time').val(hours);
         });
     });
     function sumTimeLogToLeave(start_day,end_day,start_hour,end_hour) {
@@ -127,6 +122,9 @@
                 if(hours>0){
                     if(week1 === 0 || week1 === 6 || week2 === 0 || week2 === 6 || hours >= 6 || week1 > week2){
                         $('#log_time').attr('readonly',false);
+                    }
+                    if((week1 > week2||week1 === 0||week2 === 0)&&hours>=1){
+                        hours--;
                     }
                 }else{
                     hours = 0;
