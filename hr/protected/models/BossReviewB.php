@@ -17,7 +17,7 @@ class BossReviewB extends BossReview
             array('value'=>'two_four','name'=>Yii::t("contract","two_four"),'pro_str'=>"%"),//高效客诉解决效率
             array('value'=>'two_five','name'=>Yii::t("contract","two_five")),//总经理回馈次数
             array('value'=>'two_six','name'=>Yii::t("contract","two_six"),'pro_str'=>"%"),//提交销售5步曲数量培训销售部分
-            array('value'=>'two_seven','name'=>Yii::t("contract","two_seven"),'pro_str'=>"%")//提交销售5步曲数量培训销售经理部分
+            //array('value'=>'two_seven','name'=>Yii::t("contract","two_seven"),'pro_str'=>"%")//提交销售5步曲数量培训销售经理部分
         );
     }
 
@@ -171,7 +171,8 @@ class BossReviewB extends BossReview
                 $value = 5;
                 break;
             case "two_six"://提交销售5步曲数量培训销售部分
-                $value = $this->validateSalesBoos($this->audit_year,$this->city)?5:10;
+                $value = 10;//後續刪除銷售經理部分
+                //$value = $this->validateSalesBoos($this->audit_year,$this->city)?5:10;
                 break;
             case "two_seven"://提交销售5步曲数量培训销售经理部分
                 $value = 10-$this->json_text["two_six"][$str];
