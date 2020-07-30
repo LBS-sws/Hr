@@ -121,6 +121,9 @@ class BossApplyForm extends CFormModel
         $year = date("Y");
         $html = "<select class='form-control submit_select' name='year'>";
         for($i=$year-3;$i<$year+4;$i++){
+            if($i<2019){
+                continue;
+            }
             if(in_array($i,$rows)){
                 $html.="<option value='$i' disabled>".$i.Yii::t("contract"," year")." - ".Yii::t("contract","applied")."</option>";
             }else{
