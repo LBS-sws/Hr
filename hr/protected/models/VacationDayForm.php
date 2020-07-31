@@ -196,7 +196,7 @@ class VacationDayForm
             return false;
         }
         if(empty($lcd)){
-            $statusSql = " and status NOT IN (0,3)";
+            $statusSql = " and status IN (1,2,4)";
         }else{
             $lcd = date("Y/m/d H:i:s",strtotime($lcd));
             $statusSql = " and status =  4 and date_format(lcd,'%Y/%m/%d %H:%i:%s')<='$lcd'";
@@ -346,7 +346,7 @@ class VacationDayForm
         $sumDay+=$sum;
         //用掉的年假
         $sum = Yii::app()->db->createCommand()->select("sum(log_time)")->from("hr$suffix.hr_employee_leave")
-            ->where("employee_id=:employee_id and status NOT IN (0,3) and date_format(start_time,'%Y')=:year",
+            ->where("employee_id=:employee_id and status IN (1,2,4) and date_format(start_time,'%Y')=:year",
                 array(":employee_id"=>$this->employee_id,":year"=>$foreachYear))->queryScalar();
         $sumDay-=$sum;
     }

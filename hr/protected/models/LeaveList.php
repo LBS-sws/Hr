@@ -184,6 +184,11 @@ class LeaveList extends CListPageModel
                     "status"=>Yii::t("fete","approve"),//批准
                     "style"=>" text-green"
                 );
+            case 5:
+                return array(
+                    "status"=>Yii::t("contract","cancel"),//取消
+                    "style"=>" text-gray"
+                );
         }
         return array(
             "status"=>"",

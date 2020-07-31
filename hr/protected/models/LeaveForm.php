@@ -238,7 +238,7 @@ class LeaveForm extends CFormModel
                     }else{
                         $endTime = date("Y-m-d",strtotime($list["end_time"]))." 14:00:00";
                     }
-                    $sql = "select b.leave_code from hr_employee_leave_info a LEFT JOIN hr_employee_leave b ON a.leave_id = b.id WHERE ((a.start_time>'$startTime' AND a.end_time <'$endTime') OR (a.start_time<='$startTime' AND a.end_time >='$startTime') OR (a.start_time<='$endTime' AND a.end_time >='$endTime')) ";
+                    $sql = "select b.leave_code from hr_employee_leave_info a LEFT JOIN hr_employee_leave b ON a.leave_id = b.id WHERE b.status != 5 AND ((a.start_time>'$startTime' AND a.end_time <'$endTime') OR (a.start_time<='$startTime' AND a.end_time >='$startTime') OR (a.start_time<='$endTime' AND a.end_time >='$endTime')) ";
                     //var_dump($sql);die();
                     if(Yii::app()->user->validFunction('ZR06')){
                         $sql.=" and b.employee_id='".$this->employee_id."'";
@@ -382,7 +382,7 @@ class LeaveForm extends CFormModel
             $start_time = (intval($year)-1)."-$month-$day 00:00:00";
             $end_time = "$year-$month-$day 00:00:00";
         }
-        $statusSql = "a.status NOT IN (0,3)";
+        $statusSql = "a.status IN (1,2,4)";
         if($endBool){
             //$end_time = date("Y-m-d 23:59:59",strtotime($time));
             $statusSql = "a.status =  4 and a.lcd<='$lcd'";
@@ -558,8 +558,8 @@ class LeaveForm extends CFormModel
             $city = Yii::app()->user->city();
         }
         $arr = array();
-        $rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_vacation")->where("city='$city' OR only='default'")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.name")
+            ->from("hr_vacation a")->where("a.city='$city' OR a.only='default'")->order("a.vaca_type in ('E') desc")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -602,7 +602,11 @@ class LeaveForm extends CFormModel
                 $sql = "delete from hr_employee_leave where id = :id";
                 break;
             case 'cancel':
-                $sql = "delete from hr_employee_leave where id = :id";
+                $sql = "update hr_employee_leave set
+							status = 5
+						where id = :id
+						";
+                //$sql = "delete from hr_employee_leave where id = :id";
                 break;
             case 'new':
                 $sql = "insert into hr_employee_leave(
@@ -876,7 +880,7 @@ class LeaveForm extends CFormModel
         if($this->scenario == "view"){
             return true;
         }
-        if($this->status == 1 || $this->status == 2 || $this->status == 4){
+        if(!in_array($this->status,array(0,3))){
             return true;
         }
         return false;

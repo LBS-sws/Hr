@@ -107,7 +107,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
             ));
             ?>
 
-            <?php if ($model->scenario != 'new' && $model->status != 3 && $model->status != 4): ?>
+            <?php if ($model->scenario != 'new' && in_array($model->status,array(1,2))): ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'state',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-6">
