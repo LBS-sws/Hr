@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50620
 File Encoding         : 65001
 
-Date: 2020-08-04 09:43:50
+Date: 2020-08-04 10:19:40
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -62,8 +62,8 @@ CREATE TABLE `hr_kpi_min` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `kpi_id` int(11) NOT NULL,
   `sum_id` int(11) DEFAULT NULL,
-  `min_num` float(11,4) NOT NULL,
-  `kpi_value` float(11,4) NOT NULL,
+  `min_num` float(40,4) NOT NULL,
+  `kpi_value` float(40,4) NOT NULL,
   `other_bool` int(2) DEFAULT '0' COMMENT '0:參與循環  1：其它',
   `lcu` varchar(255) DEFAULT NULL,
   `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -748,7 +748,7 @@ DROP TABLE IF EXISTS `hr_kpi_sum`;
 CREATE TABLE `hr_kpi_sum` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `kpi_id` int(11) NOT NULL,
-  `min_sum` int(11) NOT NULL,
+  `min_sum` int(40) NOT NULL,
   `other_bool` int(2) DEFAULT '0' COMMENT '0:參與循環  1：其它',
   `lcu` varchar(255) DEFAULT NULL,
   `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
