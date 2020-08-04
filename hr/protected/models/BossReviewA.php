@@ -16,6 +16,7 @@ class BossReviewA extends BossReview
             array('value'=>'one_three','name'=>Yii::t("contract","one_three")),//年新业务生意额目标
             array('value'=>'one_four','name'=>Yii::t("contract","one_four")),//IA服务生意年金额
             array('value'=>'one_five','name'=>Yii::t("contract","one_five")),//IB服务生意年金额
+            array('value'=>'one_nine','name'=>Yii::t("contract","one_nine")),//新（IA+IB）服务年金额
             array('value'=>'one_six','name'=>Yii::t("contract","one_six"),'pro_str'=>"%"),//收款率(%)
             array('value'=>'one_seven','name'=>Yii::t("contract","one_seven"),'pro_str'=>"%"),//服务单的停单比例(%)
             array('value'=>'one_eight','name'=>Yii::t("contract","one_eight"))//技术员每月平均生产力
@@ -57,6 +58,9 @@ class BossReviewA extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_five"://IB服务生意年金额
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00004");
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+            case "one_nine"://新（IA+IB）服務年金額
+                $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00006");
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_six"://收款率(%)
                 $this->json_text[$type][$str] = $this->valueOnToRate($this->city,$this->audit_year-1);;//今月收款額/上個月的生意額
@@ -102,6 +106,12 @@ class BossReviewA extends BossReview
                 $value = empty($value)?0:($this->json_text[$type]["one_1"]-$value)/$value;
                 $this->json_text[$type][$str] = floatval(sprintf("%.4f",$value))*100;
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
+            case "one_nine"://新（IA+IB）服務年金額
+                $value = $this->value($this->city,$this->audit_year-2,"00006");
+                $value = floatval($value);
+                $value = empty($value)?0:($this->json_text[$type]["one_1"]-$value)/$value;
+                $this->json_text[$type][$str] = floatval(sprintf("%.4f",$value))*100;
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "one_six"://收款率(%)
                 $this->json_text[$type][$str] = "\\";
                 return array('value'=>$this->json_text[$type][$str],'name'=>"\\");
@@ -132,7 +142,7 @@ class BossReviewA extends BossReview
     }
     //预计增长百分比 - one_4
     public function getPlanYearRate($type,$str){
-        if(in_array($type,array("one_one","one_two","one_three","one_four","one_five"))){
+        if(in_array($type,array("one_one","one_two","one_three","one_four","one_five","one_nine"))){
             $value = floatval($this->json_text[$type]["one_1"]);
             $value = empty($value)?0:($this->json_text[$type]["one_3"]-$value)/$value;
             $value = round($value*100);
@@ -179,6 +189,9 @@ class BossReviewA extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_five"://IB服务生意年金额
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00004");
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+            case "one_nine"://新（IA+IB）服務年金額
+                $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00006");
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_six"://收款率(%)
                 $this->json_text[$type][$str] = $this->valueOnToRate($this->city,$this->audit_year);;//今月收款額/上個月的生意額
@@ -245,13 +258,16 @@ class BossReviewA extends BossReview
                 $value = 20;
                 break;
             case "one_three"://年新业务生意额目标
-                $value = 15;
+                $value = 10;
                 break;
             case "one_four"://IA服务生意年金额
                 $value = 10;
                 break;
             case "one_five"://IB服务生意年金额
                 $value = 10;
+                break;
+            case "one_nine"://新（IA+IB）服務年金額
+                $value = 5;
                 break;
             case "one_six"://收款率(%)
                 $value = 10;

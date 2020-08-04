@@ -168,7 +168,7 @@ class BossKPIForm extends CFormModel
 	protected function getJsonOneConstRow($name,$list=array()){
 	    $list = empty($list)?array("min_num"=>"","kpi_value"=>""):$list;
         $list["kpi_value"] = $list["kpi_value"]!==""?floatval($list["kpi_value"]):"";
-        $list["min_num"] = $list["min_num"]!==""?floatval($list["min_num"]):"";
+        $list["min_num"] = (isset($list["min_num"])&&$list["min_num"]!=="")?floatval($list["min_num"]):"";
         $html='<tr class="otherValue">';
         $html.="<td class='text-center'>";
         $html.=Yii::t("contract","Other");

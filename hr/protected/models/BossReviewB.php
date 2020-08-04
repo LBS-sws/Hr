@@ -14,9 +14,12 @@ class BossReviewB extends BossReview
             array('value'=>'two_one','name'=>Yii::t("contract","two_one")),//优化人才评核
             array('value'=>'two_two','name'=>Yii::t("contract","two_two")),//月报表分数
             array('value'=>'two_three','name'=>Yii::t("contract","two_three")),//质检拜访量
+            array('value'=>'two_eight','name'=>Yii::t("contract","two_eight")),//洗地易销售桶数
             array('value'=>'two_four','name'=>Yii::t("contract","two_four"),'pro_str'=>"%"),//高效客诉解决效率
             array('value'=>'two_five','name'=>Yii::t("contract","two_five")),//总经理回馈次数
             array('value'=>'two_six','name'=>Yii::t("contract","two_six"),'pro_str'=>"%"),//提交销售5步曲数量培训销售部分
+            array('value'=>'two_nine','name'=>Yii::t("contract","two_nine"),'pro_str'=>"%"),//IA物料使用率
+            array('value'=>'two_ten','name'=>Yii::t("contract","two_ten"),'pro_str'=>"%"),//IB物料使用率
             //array('value'=>'two_seven','name'=>Yii::t("contract","two_seven"),'pro_str'=>"%")//提交销售5步曲数量培训销售经理部分
         );
     }
@@ -48,6 +51,9 @@ class BossReviewB extends BossReview
             case "two_three"://质检拜访量
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00042");
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+            case "two_eight"://洗地易销售桶数
+                $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00069");
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_four"://高效客诉解决效率 00038  00036
                 $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year-1,array("00038","00036"));
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
@@ -61,6 +67,12 @@ class BossReviewB extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "two_seven"://提交销售5步曲数量培训销售经理部分
                 $this->json_text[$type][$str] = $this->valueSalesTwo($this->audit_year-1,$this->city);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
+            case "two_nine"://IA物料使用率
+                $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year-1,array("00023","00003"));
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
+            case "two_ten"://IB物料使用率
+                $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year-1,array("00024","00004"));
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
         }
         $this->json_text[$type][$str] = 0;
@@ -77,7 +89,7 @@ class BossReviewB extends BossReview
             $html ="<input type='number' name='$name' value='$value' data-name='$type' $ready class='form-control planYearB'/>";
         }
 
-        if(in_array($type,array("two_four","two_six","two_seven"))){
+        if(in_array($type,array("two_four","two_six","two_seven","two_nine","two_ten"))){
             $html="<div class='input-group'>$html<span class='input-group-addon'>%</span></div>";
         }
         $this->json_text[$type][$str] = $value;
@@ -108,6 +120,9 @@ class BossReviewB extends BossReview
             case "two_three"://质检拜访量
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00042");
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
+            case "two_eight"://洗地易销售桶数
+                $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00069");
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_four"://高效客诉解决效率 00038  00036
                 $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year,array("00038","00036"));
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
@@ -121,6 +136,12 @@ class BossReviewB extends BossReview
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "two_seven"://提交销售5步曲数量培训销售经理部分
                 $this->json_text[$type][$str] = $this->valueSalesTwo($this->audit_year,$this->city);
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
+            case "two_nine"://IA物料使用率
+                $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year,array("00023","00003"));
+                return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
+            case "two_ten"://IB物料使用率
+                $this->json_text[$type][$str] = $this->valueStopToRate($this->city,$this->audit_year,array("00024","00004"));
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
         }
         $this->json_text[$type][$str] = 0;
@@ -156,12 +177,15 @@ class BossReviewB extends BossReview
         $value = 0;
         switch ($type){
             case "two_one"://优化人才评核
-                $value = 35;
+                $value = 20;
                 break;
             case "two_two"://月报表分数
                 $value = 35;
                 break;
             case "two_three"://质检拜访量
+                $value = 10;
+                break;
+            case "two_eight"://洗地易销售桶数
                 $value = 10;
                 break;
             case "two_four"://高效客诉解决效率
@@ -171,11 +195,16 @@ class BossReviewB extends BossReview
                 $value = 5;
                 break;
             case "two_six"://提交销售5步曲数量培训销售部分
-                $value = 10;//後續刪除銷售經理部分
-                //$value = $this->validateSalesBoos($this->audit_year,$this->city)?5:10;
+                $value = 5;
                 break;
-            case "two_seven"://提交销售5步曲数量培训销售经理部分
-                $value = 10-$this->json_text["two_six"][$str];
+            case "two_nine"://IA物料使用率
+                $value = 5;
+                break;
+            case "two_ten"://IB物料使用率
+                $value = 5;
+                break;
+            case "two_seven"://提交销售5步曲数量培训销售经理部分 (後續刪除)
+                $value = 0;
                 break;
         }
         $this->json_text[$type][$str] = $value;

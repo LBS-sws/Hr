@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50620
 File Encoding         : 65001
 
-Date: 2020-07-01 17:36:12
+Date: 2020-08-04 09:43:50
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -29,7 +29,7 @@ CREATE TABLE `hr_kpi` (
   `luu` varchar(255) DEFAULT NULL,
   `lud` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COMMENT='老總年度考核KPI配置';
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COMMENT='老總年度考核KPI配置';
 
 -- ----------------------------
 -- Records of hr_kpi
@@ -46,9 +46,13 @@ INSERT INTO `hr_kpi` VALUES ('9', 'two_one', '优化人才评核', '0', '0', '0'
 INSERT INTO `hr_kpi` VALUES ('10', 'two_two', '月报表分数', '0', '0', '0', null, '2020-07-01 15:00:07');
 INSERT INTO `hr_kpi` VALUES ('11', 'two_three', '质检拜访量', '0', '0', '1', null, '2020-07-01 16:11:02');
 INSERT INTO `hr_kpi` VALUES ('12', 'two_four', '高效客诉解决效率', '1', '0', '0', null, '2020-07-01 15:00:07');
-INSERT INTO `hr_kpi` VALUES ('13', 'two_five', '总经理回馈次数', '0', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('13', 'two_five', '总经理回馈次数', '0', '0', '0', 'shenchao', '2020-07-01 17:49:55');
 INSERT INTO `hr_kpi` VALUES ('14', 'two_six', '提交销售5步曲数量培训销售部分', '1', '0', '0', null, '2020-07-01 15:00:07');
 INSERT INTO `hr_kpi` VALUES ('15', 'two_seven', '提交销售5步曲数量培训销售经理部分', '1', '0', '0', null, '2020-07-01 15:00:07');
+INSERT INTO `hr_kpi` VALUES ('16', 'one_nine', '新（IA+IB）服務年金額', '0', '0', '1', 'shenchao', '2020-08-03 15:52:49');
+INSERT INTO `hr_kpi` VALUES ('17', 'two_eight', '洗地易銷售桶數', '0', '0', '1', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi` VALUES ('18', 'two_nine', 'IA物料使用率', '1', '1', '1', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi` VALUES ('19', 'two_ten', 'IB物料使用率', '1', '1', '1', 'shenchao', '2020-08-04 09:40:10');
 
 -- ----------------------------
 -- Table structure for hr_kpi_min
@@ -64,7 +68,7 @@ CREATE TABLE `hr_kpi_min` (
   `lcu` varchar(255) DEFAULT NULL,
   `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=484 DEFAULT CHARSET=utf8 COMMENT='根據最小值獲取唯一KPI';
+) ENGINE=InnoDB AUTO_INCREMENT=724 DEFAULT CHARSET=utf8 COMMENT='根據最小值獲取唯一KPI';
 
 -- ----------------------------
 -- Records of hr_kpi_min
@@ -482,21 +486,6 @@ INSERT INTO `hr_kpi_min` VALUES ('435', '12', null, '90.0000', '0.8000', '0', nu
 INSERT INTO `hr_kpi_min` VALUES ('436', '12', null, '93.0000', '0.8750', '0', null, '2020-07-01 16:13:56');
 INSERT INTO `hr_kpi_min` VALUES ('437', '12', null, '98.0000', '0.9500', '0', null, '2020-07-01 16:13:56');
 INSERT INTO `hr_kpi_min` VALUES ('438', '12', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:13:56');
-INSERT INTO `hr_kpi_min` VALUES ('439', '13', null, '40.0000', '0.0000', '0', null, '2020-07-01 16:14:50');
-INSERT INTO `hr_kpi_min` VALUES ('440', '13', null, '70.0000', '0.0500', '0', null, '2020-07-01 16:14:50');
-INSERT INTO `hr_kpi_min` VALUES ('441', '13', null, '101.0000', '0.1250', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('442', '13', null, '117.0000', '0.2000', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('443', '13', null, '133.0000', '0.2750', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('444', '13', null, '149.0000', '0.3500', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('445', '13', null, '165.0000', '0.4250', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('446', '13', null, '181.0000', '0.5000', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('447', '13', null, '197.0000', '0.5750', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('448', '13', null, '213.0000', '0.6500', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('449', '13', null, '229.0000', '0.7250', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('450', '13', null, '245.0000', '0.8000', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('451', '13', null, '276.0000', '0.8750', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('452', '13', null, '307.0000', '0.9500', '0', null, '2020-07-01 16:14:51');
-INSERT INTO `hr_kpi_min` VALUES ('453', '13', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:14:51');
 INSERT INTO `hr_kpi_min` VALUES ('454', '14', null, '6.0000', '0.0000', '0', null, '2020-07-01 16:15:49');
 INSERT INTO `hr_kpi_min` VALUES ('455', '14', null, '15.0000', '0.0500', '0', null, '2020-07-01 16:15:49');
 INSERT INTO `hr_kpi_min` VALUES ('456', '14', null, '25.0000', '0.1250', '0', null, '2020-07-01 16:15:49');
@@ -527,6 +516,230 @@ INSERT INTO `hr_kpi_min` VALUES ('480', '15', null, '70.0000', '0.8000', '0', nu
 INSERT INTO `hr_kpi_min` VALUES ('481', '15', null, '80.0000', '0.8750', '0', null, '2020-07-01 16:16:43');
 INSERT INTO `hr_kpi_min` VALUES ('482', '15', null, '90.0000', '0.9500', '0', null, '2020-07-01 16:16:43');
 INSERT INTO `hr_kpi_min` VALUES ('483', '15', null, '0.0000', '1.0000', '1', null, '2020-07-01 16:16:44');
+INSERT INTO `hr_kpi_min` VALUES ('500', '13', null, '40.0000', '0.0000', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('501', '13', null, '70.0000', '0.0500', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('502', '13', null, '101.0000', '0.1250', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('503', '13', null, '117.0000', '0.2000', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('504', '13', null, '133.0000', '0.2750', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('505', '13', null, '149.0000', '0.3500', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('506', '13', null, '165.0000', '0.4250', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('507', '13', null, '181.0000', '0.5000', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('508', '13', null, '197.0000', '0.5750', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('509', '13', null, '213.0000', '0.6500', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('510', '13', null, '229.0000', '0.7250', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('511', '13', null, '245.0000', '0.8000', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('512', '13', null, '276.0000', '0.8750', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('513', '13', null, '307.0000', '0.9500', '0', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('514', '13', null, '0.0000', '1.0000', '1', 'shenchao', '2020-07-01 17:50:08');
+INSERT INTO `hr_kpi_min` VALUES ('515', '16', '29', '5040000.0000', '0.0000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('516', '16', '29', '5760000.0000', '0.0500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('517', '16', '29', '6480000.0000', '0.1300', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('518', '16', '29', '7200000.0000', '0.2000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('519', '16', '29', '7800000.0000', '0.2800', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('520', '16', '29', '8400000.0000', '0.3500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('521', '16', '29', '9000000.0000', '0.4300', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('522', '16', '29', '9600000.0000', '0.5000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('523', '16', '29', '10000000.0000', '0.5800', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('524', '16', '29', '10000000.0000', '0.6500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('525', '16', '29', '10000000.0000', '0.7300', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('526', '16', '29', '10000000.0000', '0.8000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('527', '16', '29', '10000000.0000', '0.8800', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('528', '16', '29', '10000000.0000', '0.9500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('529', '16', '29', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('530', '16', '30', '48000.0000', '0.0000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('531', '16', '30', '192000.0000', '0.0500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('532', '16', '30', '336000.0000', '0.1300', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('533', '16', '30', '480000.0000', '0.2000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('534', '16', '30', '600000.0000', '0.2800', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('535', '16', '30', '720000.0000', '0.3500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('536', '16', '30', '840000.0000', '0.4300', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('537', '16', '30', '960000.0000', '0.5000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('538', '16', '30', '1080000.0000', '0.5800', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('539', '16', '30', '1200000.0000', '0.6500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('540', '16', '30', '1320000.0000', '0.7300', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('541', '16', '30', '1440000.0000', '0.8000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('542', '16', '30', '1584000.0000', '0.8800', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('543', '16', '30', '1728000.0000', '0.9500', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('544', '16', '30', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_min` VALUES ('545', '16', '31', '720000.0000', '0.0000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('546', '16', '31', '960000.0000', '0.0500', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('547', '16', '31', '1200000.0000', '0.1300', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('548', '16', '31', '1440000.0000', '0.2000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('549', '16', '31', '1620000.0000', '0.2800', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('550', '16', '31', '1800000.0000', '0.3500', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('551', '16', '31', '1980000.0000', '0.4300', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('552', '16', '31', '2160000.0000', '0.5000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('553', '16', '31', '2340000.0000', '0.5800', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('554', '16', '31', '2520000.0000', '0.6500', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('555', '16', '31', '2700000.0000', '0.7300', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('556', '16', '31', '2880000.0000', '0.8000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('557', '16', '31', '3120000.0000', '0.8800', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('558', '16', '31', '3360000.0000', '0.9500', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('559', '16', '31', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('560', '16', '32', '720000.0000', '0.0000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('561', '16', '32', '1200000.0000', '0.0500', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('562', '16', '32', '1680000.0000', '0.1300', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('563', '16', '32', '2160000.0000', '0.2000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('564', '16', '32', '2520000.0000', '0.2800', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('565', '16', '32', '2880000.0000', '0.3500', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('566', '16', '32', '3240000.0000', '0.4300', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('567', '16', '32', '3600000.0000', '0.5000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('568', '16', '32', '3960000.0000', '0.5800', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('569', '16', '32', '4320000.0000', '0.6500', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('570', '16', '32', '4680000.0000', '0.7300', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_min` VALUES ('571', '16', '32', '5040000.0000', '0.8000', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('572', '16', '32', '5520000.0000', '0.8800', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('573', '16', '32', '6000000.0000', '0.9500', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('574', '16', '32', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('575', '16', '33', '2280000.0000', '0.0000', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('576', '16', '33', '2880000.0000', '0.0500', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('577', '16', '33', '3480000.0000', '0.1300', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('578', '16', '33', '4080000.0000', '0.2000', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('579', '16', '33', '4560000.0000', '0.2800', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('580', '16', '33', '5040000.0000', '0.3500', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('581', '16', '33', '5520000.0000', '0.4300', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('582', '16', '33', '6000000.0000', '0.5000', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('583', '16', '33', '6480000.0000', '0.5800', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('584', '16', '33', '6960000.0000', '0.6500', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('585', '16', '33', '7440000.0000', '0.7300', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('586', '16', '33', '7920000.0000', '0.8000', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('587', '16', '33', '8520000.0000', '0.8800', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('588', '16', '33', '9120000.0000', '0.9500', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('589', '16', '33', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_min` VALUES ('590', '17', '34', '50.0000', '0.0000', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('591', '17', '34', '100.0000', '0.0500', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('592', '17', '34', '150.0000', '0.1250', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('593', '17', '34', '200.0000', '0.2000', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('594', '17', '34', '250.0000', '0.2750', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('595', '17', '34', '300.0000', '0.3500', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('596', '17', '34', '350.0000', '0.4250', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('597', '17', '34', '400.0000', '0.5000', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('598', '17', '34', '450.0000', '0.5750', '0', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_min` VALUES ('599', '17', '34', '500.0000', '0.6500', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('600', '17', '34', '550.0000', '0.7250', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('601', '17', '34', '600.0000', '0.8000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('602', '17', '34', '650.0000', '0.8750', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('603', '17', '34', '700.0000', '0.9500', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('604', '17', '34', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('605', '17', '35', '5.0000', '0.0000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('606', '17', '35', '10.0000', '0.1250', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('607', '17', '35', '20.0000', '0.2000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('608', '17', '35', '30.0000', '0.2750', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('609', '17', '35', '40.0000', '0.3500', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('610', '17', '35', '50.0000', '0.4250', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('611', '17', '35', '60.0000', '0.5000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('612', '17', '35', '70.0000', '0.5750', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('613', '17', '35', '80.0000', '0.6500', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('614', '17', '35', '90.0000', '0.7250', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('615', '17', '35', '100.0000', '0.8000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('616', '17', '35', '110.0000', '0.8750', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('617', '17', '35', '120.0000', '0.9500', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('618', '17', '35', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('619', '17', '36', '15.0000', '0.0000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('620', '17', '36', '30.0000', '0.0500', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('621', '17', '36', '45.0000', '0.1250', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('622', '17', '36', '60.0000', '0.2000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('623', '17', '36', '75.0000', '0.2750', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('624', '17', '36', '90.0000', '0.3500', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('625', '17', '36', '105.0000', '0.4250', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('626', '17', '36', '120.0000', '0.5000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('627', '17', '36', '135.0000', '0.5750', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_min` VALUES ('628', '17', '36', '150.0000', '0.6500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('629', '17', '36', '165.0000', '0.7250', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('630', '17', '36', '180.0000', '0.8000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('631', '17', '36', '195.0000', '0.8750', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('632', '17', '36', '210.0000', '0.9500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('633', '17', '36', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('634', '17', '37', '25.0000', '0.0000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('635', '17', '37', '50.0000', '0.0500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('636', '17', '37', '75.0000', '0.1250', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('637', '17', '37', '100.0000', '0.2000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('638', '17', '37', '125.0000', '0.2750', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('639', '17', '37', '150.0000', '0.3500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('640', '17', '37', '175.0000', '0.4250', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('641', '17', '37', '200.0000', '0.5000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('642', '17', '37', '225.0000', '0.5750', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('643', '17', '37', '250.0000', '0.6500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('644', '17', '37', '275.0000', '0.7250', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('645', '17', '37', '300.0000', '0.8000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('646', '17', '37', '325.0000', '0.8750', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('647', '17', '37', '350.0000', '0.9500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('648', '17', '37', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('649', '17', '38', '35.0000', '0.0000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('650', '17', '38', '70.0000', '0.0500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('651', '17', '38', '105.0000', '0.1250', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('652', '17', '38', '140.0000', '0.2000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('653', '17', '38', '175.0000', '0.2750', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('654', '17', '38', '210.0000', '0.3500', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_min` VALUES ('655', '17', '38', '245.0000', '0.4250', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('656', '17', '38', '280.0000', '0.5000', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('657', '17', '38', '315.0000', '0.5750', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('658', '17', '38', '350.0000', '0.6500', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('659', '17', '38', '385.0000', '0.7250', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('660', '17', '38', '420.0000', '0.8000', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('661', '17', '38', '455.0000', '0.8750', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('662', '17', '38', '490.0000', '0.9500', '0', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('663', '17', '38', '0.0000', '1.0000', '1', 'shenchao', '2020-08-03 16:40:16');
+INSERT INTO `hr_kpi_min` VALUES ('664', '18', '39', '14.0000', '0.0000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('665', '18', '39', '13.5000', '0.0500', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('666', '18', '39', '13.0000', '0.1250', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('667', '18', '39', '12.5000', '0.2000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('668', '18', '39', '12.0000', '0.2750', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('669', '18', '39', '11.5000', '0.3500', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('670', '18', '39', '11.0000', '0.4250', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('671', '18', '39', '10.5000', '0.5000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('672', '18', '39', '10.0000', '0.5750', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('673', '18', '39', '9.5000', '0.6500', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('674', '18', '39', '9.0000', '0.7250', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('675', '18', '39', '8.5000', '0.8000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('676', '18', '39', '8.0000', '0.8750', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('677', '18', '39', '7.5000', '0.9500', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('678', '18', '39', '0.0000', '1.0000', '1', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('679', '18', '40', '29.0000', '0.0000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('680', '18', '40', '28.0000', '0.0500', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('681', '18', '40', '26.0000', '0.1250', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('682', '18', '40', '25.0000', '0.2000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('683', '18', '40', '24.0000', '0.2750', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('684', '18', '40', '23.0000', '0.3500', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('685', '18', '40', '21.0000', '0.4250', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('686', '18', '40', '20.0000', '0.5000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('687', '18', '40', '19.0000', '0.5750', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('688', '18', '40', '18.0000', '0.6500', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_min` VALUES ('689', '18', '40', '17.0000', '0.7250', '0', 'shenchao', '2020-08-04 09:33:47');
+INSERT INTO `hr_kpi_min` VALUES ('690', '18', '40', '15.0000', '0.8000', '0', 'shenchao', '2020-08-04 09:33:47');
+INSERT INTO `hr_kpi_min` VALUES ('691', '18', '40', '14.0000', '0.8750', '0', 'shenchao', '2020-08-04 09:33:47');
+INSERT INTO `hr_kpi_min` VALUES ('692', '18', '40', '12.0000', '0.9500', '0', 'shenchao', '2020-08-04 09:33:47');
+INSERT INTO `hr_kpi_min` VALUES ('693', '18', '40', '0.0000', '1.0000', '1', 'shenchao', '2020-08-04 09:33:47');
+INSERT INTO `hr_kpi_min` VALUES ('694', '19', '41', '16.0000', '0.0000', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('695', '19', '41', '15.0000', '0.0500', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('696', '19', '41', '14.0000', '0.1250', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('697', '19', '41', '13.0000', '0.2000', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('698', '19', '41', '12.0000', '0.2750', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('699', '19', '41', '11.0000', '0.3500', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('700', '19', '41', '10.0000', '0.4250', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('701', '19', '41', '9.5000', '0.5000', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('702', '19', '41', '9.0000', '0.5750', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('703', '19', '41', '8.5000', '0.6500', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('704', '19', '41', '8.0000', '0.7250', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('705', '19', '41', '7.5000', '0.8000', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('706', '19', '41', '7.0000', '0.8750', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('707', '19', '41', '6.5000', '0.9500', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('708', '19', '41', '0.0000', '1.0000', '1', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('709', '19', '42', '8.9100', '0.0000', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('710', '19', '42', '8.5200', '0.0500', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('711', '19', '42', '8.1200', '0.1250', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_min` VALUES ('712', '19', '42', '7.8300', '0.2000', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('713', '19', '42', '7.5400', '0.2750', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('714', '19', '42', '7.2400', '0.3500', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('715', '19', '42', '6.9500', '0.4250', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('716', '19', '42', '6.6600', '0.5000', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('717', '19', '42', '6.3600', '0.5750', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('718', '19', '42', '6.0700', '0.6500', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('719', '19', '42', '5.7800', '0.7250', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('720', '19', '42', '5.3800', '0.8000', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('721', '19', '42', '4.9900', '0.8750', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('722', '19', '42', '4.6000', '0.9500', '0', 'shenchao', '2020-08-04 09:40:11');
+INSERT INTO `hr_kpi_min` VALUES ('723', '19', '42', '0.0000', '1.0000', '1', 'shenchao', '2020-08-04 09:40:11');
 
 -- ----------------------------
 -- Table structure for hr_kpi_sum
@@ -540,7 +753,7 @@ CREATE TABLE `hr_kpi_sum` (
   `lcu` varchar(255) DEFAULT NULL,
   `lcd` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='根據生意額區分不同KPI列表';
+) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8 COMMENT='根據生意額區分不同KPI列表';
 
 -- ----------------------------
 -- Records of hr_kpi_sum
@@ -567,3 +780,17 @@ INSERT INTO `hr_kpi_sum` VALUES ('25', '11', '7200000', '0', null, '2020-07-01 1
 INSERT INTO `hr_kpi_sum` VALUES ('26', '11', '14400000', '0', null, '2020-07-01 16:11:07');
 INSERT INTO `hr_kpi_sum` VALUES ('27', '11', '24000000', '0', null, '2020-07-01 16:11:08');
 INSERT INTO `hr_kpi_sum` VALUES ('28', '11', '0', '1', null, '2020-07-01 16:11:09');
+INSERT INTO `hr_kpi_sum` VALUES ('29', '16', '0', '1', 'shenchao', '2020-08-03 15:52:49');
+INSERT INTO `hr_kpi_sum` VALUES ('30', '16', '2400000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_sum` VALUES ('31', '16', '7200000', '0', 'shenchao', '2020-08-03 15:52:50');
+INSERT INTO `hr_kpi_sum` VALUES ('32', '16', '14400000', '0', 'shenchao', '2020-08-03 15:52:51');
+INSERT INTO `hr_kpi_sum` VALUES ('33', '16', '24000000', '0', 'shenchao', '2020-08-03 15:52:52');
+INSERT INTO `hr_kpi_sum` VALUES ('34', '17', '0', '1', 'shenchao', '2020-08-03 16:40:13');
+INSERT INTO `hr_kpi_sum` VALUES ('35', '17', '2400000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_sum` VALUES ('36', '17', '7200000', '0', 'shenchao', '2020-08-03 16:40:14');
+INSERT INTO `hr_kpi_sum` VALUES ('37', '17', '14400000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_sum` VALUES ('38', '17', '24000000', '0', 'shenchao', '2020-08-03 16:40:15');
+INSERT INTO `hr_kpi_sum` VALUES ('39', '18', '0', '1', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_sum` VALUES ('40', '18', '7200000', '0', 'shenchao', '2020-08-04 09:33:46');
+INSERT INTO `hr_kpi_sum` VALUES ('41', '19', '7200000', '0', 'shenchao', '2020-08-04 09:40:10');
+INSERT INTO `hr_kpi_sum` VALUES ('42', '19', '0', '1', 'shenchao', '2020-08-04 09:40:10');

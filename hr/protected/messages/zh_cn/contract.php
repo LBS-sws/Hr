@@ -563,6 +563,7 @@ return array(
     'one_three'=>'年新业务生意额目标',
     'one_four'=>'IA服务生意年金额',
     'one_five'=>'IB服务生意年金额',
+    'one_nine'=>'新（IA+IB）服務年金額',
     'one_six'=>'收款率(%)',
     'one_seven'=>'服务单的停单比例(%)',
     'one_eight'=>'技术员每月平均生产力',
@@ -574,6 +575,9 @@ return array(
     'two_five'=>'总经理回馈次数',
     'two_six'=>'提交销售5步曲数量培训销售部分',
     'two_seven'=>'提交销售5步曲数量培训销售经理部分',
+    'two_eight'=>'洗地易销售桶数',
+    'two_nine'=>'IA物料使用率',
+    'two_ten'=>'IB物料使用率',
 
     'three_one'=>'目标',
     'three_two'=>'完成结果',

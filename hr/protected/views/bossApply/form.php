@@ -16,7 +16,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 <style>
     .table-responsive th{white-space: nowrap;}
     .table-responsive>table{table-layout:fixed}
-    #moveCofWindow{position: absolute;top: 0px;left: 0px;width: 275px;box-shadow: -4px 3px 5px rgba(0,0,0,0.1);background: #fff;z-index: 999}
+    #moveCofWindow{position: absolute;top: 0px;left: 0px;width: 300px;box-shadow: -4px 3px 5px rgba(0,0,0,0.1);background: #fff;z-index: 999}
     #moveCofWindow>.arrow-left{position: absolute;top: 50%;left: -5px;margin-top:-3px;border-right: 6px solid #fff;border-top: 6px solid transparent;border-bottom: 6px solid transparent;width: 0px;height: 0px;}
     #moveCofWindow>table{margin: 0px;}
 </style>
@@ -144,9 +144,9 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
             var num=0,left,top;
             var oldCof = $(this).val();
             var nowCof = $(this).parents('tr:first').find('input[name$="[cofNow]"]').eq(0).val();
-            var nameArr =["one_eight","two_one","two_two","two_three","two_five"];
+            var nameArr =["one_eight","two_one","two_two","two_three","two_five","one_nine","two_eight"];
             var ratio_value = "<?php echo Yii::t('contract','ratio value');?>";
-            html+="<th width='70%' class='text-center'>"+ratio_value+"</th><th class='text-center'>";
+            html+="<th width='75%' class='text-center'>"+ratio_value+"</th><th class='text-center'>";
             html+="<?php echo Yii::t('contract','one_5');?>";
             html+="</th></tr></thead><tbody>";
             kpiData = kpiData.split(",");
