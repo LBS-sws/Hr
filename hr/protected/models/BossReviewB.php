@@ -27,9 +27,9 @@ class BossReviewB extends BossReview
     protected function setListY(){
         $this->listY = array(
             array('value'=>'two_1','name'=>($this->audit_year-1).Yii::t("contract","one_1"),'function'=>"getOldYear","width"=>"120px",'pro_str'=>"%"),//2018年度数据
-            array('value'=>'two_2','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px",'pro_str'=>"%"),//预计2019年目标数据
+            array('value'=>'two_2','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px",'pro_str'=>"%","emailBool"=>true),//预计2019年目标数据
             array('value'=>'two_3','name'=>Yii::t("contract","one_5"),'function'=>"getPlanYearCof","width"=>"100px"),//系数
-            array('value'=>'two_4','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px",'pro_str'=>"%"),//2019年实际达成数据
+            array('value'=>'two_4','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px",'pro_str'=>"%","emailBool"=>true),//2019年实际达成数据
             array('value'=>'two_5','name'=>Yii::t("contract","one_8"),'function'=>"getLadderDiffer","width"=>"100px"),//阶梯落差
             array('value'=>'two_6','name'=>Yii::t("contract","one_9"),'function'=>"getLadderCof","width"=>"100px"),//落差系数
             array('value'=>'two_7','name'=>Yii::t("contract","one_10"),'function'=>"getNowCof","width"=>"100px"),//实际系数

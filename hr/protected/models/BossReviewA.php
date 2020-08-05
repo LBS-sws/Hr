@@ -25,13 +25,13 @@ class BossReviewA extends BossReview
 
     protected function setListY(){
         $this->listY = array(
-            array('value'=>'one_1','name'=>($this->audit_year-1).Yii::t("contract","one_1"),'function'=>"getOldYear","width"=>"120px",'pro_str'=>"%"),//2018年度数据
+            array('value'=>'one_1','name'=>($this->audit_year-1).Yii::t("contract","one_1"),'function'=>"getOldYear","width"=>"120px",'pro_str'=>"%","emailBool"=>false),//2018年度数据
             array('value'=>'one_2','name'=>($this->audit_year-1).Yii::t("contract","one_2"),'function'=>"getOldAgoYear","width"=>"160px",'static_str'=>"%"),//2018年度增长百分比
-            array('value'=>'one_3','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px",'pro_str'=>"%"),//预计2019年目标数据
-            array('value'=>'one_4','name'=>Yii::t("contract","one_4"),'function'=>"getPlanYearRate","width"=>"120px",'static_str'=>"%"),//预计增长百分比
+            array('value'=>'one_3','name'=>Yii::t("contract","one_12").$this->audit_year.Yii::t("contract","one_3"),'function'=>"getPlanYear",'validate'=>true,"width"=>"160px",'pro_str'=>"%","emailBool"=>true),//预计2019年目标数据
+            array('value'=>'one_4','name'=>Yii::t("contract","one_4"),'function'=>"getPlanYearRate","width"=>"120px",'static_str'=>"%","emailBool"=>true),//预计增长百分比
             array('value'=>'one_5','name'=>Yii::t("contract","one_5"),'function'=>"getPlanYearCof","width"=>"100px"),//系数
-            array('value'=>'one_6','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px",'pro_str'=>"%"),//2019年实际达成数据
-            array('value'=>'one_7','name'=>Yii::t("contract","one_7"),'function'=>"getNowYearRate","width"=>"120px",'static_str'=>"%"),//实际达成百分比
+            array('value'=>'one_6','name'=>$this->audit_year.Yii::t("contract","one_6"),'function'=>"getNowYear","width"=>"160px",'pro_str'=>"%","emailBool"=>true),//2019年实际达成数据
+            array('value'=>'one_7','name'=>Yii::t("contract","one_7"),'function'=>"getNowYearRate","width"=>"120px",'static_str'=>"%","emailBool"=>true),//实际达成百分比
             array('value'=>'one_8','name'=>Yii::t("contract","one_8"),'function'=>"getLadderDiffer","width"=>"100px"),//阶梯落差
             array('value'=>'one_9','name'=>Yii::t("contract","one_9"),'function'=>"getLadderCof","width"=>"100px"),//落差系数
             array('value'=>'one_10','name'=>Yii::t("contract","one_10"),'function'=>"getNowCof","width"=>"100px"),//实际系数

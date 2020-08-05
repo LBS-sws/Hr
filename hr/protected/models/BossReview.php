@@ -140,6 +140,50 @@ class BossReview
         return $html;
     }
 
+    //主內容橫向
+    public function getTableHtmlToEmail(){
+        $width="170px";
+        $html="";
+        $html.="<thead><tr>";
+        $html.="<th width='$width'>".Yii::t("contract","matters")."</th>";
+        foreach ($this->listY as $key => $listY){
+            if(key_exists("emailBool",$listY)&&$listY["emailBool"]){
+                if(key_exists("width",$listY)){
+                    $html.="<th width='".$listY["width"]."'>".$listY["name"]."</th>";
+                }else{
+                    $html.="<th width='170px'>".$listY["name"]."</th>";
+                }
+            }
+        }
+        $html.="</tr></thead><tbody>";
+
+        foreach ($this->listX as $listX){
+            $html.="<tr>";
+            $html.="<td><b>".$listX["name"]."</b></td>";
+            foreach ($this->listY as $key => $listY){
+                if(key_exists("emailBool",$listY)){
+                    if(key_exists("function",$listY)){
+                        call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"]);
+                    }
+                    if($listY["emailBool"]){
+                        $searchText = !isset($this->json_text[$listX["value"]][$listY["value"]])?0:$this->json_text[$listX["value"]][$listY["value"]];
+                        $searchText = empty($searchText)?0:$searchText;
+                        if(isset($listY["static_str"])&&$searchText!=="\\"){
+                            $searchText.=$listY["static_str"];
+                        }elseif(isset($listY["pro_str"])&&isset($listX["pro_str"])&&$listX["pro_str"]==$listY["pro_str"]){
+                            $searchText.=$listY["pro_str"];
+                        }
+                        $html.="<td>".$searchText."</td>";
+                    }
+                }
+            }
+            $html.="</tr>";
+        }
+
+        $html.="</tbody>";
+        return $html;
+    }
+
     //主內容豎向（不使用）
     public function getTableHtmlOld(){
         $html="<p>&nbsp;</p><div class='form-group'><div class='col-lg-12'><table class='table table-bordered'>";

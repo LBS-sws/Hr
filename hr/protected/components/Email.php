@@ -50,6 +50,15 @@ class Email {
         }
     }
 
+    //添加通知人
+    public function addToAddrUser($list){
+        if(!is_array($list)){
+            $this->to_user[] = $list;
+        }else{
+            $this->to_user = array_merge($this->to_user,$list);
+        }
+    }
+
     //獲取繞生郵件
     public function getJoeEmail(){
         $suffix = Yii::app()->params['envSuffix'];
@@ -270,6 +279,33 @@ class Email {
                 }
             }
         }
+    }
+
+    //獲取用戶列表(根據權限和單個城市）
+    public function getUserListToPrefix($str){
+        $suffix = Yii::app()->params['envSuffix'];
+        $systemId = Yii::app()->params['systemId'];
+        //$city = Yii::app()->user->city();
+        if(!is_array($str)){
+            $likeSql = " and a.a_read_write like '%$str%'";
+        }else{
+            $likeSql =" and (";
+            foreach ($str as $key =>$item){
+                if($key != 0){
+                    $likeSql.=" or ";
+                }
+                $likeSql .= "a.a_read_write like '%$item%'";
+            }
+            $likeSql .=")";
+        }
+        $rs = Yii::app()->db->createCommand()->select("b.email, b.username, b.city, d.id, d.name, d.code")->from("hr_binding e")
+            ->leftJoin("hr_employee d","d.id = e.employee_id")
+            ->leftJoin("hr_dept f","f.id = d.position")
+            ->leftJoin("security$suffix.sec_user_access a","a.username = e.user_id")
+            ->leftJoin("security$suffix.sec_user b","a.username=b.username")
+            ->where("a.system_id='$systemId' $likeSql and b.email != '' and b.status='A'")
+            ->queryAll();
+        return $rs;
     }
 
     //添加收信人(根據權限和部門）

@@ -65,6 +65,8 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
         $this->sendEmail();//統一發送郵件
 
         $this->dailyInAndOutHint();//入职、离职总览电邮
+
+        $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
         echo "end\r\n";
     }
 
@@ -708,6 +710,56 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
             return true;//需要發送郵件
         }
 
+    }
+
+    //老总年度考核邮件（一个月提示一次)
+    private function bossReviewEmailToMonth(){
+        if(date("d")!="06") {//每月6號
+            return;
+        }
+        $systemId = Yii::app()->params['systemId'];
+        echo "boss review start\r\n";
+        $email = new Email("老总年度考核进度","","老总年度考核进度");
+        $userList = $email->getUserListToPrefix("BA01");
+        if($userList){
+            foreach ($userList as $user){
+                $email->resetToAddr();
+                $html = $this->bossReviewEmailHtml($user);
+                if(!empty($html)){
+                    $email->setMessage($html);
+                    $email->addToAddrEmail($user['email']);
+                    $email->addToAddrUser($user['username']);
+                    $email->sent("系统生成",$systemId);
+                }
+            }
+        }
+        echo "boss review end\r\n";
+    }
+
+    private function bossReviewEmailHtml($user){
+        $year = date("Y");
+        $html = "";
+        $bossModel = new BossSearchForm();
+        $bossModel->setDataToEmployeeIdAndYear($user["id"],$year);
+        $bossModel->city = $user["city"];
+        $bossModel->lcu = $user["username"];
+        if($bossModel->status_type != 2){
+            $html = "<h4>".$year."年老总年度考核 - ".$user["name"]."</h4>";
+            $list = array(
+                array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","width"=>"1000px","colspan"=>5),
+                array("name"=>"（B） 其他细节部分","class"=>"BossReviewB","width"=>"700px","colspan"=>3)
+            );
+            foreach ($list as $key=>$item){
+                $html.="<p>&nbsp;</p>";
+                $html.="<table width='".$item["width"]."' border='1px'>";
+                $html.="<thead><tr><td colspan='".$item["colspan"]."'><b>".$item["name"]."</b></td></tr></thead>";
+                $className = $item["class"];
+                $bossReviewModel = new $className($bossModel,true);
+                $html .= $bossReviewModel->getTableHtmlToEmail();
+                $html.="</table>";
+            }
+        }
+        return $html;
     }
 }
 ?>

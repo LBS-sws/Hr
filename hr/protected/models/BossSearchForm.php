@@ -79,6 +79,36 @@ class BossSearchForm extends CFormModel
 		return true;
 	}
 
+	public function setDataToEmployeeIdAndYear($employee_id,$year) {
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
+            ->from("hr_boss_audit a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.employee_id=:employee_id and a.audit_year = :year",array(":employee_id"=>$employee_id,":year"=>$year))->queryRow();
+		if ($row) {
+            $this->id = $row['id'];
+            $this->employee_id = $row['employee_id'];
+            $this->lcu = $row['lcu'];
+            $this->code = $row['employee_code'];
+            $this->name = $row['employee_name'];
+            $this->city = $row['city'];
+            $this->apply_date = $row['apply_date'];
+            $this->audit_year = $row['audit_year'];
+            $this->json_text = json_decode($row['json_text'],true);
+            $this->reject_remark = $row['reject_remark'];
+            $this->status_type = $row['status_type'];
+            $this->results_sum = $row['results_sum'];
+            $this->results_a = $row['results_a'];
+            $this->results_b = $row['results_b'];
+            $this->results_c = $row['results_c'];
+		}else{
+		    $this->employee_id = $employee_id;
+		    $this->audit_year = $year;
+		    $this->json_text = array();
+        }
+        return true;
+	}
+
     //刪除驗證
     public function deleteValidate(){
         return false;
