@@ -106,13 +106,23 @@ class DownReviewForm {
             if(Yii::app()->params['retire']===false){ //台灣地區
                 $this->setRowContent("A1","史伟莎员工评分制度表 (1/".$this->model->year." - 6/".$this->model->year.")",$this->end_str."1");//年份
             }else{
-                $this->setRowContent("A1","史伟莎员工评分制度表 (4/".$this->model->year." - 9/".$this->model->year.")",$this->end_str."1");//年份
+                if($this->model->year <2020){
+                    $this->setRowContent("A1","史伟莎员工评分制度表 (4/".$this->model->year." - 9/".$this->model->year.")",$this->end_str."1");//年份
+                }elseif($this->model->year ==2020){
+                    $this->setRowContent("A1","史伟莎员工评分制度表 (4/".$this->model->year." - 12/".$this->model->year.")",$this->end_str."1");//年份
+                }else{
+                    $this->setRowContent("A1","史伟莎员工评分制度表 (1/".$this->model->year." - 6/".$this->model->year.")",$this->end_str."1");//年份
+                }
             }
         }else{
             if(Yii::app()->params['retire']===false) { //台灣地區
                 $this->setRowContent("A1","史伟莎员工评分制度表 (7/".$this->model->year." - 12/".$this->model->year.")",$this->end_str."1");//年份
             }else{
-                $this->setRowContent("A1","史伟莎员工评分制度表 (10/".$this->model->year." - 3/".($this->model->year+1).")",$this->end_str."1");//年份
+                if($this->model->year <2020){
+                    $this->setRowContent("A1","史伟莎员工评分制度表 (10/".$this->model->year." - 3/".($this->model->year+1).")",$this->end_str."1");//年份
+                }else{
+                    $this->setRowContent("A1","史伟莎员工评分制度表 (7/".$this->model->year." - 12/".$this->model->year.")",$this->end_str."1");//年份
+                }
             }
         }
         $this->setBoxStyle("A1",true,18);//

@@ -33,7 +33,7 @@ class SalesReviewForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $this->form_list=array();
 	    $this->year = !is_numeric($year)?2020:$year;
-	    $this->year_type = !is_numeric($year_type)?1:$year_type;
+	    $this->year_type = (!is_numeric($year_type)||$this->year == 2020)?1:$year_type;
         $this->group_list = SalesGroupForm::getGroupListToId($index);
         $this->resetYearList();//重置年份區間
         $this->getGroupStaff($index,$city);//獲取組內的員工
@@ -287,15 +287,25 @@ class SalesReviewForm extends CFormModel
 	    $year = $this->year;
 	    if($this->year_type == 1){
             if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版
-                $this->year_list = array("$year"."/04","$year"."/05","$year"."/06","$year"."/07","$year"."/08","$year"."/09");
+                if($year<2020){
+                    $this->year_list = array("$year"."/04","$year"."/05","$year"."/06","$year"."/07","$year"."/08","$year"."/09");
+                }elseif ($year==2020){
+                    $this->year_list = array("$year"."/04","$year"."/05","$year"."/06","$year"."/07","$year"."/08","$year"."/09","$year"."/10","$year"."/11","$year"."/12");
+                }else{
+                    $this->year_list = array("$year"."/01","$year"."/02","$year"."/03","$year"."/04","$year"."/05","$year"."/06");
+                }
             }else{
                 $this->year_list = array("$year"."/01","$year"."/02","$year"."/03","$year"."/04","$year"."/05","$year"."/06");
             }
         }else{
             if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版
-                $this->year_list = array("$year"."/10","$year"."/11","$year"."/12");
-                $year++;
-                $this->year_list = array_merge($this->year_list,array("$year"."/01","$year"."/02","$year"."/03"));
+                if($year<2020){
+                    $this->year_list = array("$year"."/10","$year"."/11","$year"."/12");
+                    $year++;
+                    $this->year_list = array_merge($this->year_list,array("$year"."/01","$year"."/02","$year"."/03"));
+                }else{
+                    $this->year_list = array("$year"."/07","$year"."/08","$year"."/09","$year"."/10","$year"."/11","$year"."/12");
+                }
             }else{
                 $this->year_list = array("$year"."/07","$year"."/08","$year"."/09","$year"."/10","$year"."/11","$year"."/12");
             }

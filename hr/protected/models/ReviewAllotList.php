@@ -40,7 +40,9 @@ class ReviewAllotList extends CListPageModel
         if($this->year_type===3){
             $month = intval(date("m"));
             if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])) {//非台灣版
-                if($month<3){
+                if($this->year == 2020){
+                    $this->year_type = 1;
+                }elseif($month<3){
                     $this->year--;
                     $this->year_type = 1;
                 }elseif ($month<9){
@@ -68,9 +70,12 @@ class ReviewAllotList extends CListPageModel
         );
     }
 
-    public function getReviewDateTime($year,$year_type){
+    public function getReviewDateTime($year,&$year_type){
         $dateTime = $year."/";
-        if($year_type==1){
+        if($year == 2020){
+            $year_type = 1;
+            $dateTime.="12/31";
+        }elseif($year_type==1){
             $dateTime.="06/30";
         }else{
             $dateTime.="12/31";
@@ -91,13 +96,13 @@ class ReviewAllotList extends CListPageModel
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept e ON a.department = e.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 AND d.review_type IN (1,2,3,4) AND replace(entry_time,'-', '/')<='$dateTime' 
+                where a.city IN ($city_allow) AND a.staff_status = 0 AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
 			";
 		$sql2 = "select count(*) from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept e ON a.department = e.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 AND d.review_type IN (1,2,3,4) AND replace(entry_time,'-', '/')<='$dateTime' 
+                where a.city IN ($city_allow) AND a.staff_status = 0 AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -157,7 +162,7 @@ class ReviewAllotList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'year'=>empty($record['year'])?$this->year:$record['year'],
-					'year_type'=>$this->getYearTypeList($record['year_type']),
+					'year_type'=>$this->getYearTypeList($record['year_type'],$this->year),
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
                     'review_type'=>key_exists($record["review_type"],$reviewTypeList)?$reviewTypeList[$record["review_type"]]:$record["review_type"],
@@ -331,12 +336,20 @@ class ReviewAllotList extends CListPageModel
         return " and a.id=0";
     }
 
-    public function getYearTypeList($num=-1){
+    public function getYearTypeList($num=-1,$year=2000){
         if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
             $arr = array(
                 1=>Yii::t("contract","first half year"),
                 2=>Yii::t("contract","last half year")
             );
+            if($year == 2020){
+                $arr[1] = Yii::t("contract","first more half year");
+            }elseif ($year>2020){
+                $arr = array(
+                    1=>Yii::t("fete","first half year"),
+                    2=>Yii::t("fete","last half year")
+                );
+            }
         }else{
             $arr = array(
                 1=>Yii::t("fete","first half year"),
@@ -346,7 +359,7 @@ class ReviewAllotList extends CListPageModel
 	    if($num === -1){
 	        return $arr;
         }else{
-	        return $num ==2?$arr[2]:$arr[1];
+            return $num ==2?$arr[2]:$arr[1];
         }
     }
 

@@ -52,7 +52,7 @@
     <?php echo $form->labelEx($model,'year_type',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-2">
         <?php
-        echo TbHtml::textField("year_type",ReviewAllotList::getYearTypeList($model->year_type),array('readonly'=>(true)))
+        echo TbHtml::textField("year_type",ReviewAllotList::getYearTypeList($model->year_type,$model->year),array('readonly'=>(true)))
         ?>
     </div>
 </div>

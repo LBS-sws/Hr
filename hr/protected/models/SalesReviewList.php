@@ -27,11 +27,11 @@ class SalesReviewList extends CListPageModel
         if(empty($this->city)){
             $this->city = Yii::app()->user->city();
         }
-        if(empty($this->year_type)){
-            $this->year_type = intval(date("m"))<7?1:2;
-        }
         if(empty($this->year)){
             $this->year = date("Y");
+        }
+        if(empty($this->year_type)){
+            $this->year_type = intval(date("m"))<7?1:2;
         }
         parent::__construct();
     }
@@ -45,6 +45,9 @@ class SalesReviewList extends CListPageModel
 
     public function retrieveDataByPage($pageNum=1)
     {
+        if($this->year == 2020){
+            $this->year_type = 1;
+        }
         $suffix = Yii::app()->params['envSuffix'];
         if(empty($this->city)){
             $this->city = Yii::app()->user->city();

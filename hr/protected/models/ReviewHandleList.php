@@ -116,7 +116,7 @@ class ReviewHandleList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'year'=>$record['year'],
-					'year_type'=>ReviewAllotList::getYearTypeList($record['year_type']),
+					'year_type'=>ReviewAllotList::getYearTypeList($record['year_type'],$record['year']),
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
 					'company_id'=>$record['company_name'],

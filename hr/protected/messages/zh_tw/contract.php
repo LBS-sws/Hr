@@ -332,6 +332,7 @@ return array(
     'more review'=>'部分評核完成',
     'in review'=>'評核中',
     'first half year'=>'4月-9月',
+    'first more half year'=>'4月-12月',
     'last half year'=>'10月-3月',
     'reviewAllot Form'=>'員工考核表單',
     'reviewAllot manager'=>'作出評核員工',
