@@ -75,8 +75,16 @@ class ReviewAllotForm extends CFormModel
             array('change_num','validateChangeNum'),
             array('id_list','validateIdList'),
             array('tem_list','validateList'),
+            array('year_type','validateYear'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
+	}
+
+	public function validateYear($attribute, $params){
+	    if($this->year == 2020&&$this->year_type==2){
+            $message = "2020年的月份異常，請於管理員聯繫";
+            $this->addError($attribute,$message);
+        }
 	}
 
 	public function validateName($attribute, $params){
@@ -124,7 +132,10 @@ class ReviewAllotForm extends CFormModel
                 switch ($this->review_type){
                     case 2://技術員
                         if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){//非台灣版
-                            if($this->year_type == 1){
+                            if($this->year == 2020){
+                                $startTime = $this->year."/04";
+                                $endTime = $this->year."/12";
+                            }elseif($this->year_type == 1){
                                 $startTime = $this->year."/04";
                                 $endTime = $this->year."/09";
                             }else{
@@ -386,7 +397,10 @@ class ReviewAllotForm extends CFormModel
 
         if($this->change_num === null&&$this->review_type == 2){
             if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
-                if($this->year_type == 1){
+                if($this->year == 2020){
+                    $startTime = $this->year."/04";
+                    $endTime = $this->year."/12";
+                }elseif($this->year_type == 1){
                     $startTime = $this->year."/04";
                     $endTime = $this->year."/09";
                 }else{

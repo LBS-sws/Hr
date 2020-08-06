@@ -29,10 +29,10 @@ $this->pageTitle=Yii::app()->name . ' - reviewAllot';
     $search_add_html="";
     $modelName = get_class($model);
     $search_add_html .= TbHtml::dropDownList($modelName.'[year]',$model->year,$model->getYearList(),
-        array("class"=>"form-control submit_select"));
+        array("class"=>"form-control submit_year"));
     $search_add_html.="<span>&nbsp;&nbsp;&nbsp;&nbsp;</span>";
-    $search_add_html .= TbHtml::dropDownList($modelName.'[year_type]',$model->year_type,$model->getYearTypeList(),
-        array("class"=>"form-control submit_select"));
+    $search_add_html .= TbHtml::dropDownList($modelName.'[year_type]',$model->year_type,$model->getYearTypeList(-1,$model->year),
+        array("class"=>"form-control submit_year_type"));
 
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';
     $this->widget('ext.layout.ListPageWidget', array(
@@ -57,9 +57,18 @@ echo $form->hiddenField($model,'orderType');
 
 <?php
 $js = "
-    $('.submit_select').on('change',function(){
+    $('.submit_year,.submit_year_type').on('change',function(){
         $('form:first').submit();
     });
+    function resetYearType(){
+        var year = $('.submit_year:first').val();
+        if(year == 2020){
+            $('.submit_year_type>option:last').hide();
+        }else{
+            $('.submit_year_type>option:last').show();
+        }
+    }
+    resetYearType();
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();

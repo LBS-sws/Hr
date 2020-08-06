@@ -34,13 +34,23 @@ class RptReviewList extends CReport {
             if(Yii::app()->params['retire']===false){
                 $year_period = "$year 1月 - $year 6月";
             }else{
-                $year_period = "$year 4月 - $year 9月";
+                if($year < 2020){
+                    $year_period = "$year 4月 - $year 9月";
+                }elseif ($year == 2020){
+                    $year_period = "$year 4月 - $year 12月";
+                }else{
+                    $year_period = "$year 7月 - ".$year." 12月";
+                }
             }
         }else{
             if(Yii::app()->params['retire']===false){
-                $year_period = "$year 7月 - ".($year+1)." 12月";
+                $year_period = "$year 7月 - ".$year." 12月";
             }else{
-                $year_period = "$year 10月 - ".($year+1)." 3月";
+                if($year < 2020){
+                    $year_period = "$year 10月 - ".($year+1)." 3月";
+                }else{
+                    $year_period = "$year 7月 - ".$year." 12月";
+                }
             }
         }
 

@@ -46,7 +46,7 @@ $this->pageTitle=Yii::app()->name . ' - SalesReview';
                     <?php echo TbHtml::dropDownList("year",$model->year,ReviewAllotList::getYearList(),array("readonly"=>true)) ?>
                 </div>
                 <div class="col-sm-2">
-                    <?php echo TbHtml::dropDownList("year_type",$model->year_type,ReviewAllotList::getYearTypeList(),array("readonly"=>true)) ?>
+                    <?php echo TbHtml::dropDownList("year_type",$model->year_type,ReviewAllotList::getYearTypeList(-1,$model->year),array("readonly"=>true)) ?>
                 </div>
             </div>
             <?php

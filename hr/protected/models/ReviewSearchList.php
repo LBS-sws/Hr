@@ -44,7 +44,9 @@ class ReviewSearchList extends CListPageModel
         if($this->year_type===3){
             $month = intval(date("m"));
             if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])) {//非台灣版
-                if($month<3){
+                if($this->year == 2020){
+                    $this->year_type = $this->year_type==2?1:$this->year_type;
+                }elseif($month<3){
                     $this->year--;
                     $this->year_type = 1;
                 }elseif ($month<9){
@@ -102,7 +104,7 @@ class ReviewSearchList extends CListPageModel
         if(!empty($this->year)){
             $expr_sql.=" and b.year='".$this->year."'";
         }
-        if(!empty($this->year_type)){
+        if(!empty($this->year_type)&&$this->year!=2020){
             $expr_sql.=" and b.year_type='".$this->year_type."'";
         }
 		$sql1 = "select docman$suffix.countdoc('REVIEW',b.id) as reviewdoc,c.name,f.name as ment_name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,b.name_list,b.review_sum,b.review_type 
@@ -176,7 +178,7 @@ class ReviewSearchList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'year'=>$record['year'],
-					'year_type'=>ReviewAllotList::getYearTypeList($record['year_type']),
+					'year_type'=>ReviewAllotList::getYearTypeList($record['year_type'],$record['year']),
                     'review_type'=>key_exists($record["review_type"],$reviewTypeList)?$reviewTypeList[$record["review_type"]]:$record["review_type"],
 					'code'=>$record['code'],
 					'position'=>$record['dept_name'],
@@ -236,13 +238,22 @@ class ReviewSearchList extends CListPageModel
     }
 
 
-    public function getYearTypeList(){
+    public function getYearTypeList($year = 2000){
         if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
             $arr = array(
                 0=>Yii::t("misc","All"),
                 1=>Yii::t("contract","first half year"),
                 2=>Yii::t("contract","last half year")
             );
+            if($year == 2020){
+                $arr[1] = Yii::t("contract","first more half year");
+            }elseif ($year>2020){
+                $arr = array(
+                    0=>Yii::t("misc","All"),
+                    1=>Yii::t("fete","first half year"),
+                    2=>Yii::t("fete","last half year")
+                );
+            }
         }else{
             $arr = array(
                 0=>Yii::t("misc","All"),
