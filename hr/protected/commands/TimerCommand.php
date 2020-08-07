@@ -714,7 +714,7 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
 
     //老总年度考核邮件（一个月提示一次)
     private function bossReviewEmailToMonth(){
-        if(date("d")!="06") {//每月6號
+        if(date("d")!="07") {//每月7號
             return;
         }
         $systemId = Yii::app()->params['systemId'];
