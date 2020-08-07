@@ -7,6 +7,8 @@ class TimerCommand extends CConsoleCommand {
     protected $in_list = array();//入職提示列表
     protected $out_list = array();//離職提示列表
 
+    protected $review_list = array();//老總年度考核列表
+
     public function run() {
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
@@ -733,7 +735,37 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
                 }
             }
         }
+
+        $this->sendReviewAllEmail();
         echo "boss review end\r\n";
+    }
+
+    //給華南、華西、華北、華東、繞生、林生發匯總郵件
+    private function sendReviewAllEmail(){
+        if(!empty($this->review_list)){
+            $systemId = Yii::app()->params['systemId'];
+            $email = new Email("老总年度考核進度汇总","","老总年度考核進度汇总");
+            $userList = $email->getOnlyLRTMUserList();
+            if($userList){
+                foreach ($userList as $user){
+                    $email->resetToAddr();
+                    $html ="";
+
+                    foreach ($this->review_list as $reviewList){
+                        if(empty($user["cityList"])||in_array($reviewList["city"],$user["cityList"])){
+                            $html.=empty($html)?"":"<p style='border-bottom: 2px dashed #000'>&nbsp;</p>";
+                            $html.=$reviewList["html"];
+                        }
+                    }
+                    if(!empty($html)){
+                        $email->setMessage($html);
+                        $email->addToAddrEmail($user['email']);
+                        $email->addToAddrUser($user['username']);
+                        $email->sent("系统生成",$systemId);
+                    }
+                }
+            }
+        }
     }
 
     private function bossReviewEmailHtml($user){
@@ -744,7 +776,8 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
         $bossModel->city = $user["city"];
         $bossModel->lcu = $user["username"];
         if($bossModel->status_type != 2){
-            $html = "<h4>".$year."年老总年度考核 - ".$user["name"]."</h4>";
+            $html = "<h1>城市：".$user["city_name"]."</h1>";
+            $html .= "<h1>".$year."年老总年度考核 - ".$user["name"]."</h1>";
             $list = array(
                 array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","width"=>"1000px","colspan"=>5),
                 array("name"=>"（B） 其他细节部分","class"=>"BossReviewB","width"=>"700px","colspan"=>3)
@@ -758,6 +791,7 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
                 $html .= $bossReviewModel->getTableHtmlToEmail();
                 $html.="</table>";
             }
+            $this->review_list[] = array('city'=>$user["city"],'html'=>$html);
         }
         return $html;
     }

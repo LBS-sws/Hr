@@ -298,11 +298,12 @@ class Email {
             }
             $likeSql .=")";
         }
-        $rs = Yii::app()->db->createCommand()->select("b.email, b.username, b.city, d.id, d.name, d.code")->from("hr_binding e")
+        $rs = Yii::app()->db->createCommand()->select("b.email, b.username, b.city, h.name as city_name, d.id, d.name, d.code")->from("hr_binding e")
             ->leftJoin("hr_employee d","d.id = e.employee_id")
             ->leftJoin("hr_dept f","f.id = d.position")
             ->leftJoin("security$suffix.sec_user_access a","a.username = e.user_id")
             ->leftJoin("security$suffix.sec_user b","a.username=b.username")
+            ->leftJoin("security$suffix.sec_city h","b.city=h.code")
             ->where("a.system_id='$systemId' $likeSql and b.email != '' and b.status='A'")
             ->queryAll();
         return $rs;
@@ -486,6 +487,25 @@ class Email {
         }
 
         return $cityList;
+    }
+
+    //查找華南、華北、華西、華東老總、繞生、林生
+    public function getOnlyLRTMUserList(){
+        $userList = array();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("a.code,b.username,b.email")->from("security$suffix.sec_city a")
+            ->leftJoin("security$suffix.sec_user b","a.incharge = b.username")
+            ->where("b.status = 'A' and a.code in('HD','HD1','HN','HN1','HN2','HXHB')")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $cityList = $this->getAllCityToMaxCity($row["code"]);
+                $userList[] = array('username'=>$row['username'],'email'=>$row['email'],'cityList'=>$cityList);
+            }
+        }
+        $userList[] = array('username'=>"Franco",'email'=>"flam@lbsgroup.com.hk",'cityList'=>array());
+        $userList[] = array('username'=>"joe",'email'=>"joeyiu@lbsgroup.com.cn",'cityList'=>array());
+
+        return $userList;
     }
 
     //需要添加額外郵箱地址(支點郵件通知)
