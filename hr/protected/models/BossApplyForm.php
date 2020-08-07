@@ -211,6 +211,9 @@ class BossApplyForm extends CFormModel
             $one_4 = round($one_4*100);
             $arr["one_4"]= $one_4."%";
         }
+        if($name == "one_nine"){
+            $one_4 = $value;
+        }
         $arr["one_5"] = $bossReviewCof->getClassCof($one_4,$one_1,$name);//系數
         $one_8 = $bossReviewCof->getClassLadder($arr["one_5"],$cofNow,$name,$one_1);//階梯落差
         $arr["one_8"] = abs($one_8);//階梯落差

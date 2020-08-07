@@ -158,7 +158,7 @@ class BossReviewA extends BossReview
     }
     //系数 - one_5
     public function getPlanYearCof($type,$str){
-        if(in_array($type,array("one_six","one_seven","one_eight"))){
+        if(in_array($type,array("one_six","one_seven","one_eight","one_nine"))){
             $value = $this->json_text[$type]["one_3"];
         }else{
             $value = $this->json_text[$type]["one_4"];
