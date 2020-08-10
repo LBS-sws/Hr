@@ -716,12 +716,12 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
 
     //老总年度考核邮件（一个月提示一次)
     private function bossReviewEmailToMonth(){
-        if(date("d")!="07") {//每月7號
+        if(date("d")!="01") {//每月1號
             return;
         }
         $systemId = Yii::app()->params['systemId'];
         echo "boss review start\r\n";
-        $email = new Email("老总年度考核进度","","老总年度考核进度");
+        $email = new Email("老总年度考核进度".date("(Y年m月)"),"","老总年度考核进度".date("(Y年m月)"));
         $userList = $email->getUserListToPrefix("BA01");
         if($userList){
             foreach ($userList as $user){
@@ -744,7 +744,7 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
     private function sendReviewAllEmail(){
         if(!empty($this->review_list)){
             $systemId = Yii::app()->params['systemId'];
-            $email = new Email("老总年度考核進度汇总","","老总年度考核進度汇总");
+            $email = new Email("老总年度考核進度汇总".date("(Y年m月)"),"","老总年度考核進度汇总".date("(Y年m月)"));
             $userList = $email->getOnlyLRTMUserList();
             if($userList){
                 foreach ($userList as $user){
@@ -776,8 +776,8 @@ if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) 
         $bossModel->city = $user["city"];
         $bossModel->lcu = $user["username"];
         if($bossModel->status_type != 2){
-            $html = "<h1>城市：".$user["city_name"]."</h1>";
-            $html .= "<h1>".$year."年老总年度考核 - ".$user["name"]."</h1>";
+            $html = "<h2>城市：".$user["city_name"]."</h2>";
+            $html .= "<h2>".$year."年老总年度考核 - ".$user["name"]."</h2>";
             $list = array(
                 array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","width"=>"1000px","colspan"=>5),
                 array("name"=>"（B） 其他细节部分","class"=>"BossReviewB","width"=>"700px","colspan"=>3)
