@@ -28,6 +28,7 @@ class BossReviewCof
             $keyOld = 0;
             $keyNow = 0;
             if(is_array($kpiList)){
+                $kpiList = $this->sortList($kpiList);
                 foreach ($kpiList as $key =>$list){
                     if(floatval($list["kpi_value"])==$cofOld){
                         $keyOld = $key;
@@ -40,6 +41,16 @@ class BossReviewCof
             return $keyNow-$keyOld;
         }
         return 0;
+    }
+
+    private function sortList($kpiList){
+        $arr = array();
+        $valueList = array_column($kpiList,"kpi_value");
+        asort($valueList);
+        foreach ($valueList as $key =>$value){
+            $arr[] = $kpiList[$key];
+        }
+        return $arr;
     }
 
     public function getClassCof($value,$price='',$class_id=''){
@@ -64,7 +75,8 @@ class BossReviewCof
     public function getKPIListStr(){
         $str = "";
         if(is_array($this->kpi_list)){
-            foreach ($this->kpi_list as $list){
+            $kpiList = $this->sortList($this->kpi_list);
+            foreach ($kpiList as $list){
                 $str.=empty($str)?"":",";
                 $str.=floatval($list["min_num"]).":".floatval($list["kpi_value"]);
             }

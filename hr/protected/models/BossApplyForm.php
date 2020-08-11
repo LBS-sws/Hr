@@ -194,7 +194,7 @@ class BossApplyForm extends CFormModel
         $one_5 = $bossReviewCof->getClassLadder($arr["two_3"],$cofNow,$name,$one_1);//階梯落差
         $arr["two_5"] = abs($one_5);//階梯落差
         $one_5 = $one_5>0?$one_5*0.03:$one_5*0.08;
-        $arr["two_6"] = $arr["two_3"]+$one_5;//落差系数
+        $arr["two_6"] = $one_5;//落差系数
         $arr["two_7"] = $arr["two_3"]+$arr["two_6"];//实际系数
         $arr["two_9"] = ($arr["two_7"]*$one_11)."%";//得分
         return $arr;
@@ -218,7 +218,7 @@ class BossApplyForm extends CFormModel
         $one_8 = $bossReviewCof->getClassLadder($arr["one_5"],$cofNow,$name,$one_1);//階梯落差
         $arr["one_8"] = abs($one_8);//階梯落差
         $one_8 = $one_8>0?$one_8*0.03:$one_8*0.08;
-        $arr["one_9"] = $arr["one_5"]+$one_8;//落差系数
+        $arr["one_9"] = $one_8;//落差系数
         $arr["one_10"] = $arr["one_5"]+$arr["one_9"];//实际系数
         $arr["one_12"] = ($arr["one_10"]*$one_11)."%";//得分
         return $arr;
@@ -372,7 +372,7 @@ class BossApplyForm extends CFormModel
             $email->setDescription($description);
             $email->setMessage($message);
             $email->setSubject($subject);
-            $email->addEmailToPrefixNullCity('BA03');
+            $email->addEmailToPrefixAndCity('BA03',$this->city);
             $email->sent();
         }
     }

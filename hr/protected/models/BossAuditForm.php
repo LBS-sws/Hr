@@ -44,9 +44,10 @@ class BossAuditForm extends CFormModel
 	}
 
     public function validateID($attribute, $params){
+        $city_allow = Yii::app()->user->city_allow();
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where('a.id=:id and a.status_type = 1',array(':id'=>$this->id))->queryRow();
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type = 1",array(':id'=>$this->id))->queryRow();
         if (!$row){
             $message = "該考核不存在，無法修改";
             $this->addError($attribute,$message);
@@ -91,7 +92,7 @@ class BossAuditForm extends CFormModel
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and a.status_type in (0,1)",array(":id"=>$index))->queryRow();
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type in (0,1)",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->employee_id = $row['employee_id'];

@@ -30,13 +30,13 @@ class BossAuditList extends CListPageModel
 		$sql1 = "select b.name,b.code,d.name as city_name,a.* from hr_boss_audit a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
                 LEFT JOIN security$suffix.sec_city d ON d.code = a.city 
-                where a.status_type in (0,1)  
+                where a.status_type in (0,1) and b.city IN ($city_allow) 
 			";
 		$sql2 = "select count(a.id)
 				from hr_boss_audit a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
                 LEFT JOIN security$suffix.sec_city d ON d.code = a.city 
-                where a.status_type in (0,1)  
+                where a.status_type in (0,1) and b.city IN ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

@@ -162,13 +162,14 @@ class BossReviewB extends BossReview
     public function getLadderCof($type,$str){
         $value = $this->json_text[$type]["two_5"];
         $value = $value>0?$value*0.03:$value*0.08;
-        $value += $this->json_text[$type]["two_3"];
+        //$value += $this->json_text[$type]["two_3"];
         $this->json_text[$type][$str] = $value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$value);
     }
     //实际系数 - two_7
     public function getNowCof($type,$str){
         $value = $this->json_text[$type]["two_6"]+$this->json_text[$type]["two_3"];
+        $value = $value<=0?0:$value;
         $this->json_text[$type][$str] = $value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$value);
     }
