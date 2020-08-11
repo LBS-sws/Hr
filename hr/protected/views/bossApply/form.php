@@ -150,25 +150,31 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
             html+="<?php echo Yii::t('contract','one_5');?>";
             html+="</th></tr></thead><tbody>";
             kpiData = kpiData.split(",");
-            kpiType = kpiType == 1?">=":"<=";
             $.each(kpiData,function (i,val) {
                 var list = val.split(":");
                 var str = "",className="";
                 if(nameArr.indexOf(dataName)<0){
                     list[0]+="%";
                 }
-                if(i==0){
-                    str = ratio_value+kpiType+" "+list[0];
-                }else if(i == kpiData.length-1){
-                    if(kpiType == ">="){
-                        str =ratio_value+"<"+num;
-                    }else{
-                        str =ratio_value+">"+num;
+                if(kpiType == 1){//從大到小排序
+                    var nextList = kpiData.length-1==i?val:kpiData[i+1];
+                    nextList = nextList.split(":");
+                    if(nameArr.indexOf(dataName)<0){
+                        nextList[0]+="%";
+                    }
+                    if(i==0){//第一行
+                        str =ratio_value+"<"+nextList[0];
+                    }else if(i == kpiData.length-1){//最後一行
+                        str =ratio_value+">="+list[0];
+                    }else{//中間循環
+                        str =list[0]+"<= "+ratio_value+" <"+nextList[0];
                     }
                 }else{
-                    if(kpiType == ">="){
-                        str =list[0]+"<= "+ratio_value+" <"+num;
-                    }else{
+                    if(i==0){//第一行
+                        str = ratio_value+"<="+list[0];
+                    }else if(i == kpiData.length-1){//最後一行
+                        str =ratio_value+">"+num;
+                    }else{//中間循環
                         str =num+"< "+ratio_value+" <="+list[0];
                     }
                 }
