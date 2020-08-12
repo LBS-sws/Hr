@@ -25,18 +25,19 @@ class BossAuditList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+        BossApplyList::resetBossListScore();
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select b.name,b.code,d.name as city_name,a.* from hr_boss_audit a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
                 LEFT JOIN security$suffix.sec_city d ON d.code = a.city 
-                where a.status_type in (0,1) and b.city IN ($city_allow) 
+                where a.status_type !=2 and b.city IN ($city_allow) 
 			";
 		$sql2 = "select count(a.id)
 				from hr_boss_audit a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
                 LEFT JOIN security$suffix.sec_city d ON d.code = a.city 
-                where a.status_type in (0,1) and b.city IN ($city_allow) 
+                where a.status_type !=2 and b.city IN ($city_allow) 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -115,6 +116,16 @@ class BossAuditList extends CListPageModel
                 return array(
                     "status"=>Yii::t("contract","Rejected"),//拒絕
                     "style"=>" text-danger"
+                );
+            case 4:
+                return array(
+                    "status"=>Yii::t("contract","audited"),//已审核
+                    "style"=>" text-warning"
+                );
+            case 5:
+                return array(
+                    "status"=>Yii::t("contract","pending approval on second"),//等待二次審核
+                    "style"=>" text-primary"
                 );
         }
         return array(

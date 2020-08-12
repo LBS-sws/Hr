@@ -34,7 +34,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		?>
 
         <?php if ($model->scenario!='view'): ?>
-            <?php if ($model->scenario=='new'||$model->status_type == 0||$model->status_type == 3): ?>
+            <?php if ($model->scenario=='new'||in_array($model->status_type,array(0,3,4))): ?>
                 <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                     'submit'=>Yii::app()->createUrl('bossApply/save')));
                 ?>

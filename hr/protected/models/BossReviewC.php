@@ -11,6 +11,7 @@ class BossReviewC
     public $ready=true;//禁止用戶修改
     public $className="";//表單的name前綴
     public $audit_year;//考核年限
+    public $status_type;//表單狀態
     public $listX=array();
     public $listY=array();
     public $json_text=array();
@@ -21,6 +22,7 @@ class BossReviewC
     {
         if(!empty($model)){
             $this->json_text = $model->json_text;
+            $this->status_type = isset($model->status_type)?$model->status_type:0;//表單狀態
             $this->audit_year = $model->audit_year;
             $this->ready = $model->getInputBool();
             $this->className = get_class($model);
@@ -156,7 +158,11 @@ class BossReviewC
         $html.="<td>".TbHtml::textArea($name."[three_two]",$list["three_two"],array('readonly'=>$ready))."</td>";
         $html.="<td>".TbHtml::textArea($name."[three_three]",$list["three_three"],array('readonly'=>$ready))."</td>";
         $html.="<td><div class='input-group'>";
-        $html.=TbHtml::numberField($name."[three_four]",$list["three_four"],array('readonly'=>$ready,'class'=>'changeThreeFour'));
+        if($this->status_type == 4){
+            $html.=TbHtml::numberField($name."[three_four]",$list["three_four"],array('readonly'=>false,'class'=>'changeThreeFour'));
+        }else{
+            $html.=TbHtml::numberField($name."[three_four]",$list["three_four"],array('readonly'=>$ready,'class'=>'changeThreeFour'));
+        }
         $html.="<span class='input-group-addon'>%</span></div></td>";
 
         if(!$this->ready){

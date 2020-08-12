@@ -617,5 +617,7 @@ return array(
 
     'ratio value'=>'對比值',
     'KPI Attachment'=>'各KPI系數文檔',
+    'Reviewed and to be completed'=>'已審核，待完成',
+    'pending approval on second'=>'等待二次審核',
     );
 ?>

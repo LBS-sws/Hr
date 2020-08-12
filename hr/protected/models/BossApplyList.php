@@ -55,6 +55,7 @@ class BossApplyList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+	    $this->resetBossListScore();
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select b.name,b.code,a.* from hr_boss_audit a 
@@ -133,7 +134,7 @@ class BossApplyList extends CListPageModel
                 );
             case 2:
                 return array(
-                    "status"=>Yii::t("contract","Finish"),//審核通過
+                    "status"=>Yii::t("contract","Finish"),//已完成
                     "style"=>" text-success"
                 );
             case 3:
@@ -141,10 +142,59 @@ class BossApplyList extends CListPageModel
                     "status"=>Yii::t("contract","Rejected"),//拒絕
                     "style"=>" text-danger"
                 );
+            case 4:
+                return array(
+                    "status"=>Yii::t("contract","Reviewed and to be completed"),//已审核，待完成
+                    "style"=>" text-warning"
+                );
+            case 5:
+                return array(
+                    "status"=>Yii::t("contract","pending approval on second"),//等待二次審核
+                    "style"=>" text-primary"
+                );
         }
         return array(
             "status"=>$status,
             "style"=>""
         );
+    }
+
+    //初始化所有老總考核的總分
+    public function resetBossListScore(){
+        $city_allow = Yii::app()->user->city_allow();
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
+            ->from("hr_boss_audit a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("b.city in ($city_allow) and a.status_type !=2")->queryAll();
+        if($rows){
+            $model = new BossSearchForm();
+            foreach ($rows as $row){
+                $model->json_text = json_decode($row['json_text'],true);
+                $model->lcu = $row['lcu'];
+                $model->employee_id = $row['employee_id'];
+                $model->audit_year = $row['audit_year'];
+                $model->city = $row['city'];
+                $model->status_type = $row['status_type'];
+                $model->results_c = floatval($row["results_c"]);
+                //A類驗證
+                $bossReviewA = new BossReviewA($model);
+                $bossReviewA->validateJson($model);
+                $model->json_text = $bossReviewA->json_text;
+                $model->results_a = $bossReviewA->scoreSum;
+                //B類驗證
+                $bossReviewB = new BossReviewB($model);
+                $bossReviewB->validateJson($model);
+                $model->json_text = $bossReviewB->json_text;
+                $model->results_b = $bossReviewB->scoreSum;
+
+                $model->results_sum = $model->results_a*0.5+$model->results_b*0.35+$model->results_c;
+
+                Yii::app()->db->createCommand()->update('hr_boss_audit', array(
+                    'results_a'=>$model->results_a,
+                    'results_b'=>$model->results_b,
+                    'results_sum'=>$model->results_sum,
+                ), 'id=:id', array(':id'=>$row['id']));
+            }
+        }
     }
 }

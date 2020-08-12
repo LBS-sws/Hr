@@ -40,6 +40,11 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     'name'=>'btnJect','id'=>'btnJect','data-toggle'=>'modal','data-target'=>'#jectdialog'));
                 ?>
             <?php endif ?>
+            <?php if ($model->status_type == 5): ?>
+                <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Finish'), array(
+                    'submit'=>Yii::app()->createUrl('bossAudit/finish')));
+                ?>
+            <?php endif ?>
         <?php endif; ?>
 	</div>
 	</div></div>

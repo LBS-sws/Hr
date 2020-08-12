@@ -136,6 +136,7 @@ class BossApplyController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('bossApply/edit',array('index'=>$model->id)));
             } else {
+                $model->status_type = isset($_POST['BossApplyForm']["status_type"])?$_POST['BossApplyForm']["status_type"]:0;
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
@@ -155,7 +156,7 @@ class BossApplyController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('bossApply/edit',array('index'=>$model->id)));
             } else {
-                $model->status_type = 0;
+                $model->status_type = isset($_POST['BossApplyForm']["status_type"])?$_POST['BossApplyForm']["status_type"]:0;
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));

@@ -52,7 +52,7 @@ class BossApplyForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }
-        $row = Yii::app()->db->createCommand()->select("id")->from("hr_boss_audit")
+        $row = Yii::app()->db->createCommand()->select("id,status_type,json_text,apply_date")->from("hr_boss_audit")
             ->where('employee_id=:id and audit_year=:year',
                 array(':id'=>$this->employee_id,':year'=>$this->audit_year)
             )->queryRow();
@@ -65,6 +65,19 @@ class BossApplyForm extends CFormModel
             $message = "該考核不存在，無法修改";
             $this->addError($attribute,$message);
             return false;
+        }
+        if($row&&$row["status_type"]==4){
+            $this->apply_date = $row["apply_date"];
+            $this->status_type = $this->status_type==1?5:4;
+            $jsonTest = json_decode($row['json_text'],true);
+            if(isset($jsonTest["three"]["list"])){
+                foreach ($jsonTest["three"]["list"] as $key =>&$list){
+                    if(key_exists("three_four",$list)&&isset($this->json_text["three"]["list"][$key]["three_four"])){
+                        $list["three_four"] = $this->json_text["three"]["list"][$key]["three_four"];
+                    }
+                }
+            }
+            $this->json_text = $jsonTest;
         }
     }
 
@@ -303,7 +316,7 @@ class BossApplyForm extends CFormModel
 							reject_remark = '', 
 							apply_date = :apply_date,
 							luu = :luu
-						where id = :id and status_type in(0,3)
+						where id = :id and status_type in(0,3,4)
 						";
                 break;
         }
@@ -335,7 +348,7 @@ class BossApplyForm extends CFormModel
             $command->bindParam(':json_text',$json_text,PDO::PARAM_LOB);
         }
         if (strpos($sql,':apply_date')!==false){
-            $this->apply_date = date('Y-m-d H:i:s');
+            $this->apply_date = in_array($this->status_type,array(4,5))?$this->apply_date:date('Y-m-d H:i:s');
             $command->bindParam(':apply_date',$this->apply_date,PDO::PARAM_STR);
         }
 
@@ -356,10 +369,14 @@ class BossApplyForm extends CFormModel
 	}
 
     protected function sendEmail(){
-        if($this->status_type == 1){
+        if(in_array($this->status_type,array(1,5))){
             $email = new Email();
             $cityName = CGeneral::getCityName($this->city);
-            $description="老总年度考核申请 - ".$this->name."（".$cityName."）";
+            if($this->status_type == 1){
+                $description="老总年度考核申请 - ".$this->name."（".$cityName."）";
+            }else{
+                $description="老总年度考核二次审核 - ".$this->name."（".$cityName."）";
+            }
             $subject=$description;
             $message="<p>员工编号：".$this->code."</p>";
             $message.="<p>员工姓名：".$this->name."</p>";

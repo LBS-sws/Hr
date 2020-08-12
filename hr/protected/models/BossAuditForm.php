@@ -37,17 +37,18 @@ class BossAuditForm extends CFormModel
 	{
 		return array(
 			array('id,employee_id,json_text,audit_year,reject_remark','safe'),
-            array('id','validateID','on'=>array("audit","reject")),
-            array('json_text','validateJson','on'=>array("audit")),
+            array('id','validateID','on'=>array("audit","reject","finish")),
+            array('json_text','validateJson','on'=>array("audit","finish")),
             array('reject_remark','required','on'=>array("reject")),
 		);
 	}
 
     public function validateID($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
+        $status_type = $this->getScenario()=="finish"?5:1;
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) and a.status_type = 1",array(':id'=>$this->id))->queryRow();
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type = :status_type",array(':id'=>$this->id,':status_type'=>$status_type))->queryRow();
         if (!$row){
             $message = "該考核不存在，無法修改";
             $this->addError($attribute,$message);
@@ -92,7 +93,7 @@ class BossAuditForm extends CFormModel
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) and a.status_type in (0,1)",array(":id"=>$index))->queryRow();
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type !=2",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->employee_id = $row['employee_id'];
@@ -135,13 +136,25 @@ class BossAuditForm extends CFormModel
 	protected function saveGoods(&$connection) {
 		$sql = '';
         switch ($this->scenario) {
-            case 'audit':
+            case 'finish':
                 $sql = "update hr_boss_audit set
 							results_a = :results_a, 
 							results_b = :results_b, 
 							results_c = :results_c, 
 							results_sum = :results_sum, 
 							status_type = 2, 
+							json_text = :json_text, 
+							luu = :luu
+						where id = :id AND status_type = 5
+						";
+                break;
+            case 'audit':
+                $sql = "update hr_boss_audit set
+							results_a = :results_a, 
+							results_b = :results_b, 
+							results_c = :results_c, 
+							results_sum = :results_sum, 
+							status_type = 4, 
 							json_text = :json_text, 
 							luu = :luu
 						where id = :id AND status_type = 1
@@ -194,23 +207,31 @@ class BossAuditForm extends CFormModel
     protected function sendEmail(){
         $email = new Email();
         $cityName = CGeneral::getCityName($this->city);
-        if($this->getScenario() == "audit"){
-            $description="老总年度考核通过 - ".$this->name;
-        }else{
-            $description="老总年度考核拒绝 - ".$this->name;
+        switch ($this->getScenario()){
+            case "audit":
+                $description="老总年度考核通过 - ".$this->name;
+                break;
+            case "finish":
+                $description="老总年度考核已完成 - ".$this->name;
+                break;
+            case "reject":
+                $description="老总年度考核拒绝 - ".$this->name;
+                break;
+            default:
+                return;
         }
         $subject=$description;
         $message="<p>员工编号：".$this->code."</p>";
         $message.="<p>员工姓名：".$this->name."</p>";
         $message.="<p>员工城市：".$cityName."</p>";
         $message.="<p>考核年份：".$this->audit_year."年</p>";
-        if($this->getScenario() == "audit"){
+        if($this->getScenario() == "reject"){
+            $message.="<p>拒绝原因：".$this->reject_remark."</p>";
+        }else{
             $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
             $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
             $message.="<p>得分（C）项：".$this->results_c."</p>";
             $message.="<p>总得分：".$this->results_sum."</p>";
-        }else{
-            $message.="<p>拒绝原因：".$this->reject_remark."</p>";
         }
         $email->setDescription($description);
         $email->setMessage($message);
