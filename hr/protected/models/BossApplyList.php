@@ -162,7 +162,7 @@ class BossApplyList extends CListPageModel
     //初始化所有老總考核的總分
     public function resetBossListScore(){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.id,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.results_a,a.results_b,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("b.city in ($city_allow) and a.status_type !=2")->queryAll();
@@ -186,6 +186,9 @@ class BossApplyList extends CListPageModel
                 $bossReviewB->validateJson($model);
                 $model->json_text = $bossReviewB->json_text;
                 $model->results_b = $bossReviewB->scoreSum;
+                if($model->results_a == floatval($row["results_a"])&&$model->results_b == floatval($row["results_b"])){
+                    continue;//數據沒有變動，不需要更新
+                }
 
                 $model->results_sum = $model->results_a*0.5+$model->results_b*0.35+$model->results_c;
 
