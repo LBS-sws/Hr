@@ -144,7 +144,7 @@ class BossReviewC
 
     protected function getRowHtml($ready=false,$list=array(),$num=''){
         if(empty($list)){
-            $list = array('three_one'=>'','three_two'=>'','three_three'=>'','three_four'=>'');
+            $list = array('three_one'=>'','three_two'=>'','three_three'=>'','three_four'=>0);
         }
         if($num===''||!is_numeric($num)){
             $html="<tr id='trTemplate' style='display: none'>";
@@ -158,7 +158,7 @@ class BossReviewC
         $html.="<td>".TbHtml::textArea($name."[three_two]",$list["three_two"],array('readonly'=>$ready))."</td>";
         $html.="<td>".TbHtml::textArea($name."[three_three]",$list["three_three"],array('readonly'=>$ready))."</td>";
         $html.="<td><div class='input-group'>";
-        if($this->status_type == 4){
+        if($this->status_type == 4&&$this->className == "BossApplyForm"){
             $html.=TbHtml::numberField($name."[three_four]",$list["three_four"],array('readonly'=>false,'class'=>'changeThreeFour'));
         }else{
             $html.=TbHtml::numberField($name."[three_four]",$list["three_four"],array('readonly'=>$ready,'class'=>'changeThreeFour'));

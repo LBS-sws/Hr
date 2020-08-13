@@ -227,7 +227,7 @@ class BossAuditForm extends CFormModel
         $message.="<p>考核年份：".$this->audit_year."年</p>";
         if($this->getScenario() == "reject"){
             $message.="<p>拒绝原因：".$this->reject_remark."</p>";
-        }else{
+        }elseif($this->getScenario() == "finish"){
             $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
             $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
             $message.="<p>得分（C）项：".$this->results_c."</p>";

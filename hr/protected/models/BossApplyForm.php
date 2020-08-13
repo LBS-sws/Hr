@@ -382,10 +382,12 @@ class BossApplyForm extends CFormModel
             $message.="<p>员工姓名：".$this->name."</p>";
             $message.="<p>员工城市：".$cityName."</p>";
             $message.="<p>考核年份：".$this->audit_year."年</p>";
-            $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
-            $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
-            $message.="<p>得分（C）项：".$this->results_c."</p>";
-            $message.="<p>总得分：".$this->results_sum."</p>";
+            if($this->status_type == 5){
+                $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
+                $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
+                $message.="<p>得分（C）项：".$this->results_c."</p>";
+                $message.="<p>总得分：".$this->results_sum."</p>";
+            }
             $email->setDescription($description);
             $email->setMessage($message);
             $email->setSubject($subject);
