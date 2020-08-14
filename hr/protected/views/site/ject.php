@@ -4,7 +4,7 @@
 	$ftrbtn[] = TbHtml::button(Yii::t('dialog','OK'), array('id'=>'btnWFSubmit','data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY,'submit' => $submit));
 	$this->beginWidget('bootstrap.widgets.TbModal', array(
 					'id'=>'jectdialog',
-					'header'=>Yii::t('contract','Rejected'),
+					'header'=>!isset($header_name)?Yii::t('contract','Rejected'):$header_name,
 					'footer'=>$ftrbtn,
 					'show'=>false,
 				));

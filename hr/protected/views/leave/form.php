@@ -53,7 +53,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
             <?php endif; ?>
             <?php if (Yii::app()->user->validFunction('ZR05')&&$model->status == 4): ?>
                 <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','cancel'), array(
-                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#canceldialog',)
+                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#jectdialog',)
                 );
                 ?>
             <?php endif; ?>
@@ -202,19 +202,13 @@ $this->pageTitle=Yii::app()->name . ' - Leave Form';
 </div>
 <?php
 $this->renderPartial('//site/removedialog');
-$this->renderPartial('//site/canceldialog');
+$this->renderPartial('//site/ject',array('form'=>$form,'model'=>$model,'rejectName'=>'reject_cause','header_name'=>Yii::t('dialog','Are you sure to cancel?'),'submit'=>Yii::app()->createUrl('leave/cancel')));
 $this->renderPartial('//site/help',array('helpHtml'=>'<img width="100%" class="responsive-image" src="'.Yii::app()->baseUrl . "/images/pasted_2.png".'">'));
 ?>
 <?php
 Script::genFileUpload($model,$form->id,'LEAVE');
 
 $js = "
-//取消事件
-$('#btnCancelData').on('click',function() {
-	$('#canceldialog').modal('hide');
-	var elm=$('#btnCancelData');
-	jQuery.yii.submitForm(elm,'".Yii::app()->createUrl('leave/cancel')."',{});
-});
 
 
 var ajaxBool = true;

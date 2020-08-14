@@ -191,7 +191,7 @@ class LeaveController extends Controller
                 $this->redirect(Yii::app()->createUrl('leave/index'));
             }else{
                 $message = CHtml::errorSummary($model);
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl('leave/edit',array('index'=>$model->id)));
             }
         }

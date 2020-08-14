@@ -52,6 +52,11 @@ class LeaveForm extends CFormModel
 
 	public function attributeLabels()
 	{
+	    if(in_array($this->status,array(4,5))){
+            $reject_cause = Yii::t('contract','cancel cause');
+        }else{
+            $reject_cause = Yii::t('contract','Rejected Remark');
+        }
 		return array(
             'leave_code'=>Yii::t('fete','Leave Code'),
             'vacation_id'=>Yii::t('fete','Leave Type'),
@@ -73,7 +78,7 @@ class LeaveForm extends CFormModel
             'you_lcu'=>Yii::t('fete','you lcu'),
             'you_lcd'=>Yii::t('fete','you lcd'),
             'audit_remark'=>Yii::t('fete','Audit Remark'),
-            'reject_cause'=>Yii::t('contract','Rejected Remark'),
+            'reject_cause'=>$reject_cause,
             'wage'=>Yii::t('contract','Contract Pay'),
             'lcd'=>Yii::t('fete','apply for time'),
             'state'=>Yii::t('contract','Status'),
@@ -86,7 +91,8 @@ class LeaveForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,addTime,leave_code,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd','safe'),
+			array('id,addTime,leave_code,employee_id,vacation_id,city,status,leave_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
+            array('id','validateRejectCause','on'=>array("cancel")),
             array('employee_id','validateUser','on'=>array("new","edit","audit")),
             array('vacation_id','required','on'=>array("new","edit","audit")),
             array('leave_cause','required','on'=>array("new","edit","audit")),
@@ -98,6 +104,20 @@ class LeaveForm extends CFormModel
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
+
+	public function validateRejectCause($attribute, $params){
+        if(empty($this->reject_cause)){
+            $message = Yii::t('contract','cancel cause').Yii::t('contract',' can not be empty');
+            $this->addError($attribute,$message);
+        }else{
+            $row = Yii::app()->db->createCommand()->select("id")->from("hr_employee_leave")
+                ->where("id=:id and status=4",array(":id"=>$this->id))->queryRow();
+            if(!$row){
+                $message = "請假單不存在，請於管理員聯繫";
+                $this->addError($attribute,$message);
+            }
+        }
+    }
 
 	public function validateUser($attribute, $params){
         if(Yii::app()->user->validFunction('ZR06')){
@@ -603,6 +623,7 @@ class LeaveForm extends CFormModel
                 break;
             case 'cancel':
                 $sql = "update hr_employee_leave set
+							reject_cause = :reject_cause, 
 							status = 5
 						where id = :id
 						";
@@ -671,6 +692,8 @@ class LeaveForm extends CFormModel
             $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
+        if (strpos($sql,':reject_cause')!==false)
+            $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false){
             $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id,1);
             $this->z_index = $z_index;

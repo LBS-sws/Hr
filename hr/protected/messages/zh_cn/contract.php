@@ -624,5 +624,6 @@ return array(
     'KPI Attachment'=>'各KPI系数文档',
     'Reviewed and to be completed'=>'已审核，待完成',
     'pending approval on second'=>'等待二次审核',
+    'cancel cause'=>'取消原因',
 );
 ?>
