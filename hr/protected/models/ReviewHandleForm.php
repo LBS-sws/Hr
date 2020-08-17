@@ -108,11 +108,15 @@ class ReviewHandleForm extends CFormModel
 
     public function validateList($attribute, $params){
         if(!empty($this->tem_s_ist)){
-            $rows = Yii::app()->db->createCommand()->select("tem_s_ist,change_num,review_type,year,year_type")->from("hr_review")
-                ->where("id=:id",array(":id"=>$this->review_id))->queryRow();
+            $rows = Yii::app()->db->createCommand()->select("c.city,b.employee_id,b.tem_s_ist,b.change_num,b.review_type,b.year,b.year_type")
+                ->from("hr_review b")
+                ->leftJoin("hr_employee c","c.id = b.employee_id")
+                ->where("b.id=:id",array(":id"=>$this->review_id))->queryRow();
             if($rows){
                 $this->review_sum = 0;
                 $this->four_with_sum = 0;
+                $this->city = $rows["city"];
+                $this->employee_id = $rows["employee_id"];
                 $this->review_type = $rows["review_type"];
                 $this->change_num = $rows["change_num"];
                 $this->year = $rows["year"];
@@ -417,7 +421,7 @@ class ReviewHandleForm extends CFormModel
                 'status_type'=>$status_type,
                 'review_sum'=>$status_type==3?$review_sum:null
             ), 'id=:id', array(':id'=>$this->review_id));
-            if($status_type == 3){
+            if($status_type == 3 && $this->city!="BJ"){
                 $this->sendEmail($review_sum,$rows);
             }
         }
