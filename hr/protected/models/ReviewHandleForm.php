@@ -429,7 +429,7 @@ class ReviewHandleForm extends CFormModel
 
     protected function sendEmail($review_sum,$rows){
         $email = new Email();
-        $description="人才優化評核完成 - ".$this->name."(".$this->year.ReviewAllotList::getYearTypeList($this->year_type).")";
+        $description="人才優化評核完成 - ".$this->name."(".$this->year." ".ReviewAllotList::getYearTypeList($this->year_type,$this->year).")";
         $subject=$description;
         $colspan = count($rows)+1;
         $width = intval(50/$colspan);
