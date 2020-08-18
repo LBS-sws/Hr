@@ -103,6 +103,9 @@ class LeaveList extends CListPageModel
                 case 'city_name':
                     $clause .= ' and b.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
+                case 'status':
+                    $clause .= $this->searchToStatus($svalue);
+                    break;
 			}
 		}
         if (!empty($this->searchTimeStart) && !empty($this->searchTimeStart)) {
@@ -194,5 +197,27 @@ class LeaveList extends CListPageModel
             "status"=>"",
             "style"=>""
         );
+    }
+
+    private function searchToStatus($search){
+        $arr = array(10);
+        $list = array(
+            Yii::t("contract","Draft"),
+            Yii::t("contract","Sent, pending approval"),
+            Yii::t("contract","audit"),
+            Yii::t("contract","Rejected"),
+            Yii::t("fete","approve"),
+            Yii::t("contract","cancel")
+        );
+        foreach ($list as $key=>$status){
+            if (strpos($status,$search)!==false){
+                $arr[] = $key;
+            }
+        }
+        if($search!=""){
+            return " and a.status in (".implode(",",$arr).")";
+        }else{
+            return "";
+        }
     }
 }
