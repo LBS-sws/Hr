@@ -11,6 +11,7 @@ class BossAuditForm extends CFormModel
 	public $audit_year;
 	public $apply_date;
 	public $status_type=0;
+	public $boss_type;
 	public $reject_remark;
 	public $json_text=array();
 	public $results_sum;
@@ -48,7 +49,9 @@ class BossAuditForm extends CFormModel
         $status_type = $this->getScenario()=="finish"?5:1;
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) and a.status_type = :status_type",array(':id'=>$this->id,':status_type'=>$status_type))->queryRow();
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type = :status_type and boss_type=:boss_type",
+                array(':id'=>$this->id,':status_type'=>$status_type,':boss_type'=>$this->boss_type)
+            )->queryRow();
         if (!$row){
             $message = "該考核不存在，無法修改";
             $this->addError($attribute,$message);
@@ -110,6 +113,7 @@ class BossAuditForm extends CFormModel
             $this->results_a = $row['results_a'];
             $this->results_b = $row['results_b'];
             $this->results_c = $row['results_c'];
+            $this->boss_type = $row['boss_type'];
 		}
 		return true;
 	}
@@ -124,8 +128,12 @@ class BossAuditForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->saveGoods($connection);
-			$transaction->commit();
+		    if($this->boss_type == 2&&in_array($this->getScenario(),array("finish","audit"))){ //副總監考核後需要總監考核
+                $this->deputyAudit();
+            }else{
+                $this->saveGoods($connection);
+            }
+            $transaction->commit();
 		}
 		catch(Exception $e) {
 			$transaction->rollback();
@@ -204,7 +212,7 @@ class BossAuditForm extends CFormModel
 		return true;
 	}
 
-    protected function sendEmail(){
+    protected function sendEmail($send_type = 1){
         $email = new Email();
         $cityName = CGeneral::getCityName($this->city);
         switch ($this->getScenario()){
@@ -236,8 +244,21 @@ class BossAuditForm extends CFormModel
         $email->setDescription($description);
         $email->setMessage($message);
         $email->setSubject($subject);
-        $email->addEmailToStaffId($this->employee_id);
+        if($send_type==1){
+            $email->addEmailToStaffId($this->employee_id);
+        }else{
+            $email->addEmailToPrefixAndCity('BA03',$this->city);
+        }
         $email->sent();
+    }
+
+    //副總監修改考核狀態
+    protected function deputyAudit(){
+        Yii::app()->db->createCommand()->update('hr_boss_audit', array(
+            'boss_type'=>1,
+            'lcu'=>"test",
+        ), 'id=:id', array(':id'=>$this->id));
+        $this->sendEmail(2);
     }
 
 	//判斷輸入框能否修改

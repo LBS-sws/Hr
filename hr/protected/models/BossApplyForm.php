@@ -391,7 +391,17 @@ class BossApplyForm extends CFormModel
             $email->setDescription($description);
             $email->setMessage($message);
             $email->setSubject($subject);
-            $email->addEmailToPrefixAndCity('BA03',$this->city);
+            $email->addEmailToPrefixAndCity('BA05',$this->city);
+            if(empty($email->getToAddr())){//沒有副總監
+                $email->addEmailToPrefixAndCity('BA03',$this->city);
+                Yii::app()->db->createCommand()->update('hr_boss_audit', array(
+                    'boss_type'=>1,
+                ), 'id=:id', array(':id'=>$this->id));
+            }else{
+                Yii::app()->db->createCommand()->update('hr_boss_audit', array(
+                    'boss_type'=>2,
+                ), 'id=:id', array(':id'=>$this->id));
+            }
             $email->sent();
         }
     }

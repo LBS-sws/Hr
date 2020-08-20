@@ -625,5 +625,6 @@ return array(
     'Reviewed and to be completed'=>'已审核，待完成',
     'pending approval on second'=>'等待二次审核',
     'cancel cause'=>'取消原因',
+    'deputy director is reviewing'=>'副总监正在审核',
 );
 ?>

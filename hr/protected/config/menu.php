@@ -235,7 +235,12 @@ return array(
             //考核審批
             'Boss Audit'=>array(
                 'access'=>'BA03',
-                'url'=>'/bossAudit/index',
+                'url'=>'/bossAudit/index?type=1',
+            ),
+            //考核審批
+            'Boss Audit(Deputy director)'=>array(
+                'access'=>'BA05',
+                'url'=>'/bossAudit/index?type=2',
             ),
             //KPI設置
             'Setting KPI'=>array(

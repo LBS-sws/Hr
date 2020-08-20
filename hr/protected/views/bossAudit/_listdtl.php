@@ -1,7 +1,7 @@
-<tr class='clickable-row<?php echo $this->record['style']; ?>' data-href='<?php echo $this->getLink('BA03', 'bossAudit/edit', 'bossAudit/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row<?php echo $this->record['style']; ?>' data-href='<?php echo $this->getLink('BA03', 'bossAudit/edit', 'bossAudit/view', array('index'=>$this->record['id'],'type'=>$this->record['link_type']));?>'>
 
 
-	<td><?php echo $this->drawEditButton('BA03', 'bossAudit/edit','bossAudit/view', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->drawEditButton('BA03', 'bossAudit/edit','bossAudit/view', array('index'=>$this->record['id'],'type'=>$this->record['link_type'])); ?></td>
 
 
     <td><?php echo $this->record['code']; ?></td>

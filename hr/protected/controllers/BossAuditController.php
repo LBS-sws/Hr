@@ -8,7 +8,21 @@
  */
 class BossAuditController extends Controller
 {
+    public $boss_type=1;//1:總監  2：副總監
 	public $function_id='BA03';
+
+    public function init()
+    {
+        parent::init();
+        //$this->function_id = key_exists("type",$_GET)&&$_GET["type"] == 2?"BA05":"BA03";
+        if(key_exists("type",$_GET)&&$_GET["type"] == 2){
+            $this->function_id = "BA05";
+            $this->boss_type = 2;
+        }else{
+            $this->function_id = "BA03";
+            $this->boss_type = 1;
+        }
+    }
 
     public function filters()
     {
@@ -43,11 +57,13 @@ class BossAuditController extends Controller
     }
 
     public static function allowReadWrite() {
-        return Yii::app()->user->validRWFunction('BA03');
+        $typeStr = key_exists("type",$_GET)&&$_GET["type"] == 2?"BA05":"BA03";
+        return Yii::app()->user->validRWFunction($typeStr);
     }
 
     public static function allowReadOnly() {
-        return Yii::app()->user->validFunction('BA03');
+        $typeStr = key_exists("type",$_GET)&&$_GET["type"] == 2?"BA05":"BA03";
+        return Yii::app()->user->validFunction($typeStr);
     }
 
     public function actionIndex($pageNum=0){
@@ -56,13 +72,14 @@ class BossAuditController extends Controller
             $model->attributes = $_POST['BossAuditList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['bossAudit_01']) && !empty($session['bossAudit_01'])) {
-                $criteria = $session['bossAudit_01'];
+            $sessionStr = "bossAudit_0".$this->boss_type;
+            if (isset($session[$sessionStr]) && !empty($session[$sessionStr])) {
+                $criteria = $session[$sessionStr];
                 $model->setCriteria($criteria);
             }
         }
         $model->determinePageNum($pageNum);
-        $model->retrieveDataByPage($model->pageNum);
+        $model->retrieveDataByPage($model->pageNum,$this->boss_type);
         $this->render('index',array('model'=>$model));
     }
 
@@ -91,14 +108,15 @@ class BossAuditController extends Controller
         if (isset($_POST['BossAuditForm'])) {
             $model = new BossAuditForm('audit');
             $model->attributes = $_POST['BossAuditForm'];
+            $model->boss_type = $this->boss_type;
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('bossAudit/index'));
+                $this->redirect(Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id,'type'=>$this->boss_type)));
             }
         }
     }
@@ -108,14 +126,15 @@ class BossAuditController extends Controller
         if (isset($_POST['BossAuditForm'])) {
             $model = new BossAuditForm('finish');
             $model->attributes = $_POST['BossAuditForm'];
+            $model->boss_type = $this->boss_type;
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('bossAudit/index'));
+                $this->redirect(Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id,'type'=>$this->boss_type)));
             }
         }
     }
@@ -125,6 +144,7 @@ class BossAuditController extends Controller
         if (isset($_POST['BossAuditForm'])) {
             $model = new BossAuditForm('reject');
             $model->attributes = $_POST['BossAuditForm'];
+            $model->boss_type = $this->boss_type;
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Request Denied'));
@@ -132,7 +152,7 @@ class BossAuditController extends Controller
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
             }
-            $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id)));
+            $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id,'type'=>$this->boss_type)));
         }
     }
 }

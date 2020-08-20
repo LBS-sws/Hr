@@ -29,11 +29,10 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('bossAudit/index')));
 		?>
-
-        <?php if ($model->scenario!='view'): ?>
+        <?php if ($model->scenario!='view'&&$this->boss_type == $model->boss_type): ?>
             <?php if ($model->status_type == 1): ?>
                 <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
-                    'submit'=>Yii::app()->createUrl('bossAudit/audit')));
+                    'submit'=>Yii::app()->createUrl('bossAudit/audit',array('type'=>$this->boss_type))));
                 ?>
                 <?php
                 echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','Rejected'), array(
@@ -42,7 +41,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
             <?php endif ?>
             <?php if ($model->status_type == 5): ?>
                 <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Finish'), array(
-                    'submit'=>Yii::app()->createUrl('bossAudit/finish')));
+                    'submit'=>Yii::app()->createUrl('bossAudit/finish',array('type'=>$this->boss_type))));
                 ?>
             <?php endif ?>
         <?php endif; ?>
@@ -128,7 +127,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
     }
 </script>
 <?php
-$this->renderPartial('//site/ject',array('model'=>$model,'form'=>$form,'rejectName'=>"reject_remark",'submit'=>Yii::app()->createUrl('bossAudit/reject')));
+$this->renderPartial('//site/ject',array('model'=>$model,'form'=>$form,'rejectName'=>"reject_remark",'submit'=>Yii::app()->createUrl('bossAudit/reject',array('type'=>$this->boss_type))));
 ?>
 <?php
 $js = "

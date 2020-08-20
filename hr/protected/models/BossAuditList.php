@@ -23,7 +23,7 @@ class BossAuditList extends CListPageModel
 		);
 	}
 
-	public function retrieveDataByPage($pageNum=1)
+	public function retrieveDataByPage($pageNum=1,$type=1)
 	{
         BossApplyList::resetBossListScore();
         $suffix = Yii::app()->params['envSuffix'];
@@ -74,7 +74,7 @@ class BossAuditList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-                $arrList = $this->statusToColor($record['status_type']);
+                $arrList = $this->statusToColor($record,$type);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'code'=>$record['code'],
@@ -87,31 +87,37 @@ class BossAuditList extends CListPageModel
 					'city_name'=>$record['city_name'],
 					'status_type'=>$arrList['status'],
 					'style'=>$arrList['style'],
+					'link_type'=>$type,
 				);
 			}
 		}
 		$session = Yii::app()->session;
-		$session['bossAudit_01'] = $this->getCriteria();
+		$session['bossAudit_0'.$type] = $this->getCriteria();
 		return true;
 	}
     //根據狀態獲取顏色
-    public function statusToColor($status){
-        switch ($status){
+    public function statusToColor($row,$boss_type){
+        switch ($row['status_type']){
             case 0:
                 return array(
                     "status"=>Yii::t("contract","Draft"),
                     "style"=>""
                 );
             case 1:
+                if($boss_type == 1){
+                    $status =$row['boss_type']==1?Yii::t("contract","pending approval"):Yii::t("contract","deputy director is reviewing");
+                }else{
+                    $status =$row['boss_type']==1?Yii::t("contract","audited"):Yii::t("contract","pending approval");
+                }
                 return array(
-                    "status"=>Yii::t("contract","pending approval"),//已發送，等待審核
+                    "status"=>$status,//已發送，等待審核
                     "style"=>" text-primary"
                 );
-            case 2:
+/*            case 2:
                 return array(
                     "status"=>Yii::t("contract","Finish"),//審核通過
                     "style"=>" text-success"
-                );
+                );*/
             case 3:
                 return array(
                     "status"=>Yii::t("contract","Rejected"),//拒絕
@@ -123,13 +129,18 @@ class BossAuditList extends CListPageModel
                     "style"=>" text-warning"
                 );
             case 5:
+                if($boss_type == 1){
+                    $status =$row['boss_type']==1?Yii::t("contract","pending approval on second"):Yii::t("contract","deputy director is reviewing");
+                }else{
+                    $status =$row['boss_type']==1?Yii::t("contract","audited"):Yii::t("contract","pending approval on second");
+                }
                 return array(
-                    "status"=>Yii::t("contract","pending approval on second"),//等待二次審核
+                    "status"=>$status,//等待二次審核
                     "style"=>" text-primary"
                 );
         }
         return array(
-            "status"=>$status,
+            "status"=>$row['status_type'],
             "style"=>""
         );
     }

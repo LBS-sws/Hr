@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - bossAudit';
 
 <section class="content-header">
     <h1>
-        <strong><?php echo Yii::t('app','Boss Audit'); ?></strong>
+        <strong><?php echo $this->boss_type == 1?Yii::t('app','Boss Audit'):Yii::t('app','Boss Audit(Deputy director)'); ?></strong>
     </h1>
     <!--
         <ol class="breadcrumb">
@@ -41,6 +41,7 @@ $this->pageTitle=Yii::app()->name . ' - bossAudit';
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,
+        'searchlinkparam'=>array('type'=>$this->boss_type),
     ));
     ?>
 </section>
