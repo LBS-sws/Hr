@@ -104,10 +104,10 @@ class BossAuditList extends CListPageModel
                     "style"=>""
                 );
             case 1:
-                if($boss_type == 1){
-                    $status =$row['boss_type']==1?Yii::t("contract","pending approval"):Yii::t("contract","deputy director is reviewing");
+                if($row['boss_type']==1){
+                    $status =Yii::t("contract","Pending review by the director");
                 }else{
-                    $status =$row['boss_type']==1?Yii::t("contract","audited"):Yii::t("contract","pending approval");
+                    $status =Yii::t("contract","Pending review by the Deputy Director");
                 }
                 return array(
                     "status"=>$status,//已發送，等待審核
@@ -129,10 +129,10 @@ class BossAuditList extends CListPageModel
                     "style"=>" text-warning"
                 );
             case 5:
-                if($boss_type == 1){
-                    $status =$row['boss_type']==1?Yii::t("contract","pending approval on second"):Yii::t("contract","deputy director is reviewing");
+                if($row['boss_type']==1){
+                    $status =Yii::t("contract","Pending confirmation by the director");
                 }else{
-                    $status =$row['boss_type']==1?Yii::t("contract","audited"):Yii::t("contract","pending approval on second");
+                    $status =Yii::t("contract","Pending confirmation by the Deputy Director");
                 }
                 return array(
                     "status"=>$status,//等待二次審核

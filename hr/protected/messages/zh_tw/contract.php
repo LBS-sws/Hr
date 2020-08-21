@@ -621,5 +621,6 @@ return array(
     'pending approval on second'=>'等待二次審核',
     'cancel cause'=>'取消原因',
     'deputy director is reviewing'=>'副總監正在審核',
+    'Approaching retirement age'=>'即將到達退休年齡',
     );
 ?>

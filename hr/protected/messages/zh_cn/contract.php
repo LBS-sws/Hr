@@ -626,5 +626,10 @@ return array(
     'pending approval on second'=>'等待二次审核',
     'cancel cause'=>'取消原因',
     'deputy director is reviewing'=>'副总监正在审核',
+    'Approaching retirement age'=>'即将到达退休年龄',
+    'Pending review by the Deputy Director'=>'有待副总监审核',
+    'Pending review by the director'=>'有待总监审核',
+    'Pending confirmation by the Deputy Director'=>'有待副总监确认',
+    'Pending confirmation by the director'=>'有待总监确认',
 );
 ?>

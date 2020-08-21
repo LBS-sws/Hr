@@ -99,7 +99,7 @@ class BossApplyList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-                $arrList = $this->statusToColor($record['status_type']);
+                $arrList = $this->statusToColor($record);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'code'=>$record['code'],
@@ -120,16 +120,21 @@ class BossApplyList extends CListPageModel
 		return true;
 	}
     //根據狀態獲取顏色
-    public function statusToColor($status){
-        switch ($status){
+    public function statusToColor($row){
+        switch ($row["status_type"]){
             case 0:
                 return array(
                     "status"=>Yii::t("contract","Draft"),
                     "style"=>""
                 );
             case 1:
+                if($row['boss_type']==1){
+                    $status =Yii::t("contract","Pending review by the director");
+                }else{
+                    $status =Yii::t("contract","Pending review by the Deputy Director");
+                }
                 return array(
-                    "status"=>Yii::t("contract","pending approval"),//已發送，等待審核
+                    "status"=>$status,//已發送，等待審核
                     "style"=>" text-primary"
                 );
             case 2:
@@ -148,13 +153,18 @@ class BossApplyList extends CListPageModel
                     "style"=>" text-warning"
                 );
             case 5:
+                if($row['boss_type']==1){
+                    $status =Yii::t("contract","Pending confirmation by the director");
+                }else{
+                    $status =Yii::t("contract","Pending confirmation by the Deputy Director");
+                }
                 return array(
-                    "status"=>Yii::t("contract","pending approval on second"),//等待二次審核
+                    "status"=>$status,//等待二次審核
                     "style"=>" text-primary"
                 );
         }
         return array(
-            "status"=>$status,
+            "status"=>$row["status_type"],
             "style"=>""
         );
     }
