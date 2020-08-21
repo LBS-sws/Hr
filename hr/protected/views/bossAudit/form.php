@@ -1,6 +1,6 @@
 <?php
 if (empty($model->id)&&$model->scenario == "edit"){
-    $this->redirect(Yii::app()->createUrl('bossAudit/index'));
+    $this->redirect(Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type)));
 }
 $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 ?>
@@ -27,7 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('bossAudit/index')));
+				'submit'=>Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type))));
 		?>
         <?php if ($model->scenario!='view'&&$this->boss_type == $model->boss_type): ?>
             <?php if ($model->status_type == 1): ?>
