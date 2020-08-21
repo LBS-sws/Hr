@@ -128,6 +128,12 @@ class EmployeeList extends CListPageModel
                 }
             }
         }
+        if($record["z_index"]==-1){
+            return array(
+                "status"=>Yii::t("contract","Approaching retirement age"),
+                "style"=>"text-green"//text-black/text-green
+            );//即将到达退休年龄
+        }
         return $list;
     }
 

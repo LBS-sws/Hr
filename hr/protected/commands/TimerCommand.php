@@ -33,18 +33,22 @@ class TimerCommand extends CConsoleCommand {
         //echo "合同過期:$aaa<br>";
 
 // 因台灣版不適用而加的判斷
-if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) {
-        //echo "員工退休年齡(男60 女50):$aaa<br>";
-        $manDate = date("Y/m/d", strtotime("-60 year"));
-        $womanDate = date("Y/m/d", strtotime("-50 year"));
-        $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
-        $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
-        $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
-        echo "retire:$aa"."\r\n";
-        $this->retireToMonth();//員工退休後是否簽署退休合同（提前一個月）
-        $this->retireToWeek();//員工退休後是否簽署退休合同（提前一個星期）
-        $this->retireToAgo();//員工退休後是否簽署退休合同（超過退休年齡未修改合同）
-}
+        if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) {
+            //echo "員工退休年齡(男60 女50):$aaa<br>";
+            $manDate = date("Y/m/d", strtotime("-60 year"));
+            $womanDate = date("Y/m/d", strtotime("-50 year"));
+            $manDateMonth = date("Y/m/d", strtotime("-60 year + 1 month"));
+            $womanDateMonth = date("Y/m/d", strtotime("-50 year + 1 month"));
+            $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = -1 WHERE ";
+            $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDateMonth' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDateMonth' and a.sex='man'))";
+            Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示(一個月後過期)
+            $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
+            $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+            Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
+            $this->retireToMonth();//員工退休後是否簽署退休合同（提前一個月）
+            $this->retireToWeek();//員工退休後是否簽署退休合同（提前一個星期）
+            $this->retireToAgo();//員工退休後是否簽署退休合同（超過退休年齡未修改合同）
+        }
 
         $this->signedContract();//是否簽署合同
         $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
