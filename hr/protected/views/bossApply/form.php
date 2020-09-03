@@ -44,6 +44,14 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
             <?php endif ?>
         <?php endif; ?>
 	</div>
+            <div class="btn-group pull-right" role="group">
+                <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(0,3))): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                            'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                    );
+                    ?>
+                <?php endif; ?>
+            </div>
 	</div></div>
 
 	<div class="box box-info">
@@ -109,6 +117,9 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		</div>
 	</div>
 </section>
+<?php
+$this->renderPartial('//site/removedialog');
+?>
 <script>
     function resetTableSum() {
         if($("#sum_label").data("num") =="no"){
@@ -220,6 +231,8 @@ $this->widget('bootstrap.widgets.TbModal', array(
 ));
 ?>
 <?php
+$js = Script::genDeleteData(Yii::app()->createUrl('bossApply/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 $js = "
 changeCofWindow();
     $('.planYearA,.planYearB').on('keyup',function(){

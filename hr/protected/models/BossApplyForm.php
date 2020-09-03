@@ -274,7 +274,13 @@ class BossApplyForm extends CFormModel
 
     //刪除驗證
     public function deleteValidate(){
-        return false;
+        $row = Yii::app()->db->createCommand()->select("employee_id")->from("hr_boss_audit")
+            ->where('id=:id and status_type in (0,3)',array(':id'=>$this->id))->queryRow();
+        if($row){
+            return true;
+        }else{
+            return false;
+        }
     }
 
 	public function saveData($str='')

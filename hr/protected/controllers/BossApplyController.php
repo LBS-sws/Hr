@@ -29,7 +29,7 @@ class BossApplyController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','add','new','save','audit','ajaxPlanYear','fileDownload'),
+                'actions'=>array('edit','add','new','save','delete','audit','ajaxPlanYear','fileDownload'),
                 'expression'=>array('BossApplyController','allowReadWrite'),
             ),
             array('allow',
@@ -160,6 +160,22 @@ class BossApplyController extends Controller
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
+            }
+        }
+    }
+
+    //刪除
+    public function actionDelete(){
+        $model = new BossApplyForm('delete');
+        if (isset($_POST['BossApplyForm'])) {
+            $model->attributes = $_POST['BossApplyForm'];
+            if($model->deleteValidate()){
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('bossApply/index'));
+            }else{
+                Dialog::message(Yii::t('dialog','Information'), "內容不存在");
+                $this->render('form',array('model'=>$model));
             }
         }
     }
