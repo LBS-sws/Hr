@@ -373,6 +373,16 @@ class AuditHistoryForm extends CFormModel
         $this->sendEmail();
 	}
 
+    private function signContract(){
+        if($this->opr_type == "contract"){
+            Yii::app()->db->createCommand()->insert('hr_sign_contract',array(
+                'employee_id'=>$this->employee_id,
+                'status_type'=>0,
+                'lcu'=>Yii::app()->user->id,
+            ));
+        }
+    }
+
 
     private function sendEmail(){
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee_operate")
@@ -427,6 +437,7 @@ class AuditHistoryForm extends CFormModel
             ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
         $staffNew = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
             ->where('id=:id', array(':id'=>$this->id))->queryRow();
+        $this->opr_type = $staffNew["opr_type"];
         unset($staff["id"]);
         unset($staff["lcd"]);
         unset($staff["lud"]);
@@ -457,6 +468,9 @@ class AuditHistoryForm extends CFormModel
         Yii::app()->db->createCommand()->update('hr_employee_history', array('lud'=>$date), 'history_id=:id',array(":id"=>$this->id));
         //交換員工附件
         $this->replaceAttachment();
+
+        //判斷是否需要生成簽署合同
+        $this->signContract();
     }
 
     //交換員工附件

@@ -77,15 +77,18 @@ class EmployeeForm extends CFormModel
     public $wechat;//微信賬號
     public $urgency_card;//緊急聯繫人身份證
     public $no_of_attm = array(
-        'employ'=>0
+        'employ'=>0,
+        'signc'=>0,
     );
     public $docType = 'EMPLOY';
     public $docMasterId = array(
-        'employ'=>0
+        'employ'=>0,
+        'signc'=>0,
     );
     public $files;
     public $removeFileId = array(
-        'employ'=>0
+        'employ'=>0,
+        'signc'=>0,
     );
 	/**
 	 * Declares customized attribute labels.
@@ -484,13 +487,14 @@ class EmployeeForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
+        $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('SIGNC',id) as signcdoc,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
             ->where("id=:id and city in ($city_allow)", array(':id'=>$index))->queryAll();
 		if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
                 $this->no_of_attm['employ'] = $row['employdoc'];
+                $this->no_of_attm['signc'] = $row['signcdoc'];
                 $this->id = $row['id'];
                 $this->code = $row['code'];
                 $this->name = $row['name'];

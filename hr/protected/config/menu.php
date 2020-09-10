@@ -117,6 +117,11 @@ return array(
 				'access'=>'ZE04',
 				'url'=>'/history/index',
 			),
+            //簽署合同
+            'sign contract'=>array(
+                'access'=>'ZE09',
+                'url'=>'/signContract/index',
+            ),
             //加班审核
             'audit for work overtime'=>array(
                 'access'=>'ZE05',
@@ -154,6 +159,11 @@ return array(
 				'access'=>'ZG02',
 				'url'=>'/auditHistory/index',
 			),
+            //簽署合同
+            'Audit sign contract'=>array(
+                'access'=>'ZG08',
+                'url'=>'/auditSign/index',
+            ),
             //工資單審核
 			'Wages Audit'=>array(
 				'access'=>'ZG03',

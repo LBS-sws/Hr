@@ -71,6 +71,12 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 </div>
             <?php endif; ?>
             <div class="btn-group pull-right" role="group">
+                <?php
+                $counter = ($model->no_of_attm['signc'] > 0) ? ' <span id="docsignc" class="label label-info">'.$model->no_of_attm['signc'].'</span>' : ' <span id="docsignc"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('contract','sign attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadsignc',)
+                );
+                ?>
                 <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')){
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
@@ -146,9 +152,18 @@ $this->renderPartial('//site/agreementlist',array('model'=>$model));
 ));
 ?>
 <?php
+$this->renderPartial('//site/fileupload',array('model'=>$model,
+    'form'=>$form,
+    'doctype'=>'SIGNC',
+    'header'=>Yii::t('contract','sign attachment'),
+    'ronly'=>(true),
+));
+?>
+<?php
 /*if ($model->scenario!='new')
     $this->renderPartial('//site/flowword',array('model'=>$model));*/
 Script::genFileUpload($model,$form->id,'EMPLOY');
+Script::genFileUpload($model,$form->id,'SIGNC');
 
 $js = "
 var staffStatus = '".$model->staff_status."';

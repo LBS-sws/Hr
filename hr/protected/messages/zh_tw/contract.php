@@ -622,5 +622,23 @@ return array(
     'cancel cause'=>'取消原因',
     'deputy director is reviewing'=>'副總監正在審核',
     'Approaching retirement age'=>'即將到達退休年齡',
+    'Pending review by the Deputy Director'=>'有待副總監審核',
+    'Pending review by the director'=>'有待總監審核',
+    'Pending confirmation by the Deputy Director'=>'有待副總監確認',
+    'Pending confirmation by the director'=>'有待總監確認',
+
+    'courier code'=>'快遞單號',
+    'courier name'=>'快遞公司',
+    'none sign'=>'沒有簽署',
+    'send date'=>'發送時間',
+    'courier detail'=>'快遞信息',
+    'sign attachment'=>'簽署附件',
+    'pack off'=>'寄出',
+    'signed'=>'簽收',
+    'for sign'=>'待簽收',
+    'contract has been sent'=>'合同已寄出',
+    'contract has been signed'=>'合同已簽收',
+
+
     );
 ?>

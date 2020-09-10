@@ -18,6 +18,7 @@ return array(
 	'Sales'=>'销售系统',
     'Quiz'=>'培训测验系统',
     'Academic Credit'=>'学分系统',
+    'Charity'=>'慈善分系统',
 	'Online Library'=>'网上文库',
 	'System Use'=>'系统使用',
 
@@ -179,6 +180,8 @@ return array(
     'Back to boss review'=>'退回老总年度考核',
     'Config System'=>'开发者配置',
     'Personnel Audit'=>'人事',
+    'sign contract'=>'签署合同',
+    'Audit sign contract'=>'审核签署合同',
     //沈超添加结束
 );
 ?>

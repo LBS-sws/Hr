@@ -219,9 +219,19 @@ class HistoryForm extends CFormModel
 			array('test_type','validateTestType'),
             array('year_day','required'),
             array('year_day', 'validateYearDay'),
+            array('employee_id', 'validateSign'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
+
+    public function validateSign($attribute, $params){
+        $rows = Yii::app()->db->createCommand()->select("a.status_type")->from("hr_sign_contract a")
+            ->where("a.employee_id=:id and a.status_type IN (0,1,2,4) ",array(':id'=>$this->employee_id))->queryRow();
+        if($rows){
+            $message = "該員工有未簽署的合同，無法變更及修改";
+            $this->addError($attribute,$message);
+        }
+    }
 
     public function validateYearDay($attribute, $params){
         if(!empty($this->year_day)){

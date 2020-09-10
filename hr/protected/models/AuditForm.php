@@ -338,8 +338,21 @@ class AuditForm extends CFormModel
         ));
 
         $this->sendEmail();
+
+        //判斷是否需要生成簽署合同
+        $this->signContract();
         return true;
 	}
+
+    private function signContract(){
+        if($this->getScenario() == "audit"){
+            Yii::app()->db->createCommand()->insert('hr_sign_contract',array(
+                'employee_id'=>$this->id,
+                'status_type'=>0,
+                'lcu'=>Yii::app()->user->id,
+            ));
+        }
+    }
 
     private function sendEmail(){
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")

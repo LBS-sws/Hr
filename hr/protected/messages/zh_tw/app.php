@@ -18,6 +18,7 @@ return array(
 'Sales'=>'銷售系統',
 'Quiz'=>'培訓測驗系統',
 'Academic Credit'=>'學分系統',
+    'Charity'=>'慈善分系统',
 'Online Library'=>'網上文庫',
 'System Use'=>'系統使用',
 
@@ -178,6 +179,8 @@ return array(
     'Back to boss review'=>'退回老總年度考核',
     'Config System'=>'開發者配置',
     'Personnel Audit'=>'人事',
+    'sign contract'=>'簽署合同',
+    'Audit sign contract'=>'審核簽署合同',
 //沈超添加結束
 );
 ?>

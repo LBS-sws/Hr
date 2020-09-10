@@ -631,5 +631,17 @@ return array(
     'Pending review by the director'=>'有待总监审核',
     'Pending confirmation by the Deputy Director'=>'有待副总监确认',
     'Pending confirmation by the director'=>'有待总监确认',
+
+    'courier code'=>'快递单号',
+    'courier name'=>'快递公司',
+    'none sign'=>'没有签署',
+    'send date'=>'发送时间',
+    'courier detail'=>'快递信息',
+    'sign attachment'=>'签署附件',
+    'pack off'=>'寄出',
+    'signed'=>'签收',
+    'for sign'=>'待签收',
+    'contract has been sent'=>'合同已寄出',
+    'contract has been signed'=>'合同已签收',
 );
 ?>

@@ -51,6 +51,8 @@ class TimerCommand extends CConsoleCommand {
         }
 
         $this->signedContract();//是否簽署合同
+        $this->signedContractEnd();//是否簽署合同
+        $this->signedContractFinish();//是否簽署合同
         $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
         $this->contractAgoSendEmail();//合同過期10天后（合同已過期）給饒總發送郵件
 
@@ -197,6 +199,10 @@ class TimerCommand extends CConsoleCommand {
                             }
                         }
                     }
+                    if(key_exists("send_all_city",$send)&&$send["send_all_city"]){
+                        $bool = 1;
+                        $city_list = $send["city_list"];//所有城市的郵件
+                    }
                     if(!$maxBool){
                         if(empty($bool)){
                             continue;//該城市沒有提示信息
@@ -324,19 +330,68 @@ class TimerCommand extends CConsoleCommand {
         }
     }
 
-    //員工錄入后2周提示是否簽署合同
+    //員工錄入后10天提示是否簽署合同
     private function signedContract(){
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $day = date("Y/m/d");
+        $firstDay = date("Y/m/d",strtotime("$day - 10 day"));
+        $endDay = date("Y/m/d",strtotime("$day - 14 day"));
+        $sql = "a.status_type in (0,1,4) and date_format(a.lcd,'%Y/%m/%d') <='$firstDay' and date_format(a.lcd,'%Y/%m/%d') >'$endDay'";
+        $rows = $command->select("b.*")->from("hr_sign_contract a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>下列员工已超過10天未簽署合同：</p>";
+            $arr = $this->getListToStaffList($description,$rows,false);
+            $arr["auth_list"] = array("ZE09");
+            $arr["city_allow"] = true;
+            $arr["incharge"] = 0;
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
+    //員工錄入后14天提示是否簽署合同
+    private function signedContractEnd(){
         $command = Yii::app()->db->createCommand();
         $command->reset();
         $firstDay = date("Y/m/d");
         $firstDay = date("Y/m/d",strtotime("$firstDay - 14 day"));
-        $sql = "staff_status=4 and replace(entry_time,'-', '/') <='$firstDay'";
-        $rows = $command->select("*")->from("hr_employee")->where($sql)->queryAll();
+        $sql = "a.status_type in (0,1,4) and date_format(a.lcd,'%Y/%m/%d') <='$firstDay'";
+        $rows = $command->select("b.*")->from("hr_sign_contract a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where($sql)->queryAll();
         if($rows){
-            $description = "<p>請檢查下列员工的是否簽署合同：</p>";
-            $arr = $this->getListToStaffList($description,$rows,true);
-            $arr["auth_list"] = array("ZE01");
+            $description = "<p>下列员工已超過14天未簽署合同：</p>";
+            $arr = $this->getListToStaffList($description,$rows,false);
+            $arr["auth_list"] = array("ZE09");
             $arr["city_allow"] = true;
+            $arr["incharge"] = 0;
+            $arr["joeEmail"] = true;//繞生收到郵件
+            if(count($arr)>6){
+                $this->send_list[] = $arr;
+            }
+        }
+    }
+
+    //員工錄入后10天提示是否簽收合同
+    private function signedContractFinish(){
+        $command = Yii::app()->db->createCommand();
+        $command->reset();
+        $firstDay = date("Y/m/d");
+        $firstDay = date("Y/m/d",strtotime("$firstDay - 10 day"));
+        $sql = "a.status_type = 2 and date_format(a.lud,'%Y/%m/%d') <='$firstDay'";
+        $rows = $command->select("b.*")->from("hr_sign_contract a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where($sql)->queryAll();
+        if($rows){
+            $description = "<p>下列员工已超過10天未簽收合同：</p>";
+            $arr = $this->getListToStaffList($description,$rows,false);
+            $arr["auth_list"] = array('ZG08');
+            $arr["city_allow"] = false;
+            $arr["send_all_city"] = true;
             $arr["incharge"] = 0;
             if(count($arr)>6){
                 $this->send_list[] = $arr;
