@@ -643,5 +643,8 @@ return array(
     'for sign'=>'待签收',
     'contract has been sent'=>'合同已寄出',
     'contract has been signed'=>'合同已签收',
+
+    'Batch Finish'=>'批量完成',
+    'Please select the support list you want to complete'=>'请选择需要完成的支援单',
 );
 ?>

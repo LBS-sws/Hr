@@ -639,6 +639,7 @@ return array(
     'contract has been sent'=>'合同已寄出',
     'contract has been signed'=>'合同已簽收',
 
-
+    'Batch Finish'=>'批量完成',
+    'Please select the support list you want to complete'=>'請選擇需要完成的支援單',
     );
 ?>

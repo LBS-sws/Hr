@@ -28,6 +28,15 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
                 <?php
                 //var_dump(Yii::app()->session['rw_func']);
                 if (Yii::app()->user->validRWFunction("AY02"))
+                    echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Batch Finish'), array(
+                        'submit'=>Yii::app()->createUrl('supportAudit/batchFinish'),
+                    ));
+                ?>
+            </div>
+            <div class="btn-group pull-right" role="group">
+                <?php
+                //var_dump(Yii::app()->session['rw_func']);
+                if (Yii::app()->user->validRWFunction("AY02"))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
                         'submit'=>Yii::app()->createUrl('supportAudit/new'),
                     ));
@@ -60,6 +69,19 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+$js="
+    $('.checkBox').on('click',function(e){
+        e.stopPropagation();
+        if(!$(this).is(':checked')){
+            $('#selectAll').prop('checked',false);
+        }
+    });
+    $('#selectAll').on('click',function(){
+        var bool = $(this).is(':checked');
+        $('.checkBox').prop('checked',bool);
+    });
+";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

@@ -83,6 +83,7 @@ class SupportAuditList extends CListPageModel
                 $arr = $this->getStatus($record);
 				$this->attr[] = array(
 					'id'=>$record['id'],
+					'status_type'=>$record['status_type'],
 					'support_code'=>$record['support_code'],
 					'apply_city'=>$record['city_name'],
 					'apply_date'=>$record['apply_date'],

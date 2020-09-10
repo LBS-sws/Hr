@@ -1,4 +1,5 @@
 <tr>
+	<th><input type="checkbox" class="selectAll" id="selectAll"></th>
 	<th></th>
 	<th>
 		<?php echo TbHtml::link($this->getLabelName('support_code').$this->drawOrderArrow('a.support_code'),'#',$this->createOrderLink('supportAudit-list','a.support_code'))

@@ -25,7 +25,7 @@ class SupportAuditController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','support','delete','save','audit','wait','undo','finish','reject','early','renewal','ajaxChangeCity','endReply'),
+                'actions'=>array('new','edit','support','delete','save','audit','wait','undo','finish','reject','early','renewal','ajaxChangeCity','endReply','batchFinish'),
                 'expression'=>array('SupportAuditController','allowReadWrite'),
             ),
             array('allow',
@@ -106,6 +106,25 @@ class SupportAuditController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }
+        }
+    }
+    public function actionBatchFinish()
+    {
+        if (isset($_POST['checkBox'])) {
+            $model = new SupportAuditForm();
+            $idList = $_POST['checkBox'];
+            if ($model->validateBatchFinish($idList)) {
+                $model->batchFinish();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                $this->redirect(Yii::app()->createUrl('supportAudit/index'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('supportAudit/index'));
+            }
+        }else{
+            Dialog::message(Yii::t('dialog','Validation Message'), "請選擇需要完成的支援單");
+            $this->redirect(Yii::app()->createUrl('supportAudit/index'));
         }
     }
 

@@ -35,6 +35,8 @@ class SupportAuditForm extends CFormModel
     public $privilege;
     public $privilege_user;
 
+    public $bathFinish=array();
+
 	public function attributeLabels()
 	{
         return array(
@@ -172,6 +174,36 @@ class SupportAuditForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }
+    }
+
+    //驗證批量完成
+    public function validateBatchFinish($idList){
+        if(!empty($idList)){
+            $this->bathFinish = array();
+            foreach ($idList as $id){
+                if(is_numeric($id)){
+                    $this->bathFinish[] = $id;
+                }
+            }
+            $idList = implode(",",$this->bathFinish);
+            $row = Yii::app()->db->createCommand()->select("id")->from("hr_apply_support")
+                ->where("id in ($idList) and status_type = 6")->queryRow();
+            if($row){
+                return true;
+            }
+        }
+        $message = Yii::t("contract","Please select the support list you want to complete");
+        $this->addError("support_code",$message);
+        return false;
+    }
+
+    //批量完成
+    public function batchFinish(){
+        $idList = implode(",",$this->bathFinish);
+        Yii::app()->db->createCommand()->update('hr_apply_support', array(
+            'status_type'=>7,
+            'luu'=>Yii::app()->user->id
+        ), "id in ($idList) and status_type = 6");
     }
 
     //id通用驗證
