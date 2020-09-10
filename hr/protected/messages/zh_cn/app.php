@@ -21,6 +21,7 @@ return array(
     'Charity'=>'慈善分系统',
 	'Online Library'=>'网上文库',
 	'System Use'=>'系统使用',
+	'Charitable Credit'=>'慈善分系统',
 
 	'Data Entry'=>'数据输入',
 	'Misc'=>'其他',
