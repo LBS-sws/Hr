@@ -52,7 +52,7 @@ class AuditSignForm extends CFormModel
             'status_type'=>Yii::t('contract','Status'),
             'courier_code'=>Yii::t('contract','courier code'),
             'courier_str'=>Yii::t('contract','courier name'),
-            'send_date'=>Yii::t('contract','send date'),
+            'send_date'=>Yii::t('contract','pack off date'),
 
             'start_time'=>Yii::t('contract','Contract Start Time'),
             'end_time'=>Yii::t('contract','Contract End Time'),
@@ -212,9 +212,9 @@ class AuditSignForm extends CFormModel
         $message="<p>員工編號：".$this->code."</p>";
         $message.="<p>員工姓名：".$this->name."</p>";
         $message.="<p>員工所在城市：".$city_name."</p>";
-        $message.="<p>員工入職日期：".$this->entry_time."</p>";
-        $message.="<p>快遞公司：".$this->entry_time."</p>";
-        $message.="<p>快遞單號：".$this->entry_time."</p>";
+        $message.="<p>寄出日期：".$this->send_date."</p>";
+        $message.="<p>快遞公司：".$this->courier_str."</p>";
+        $message.="<p>快遞單號：".$this->courier_code."</p>";
         if($this->scenario=="reject"){
             $message.="<p>拒绝原因：".$this->reject_remark."</p>";
         }

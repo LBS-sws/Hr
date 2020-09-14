@@ -635,6 +635,7 @@ return array(
     'courier detail'=>'快遞信息',
     'sign attachment'=>'簽署附件',
     'pack off'=>'寄出',
+    'pack off date'=>'寄出日期',
     'signed'=>'簽收',
     'for sign'=>'待簽收',
     'contract has been sent'=>'合同已寄出',
