@@ -632,6 +632,7 @@ return array(
     'Pending confirmation by the Deputy Director'=>'有待副总监确认',
     'Pending confirmation by the director'=>'有待总监确认',
 
+    'contract type'=>'合同类型',
     'courier code'=>'快递单号',
     'courier name'=>'快递公司',
     'none sign'=>'没有签署',
@@ -643,6 +644,9 @@ return array(
     'for sign'=>'待签收',
     'contract has been sent'=>'合同已寄出',
     'contract has been signed'=>'合同已签收',
+    'new contract'=>'新合同',
+    'contract renewal'=>'续约合同',
+    'retirement contract'=>'退休劳务合同',
 
     'Batch Finish'=>'批量完成',
     'Please select the support list you want to complete'=>'请选择需要完成的支援单',

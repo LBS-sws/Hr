@@ -16,6 +16,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('sign_type').$this->drawOrderArrow('a.sign_type'),'#',$this->createOrderLink('signContract-list','a.sign_type'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('b.position'),'#',$this->createOrderLink('signContract-list','b.position'))
 			;
 		?>

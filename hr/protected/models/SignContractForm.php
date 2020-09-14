@@ -17,6 +17,7 @@ class SignContractForm extends CFormModel
 	public $end_time;
 	public $contract_id;
 	public $company_id;
+	public $sign_type;
 
 	public $send_date;
 	public $courier_code;
@@ -61,6 +62,7 @@ class SignContractForm extends CFormModel
             'remark'=>Yii::t('contract','Remark'),
             'fix_time'=>Yii::t('contract','contract deadline'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
+            'sign_type'=>Yii::t('contract','contract type'),
         );
 	}
 
@@ -80,7 +82,7 @@ class SignContractForm extends CFormModel
 
     public function validateId($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.status_type,a.reject_remark,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
+        $rows = Yii::app()->db->createCommand()->select("a.status_type,a.sign_type,a.reject_remark,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
             ->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.id=:id and b.city in ($city_allow) and a.status_type IN (0,1,4) ",array(':id'=>$this->id))->queryRow();
@@ -101,6 +103,7 @@ class SignContractForm extends CFormModel
             $this->end_time = $rows["end_time"];
             $this->start_time = $rows["start_time"];
             $this->fix_time = $rows["fix_time"];
+            $this->sign_type = SignContractList::getSignTypeListOrId($rows['sign_type'],true);
             $this->department = DeptForm::getDeptToid($rows['department']);
             $this->position = DeptForm::getDeptToid($rows['position']);
             $this->company_id=CompanyForm::getCompanyToId($rows['company_id'])["name"];
@@ -123,6 +126,7 @@ class SignContractForm extends CFormModel
             $this->name = $row['name'];
             $this->employee_id = $row['employee_id'];
             $this->status_type = $row['status_type'];
+            $this->sign_type = SignContractList::getSignTypeListOrId($row['sign_type'],true);
             $this->company_id=CompanyForm::getCompanyToId($row['company_id'])["name"];
 
             $this->fix_time = $row["fix_time"];

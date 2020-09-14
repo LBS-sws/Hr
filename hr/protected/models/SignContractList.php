@@ -20,6 +20,7 @@ class SignContractList extends CListPageModel
             'status_type'=>Yii::t('contract','Status'),
             'courier_code'=>Yii::t('contract','courier code'),
             'courier_str'=>Yii::t('contract','courier name'),
+            'sign_type'=>Yii::t('contract','contract type'),
 		);
 	}
 
@@ -28,7 +29,7 @@ class SignContractList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city;
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select a.id,b.code,b.name,b.city,b.position,b.company_id,b.entry_time,a.status_type,a.courier_str,a.courier_code from hr_sign_contract a 
+		$sql1 = "select a.id,a.sign_type,b.code,b.name,b.city,b.position,b.company_id,b.entry_time,a.status_type,a.courier_str,a.courier_code from hr_sign_contract a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where b.city IN ($city_allow) AND a.status_type IN (0,1,2,3,4) 
 			";
@@ -86,6 +87,7 @@ class SignContractList extends CListPageModel
 					'entry_time'=>$record['entry_time'],
 					'courier_str'=>$record['courier_str'],
 					'courier_code'=>$record['courier_code'],
+					'sign_type'=>SignContractList::getSignTypeListOrId($record["sign_type"],true),
 					'status_type'=>$arr['status'],
 					'style'=>$arr['style'],
 				);
@@ -133,6 +135,24 @@ class SignContractList extends CListPageModel
                     "status"=>Yii::t("contract","not sent"),
                     "style"=>"text-danger"
                 );//未發送
+        }
+    }
+
+    function getSignTypeListOrId($sign_type,$bool=false){
+        $arr = array(
+            ''=>'',
+            0=>Yii::t("contract","new contract"),
+            1=>Yii::t("contract","contract renewal"),
+            2=>Yii::t("contract","retirement contract"),
+        );
+        if($bool){
+            if(key_exists($sign_type,$arr)){
+                return $arr[$sign_type];
+            }else{
+                return $sign_type;
+            }
+        }else{
+            return $arr;
         }
     }
 }

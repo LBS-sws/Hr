@@ -181,7 +181,7 @@ return array(
     'Back to boss review'=>'退回老总年度考核',
     'Config System'=>'开发者配置',
     'Personnel Audit'=>'人事',
-    'sign contract'=>'签署合同',
+    'sign contract'=>'合同寄出及签收',
     'Audit sign contract'=>'审核签署合同',
     //沈超添加结束
 );

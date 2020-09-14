@@ -20,6 +20,7 @@ class AuditSignList extends CListPageModel
             'status_type'=>Yii::t('contract','Status'),
             'courier_code'=>Yii::t('contract','courier code'),
             'courier_str'=>Yii::t('contract','courier name'),
+            'sign_type'=>Yii::t('contract','contract type'),
 		);
 	}
 
@@ -28,7 +29,7 @@ class AuditSignList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city;
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select a.id,b.code,b.name,b.city,b.position,b.company_id,b.entry_time,a.status_type,a.courier_str,a.courier_code from hr_sign_contract a 
+		$sql1 = "select a.id,a.sign_type,b.code,b.name,b.city,b.position,b.company_id,b.entry_time,a.status_type,a.courier_str,a.courier_code from hr_sign_contract a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
                 where a.status_type=2 
 			";
@@ -87,6 +88,7 @@ class AuditSignList extends CListPageModel
 					'courier_str'=>$record['courier_str'],
 					'courier_code'=>$record['courier_code'],
 					'status_type'=>$arr['status'],
+                    'sign_type'=>SignContractList::getSignTypeListOrId($record["sign_type"],true),
 					'style'=>$arr['style'],
 				);
 			}

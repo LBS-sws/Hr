@@ -123,7 +123,7 @@ class SupportAuditController extends Controller
                 $this->redirect(Yii::app()->createUrl('supportAudit/index'));
             }
         }else{
-            Dialog::message(Yii::t('dialog','Validation Message'), "請選擇需要完成的支援單");
+            Dialog::message(Yii::t('dialog','Validation Message'), Yii::t("contract","Please select the support list you want to complete"));
             $this->redirect(Yii::app()->createUrl('supportAudit/index'));
         }
     }
