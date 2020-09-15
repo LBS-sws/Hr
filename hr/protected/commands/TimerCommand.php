@@ -342,7 +342,7 @@ class TimerCommand extends CConsoleCommand {
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where($sql)->queryAll();
         if($rows){
-            $description = "<p>下列员工已超過10天未簽署合同：</p>";
+            $description = "<p>下列员工已超過10天未寄出合同：</p>";
             $arr = $this->getListToStaffList($description,$rows,false);
             $arr["auth_list"] = array("ZE09");
             $arr["city_allow"] = true;
@@ -364,7 +364,7 @@ class TimerCommand extends CConsoleCommand {
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where($sql)->queryAll();
         if($rows){
-            $description = "<p>下列员工已超過14天未簽署合同：</p>";
+            $description = "<p>下列员工已超過14天未寄出合同：</p>";
             $arr = $this->getListToStaffList($description,$rows,false);
             $arr["auth_list"] = array("ZE09");
             $arr["city_allow"] = true;
