@@ -35,6 +35,11 @@ $this->pageTitle=Yii::app()->name . ' - signContract';
             </div>
         </div></div>
     <?php
+    $search_add_html="";
+    if(!Yii::app()->user->isSingleCity()){
+        $search_add_html .= TbHtml::dropDownList('SignContractList[city]',$model->city,$model->getCityAllList(),
+                array("class"=>"form-control","id"=>"change_city"))."<span style='display:inline-block;width:20px;'>&nbsp;</span>";
+    }
     $search = array(
         'code',
         'name',
@@ -46,6 +51,7 @@ $this->pageTitle=Yii::app()->name . ' - signContract';
         'model'=>$model,
         'viewhdr'=>'//signContract/_listhdr',
         'viewdtl'=>'//signContract/_listdtl',
+        'search_add_html'=>$search_add_html,
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,
@@ -61,6 +67,12 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+$js = "
+$('#change_city').change(function(){
+    $('form:first').submit();
+});
+    ";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

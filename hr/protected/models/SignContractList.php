@@ -2,6 +2,7 @@
 
 class SignContractList extends CListPageModel
 {
+    public $city;//查詢的城市
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -23,6 +24,12 @@ class SignContractList extends CListPageModel
             'sign_type'=>Yii::t('contract','contract type'),
 		);
 	}
+
+    public function rules(){
+        return array(
+            array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, city, filter, dateRangeValue','safe',),
+        );
+    }
 
 	public function retrieveDataByPage($pageNum=1)
 	{
@@ -56,6 +63,10 @@ class SignContractList extends CListPageModel
 					break;
 			}
 		}
+        if (!empty($this->city)) {
+            $svalue = str_replace("'","\'",$this->city);
+            $clause .= " and b.city ='$svalue' ";
+        }
 		
 		$order = "";
 		if (!empty($this->orderField)) {
@@ -154,5 +165,18 @@ class SignContractList extends CListPageModel
         }else{
             return $arr;
         }
+    }
+
+//獲取城市列表
+    public function getCityAllList()
+    {
+        $city_allow = Yii::app()->user->city_allow();
+        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
+        $rows = Yii::app()->db->createCommand()->select("code,name")->from($from)->where("code in ($city_allow)")->queryAll();
+        $arr = array(""=>" -- ".Yii::t("user","City")." -- ");
+        foreach ($rows as $row){
+            $arr[$row["code"]] = $row["name"];
+        }
+        return $arr;
     }
 }
