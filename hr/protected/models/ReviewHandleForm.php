@@ -171,7 +171,7 @@ class ReviewHandleForm extends CFormModel
     public function scoringOk($num){
         if(is_numeric($num)){
             $num = intval($num);
-            if(in_array($num,array(6,7,8))){
+            if(in_array($num,array(7,8))){
                 return true;
             }
         }
@@ -280,7 +280,7 @@ class ReviewHandleForm extends CFormModel
                     if(!is_array($item)){
                         return '';
                     }//
-                    $item['value'] = isset($item['value'])?$item['value']:6;
+                    $item['value'] = isset($item['value'])?$item['value']:7;
                     $num = $key;
                     $name = $className."[tem_s_ist][$set_id][list][$num]";
                     $html.="<tr data-name='$name'><td width='33%'>".$item['name']."</td>";
