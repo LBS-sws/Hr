@@ -162,7 +162,7 @@ class SupportApplyForm extends CFormModel
                             $this->addError($attribute,$message);
                             return false;
                         }
-                        if(!ReviewHandleForm::scoringOk($item["value"])){
+                        if(!SupportApplyForm::scoringOk($item["value"])){
                             if(!isset($item["remark"])||empty($item["remark"])){
                                 $message = Yii::t('contract','Scoring remark')."（".$item['name']."）".Yii::t("contract"," can not be empty");
                                 $this->addError($attribute,$message);
@@ -184,6 +184,17 @@ class SupportApplyForm extends CFormModel
                 return false;
             }
         }
+    }
+
+    //評分安全數字範圍
+    public function scoringOk($num){
+        if(is_numeric($num)){
+            $num = intval($num);
+            if(in_array($num,array(7,8))){
+                return true;
+            }
+        }
+        return false;
     }
 
     public function validateApplyDate($attribute, $params){
