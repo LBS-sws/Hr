@@ -11,6 +11,9 @@ class DownReviewForm {
     protected $end_str;
     protected $end_num;
 
+    protected $pro_str="";
+    protected $userNum=0;
+
     public function __construct() {
         $phpExcelPath = Yii::getPathOfAlias('ext.phpexcel');
         //spl_autoload_unregister(array('YiiBase','autoload'));
@@ -77,7 +80,62 @@ class DownReviewForm {
         ));
     }
 
-    //設置頁頭數組
+    //設置頁頭數組(中央支援)
+    protected function setExcelTopToSupport(){
+        //設置表格寬度
+        $this->setWidthToArr('A',8);
+        $this->setWidthToArr('B',72);
+        $this->setWidthToArr('C',20);
+        $this->setWidthToArr('D',220);
+        $this->end_str = "C";
+        $this->end_num = 4;
+        $this->setRowContent("A1","史伟莎员工评分制度表",$this->end_str."1");//
+        $this->setBoxStyle("A1",true,18);//
+        $this->setRowContent("A2","大中华中央技术支援组同事",$this->end_str."2");//
+        $this->setBoxStyle("A2",true,18);//
+        $this->setRowContent("A3","<<员工支援评分表>>",$this->end_str."3");//
+        $this->setBoxStyle("A3",true,16);//
+        $this->setRowContent("A4","去对每位员工进每评分，力求做到公平、公正、公开。",$this->end_str."4");//
+        $this->setBoxStyle("A4");
+
+        $this->setRowContent("A5","评分标准 (0至10分) :","C5");//
+        $this->setRowContent("A6","10 - 表现卓越 (表现十分超卓，持续远超过公司期望)","C6");//
+        $this->setRowContent("A7"," 9 - 表现优秀 (表现出色，超越公司的期望)","C7");//
+        $this->setRowContent("A8"," 8 - 表现良好 (整体表现符合公司期望)","C8");//
+        $this->setRowContent("A9"," 7 - 表现不俗 (整体表现十分稳定)","C9");//
+        $this->setRowContent("A10"," 6 - 表现达标 (整体表现已达公司标准)","C10");//
+        $this->setRowContent("A11"," 5 - 表现尚可 (表现努力，但仍未达公司标准)",$this->end_str."11");//
+        $this->setRowContent("A12"," 4 - 表现欠佳 (表现不佳，整体表现不满意)",$this->end_str."12");//
+        $this->setRowContent("A13"," 3 - 表现差劲 (表现差劣，与公司的标准相距甚大)",$this->end_str."13");//
+        $this->setRowContent("A14"," 2 - 表现恶劣 (表现令人失望)",$this->end_str."14");//
+        $this->setRowContent("A15"," 1 - 表现极度恶劣 (表现令人极度失望)",$this->end_str."15");//
+        $this->setRowContent("A16"," 0 - 表现不值任何分数 (玩忽职守)",$this->end_str."16");//
+
+        $arr = array(
+            array("name"=>"支援员工姓名 :","key"=>"employee_name"),
+            array("name"=>"职位 :","key"=>"position_name"),
+            array("name"=>"服务类型 :","key"=>"service_type_name"),
+            array("name"=>"支援开始时间 :","key"=>"apply_date"),
+            array("name"=>"支援结束时间 :","key"=>"apply_end_date"),
+            array("name"=>"支援城市 :","key"=>"city_name"),
+            array("name"=>"评核日期 :","key"=>"lud"),
+        );
+        $this->printTable("A5:C16");
+
+        $this->row = 17;
+        foreach ($arr as $list){
+            $this->row++;
+            $this->setRowContent("A".$this->row,$list["name"],"B".$this->row);//
+            $this->setBoxStyle("A".$this->row,true,0,"right");//
+            $this->setRowContent("C".$this->row,$this->model[$list["key"]]);//
+            $this->setBoxStyle("C".$this->row,true,0,"left");//
+        }
+        $this->printTable("A18:C".$this->row);
+
+        $this->row++;
+    }
+
+    //設置頁頭數組(考核)
     protected function setExcelTop(){
         $rows = Yii::app()->db->createCommand()->select("*")->from("hr_review_h")
             ->where("review_id=:review_id",array(":review_id"=>$this->model->id))->queryAll();
@@ -238,6 +296,70 @@ class DownReviewForm {
         $this->setBoxStyle($this->end_str.$this->row,true);//
     }
 
+    protected function setReviewHeaderToSupport(){
+        $this->row+=3;
+        $this->setRowContent("A".$this->row,"序号");//
+        $this->setBoxStyle("A".$this->row,true);//
+        $this->setRowContent("B".$this->row,"项目");//
+        $this->setBoxStyle("B".$this->row,true);//
+        $this->setRowContent("C".$this->row,"评分");//
+        $this->setBoxStyle("C".$this->row,true);//
+    }
+
+
+    protected function setRowBodyToSupport(){
+        $tem_s_ist = $this->model->tem_s_ist;
+        $this->pro_str = empty($tem_s_ist)?"":current($tem_s_ist)["code"];
+        foreach ($tem_s_ist as $set_id => $proRow){
+            $footArr = array(
+                'sum'=>0,
+                'num'=>0,
+            );
+            $sumNumber = count($proRow["list"])*10*$proRow['num_ratio'];//總分
+            $footArr["sum"]+=$sumNumber;
+            $this->setReviewHeaderToSupport();
+            $tableBorder = "A".$this->row;
+            $this->row++;
+            $this->setRowContent("A".$this->row,$proRow["code"]);//
+            $this->setBoxStyle("A".$this->row,true,0,"center");//
+            $this->setRowContent("B".$this->row,$proRow["name"]);//
+            $this->setBoxStyle("B".$this->row,true,0,"left");//
+            $this->setRowContent("C".$this->row,$sumNumber);//
+            $this->setBoxStyle("C".$this->row,true,0);//
+            $this->cellColor("A".$this->row.":C".$this->row,"FFFF00");//
+            $key = 0;
+            foreach ($proRow["list"] as $row){
+                $key++;
+                $this->row++;
+                $this->setRowContent("A".$this->row,$key);
+                $this->setBoxStyle("A".$this->row,false,0,"center");//
+                $this->setRowContent("B".$this->row,$row["name"]);
+                $remark='';
+                if(key_exists("value",$row)){
+                    $proValue = intval($row["value"])*$proRow['num_ratio'];
+                    $footArr['num']+=$proValue;
+                    $this->userNum+=$proValue;
+                }else{
+                    $proValue = "";
+                }
+                if(key_exists("remark",$row)){
+                    $remark = $row["remark"];
+                }
+
+                $this->setRowContent("C".$this->row,$proValue);//總分
+                $this->setBoxStyle("C".$this->row,false,0,"center");//
+                $this->setRowContent("D".$this->row,$remark);//備註
+                $this->objPHPExcel->getActiveSheet()->getStyle("D".$this->row)->getAlignment()->setWrapText(true);
+                $this->setBoxStyle("C".$this->row,false,0,"center");//
+            }
+
+            $this->setReviewFootToSupport($footArr);
+            $tableBorder .= ":C".$this->row;
+            $this->printTable($tableBorder);
+        }
+        $this->pro_str.= (empty($tem_s_ist)||empty($proRow))?"":" - ".$proRow["code"];
+    }
+
 
     protected function setRowBody(){
         $remarkStr = $this->getStrToNum($this->end_num+1);
@@ -301,6 +423,27 @@ class DownReviewForm {
             $tableBorder .= ":".$this->end_str.$this->row;
             $this->printTable($tableBorder);
         }
+    }
+
+    protected function setReviewFootToSupport($footArr,$bool=false){
+        $name = $bool?"(".$this->pro_str.")":"";
+        $arr = array(
+            array('code'=>'A','name'=>"项目总分$name",'value'=>'sum','sumBool'=>true,'bold'=>true),
+            array('code'=>'B','name'=>"评核项目得总分",'value'=>'num','sumBool'=>true,'bold'=>true),
+            array('code'=>'C','name'=>"百分比得分(以一百分为满分) B/A*100",'value'=>'c','sumBool'=>false,'bold'=>true),
+        );
+        $this->cellColor("A".($this->row+count($arr)).":".$this->end_str.($this->row+count($arr)),"FFCC00");//
+        $footArr["c"] = empty($footArr["sum"])?0:sprintf("%.2f",$footArr["num"]/$footArr["sum"]*100);
+        foreach ($arr as $item){
+            $this->row++;
+            $this->setRowContent("A".$this->row,$item['code']);
+            $this->setBoxStyle("A".$this->row,$item['bold'],0,"center");//
+            $this->setRowContent("B".$this->row,$item['name']);
+            $this->setBoxStyle("B".$this->row,$item['bold'],0,"left");//
+            $this->setRowContent("C".$this->row,$footArr[$item["value"]]);
+            $this->setBoxStyle("C".$this->row,$item['bold'],0,"center");
+        }
+        //$this->setBoxStyle("A".$this->row,true);
     }
 
     protected function setReviewFoot($footArr,$bool=false,$pro=90){
@@ -494,6 +637,29 @@ class DownReviewForm {
 
 
     //繪製表格
+    protected function setExcelFootToSupport(){
+        $footArr = array(
+            'sum'=>$this->model->tem_sum*10,
+            'num'=>$this->userNum,
+            'c'=>$this->model->review_sum,
+        );
+        $this->row+=3;
+        $tableBorder = "A".$this->row;
+        $this->setRowContent("A".$this->row,"评核总得分","C".$this->row);//
+        $this->setBoxStyle("A".$this->row,true,0,"center");//
+        $this->row++;
+        $this->setRowContent("A".$this->row,"季度评核得分 (100%)","C".$this->row);//
+        $this->setBoxStyle("A".$this->row,false,0,"left");//
+        $bgColor = "A".$this->row;
+
+        $this->setReviewFootToSupport($footArr,true);
+        $tableBorder .= ":C".$this->row;
+        $this->cellColor($bgColor.":C".($this->row-1),"FFFF00");//
+        $this->printTable($tableBorder);
+    }
+
+
+    //繪製表格
     protected function setExcelFoot(){
         $tableBorder = "A".($this->row+3);
         $footArr = array(
@@ -670,6 +836,16 @@ class DownReviewForm {
         $this->setExcelFoot();
 
         $this->setRemarkFoot();
+    }
+
+    public function setRowExcelToSupport($model){
+        $this->model = $model;
+        $this->review_rows = array();
+        set_time_limit(0);
+
+        $this->setExcelTopToSupport();
+        $this->setRowBodyToSupport();
+        $this->setExcelFootToSupport();
     }
 
     //輸出excel表格

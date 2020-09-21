@@ -35,6 +35,10 @@ class SupportSearchForm extends CFormModel
     public $privilege_user;
 	public $city="HK";
 
+	public $position_name;
+	public $service_type_name;
+	public $lud;
+
 	public function attributeLabels()
 	{
         return array(
@@ -127,8 +131,9 @@ class SupportSearchForm extends CFormModel
             $bindEmployee = BindingForm::getEmployeeIdToUsername();
             $sqlEx = " and a.employee_id=$bindEmployee ";
         }
-        $row = Yii::app()->db->createCommand()->select("a.*,b.name as employee_name,c.name as city_name")->from("hr_apply_support a")
+        $row = Yii::app()->db->createCommand()->select("f.name as position_name,a.*,b.name as employee_name,c.name as city_name")->from("hr_apply_support a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("hr_dept f","b.position = f.id")
             ->leftJoin("security$suffix.sec_city c","c.code = a.apply_city")
             ->where(" a.status_type != 1 $sqlEx and a.id=:id",array(":id"=>$index))->queryRow();
 		if ($row) {
@@ -143,6 +148,8 @@ class SupportSearchForm extends CFormModel
 
             $this->apply_type = $row['apply_type'];
             $this->service_type = $row['service_type'];
+            $this->service_type_name = SupportApplyList::getServiceList($row['service_type'],true);
+            $this->position_name = $row['position_name'];
 
             $this->employee_id = $row['employee_id'];
             $this->employee_name = $row['employee_name'];
@@ -152,12 +159,15 @@ class SupportSearchForm extends CFormModel
             $this->length_type = $row['length_type'];
             $this->apply_length = $row['apply_length'];
             $this->tem_str = $row['tem_str'];
+            $this->tem_sum = $row['tem_sum'];
+            $this->review_sum = $row['review_sum'];
             $this->early_date = $row['early_date'];
             $this->early_remark = $row['early_remark'];
             $this->tem_s_ist = json_decode($row['tem_s_ist'],true);
 
             $this->privilege = $row['privilege'];
             $this->privilege_user = $row['privilege_user'];
+            $this->lud = date("Y-m-d",strtotime($row['lud']));
 		}
 		return true;
 	}

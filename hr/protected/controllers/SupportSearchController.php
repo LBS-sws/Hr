@@ -25,7 +25,7 @@ class SupportSearchController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('early','delete'),
+                'actions'=>array('early','delete','downExcel'),
                 'expression'=>array('SupportSearchController','allowReadWrite'),
             ),
             array('allow',
@@ -102,6 +102,20 @@ class SupportSearchController extends Controller
             }else{
                 Dialog::message(Yii::t('dialog','Information'), "內容不存在");
                 $this->render('form',array('model'=>$model));
+            }
+        }
+    }
+
+    public function actionDownExcel()
+    {
+        if (isset($_POST['SupportSearchForm'])) {
+            $model = new SupportSearchForm();
+            if (!$model->retrieveData($_POST['SupportSearchForm']['id'])) {
+                throw new CHttpException(404,'The requested page does not exist.');
+            } else {
+                $downExcel = new DownReviewForm();
+                $downExcel->setRowExcelToSupport($model);
+                $downExcel->outDownExcel("中央技术支援-".$model->employee_name.".xls");
             }
         }
     }

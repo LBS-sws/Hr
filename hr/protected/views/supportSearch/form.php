@@ -56,6 +56,11 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
             );
             ?>
         <?php endif; ?>
+        <?php if ($model->status_type == 6 || $model->status_type == 7): ?>
+            <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('contract','Down'), array(
+                'submit'=>Yii::app()->createUrl('supportSearch/downExcel')));
+            ?>
+        <?php endif ?>
 		<?php echo TbHtml::button('<span class="fa fa-calendar"></span> '.Yii::t('app','History'), array(
             'data-toggle'=>'modal','data-target'=>'#historydialog'));
 		?>
