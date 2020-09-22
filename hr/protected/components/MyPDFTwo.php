@@ -25,9 +25,16 @@ class MyPDFTwo {
         $this->_PDF->setFontSubsetting(true);
 	}
 
+    public function setPageToLeave($arr=array()){
+	    if(Yii::app()->language == "en"){
+            $this->setPageToLeaveToEnglish($arr);
+        }else{
+            $this->setPageToLeaveToChina($arr);
+        }
+    }
 	//210mm×297mm
 	//190mm×287mm
-	public function setPageToLeave($arr=array()){
+	public function setPageToLeaveToChina($arr=array()){
         $suffix = Yii::app()->basePath;
         $this->_PDF->AddPage();
         //员工请假单
@@ -215,6 +222,182 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(18, 6, 100,220, $html, 0, 1, 0, true, 'C', true);
         $html = "中国区营运<br>总监<br>（如适用）";
         $this->_PDF->writeHTMLCell(24, 6, 148,222, $html, 0, 1, 0, true, 'C', true);
+
+/*       $this->_PDF->Line(10,228,100,228);*/
+    }
+	public function setPageToLeaveToEnglish($arr=array()){
+        $suffix = Yii::app()->basePath;
+        $this->_PDF->AddPage();
+        //员工请假单
+        $this->_PDF->Image("$suffix/../images/LBS_Group.jpg",92,5,25,22);
+        $this->_PDF->SetFont('times', '', 18, '', true);
+        $html = "Leave Application Form";
+        $this->_PDF->writeHTMLCell(190, 10, 10,33, $html, 0, 1, 0, true, 'C', true);
+
+
+        $this->_PDF->SetFont('times', '', 14, '', true);
+        //繪製表格
+        $this->_PDF->MultiCell(190,12,"",1);
+        $this->_PDF->MultiCell(190,12,"",1);
+        $this->_PDF->MultiCell(190,48,"",1);
+        $this->_PDF->MultiCell(190,12,"",1);
+        $this->_PDF->MultiCell(190,25,"",1);
+        //竖线
+        $this->_PDF->Line(35,43,35,79);
+        $this->_PDF->Line(65,43,65,67);
+        $this->_PDF->Line(90,43,90,67);
+        $this->_PDF->Line(130,43,130,55);
+        $this->_PDF->Line(160,43,160,55);
+
+        $this->_PDF->Line(30,115,30,152);
+        $this->_PDF->Line(45,115,45,152);
+        $this->_PDF->Line(85,115,85,152);
+        $this->_PDF->Line(125,115,125,152);
+        $this->_PDF->Line(155,115,155,152);
+
+        //$this->_PDF->Line(115,162,200,162);
+        $this->_PDF->Line(10,79,200,79);
+        $this->_PDF->Line(54,166,98,166);
+        $this->_PDF->Line(145,166,200,166);
+
+        $this->_PDF->writeHTMLCell(190, 6, 10,147, "", 0, 1, 0, true, 'L', true);
+        $html = "<p><b>I hereby apply leave (see above for details) and the company and seek for approval.</b></p>";
+        $this->_PDF->writeHTMLCell(190,8,"","",$html);
+
+        $this->_PDF->MultiCell(100,8,"",0);
+        $this->_PDF->MultiCell(115,8,"Employee Signature:",0,"L",false,0);
+        $this->_PDF->MultiCell(100,8,"Date of:",0,"L",false,0);
+        //$this->_PDF->writeHTMLCell(190, 8, 20,"", $html, 0, 1, 0, true, 'L', true);
+        //繪製表格
+        $this->_PDF->SetFillColor(10,10,10,10);
+        $this->_PDF->writeHTMLCell(190, 8, 10,"", "", 0, 1, 0, true, 'L', true);
+        $this->_PDF->MultiCell(190,10,"",1,"L",true);
+        $this->_PDF->MultiCell(190,20,"",1,"L");
+        $this->_PDF->MultiCell(190,10,"",1,"L",true);
+        $this->_PDF->MultiCell(190,30,"",1,"L");
+        $this->_PDF->MultiCell(190,2,"",0,"L");
+        //竖线
+        $this->_PDF->Line(52,179,52,199);
+        $this->_PDF->Line(52,209,52,239);
+        $this->_PDF->Line(100,179,100,199);
+        $this->_PDF->Line(100,209,100,239);
+        $this->_PDF->Line(118,209,118,239);
+        $this->_PDF->Line(148,209,148,239);
+        $this->_PDF->Line(172,209,172,239);
+
+        $this->_PDF->Line(52,188,200,188);
+        //$this->_PDF->Line(10,228,100,228);
+
+        $this->_PDF->SetFont('times', '', 12, '', true);
+        $html = "<p>Remarks:<br>";
+        $html .= "1.Confirm the details of leave application form are accurate and correct.<br>";
+        $html .= "2.For annual leave application equal or more than 3 days, must be submitted 2 weeks before.<br>";
+        $html .= "3.Original Medical certificate shall be submitted for sick leave application,If medical prove is not provided, it will consider as personal leave.   <br>";
+        $html .= "4.Leave application procedures:Staff could apply leave on LBS online system,request for approval from our Company Representative(For annual leave under 3 days, approve by Department Head. For annual leave 3 days or above, approve by Department Head & General Manager.)After Approval,HR. Department will print out the application form,Staff required to sign on the application and upload it back to LBS system leave attachment, company will keep the original application copy.<br>";
+        $html .= "5.This application applies to all staff. Leave application for General Manager/Company Representative requires to take approval from Regional director.</p>";
+        $this->_PDF->writeHTMLCell(190, 5, 10,240, $html, 0, 1, 0, true, 'L', true);
+
+        $html = "Name";
+        $this->_PDF->writeHTMLCell(25, 8, 10,47, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["employee_name"];
+        $this->_PDF->writeHTMLCell(30, 8, 35,47, $html, 0, 1, 0, true, 'C', true);
+        $html = "Staff No.";
+        $this->_PDF->writeHTMLCell(25, 8, 65,47, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["employee_code"];
+        $this->_PDF->writeHTMLCell(40, 8, 90,47, $html, 0, 1, 0, true, 'C', true);
+        $html = "Date of<br>Employment";
+        $this->_PDF->writeHTMLCell(30, 8, 130,45, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["entry_time"];
+        $this->_PDF->writeHTMLCell(40, 8, 160,47, $html, 0, 1, 0, true, 'C', true);
+        $html = "Department";
+        $this->_PDF->writeHTMLCell(25, 8, 10,59, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["dept_name"];
+        $this->_PDF->writeHTMLCell(30, 8, 35,59, $html, 0, 1, 0, true, 'C', true);
+        $html = "Position";
+        $this->_PDF->writeHTMLCell(25, 8, 65,59, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["posi_name"];
+        $this->_PDF->writeHTMLCell(110, 8, 90,59, $html, 0, 1, 0, true, 'C', true);
+        $html = "Co. Name";
+        $this->_PDF->writeHTMLCell(25, 8, 10,71, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["company_name"];
+        $this->_PDF->writeHTMLCell(160, 8, 38,71, $html, 0, 1, 0, true, 'L', true);
+        $signature = LeaveForm::getSignatureToStaffId($arr["employee_id"]);
+        if($signature){
+            $this->setSignature($signature, 60, 153, 0,16);
+        }
+
+        $html = "<p><b>Leave Category:</b></p>";
+        $this->_PDF->writeHTMLCell(190, 9, 11,82, $html, 0, 1, 0, true, 'L', true);
+        $html = "<p>A:OT Leave,Annual Leave,Special Leave</p>";
+        $this->_PDF->writeHTMLCell(190, 9, 15,90, $html, 0, 1, 0, true, 'L', true);
+        $html = "<p>B:Marriage Leave,Funeral Leave,Nursing Leave,Maternity Leave</p>";
+        $this->_PDF->writeHTMLCell(190, 9, 15,96, $html, 0, 1, 0, true, 'L', true);
+        $html = "<p>C:Prenatal Leave,Sick Leave</p>";
+        $this->_PDF->writeHTMLCell(190, 9, 15,102, $html, 0, 1, 0, true, 'L', true);
+        $html = "<p>D:Personal Leave </p>";
+        $this->_PDF->writeHTMLCell(190, 9, 15,108, $html, 0, 1, 0, true, 'L', true);
+
+        $vaca_type = $arr["vaca_type"];
+        $vaca_type =$vaca_type=="E"?"A":$vaca_type;
+
+        $sumDay = 0;
+        if($arr["vaca_type"] == "E"){
+            $sumDay=floatval($arr["sumDay"]) - floatval($arr["leaveNum"]);
+            $html = $sumDay+floatval($arr["log_time"])." day";
+            $this->_PDF->writeHTMLCell(98, 6, 101,182, $html, 0, 1, 0, true, 'C', true);
+            $html = $sumDay." day";
+            $this->_PDF->writeHTMLCell(98, 6, 101,192, $html, 0, 1, 0, true, 'C', true);
+        }
+
+        $html = "Leave<br>Category";
+        $this->_PDF->writeHTMLCell(20, 11, 10,117, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["vacation_name"];
+        $this->_PDF->writeHTMLCell(20, 20, 10,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "Leave<br>Type";
+        $this->_PDF->writeHTMLCell(15, 11, 30,117, $html, 0, 1, 0, true, 'C', true);
+        $html = $vaca_type;
+        $this->_PDF->writeHTMLCell(15, 11, 30,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "Start Date/Time";
+        $this->_PDF->writeHTMLCell(40, 11, 45,119, $html, 0, 1, 0, true, 'C', true);
+        $html = "End Date/Time";
+        $this->_PDF->writeHTMLCell(40, 11, 85,119, $html, 0, 1, 0, true, 'C', true);
+        if(!empty($arr["time_list"])){
+            $time_y=0;
+            foreach ($arr["time_list"] as $time_list){
+                $html = date("Y-m-d",strtotime($time_list["start_time"]))." ".$time_list["start_time_lg"];
+                $this->_PDF->writeHTMLCell(40, 5, 45,130+$time_y, $html, 0, 1, 0, true, 'C', true);
+                $html = date("Y-m-d",strtotime($time_list["end_time"]))." ".$time_list["end_time_lg"];
+                $this->_PDF->writeHTMLCell(40, 5, 85,130+$time_y, $html, 0, 1, 0, true, 'C', true);
+                $time_y+=6;
+            }
+        }
+        $html = "Total Days";
+        $this->_PDF->writeHTMLCell(30, 11, 125,119, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["log_time"]." day";
+        $this->_PDF->writeHTMLCell(30, 11, 125,130, $html, 0, 1, 0, true, 'C', true);
+        $html = "Remarks";
+        $this->_PDF->writeHTMLCell(45, 11, 155,119, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["leave_cause"];
+        $this->_PDF->writeHTMLCell(45, 11, 155,130, $html, 0, 1, 0, true, 'C', true);
+        $html = date("Y-m-d",strtotime($arr["lcd"]));
+        $this->_PDF->writeHTMLCell(55, 6, 145,161, $html, 0, 1, 0, true, 'C', true);
+
+        $html = "Review:";
+        $this->_PDF->writeHTMLCell(45, 6, 11,172, $html, 0, 1, 0, true, 'L', true);
+        $html = "HR Dep. Remarks:";
+        $this->_PDF->writeHTMLCell(42, 6, 10,186, $html, 0, 1, 0, true, 'C', true);
+        $html = "Annual Leave (Before)";
+        $this->_PDF->writeHTMLCell(47, 6, 52,182, $html, 0, 1, 0, true, 'L', true);
+        $html = "Annual Leave (After)";
+        $this->_PDF->writeHTMLCell(47, 6, 52,192, $html, 0, 1, 0, true, 'L', true);
+        $html = "Approval:";
+        $this->_PDF->writeHTMLCell(45, 6, 11,202, $html, 0, 1, 0, true, 'L', true);
+        $html = "Company Representative";
+        $this->_PDF->writeHTMLCell(42, 6, 10,220, $html, 0, 1, 0, true, 'C', true);
+        $html = "Regional or Director(If Applicable)";
+        $this->_PDF->writeHTMLCell(18, 6, 100,215, $html, 0, 1, 0, true, 'C', true);
+        $html = "General Manager(If Applicable)";
+        $this->_PDF->writeHTMLCell(24, 6, 148,217, $html, 0, 1, 0, true, 'C', true);
 
 /*       $this->_PDF->Line(10,228,100,228);*/
     }
@@ -417,9 +600,9 @@ class MyPDFTwo {
 
 	public function getOutput($str="docx") {//D
         ob_end_clean();
-        $this->_PDF->Output($str.".pdf", 'D');
+        //$this->_PDF->Output($str.".pdf", 'D');
+        $this->_PDF->Output($str.".pdf", 'I');
         exit;
-        //$this->_PDF->Output($str.".pdf", 'I');
 	}
 }
 ?>
