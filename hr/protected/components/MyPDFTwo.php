@@ -600,8 +600,8 @@ class MyPDFTwo {
 
 	public function getOutput($str="docx") {//D
         ob_end_clean();
-        //$this->_PDF->Output($str.".pdf", 'D');
-        $this->_PDF->Output($str.".pdf", 'I');
+        $this->_PDF->Output($str.".pdf", 'D');
+        //$this->_PDF->Output($str.".pdf", 'I');
         exit;
 	}
 }
