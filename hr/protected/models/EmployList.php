@@ -82,6 +82,14 @@ class EmployList extends CListPageModel
         }
         return $list;
     }
+    //試用期時長列表
+    public function getTestMonthLengthList(){
+        $list = array(""=>"");
+        for ($num = 1;$num<=6;$num++){
+            $list[$num]=$num.Yii::t("staff"," months");
+        }
+        return $list;
+    }
     //獲取學歷列表
     public function getEducationList(){
         return array(

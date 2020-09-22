@@ -315,10 +315,9 @@ if ($model->scenario!='view'||$model->staff_status == 3) {
         'HistoryForm_leave_time',
         'birth_time',
         'HistoryForm_entry_time',
-        'HistoryForm_start_time',
-        'HistoryForm_end_time',
-        'HistoryForm_test_start_time',
-        'HistoryForm_test_end_time',
+        'start_time',
+        'end_time',
+        'test_start_time',
         'HistoryForm_user_card_date',
         'HistoryForm_effect_time',
     ));

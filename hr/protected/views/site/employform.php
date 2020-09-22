@@ -305,7 +305,7 @@ if (!empty($contractNum)){
     <?php echo $form->label($model,'fix_time',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-5">
         <?php echo $form->inlineRadioButtonList($model, 'fix_time',EmployList::getFixTimeList(),
-            array('disabled'=>($readonly),'class'=>"fixTime")
+            array('disabled'=>($readonly),'class'=>"fixTime",'id'=>"fix_time")
         ); ?>
     </div>
 </div>
@@ -317,7 +317,7 @@ if (!empty($contractNum)){
                 <i class="fa fa-calendar"></i>
             </div>
             <?php echo $form->textField($model, 'start_time',
-                array('class'=>'form-control pull-right','readonly'=>($readonly),));
+                array('class'=>'form-control pull-right','readonly'=>($readonly),'id'=>"start_time"));
             ?>
         </div>
     </div>
@@ -331,10 +331,10 @@ if (!empty($contractNum)){
             if($model->fix_time == "nofixed"){
                 $model->end_time = "";
                 echo $form->textField($model, 'end_time',
-                    array('class'=>'form-control pull-right','readonly'=>(true),));
+                    array('class'=>'form-control pull-right','readonly'=>(true),'id'=>"end_time"));
             }else{
                 echo $form->textField($model, 'end_time',
-                    array('class'=>'form-control pull-right','readonly'=>($readonly),));
+                    array('class'=>'form-control pull-right','readonly'=>($readonly),'id'=>"end_time"));
             }
             ?>
         </div>
@@ -388,8 +388,8 @@ if (!empty($contractNum)){
     <div class="form-group">
         <?php echo $form->label($model,'test_length',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
         <div class="col-sm-3">
-            <?php echo $form->dropDownList($model, 'test_length',EmployList::getMonthList(),
-                array('class'=>'test_add_time','disabled'=>($readonly))
+            <?php echo $form->dropDownList($model, 'test_length',EmployList::getTestMonthLengthList(),
+                array('class'=>'test_add_time','disabled'=>($readonly),'id'=>"test_length")
             ); ?>
         </div>
     </div>
@@ -401,7 +401,7 @@ if (!empty($contractNum)){
                     <i class="fa fa-calendar"></i>
                 </div>
                 <?php echo $form->textField($model, 'test_start_time',
-                    array('class'=>'test_add_time pull-right','readonly'=>($readonly),));
+                    array('class'=>'test_add_time pull-right','readonly'=>($readonly),'id'=>'test_start_time'));
                 ?>
             </div>
         </div>
@@ -412,7 +412,7 @@ if (!empty($contractNum)){
                     <i class="fa fa-calendar"></i>
                 </div>
                 <?php echo $form->textField($model, 'test_end_time',
-                    array('class'=>'test_sum_time pull-right','readonly'=>true));
+                    array('class'=>'test_sum_time pull-right','readonly'=>true,'id'=>'test_end_time'));
                 ?>
             </div>
         </div>
@@ -654,5 +654,34 @@ if (!empty($contractNum)){
         });
 
         //$("#position").trigger("change");
-    })
+        //後續添加的无用要求
+        $(".fixTime,#start_time,#end_time").change(changeTestMonthLength);
+    });
+    function changeTestMonthLength() {
+        var value = $("#test_length").val();
+        if($("#end_time").is(":disabled")||$("#start_time").val()==""||$("#end_time").val()==""){
+            $("#test_length>option").show();
+        }else{
+            $("#test_length>option").hide();
+            $("#test_length>option[value='']").show();
+            var startDate = new Date($("#start_time").val());
+            var endDate = new Date($("#end_time").val());
+            var Year = endDate.getFullYear()-startDate.getFullYear();
+            var Month = endDate.getMonth()-startDate.getMonth();
+            var dateLeng = Year*12+Month;
+            if(dateLeng<12){
+                $("#test_length>option[value='1']").show();
+            }else if(dateLeng<36){
+                $("#test_length>option[value='1']").show();
+                $("#test_length>option[value='2']").show();
+            }else{
+                $("#test_length>option").show();
+            }
+
+            if(value==""||$("#test_length>option[value='"+value+"']").css("display")=="none"){
+                $("#test_length").val(1);
+            }
+            $('.test_add_time:first').trigger("change");
+        }
+    }
 </script>

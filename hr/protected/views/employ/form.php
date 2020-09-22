@@ -211,9 +211,9 @@ if ($model->scenario!='view') {
     $js = Script::genDatePicker(array(
         'birth_time',
         'EmployForm_entry_time',
-        'EmployForm_start_time',
-        'EmployForm_end_time',
-        'EmployForm_test_start_time',
+        'start_time',
+        'end_time',
+        'test_start_time',
         'EmployForm_user_card_date',
     ));
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
