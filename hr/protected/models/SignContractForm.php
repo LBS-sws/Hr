@@ -235,7 +235,7 @@ class SignContractForm extends CFormModel
 
 	protected function sendEmail(){
         $city_name = $this->city_name;
-        $subject = "員工簽署合同待審核 - ".$this->name."（".$city_name."）";
+        $subject = "員工合同已寄出，請簽收 - ".$this->name."（".$city_name."）";
         $description=$subject;
         $message="<p>員工編號：".$this->code."</p>";
         $message.="<p>員工姓名：".$this->name."</p>";
