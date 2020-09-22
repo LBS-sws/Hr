@@ -85,7 +85,7 @@ class SignContractForm extends CFormModel
         $rows = Yii::app()->db->createCommand()->select("a.status_type,a.sign_type,a.reject_remark,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
             ->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) and a.status_type IN (0,1,4) ",array(':id'=>$this->id))->queryRow();
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type IN (-1,0,1,4) ",array(':id'=>$this->id))->queryRow();
         if(!$rows){
             $this->employee_id = '';
             $message = Yii::t('contract','send staff'). Yii::t('contract',' Did not find');
@@ -110,13 +110,19 @@ class SignContractForm extends CFormModel
         }
     }
 
+    public function updateStatusType(){
+        Yii::app()->db->createCommand()->update('hr_sign_contract', array(
+            'status_type'=>-1,
+        ), 'id=:id and status_type in (0,1)', array(':id'=>$this->id));
+    }
+
 	public function retrieveData($index) {
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         $row = Yii::app()->db->createCommand()->select("a.*,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city,docman$suffix.countdoc('SIGNC',b.id) as signcdoc")
             ->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) and a.status_type IN (0,1,2,3,4) ",array(':id'=>$index))->queryRow();
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type IN (-1,0,1,2,3,4) ",array(':id'=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->city = $row['city'];

@@ -147,6 +147,7 @@ class SignContractController extends Controller
             if(empty($model->employee_id)){
                 echo "NIL";
             }else{
+                $model->updateStatusType();
                 $id = $model->employee_id;
                 $docman = new DocMan($model->docType,$id,get_class($model));
                 $docman->masterId = $model->docMasterId[strtolower($doctype)];

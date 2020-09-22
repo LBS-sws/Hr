@@ -646,5 +646,7 @@ return array(
 
     'Batch Finish'=>'批量完成',
     'Please select the support list you want to complete'=>'請選擇需要完成的支援單',
+
+    'To be sent under contract'=>'有待合同寄出',
     );
 ?>

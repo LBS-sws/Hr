@@ -38,11 +38,11 @@ class SignContractList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select a.id,a.sign_type,b.code,b.name,b.city,b.position,b.company_id,b.entry_time,a.status_type,a.courier_str,a.courier_code from hr_sign_contract a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
-                where b.city IN ($city_allow) AND a.status_type IN (0,1,2,3,4) 
+                where b.city IN ($city_allow) AND a.status_type IN (-1,0,1,2,3,4) 
 			";
 		$sql2 = "select count(a.id) from hr_sign_contract a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
-                where b.city IN ($city_allow) AND a.status_type IN (0,1,2,3,4) 
+                where b.city IN ($city_allow) AND a.status_type IN (-1,0,1,2,3,4) 
 			";
 
 		$clause = "";
@@ -111,6 +111,12 @@ class SignContractList extends CListPageModel
 
     public function getEmailStatus($str){
         switch ($str){
+            case -1:
+                return array(
+                    "status"=>Yii::t("contract","To be sent under contract"),
+                    "style"=>"text-danger"
+                );//未填寫
+                break;
             case 0:
                 return array(
                     "status"=>Yii::t("contract","none sign"),

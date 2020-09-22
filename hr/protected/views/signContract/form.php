@@ -33,7 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - signContract';
 				'submit'=>Yii::app()->createUrl('signContract/index')));
 		?>
 
-        <?php if ($model->scenario!='view'&&in_array($model->status_type,array(0,1,4))): ?>
+        <?php if ($model->scenario!='view'&&in_array($model->status_type,array(-1,0,1,4))): ?>
             <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('contract','Draft'), array(
                 'submit'=>Yii::app()->createUrl('signContract/draft')));
             ?>
