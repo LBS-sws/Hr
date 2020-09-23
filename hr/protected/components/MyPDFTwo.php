@@ -244,10 +244,10 @@ class MyPDFTwo {
         $this->_PDF->MultiCell(190,25,"",1);
         //竖线
         $this->_PDF->Line(35,43,35,79);
-        $this->_PDF->Line(65,43,65,67);
-        $this->_PDF->Line(90,43,90,67);
-        $this->_PDF->Line(130,43,130,55);
-        $this->_PDF->Line(160,43,160,55);
+        $this->_PDF->Line(65,55,65,67);
+        $this->_PDF->Line(90,55,90,67);
+        $this->_PDF->Line(130,43,130,67);
+        $this->_PDF->Line(160,43,160,67);
 
         $this->_PDF->Line(30,115,30,152);
         $this->_PDF->Line(45,115,45,152);
@@ -300,23 +300,23 @@ class MyPDFTwo {
         $html = "Name";
         $this->_PDF->writeHTMLCell(25, 8, 10,47, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["employee_name"];
-        $this->_PDF->writeHTMLCell(30, 8, 35,47, $html, 0, 1, 0, true, 'C', true);
+        $this->_PDF->writeHTMLCell(90, 8, 37,47, $html, 0, 1, 0, true, 'L', true);
         $html = "Staff No.";
-        $this->_PDF->writeHTMLCell(25, 8, 65,47, $html, 0, 1, 0, true, 'C', true);
+        $this->_PDF->writeHTMLCell(30, 8, 130,47, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["employee_code"];
-        $this->_PDF->writeHTMLCell(40, 8, 90,47, $html, 0, 1, 0, true, 'C', true);
-        $html = "Date of<br>Employment";
-        $this->_PDF->writeHTMLCell(30, 8, 130,45, $html, 0, 1, 0, true, 'C', true);
-        $html = $arr["entry_time"];
         $this->_PDF->writeHTMLCell(40, 8, 160,47, $html, 0, 1, 0, true, 'C', true);
+        $html = "Date of<br>Employment";
+        $this->_PDF->writeHTMLCell(30, 8, 130,57, $html, 0, 1, 0, true, 'C', true);
+        $html = $arr["entry_time"];
+        $this->_PDF->writeHTMLCell(40, 8, 160,59, $html, 0, 1, 0, true, 'C', true);
         $html = "Department";
         $this->_PDF->writeHTMLCell(25, 8, 10,59, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["dept_name"];
-        $this->_PDF->writeHTMLCell(30, 8, 35,59, $html, 0, 1, 0, true, 'C', true);
+        $this->_PDF->writeHTMLCell(34, 8, 33,59, $html, 0, 1, 0, true, 'C', true);
         $html = "Position";
-        $this->_PDF->writeHTMLCell(25, 8, 65,59, $html, 0, 1, 0, true, 'C', true);
+        $this->_PDF->writeHTMLCell(25, 8, 65,59, $html,0 , 1, 0, true, 'C', true);
         $html = $arr["posi_name"];
-        $this->_PDF->writeHTMLCell(110, 8, 90,59, $html, 0, 1, 0, true, 'C', true);
+        $this->_PDF->writeHTMLCell(44, 8, 88,59, $html, 0, 1, 0, true, 'C', true);
         $html = "Co. Name";
         $this->_PDF->writeHTMLCell(25, 8, 10,71, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["company_name"];
