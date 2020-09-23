@@ -206,12 +206,12 @@ class AuditSignForm extends CFormModel
 	}
 
 	protected function sendEmail(){
-        $city_name = $this->scenario=="audit"?"審核通過":"已拒絕";
+        $city_name = $this->scenario=="audit"?"員工合同已簽收":"員工合同被拒絕";
         $subject = "員工合同已簽收 - ".$this->name."（".$city_name."）";
         $description=$subject;
         $message="<p>員工編號：".$this->code."</p>";
         $message.="<p>員工姓名：".$this->name."</p>";
-        $message.="<p>員工所在城市：".$city_name."</p>";
+        $message.="<p>員工所在城市：".$this->city_name."</p>";
         $message.="<p>寄出日期：".$this->send_date."</p>";
         $message.="<p>快遞公司：".$this->courier_str."</p>";
         $message.="<p>快遞單號：".$this->courier_code."</p>";
