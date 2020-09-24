@@ -543,7 +543,7 @@ class SupportAuditForm extends CFormModel
     //刪除驗證
     public function deleteValidate(){
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")
-            ->where("id=:id and status_type in (1,8)",array(":id"=>$this->id))->queryRow();
+            ->where("id=:id and status_type =2",array(":id"=>$this->id))->queryRow();
         if($row){
             return true;
         }
@@ -567,6 +567,9 @@ class SupportAuditForm extends CFormModel
 	protected function saveGoods(&$connection,$serviceStr) {
 		$sql = '';
         switch ($serviceStr) {
+            case 'delete':
+                $sql = "delete from hr_apply_support where id = :id and status_type =2";
+                break;
             case 'reject'://不同意提前結束或續期 8,11
                 $sql = "update hr_apply_support set
 							status_type = :status_type, 

@@ -79,6 +79,12 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
                 'submit'=>Yii::app()->createUrl('supportAudit/renewal')));
             ?>
         <?php endif ?>
+        <?php if ($model->scenario=='edit'&&$model->status_type == 2): ?>
+            <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                    'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+            );
+            ?>
+        <?php endif; ?>
 	</div>
             <div class="btn-group pull-right" role="group">
                 <?php if ($model->scenario!='view'): ?>
@@ -294,6 +300,7 @@ $this->pageTitle=Yii::app()->name . ' - supportAudit';
 	</div>
 </section>
 <?php
+$this->renderPartial('//site/removedialog');
 $this->renderPartial('//site/history',array('tableHtml'=>SupportSearchForm::getHistoryHtml($model->id)));
 if(in_array($model->status_type,array(10,9))){
     $this->renderPartial('//site/ject',array('form'=>$form,'model'=>$model,'rejectName'=>'reject_remark','submit'=>Yii::app()->createUrl('supportAudit/reject')));
@@ -377,6 +384,8 @@ if ($model->scenario!='view'&& in_array($model->status_type,array(1,2,3))) {
     ));
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
+$js = Script::genDeleteData(Yii::app()->createUrl('supportAudit/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>

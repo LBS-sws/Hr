@@ -302,7 +302,7 @@ class SupportAuditController extends Controller
         if (isset($_POST['SupportAuditForm'])) {
             $model->attributes = $_POST['SupportAuditForm'];
             if($model->deleteValidate()){
-                $model->saveData();
+                $model->saveData('delete');
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
                 $this->redirect(Yii::app()->createUrl('supportAudit/index'));
             }else{
