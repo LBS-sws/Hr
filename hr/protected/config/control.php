@@ -17,4 +17,5 @@ return array(
 	'Back to leave and work'=>array('access'=>'ZR13',),//退回請假單及加班單
 	'sales group manage'=>array('access'=>'ZR14',),//銷售分組管理
 	'Back to boss review'=>array('access'=>'ZR16',),//退回老總年度考核
+	'delete contract for finish'=>array('access'=>'ZR17',),//刪除已完成的合同簽收
 );

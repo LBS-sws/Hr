@@ -25,8 +25,12 @@ class SignContractController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','draft','delete','save','fileupload','fileRemove'),
+                'actions'=>array('edit','draft','save','fileupload','fileRemove'),
                 'expression'=>array('SignContractController','allowReadWrite'),
+            ),
+            array('allow',
+                'actions'=>array('delete'),
+                'expression'=>array('SignContractController','allowDelete'),
             ),
             array('allow',
                 'actions'=>array('index','view','fileDownload'),
@@ -44,6 +48,10 @@ class SignContractController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('ZE09');
+    }
+
+    public static function allowDelete() {
+        return Yii::app()->user->validFunction('ZR17');
     }
 
     public function actionIndex($pageNum=0){

@@ -182,6 +182,7 @@ return array(
     'Personnel Audit'=>'人事',
     'sign contract'=>'合同寄出',
     'Audit sign contract'=>'合同簽收',
+    'delete contract for finish'=>'刪除已完成的合同簽收',
 //沈超添加結束
 );
 ?>
