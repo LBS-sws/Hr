@@ -56,7 +56,7 @@ class TimerCommand extends CConsoleCommand {
         $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
         $this->contractAgoSendEmail();//合同過期10天后（合同已過期）給饒總發送郵件
 
-        $this->contractAgainSendEmail();//合同续期10天后未更新附加提示，城市、老总
+        //$this->contractAgainSendEmail();//合同续期10天后未更新附加提示，城市、老总(與合同寄出功能重複，不執行該提示)
 
         //加班、請假批准后的郵件提示（開始)
         $this->leaveThreeSendEmail();
