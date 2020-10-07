@@ -140,8 +140,8 @@ class SignContractController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
                 $this->redirect(Yii::app()->createUrl('signContract/index'));
             }else{
-                Dialog::message(Yii::t('dialog','Information'), "內容不存在");
-                $this->render('form',array('model'=>$model));
+                Dialog::message(Yii::t('dialog','Information'), "该员工未离职无法删除");
+                $this->redirect(Yii::app()->createUrl('signContract/edit',array('index'=>$model->id)));
             }
         }
     }

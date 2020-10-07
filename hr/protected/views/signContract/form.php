@@ -42,7 +42,7 @@ $this->pageTitle=Yii::app()->name . ' - signContract';
             ?>
         <?php endif ?>
 
-        <?php if ($model->scenario=='edit'&&$model->status_type == 3&&Yii::app()->user->validFunction('ZR17')): ?>
+        <?php if ($model->scenario!='view'&&in_array($model->status_type,array(-1,0,1,3,4))&&Yii::app()->user->validFunction('ZR17')): ?>
             <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                     'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
             );

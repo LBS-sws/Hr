@@ -175,6 +175,7 @@ return array(
     'Boss Search'=>'查询年度考核',
     'Boss Audit'=>'审批年度考核',
     'Boss Audit(Deputy director)'=>'审批年度考核（副总监）',
+    'Boss Audit(Joe)'=>'审批年度考核（饶生）',
 
     'Email support employee'=>'员工支点分配',
     'Setting KPI'=>'KPI设置',
