@@ -173,7 +173,7 @@ return array(
     'Boss Year Audit'=>'老总年度考核',
     'Boss Apply'=>'申请年度考核',
     'Boss Search'=>'查询年度考核',
-    'Boss Audit'=>'审批年度考核',
+    'Boss Audit(director)'=>'审批年度考核（总监）',
     'Boss Audit(Deputy director)'=>'审批年度考核（副总监）',
     'Boss Audit(Joe)'=>'审批年度考核（饶生）',
 

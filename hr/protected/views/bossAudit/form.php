@@ -29,7 +29,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type))));
 		?>
-        <?php if ($model->scenario!='view'&&$this->boss_type == $model->boss_type): ?>
+        <?php if ($model->scenario!='view'): ?>
             <?php if ($model->status_type == 1): ?>
                 <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                     'submit'=>Yii::app()->createUrl('bossAudit/audit',array('type'=>$this->boss_type))));

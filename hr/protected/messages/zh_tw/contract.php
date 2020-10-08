@@ -624,8 +624,10 @@ return array(
     'Approaching retirement age'=>'即將到達退休年齡',
     'Pending review by the Deputy Director'=>'有待副總監審核',
     'Pending review by the director'=>'有待總監審核',
+    'Pending review by the joe'=>'有待饒生審核',
     'Pending confirmation by the Deputy Director'=>'有待副總監確認',
     'Pending confirmation by the director'=>'有待總監確認',
+    'Pending confirmation by the joe'=>'有待饒生確認',
 
     'contract type'=>'合同類型',
     'courier code'=>'快遞單號',

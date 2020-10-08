@@ -8,7 +8,7 @@
  */
 class BossAuditController extends Controller
 {
-    public $boss_type=1;//1:總監  2：副總監
+    public $boss_type=1;//1:總監  2：副總監  3：饒生
 	public $function_id='BA03';
 
     public function init()
@@ -18,6 +18,9 @@ class BossAuditController extends Controller
         if(key_exists("type",$_GET)&&$_GET["type"] == 2){
             $this->function_id = "BA05";
             $this->boss_type = 2;
+        }elseif(key_exists("type",$_GET)&&$_GET["type"] == 3){
+            $this->function_id = "BA06";
+            $this->boss_type = 3;
         }else{
             $this->function_id = "BA03";
             $this->boss_type = 1;
@@ -57,12 +60,24 @@ class BossAuditController extends Controller
     }
 
     public static function allowReadWrite() {
-        $typeStr = key_exists("type",$_GET)&&$_GET["type"] == 2?"BA05":"BA03";
+        if(key_exists("type",$_GET)&&$_GET["type"] == 2){
+            $typeStr = "BA05";
+        }elseif(key_exists("type",$_GET)&&$_GET["type"] == 3){
+            $typeStr = "BA06";
+        }else{
+            $typeStr = "BA03";
+        }
         return Yii::app()->user->validRWFunction($typeStr);
     }
 
     public static function allowReadOnly() {
-        $typeStr = key_exists("type",$_GET)&&$_GET["type"] == 2?"BA05":"BA03";
+        if(key_exists("type",$_GET)&&$_GET["type"] == 2){
+            $typeStr = "BA05";
+        }elseif(key_exists("type",$_GET)&&$_GET["type"] == 3){
+            $typeStr = "BA06";
+        }else{
+            $typeStr = "BA03";
+        }
         return Yii::app()->user->validFunction($typeStr);
     }
 

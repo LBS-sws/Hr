@@ -130,6 +130,8 @@ class BossApplyList extends CListPageModel
             case 1:
                 if($row['boss_type']==1){
                     $status =Yii::t("contract","Pending review by the director");
+                }elseif($row['boss_type']==3){
+                    $status =Yii::t("contract","Pending review by the joe");
                 }else{
                     $status =Yii::t("contract","Pending review by the Deputy Director");
                 }
@@ -155,6 +157,8 @@ class BossApplyList extends CListPageModel
             case 5:
                 if($row['boss_type']==1){
                     $status =Yii::t("contract","Pending confirmation by the director");
+                }elseif($row['boss_type']==3){
+                    $status =Yii::t("contract","Pending confirmation by the joe");
                 }else{
                     $status =Yii::t("contract","Pending confirmation by the Deputy Director");
                 }

@@ -629,8 +629,10 @@ return array(
     'Approaching retirement age'=>'即将到达退休年龄',
     'Pending review by the Deputy Director'=>'有待副总监审核',
     'Pending review by the director'=>'有待总监审核',
+    'Pending review by the joe'=>'有待饶生审核',
     'Pending confirmation by the Deputy Director'=>'有待副总监确认',
     'Pending confirmation by the director'=>'有待总监确认',
+    'Pending confirmation by the joe'=>'有待饶生确认',
 
     'contract type'=>'合同类型',
     'courier code'=>'快递单号',

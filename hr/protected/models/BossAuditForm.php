@@ -128,7 +128,7 @@ class BossAuditForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-		    if($this->boss_type == 2&&in_array($this->getScenario(),array("finish","audit"))){ //副總監考核後需要總監考核
+		    if(in_array($this->boss_type,array(1,2))&&in_array($this->getScenario(),array("finish","audit"))){ //副總監考核後需要總監考核
                 $this->deputyAudit();
             }else{
                 $this->saveGoods($connection);
@@ -247,15 +247,27 @@ class BossAuditForm extends CFormModel
         if($send_type==1){
             $email->addEmailToStaffId($this->employee_id);
         }else{
-            $email->addEmailToPrefixAndCity('BA03',$this->city);
+            if ($this->boss_type == 3){//繞生的郵件
+                $email->addEmailToPrefixAndCity('BA06',$this->city);
+            }else if ($this->boss_type == 1){//總監的郵件
+                $email->addEmailToPrefixAndCity('BA03',$this->city);
+            }
         }
         $email->sent();
     }
 
     //副總監修改考核狀態
     protected function deputyAudit(){
+        switch ($this->boss_type){
+            case 1:
+                $this->boss_type = 3;//跳轉給繞生
+                break;
+            case 2:
+                $this->boss_type = 1;//跳轉給總監
+                break;
+        }
         Yii::app()->db->createCommand()->update('hr_boss_audit', array(
-            'boss_type'=>1,
+            'boss_type'=>$this->boss_type,
             'lcu'=>"test",
         ), 'id=:id', array(':id'=>$this->id));
         $this->sendEmail(2);

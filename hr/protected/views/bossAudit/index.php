@@ -11,7 +11,21 @@ $this->pageTitle=Yii::app()->name . ' - bossAudit';
 
 <section class="content-header">
     <h1>
-        <strong><?php echo $this->boss_type == 1?Yii::t('app','Boss Audit'):Yii::t('app','Boss Audit(Deputy director)'); ?></strong>
+        <strong>
+            <?php
+            switch ($this->boss_type){
+                case 1:
+                    echo Yii::t('app','Boss Audit(director)');
+                    break;
+                case 2:
+                    echo Yii::t('app','Boss Audit(Deputy director)');
+                    break;
+                case 3:
+                    echo Yii::t('app','Boss Audit(Joe)');
+                    break;
+            }
+            ?>
+        </strong>
     </h1>
     <!--
         <ol class="breadcrumb">

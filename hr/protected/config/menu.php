@@ -242,12 +242,17 @@ return array(
                 'access'=>'BA02',
                 'url'=>'/bossSearch/index',
             ),
-            //考核審批
-            'Boss Audit'=>array(
+            //考核審批（繞生）
+            'Boss Audit(Joe)'=>array(
+                'access'=>'BA06',
+                'url'=>'/bossAudit/index?type=3',
+            ),
+            //考核審批（總監）
+            'Boss Audit(director)'=>array(
                 'access'=>'BA03',
                 'url'=>'/bossAudit/index?type=1',
             ),
-            //考核審批
+            //考核審批（副總監）
             'Boss Audit(Deputy director)'=>array(
                 'access'=>'BA05',
                 'url'=>'/bossAudit/index?type=2',
