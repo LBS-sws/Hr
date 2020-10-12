@@ -164,7 +164,7 @@ class RptReviewList extends CReport {
                     ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
                         array(":department"=>$staff["department"],":year"=>$arr["year"],":year_type"=>$arr["year_type"])
                     )->order("b.review_sum desc")->queryAll();
-                if(count($reviewRows)<10){ //少於10個人不參與差異性評分
+                if(count($reviewRows)<5){ //少於5個人不參與差異性評分
                     $this->leave_list[$staff["department"]]=array('caseNum'=>3);
                     return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
                 }else{

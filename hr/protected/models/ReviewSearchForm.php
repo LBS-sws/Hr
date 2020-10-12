@@ -378,8 +378,8 @@ class ReviewSearchForm extends CFormModel
                 ->leftJoin("hr_dept e","c.position = e.id")
                 ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
                     array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
-                )->order("b.review_sum desc")->queryScalar();//組別內超過10個人並且需要差異性排名
-            if($this->ranking_sum>=10){
+                )->order("b.review_sum desc")->queryScalar();//組別內超過5個人並且需要差異性排名
+            if($this->ranking_sum>=5){
                 $this->ranking_bool = true;
                 return true;
             }
