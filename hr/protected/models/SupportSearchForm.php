@@ -220,22 +220,55 @@ class SupportSearchForm extends CFormModel
         }
     }
 
+    public function backValidate(){
+        $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")
+            ->where("id=:id and status_type = 5",array(":id"=>$this->id))->queryRow();
+        if($row){
+            $this->apply_date = $row["apply_date"];
+            $this->apply_end_date = $row["apply_end_date"];
+            $this->apply_length = $row["apply_length"];
+            $this->length_type = $row["length_type"];
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     public function deleteData(){
         Yii::app()->db->createCommand()->delete('hr_apply_support', 'id=:id', array(':id'=>$this->id));
         Yii::app()->db->createCommand()->delete('hr_apply_support_history', 'support_id=:id', array(':id'=>$this->id));
     }
 
-    public function saveData(){
-        Yii::app()->db->createCommand()->update('hr_apply_support', array(
-            'length_type'=>2,
-            'apply_end_date'=>$this->early_date,
-            'early_remark'=>$this->early_remark,
-            'update_type'=>$this->update_type,
-            'update_remark'=>$this->update_remark,
-            'apply_length'=>$this->apply_length
-        ), 'id=:id', array(':id'=>$this->id));
+    public function saveData($str){
+        switch ($str){
+            case "early":
+                Yii::app()->db->createCommand()->update('hr_apply_support', array(
+                    'length_type'=>2,
+                    'apply_end_date'=>$this->early_date,
+                    'early_remark'=>$this->early_remark,
+                    'update_type'=>$this->update_type,
+                    'update_remark'=>$this->update_remark,
+                    'apply_length'=>$this->apply_length
+                ), 'id=:id', array(':id'=>$this->id));
 
-        $this->setSupportHistory();//記錄操作并发送邮件
+                $this->setSupportHistory();//記錄操作并发送邮件
+                break;
+            case "back":
+                Yii::app()->db->createCommand()->update('hr_apply_support', array(
+                    'status_type'=>2,
+                ), 'id=:id', array(':id'=>$this->id));
+                Yii::app()->db->createCommand()->insert('hr_apply_support_history', array(
+                    'support_id'=>$this->id,
+                    'start_date'=>$this->apply_date,
+                    'end_date'=>$this->apply_end_date,
+                    'apply_length'=>$this->apply_length,
+                    'length_type'=>$this->length_type,
+                    'status_type'=>13,
+                    'lcu'=>Yii::app()->user->id,
+                ));
+                break;
+            default:
+        }
     }
 
     private function setSupportHistory(){

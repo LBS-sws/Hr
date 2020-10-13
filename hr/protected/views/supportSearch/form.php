@@ -56,6 +56,11 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
             );
             ?>
         <?php endif; ?>
+        <?php if ($model->status_type == 5 && Yii::app()->user->validRWFunction("AY02")): ?>
+            <?php echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','send back'), array(
+                'submit'=>Yii::app()->createUrl('supportSearch/back')));
+            ?>
+        <?php endif ?>
         <?php if ($model->status_type == 6 || $model->status_type == 7): ?>
             <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('contract','Down'), array(
                 'submit'=>Yii::app()->createUrl('supportSearch/downExcel')));

@@ -111,6 +111,7 @@ class SupportApplyList extends CListPageModel
 	        10=>array("status"=>Yii::t("contract","renewal"),"style"=>"text-primary"),//续期
             11=>array("status"=>Yii::t("contract","reject renewal"),"style"=>"text-danger"),//拒绝续期
             12=>array("status"=>Yii::t("contract","finish and custom"),"style"=>"text-danger"),//已完成,自定义
+            13=>array("status"=>Yii::t("contract","send back"),"style"=>"text-danger"),//退回
         );
     }
 

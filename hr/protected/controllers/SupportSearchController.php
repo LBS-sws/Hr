@@ -25,7 +25,7 @@ class SupportSearchController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('early','delete','downExcel'),
+                'actions'=>array('early','delete','downExcel','back'),
                 'expression'=>array('SupportSearchController','allowReadWrite'),
             ),
             array('allow',
@@ -85,6 +85,22 @@ class SupportSearchController extends Controller
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('supportSearch/view',array("index"=>$model->id)));
+            }
+        }
+    }
+
+    public function actionBack()
+    {
+        $model = new SupportSearchForm("back");
+        if (isset($_POST['SupportSearchForm'])) {
+            $model->attributes = $_POST['SupportSearchForm'];
+            if ($model->backValidate()) {
+                $model->saveData('back');
+                Dialog::message(Yii::t('dialog','Information'), Yii::t("contract","finish to send back"));
+                $this->redirect(Yii::app()->createUrl('supportAudit/edit',array("index"=>$model->id)));
+            } else {
+                Dialog::message(Yii::t('dialog','Validation Message'), "支援單不存在，請於管理員聯繫");
                 $this->redirect(Yii::app()->createUrl('supportSearch/view',array("index"=>$model->id)));
             }
         }
