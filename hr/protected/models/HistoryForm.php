@@ -225,11 +225,11 @@ class HistoryForm extends CFormModel
 	}
 
     public function validateSign($attribute, $params){
-	    if($this->scenario !="departure"){
+	    if(!in_array($this->scenario,array("departure","update"))){
             $rows = Yii::app()->db->createCommand()->select("a.status_type")->from("hr_sign_contract a")
                 ->where("a.employee_id=:id and a.status_type IN (0,1,2,4) ",array(':id'=>$this->employee_id))->queryRow();
             if($rows){
-                $message = "該員工有未簽署的合同，無法變更及修改";
+                $message = "該員工有未簽署的合同，無法變更";
                 $this->addError($attribute,$message);
             }
         }
