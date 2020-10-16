@@ -25,7 +25,7 @@ class SignContractController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','draft','save','fileupload','fileRemove'),
+                'actions'=>array('edit','draft','save','down','fileupload','fileRemove'),
                 'expression'=>array('SignContractController','allowReadWrite'),
             ),
             array('allow',
@@ -107,6 +107,36 @@ class SignContractController extends Controller
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
+            }
+        }
+    }
+
+
+    public function actionDown($index = 0)
+    {
+        if (isset($_POST['SignContractForm'])) {
+            $model = new SignContractForm($_POST['SignContractForm']['scenario']);
+            $model->attributes = $_POST['SignContractForm'];
+            $model->his_id = $index;
+            if ($model->validateDown()) {
+                $url = EmployeeForm::updateEmployeeWord($model->downList);
+                if($url){
+                    $file = Yii::app()->basePath."/../".$url["word_url"];
+                    // To prevent corrupted zip - Percy
+                    ob_clean();
+                    ob_end_flush();
+                    //
+                    header("Content-type: application/octet-stream");
+                    header('Content-Disposition: attachment; filename='.$url["name"].'.docx');
+                    header("Content-Length: ". filesize($file));
+                    readfile($file);
+                }else{
+                    $this->redirect(Yii::app()->createUrl('signContract/edit',array('index'=>$model->id)));
+                }
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('signContract/edit',array('index'=>$model->id)));
             }
         }
     }

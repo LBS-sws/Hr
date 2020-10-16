@@ -381,9 +381,13 @@ class AuditHistoryForm extends CFormModel
             if($row){
                 $sign_type = $row["retire"] == 1?2:1;
             }
+            Yii::app()->db->createCommand()->update('hr_sign_contract', array(
+                'history_id'=>$this->id
+            ), 'employee_id=:id and history_id=0', array(':id'=>$this->employee_id));
             Yii::app()->db->createCommand()->insert('hr_sign_contract',array(
                 'employee_id'=>$this->employee_id,
                 'status_type'=>0,
+                'history_id'=>0,
                 'sign_type'=>$sign_type,
                 'lcu'=>Yii::app()->user->id,
             ));

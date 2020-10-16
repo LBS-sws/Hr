@@ -73,6 +73,34 @@ $this->pageTitle=Yii::app()->name . ' - auditSign';
                 'readonly'=>(true),
             ));
             ?>
+            <legend><?php echo  Yii::t("contract","Staff View");?></legend>
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <table class="table table-bordered table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th><?php echo Yii::t("contract","contract type");?></th>
+                            <th><?php echo Yii::t("contract","Employee Code");?></th>
+                            <th><?php echo Yii::t("contract","Employee Name");?></th>
+                            <th><?php echo Yii::t("contract","Employee Phone");?></th>
+                            <th><?php echo Yii::t("contract","Department");?></th>
+                            <th><?php echo Yii::t("contract","Position");?></th>
+                            <th><?php echo Yii::t("contract","Company Name");?></th>
+                            <th><?php echo Yii::t("contract","contract deadline");?></th>
+                            <th><?php echo Yii::t("contract","Contract Start Time");?></th>
+                            <th><?php echo Yii::t("contract","Contract End Time");?></th>
+                            <th width="1%">&nbsp;</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
+                        $tableModel = new OldContractForm();
+                        echo $tableModel->printTableBody($model->employee_id,true,$model->his_id);
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 		</div>
 	</div>
 </section>

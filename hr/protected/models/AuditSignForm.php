@@ -18,6 +18,7 @@ class AuditSignForm extends CFormModel
 	public $contract_id;
 	public $company_id;
 	public $sign_type;
+	public $his_id;
 
 	public $send_date;
 	public $courier_code;
@@ -98,6 +99,7 @@ class AuditSignForm extends CFormModel
             $this->city = $rows["city"];
             $this->city_name = CGeneral::getCityName($rows["city"]);
             $this->phone = $rows["phone"];
+            $this->his_id = $rows["history_id"];
             $this->entry_time = $rows["entry_time"];
             $this->user_card = $rows["user_card"];
             $this->end_time = $rows["end_time"];

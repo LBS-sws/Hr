@@ -655,5 +655,15 @@ return array(
     'Please select the support list you want to complete'=>'请选择需要完成的支援单',
 
     'To be sent under contract'=>'有待合同寄出',
+
+    //2020/10/15
+    'No contract'=>'未有合同',
+    'Existing contract'=>'已有合同',
+    'unchecked'=>'未检查',
+    'checked'=>'已检查',
+    'examine'=>'检查',
+    'recall'=>'撤回',
+    'unsigned'=>'未签收',
+    'sign type'=>'合同签署状态',
 );
 ?>

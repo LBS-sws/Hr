@@ -18,6 +18,7 @@ class SignContractForm extends CFormModel
 	public $contract_id;
 	public $company_id;
 	public $sign_type;
+	public $his_id;
 
 	public $send_date;
 	public $courier_code;
@@ -38,6 +39,8 @@ class SignContractForm extends CFormModel
     public $removeFileId = array(
         'signc'=>0
     );
+
+    public $downList = array();
 
 	public function attributeLabels()
 	{
@@ -72,7 +75,7 @@ class SignContractForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, courier_code,courier_str,remark,send_date','safe'),
+			array('id, courier_code,courier_str,remark,send_date,employee_id','safe'),
             array('id,courier_code,courier_str,send_date','required'),
             array('id','validateId'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
@@ -80,9 +83,48 @@ class SignContractForm extends CFormModel
 	}
 
 
+    public function validateDown(){
+        $staffList = array();
+        $this->downList = array();
+        $city_allow = Yii::app()->user->city_allow();
+        $nowList = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
+            ->where("id=:id and staff_status=0 and city in ($city_allow)",array(":id"=>$this->employee_id))->queryRow();
+        if($nowList){
+            if(empty($this->his_id)){
+                $staffList = $nowList;
+            }else{
+                $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee_operate")
+                    ->where("id=:id and employee_id=:employee_id",array(":id"=>$this->his_id,":employee_id"=>$this->employee_id))->queryRow();
+                if($row){
+                    $staffList = $row;
+                }else{
+                    $message = "員工不存在2";
+                    $this->addError("id",$message);
+                    return false;
+                }
+            }
+        }else{
+            $message = "員工不存在1";
+            $this->addError("id",$message);
+            return false;
+        }
+        $this->downList["company"]=CompanyForm::getCompanyToId($staffList["company_id"]);
+        $wordIdList = ContractForm::getWordListToConIdDesc($staffList["contract_id"]);
+        $this->downList["word"]=array();
+        $this->downList["staff"]=$staffList;
+        foreach ($wordIdList as $wordId){
+            $url = WordForm::getDocxUrlToId($wordId["name"]);
+            if($url){
+                array_push($this->downList["word"],$url["docx_url"]);
+            }
+        }
+        return true;
+    }
+
+
     public function validateId($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.status_type,a.sign_type,a.reject_remark,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
+        $rows = Yii::app()->db->createCommand()->select("a.history_id,a.status_type,a.sign_type,a.reject_remark,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
             ->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.id=:id and b.city in ($city_allow) and a.status_type IN (-1,0,1,4) ",array(':id'=>$this->id))->queryRow();
@@ -100,6 +142,7 @@ class SignContractForm extends CFormModel
             $this->phone = $rows["phone"];
             $this->entry_time = $rows["entry_time"];
             $this->user_card = $rows["user_card"];
+            $this->his_id = $rows["history_id"];
             $this->end_time = $rows["end_time"];
             $this->start_time = $rows["start_time"];
             $this->fix_time = $rows["fix_time"];
@@ -136,6 +179,7 @@ class SignContractForm extends CFormModel
             $this->company_id=CompanyForm::getCompanyToId($row['company_id'])["name"];
 
             $this->fix_time = $row["fix_time"];
+            $this->his_id = $row["history_id"];
             $this->phone = $row["phone"];
             $this->entry_time = $row["entry_time"];
             $this->user_card = $row["user_card"];

@@ -164,6 +164,11 @@ return array(
                 'access'=>'ZG08',
                 'url'=>'/auditSign/index',
             ),
+            //檢查員工舊合同
+            'Review of old contracts'=>array(
+                'access'=>'ZG09',
+                'url'=>'/oldContract/index',
+            ),
             //工資單審核
 			'Wages Audit'=>array(
 				'access'=>'ZG03',

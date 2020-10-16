@@ -185,6 +185,7 @@ return array(
     'sign contract'=>'合同寄出',
     'Audit sign contract'=>'合同簽收',
     'delete contract for finish'=>'刪除已完成的合同簽收',
+    'Review of old contracts'=>'檢查員工舊合同',
 //沈超添加結束
 );
 ?>
