@@ -80,7 +80,7 @@ $this->pageTitle=Yii::app()->name . ' - oldContract Form';
                             <th><?php echo Yii::t("contract","contract type");?></th>
                             <th><?php echo Yii::t("contract","Employee Code");?></th>
                             <th><?php echo Yii::t("contract","Employee Name");?></th>
-                            <th><?php echo Yii::t("contract","Employee Phone");?></th>
+                            <th><?php echo Yii::t("contract","ID Card");?></th>
                             <th><?php echo Yii::t("contract","Department");?></th>
                             <th><?php echo Yii::t("contract","Position");?></th>
                             <th><?php echo Yii::t("contract","Company Name");?></th>

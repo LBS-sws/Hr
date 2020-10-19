@@ -82,14 +82,13 @@ $this->pageTitle=Yii::app()->name . ' - auditSign';
                             <th><?php echo Yii::t("contract","contract type");?></th>
                             <th><?php echo Yii::t("contract","Employee Code");?></th>
                             <th><?php echo Yii::t("contract","Employee Name");?></th>
-                            <th><?php echo Yii::t("contract","Employee Phone");?></th>
+                            <th><?php echo Yii::t("contract","ID Card");?></th>
                             <th><?php echo Yii::t("contract","Department");?></th>
                             <th><?php echo Yii::t("contract","Position");?></th>
                             <th><?php echo Yii::t("contract","Company Name");?></th>
                             <th><?php echo Yii::t("contract","contract deadline");?></th>
                             <th><?php echo Yii::t("contract","Contract Start Time");?></th>
                             <th><?php echo Yii::t("contract","Contract End Time");?></th>
-                            <th width="1%">&nbsp;</th>
                         </tr>
                         </thead>
                         <tbody>

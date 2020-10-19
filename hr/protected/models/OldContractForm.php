@@ -165,7 +165,7 @@ class OldContractForm extends CFormModel
         $html.="<td>".$arr["show_status"]."</td>";
         $html.="<td>".$arr["code"]."</td>";
         $html.="<td>".$arr["name"]."</td>";
-        $html.="<td>".$arr["phone"]."</td>";
+        $html.="<td>".$arr["user_card"]."</td>";
         $html.="<td>".DeptForm::getDeptToid($arr['department'])."</td>";
         $html.="<td>".DeptForm::getDeptToid($arr['position'])."</td>";
         $html.="<td>".CompanyForm::getCompanyToId($arr['company_id'])["name"]."</td>";
