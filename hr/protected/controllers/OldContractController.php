@@ -29,7 +29,7 @@ class OldContractController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('checked','edit','unsigned','recall'),
+                'actions'=>array('checked','edit','unsigned','recall','delete'),
                 'expression'=>array('OldContractController','allowReadWrite'),
             ),
             array('allow',
@@ -75,6 +75,24 @@ class OldContractController extends Controller
                 $model->saveStaff();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('OldContract/edit',array('index'=>$model->id)));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('OldContract/edit',array('index'=>$model->id)));
+            }
+        }
+    }
+
+    public function actionDelete()
+    {
+        if (isset($_POST['OldContractForm'])) {
+            $model = new OldContractForm($_POST['OldContractForm']['scenario']);
+            $model->attributes = $_POST['OldContractForm'];
+            if ($model->validate()) {
+                $model->old_type = 3;
+                $model->saveStaff();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('OldContract/index'));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);

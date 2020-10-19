@@ -28,12 +28,12 @@ class OldContractList extends CListPageModel
     {
         $sql1 = "select a.*,b.old_type from hr_employee a 
                 LEFT JOIN hr_check_staff b ON a.id = b.employee_id 
-                where a.staff_status = 0
+                where a.staff_status = 0 AND (b.old_type != 3 or b.old_type is NULL ) 
 			";
         $sql2 = "select count(a.id)
 				from hr_employee a 
                 LEFT JOIN hr_check_staff b ON a.id = b.employee_id 
-				where a.staff_status = 0
+                where a.staff_status = 0 AND (b.old_type != 3 or b.old_type is NULL ) 
 			";
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {

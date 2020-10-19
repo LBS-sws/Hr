@@ -35,6 +35,12 @@ $this->pageTitle=Yii::app()->name . ' - oldContract Form';
                 <?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
                     'submit'=>Yii::app()->createUrl('oldContract/index')));
                 ?>
+                <?php if ($model->scenario=='edit'): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                            'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                    );
+                    ?>
+                <?php endif; ?>
             </div>
             <div class="btn-group pull-right" role="group">
                 <?php echo TbHtml::button('<span class="fa fa-refresh"></span> '.Yii::t('contract','examine'), array(
@@ -99,11 +105,15 @@ $this->pageTitle=Yii::app()->name . ' - oldContract Form';
 </section>
 
 <?php
+$this->renderPartial('//site/removedialog');
+?>
+<?php
 $js = "
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
-
+$js = Script::genDeleteData(Yii::app()->createUrl('oldContract/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 
