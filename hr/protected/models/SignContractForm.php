@@ -24,6 +24,7 @@ class SignContractForm extends CFormModel
 	public $courier_code;
 	public $courier_str;
 	public $remark;
+	public $lcd;
 	public $status_type;
 	public $fix_time;
 	public $reject_remark;
@@ -66,6 +67,7 @@ class SignContractForm extends CFormModel
             'fix_time'=>Yii::t('contract','contract deadline'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
             'sign_type'=>Yii::t('contract','contract type'),
+            'lcd'=>Yii::t('contract','Apply Date'),
         );
 	}
 
@@ -78,6 +80,7 @@ class SignContractForm extends CFormModel
 			array('id, courier_code,courier_str,remark,send_date,employee_id','safe'),
             array('id,courier_code,courier_str,send_date','required'),
             array('id','validateId'),
+            array('courier_code','validateFile'),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
@@ -121,10 +124,23 @@ class SignContractForm extends CFormModel
         return true;
     }
 
+    public function validateFile($attribute, $params){
+        $id = $this->employee_id;
+        $date = date("Y/m/d H:i:s",strtotime($this->lcd));
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("b.lcd")->from("docman$suffix.dm_master a")
+            ->leftJoin("docman$suffix.dm_file b","b.mast_id = a.id")
+            ->where("a.doc_type_code='SIGNC' and a.doc_id = '$id' and date_format(b.lcd,'%Y/%m/%d %H:%i:%s') > '$date'")->queryRow();
+        if(!$rows){
+            $message = "没有上传合同，不允许寄出";
+            $this->addError($attribute,$message);
+        }
+    }
+
 
     public function validateId($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.history_id,a.status_type,a.sign_type,a.reject_remark,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
+        $rows = Yii::app()->db->createCommand()->select("a.lcd,a.history_id,a.status_type,a.sign_type,a.reject_remark,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
             ->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.id=:id and b.city in ($city_allow) and a.status_type IN (-1,0,1,4) ",array(':id'=>$this->id))->queryRow();
@@ -145,6 +161,7 @@ class SignContractForm extends CFormModel
             $this->his_id = $rows["history_id"];
             $this->end_time = $rows["end_time"];
             $this->start_time = $rows["start_time"];
+            $this->lcd = $rows["lcd"];
             $this->fix_time = $rows["fix_time"];
             $this->sign_type = SignContractList::getSignTypeListOrId($rows['sign_type'],true);
             $this->department = DeptForm::getDeptToid($rows['department']);
@@ -169,6 +186,7 @@ class SignContractForm extends CFormModel
 		if ($row) {
             $this->id = $row['id'];
             $this->city = $row['city'];
+            $this->lcd = $row['lcd'];
             $this->city_name = CGeneral::getCityName($row["city"]);
             $this->code = $row['code'];
             $this->reject_remark = $row['reject_remark'];

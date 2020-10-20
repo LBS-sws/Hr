@@ -26,6 +26,7 @@ class AuditSignForm extends CFormModel
 	public $remark;
 	public $status_type;
 	public $fix_time;
+	public $lcd;
 	public $reject_remark;
 
     public $no_of_attm = array(
@@ -64,6 +65,7 @@ class AuditSignForm extends CFormModel
             'fix_time'=>Yii::t('contract','contract deadline'),
             'reject_remark'=>Yii::t('contract','Rejected Remark'),
             'sign_type'=>Yii::t('contract','contract type'),
+            'lcd'=>Yii::t('contract','Apply Date'),
         );
 	}
 
@@ -84,7 +86,7 @@ class AuditSignForm extends CFormModel
 
     public function validateId($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.history_id,a.reject_remark,a.sign_type,a.status_type,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
+        $rows = Yii::app()->db->createCommand()->select("a.lcd,a.history_id,a.reject_remark,a.sign_type,a.status_type,a.employee_id,b.company_id,b.phone,b.entry_time,b.user_card,b.end_time,b.start_time,b.department,b.fix_time,b.name,b.code,b.position,b.city")
             ->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.id=:id and a.status_type =2 ",array(':id'=>$this->id))->queryRow();
@@ -105,6 +107,7 @@ class AuditSignForm extends CFormModel
             $this->end_time = $rows["end_time"];
             $this->start_time = $rows["start_time"];
             $this->sign_type = SignContractList::getSignTypeListOrId($rows['sign_type'],true);
+            $this->lcd = $rows["lcd"];
             $this->fix_time = $rows["fix_time"];
             $this->department = DeptForm::getDeptToid($rows['department']);
             $this->position = DeptForm::getDeptToid($rows['position']);
@@ -123,6 +126,7 @@ class AuditSignForm extends CFormModel
             $this->id = $row['id'];
             $this->city = $row['city'];
             $this->city_name = CGeneral::getCityName($row["city"]);
+            $this->lcd = $row['lcd'];
             $this->code = $row['code'];
             $this->name = $row['name'];
             $this->sign_type = SignContractList::getSignTypeListOrId($row['sign_type'],true);
