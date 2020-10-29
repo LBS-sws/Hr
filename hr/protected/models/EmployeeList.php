@@ -31,7 +31,7 @@ class EmployeeList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select *,docman$suffix.countdoc('EMPLOY',id) as employdoc from hr_employee
+		$sql1 = "select *,docman$suffix.countdoc('EMPLOY',id) as employdoc,docman$suffix.countdoc('SIGNC',id) as signcdoc from hr_employee
                 where city IN ($city_allow) AND staff_status = 0
 			";
 		$sql2 = "select count(id)
@@ -88,7 +88,7 @@ class EmployeeList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
-					'employdoc'=>$record['employdoc'],
+					'employdoc'=>empty($record['employdoc'])?$record['signcdoc']:$record['employdoc'],
 					'code'=>$record['code'],
 					'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
