@@ -81,9 +81,19 @@ class ReviewAllotForm extends CFormModel
 	}
 
 	public function validateYear($attribute, $params){
-	    if($this->year == 2020&&$this->year_type==2){
-            $message = "2020年的月份異常，請於管理員聯繫";
+	    $year = date("Y-m-d");
+	    $nowDate = $this->year;
+	    if($this->year == 2020 && $this->year_type == 1){
+	        $nowDate.="-12-01";
+        }elseif ($this->year > 2020 &&$this->year_type == 1){
+            $nowDate.="-06-01";
+        }elseif ($this->year > 2020 &&$this->year_type == 2){
+            $nowDate.="-12-01";
+        }
+        if($year<$nowDate){
+            $message = "该考核单需要在".$nowDate."之后才能分配";
             $this->addError($attribute,$message);
+            return false;
         }
 	}
 
