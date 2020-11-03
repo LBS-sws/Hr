@@ -37,7 +37,7 @@ class AssessController extends Controller
                 'expression'=>array('AssessController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('ajaxCity','ajaxStaff'),
+                'actions'=>array('ajaxCity','ajaxStaff','ajaxHistory'),
                 'expression'=>array('AssessController','allowWrite'),
             ),
             array('deny',  // deny all users
@@ -214,6 +214,17 @@ class AssessController extends Controller
             $staffList = AssessForm::getEmployeeList($city);
             unset($staffList[""]);
             echo CJSON::encode(array("status"=>1,"staffList"=>$staffList));
+        }else{
+            $this->redirect(Yii::app()->createUrl(''));
+        }
+    }
+
+    public function actionAjaxHistory() {
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $id = $_POST['id'];
+            $staff_id = $_POST['staff_id'];
+            $arr = AssessForm::getHistoryList($staff_id,$id);
+            echo CJSON::encode($arr);
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }

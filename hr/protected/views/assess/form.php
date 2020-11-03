@@ -84,9 +84,15 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'employee_id',$model->getEmployeeList($model->city),
-                        array('disabled'=>($model->scenario=='view'),'id'=>"staff")
-                    ); ?>
+
+                    <div class="input-group">
+                        <?php echo $form->dropDownList($model, 'employee_id',$model->getEmployeeList($model->city),
+                            array('disabled'=>($model->scenario=='view'),'id'=>"staff")
+                        ); ?>
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="button" id="btn_history"><?php echo Yii::t("contract","assess history");?></button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
@@ -197,6 +203,43 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
 		</div>
 	</div>
 </section>
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" id="div_history" data-num="-1">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><?php echo Yii::t("contract","assess history");?></h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th><?php echo Yii::t('fete','Evaluation Time')?></th>
+                        <th><?php echo Yii::t("fete","overall effect");?></th>
+                        <th><?php echo Yii::t("fete","service effect");?></th>
+                        <th><?php echo Yii::t("fete","service process");?></th>
+                        <th><?php echo Yii::t("fete","carefully");?></th>
+                        <th><?php echo Yii::t("fete","judge");?></th>
+                        <th><?php echo Yii::t("fete","deal");?></th>
+                        <th><?php echo Yii::t("fete","connect");?></th>
+                        <th><?php echo Yii::t("fete","obey");?></th>
+                        <th><?php echo Yii::t("fete","leadership");?></th>
+                        <th><?php echo Yii::t("contract","Operation");?></th>
+                    </tr>
+                    </thead>
+                    <tbody id="body_history">
+                        <tr>
+                            <td colspan="11">加载中....</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo Yii::t("misc","Off");?></button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
@@ -209,6 +252,40 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
 <?php
 $this->renderPartial('//site/removedialog');
 ?>
+<script type="text/javascript">
+    $(function(){
+        $('#btn_history').click(function(){
+            $('#div_history').modal('show');
+            var staff_id = $('#staff').val();
+            var num = $('#div_history').data('num');
+            if(staff_id != num){
+                $('#body_history').html("<tr><td colspan='11'>加载中....</td></tr>");
+                $.ajax({
+                    type: 'post',
+                    url: "<?php echo Yii::app()->createUrl('assess/ajaxHistory');?>",
+                    data: { "staff_id":staff_id,"id":"<?php echo $model->id;?>"},
+                    dataType: 'json',
+                    success: function(data){
+                        $('#body_history').html(data.html);
+                        if(data.status == 1){
+                            $('#div_history').data('num',staff_id);
+                        }
+                    }
+                });
+            }
+        });
+
+        $('#body_history').delegate(".insert_history","click",function () {
+            var list =["service_effect","service_process","carefully","overall_effect","judge","deal","connects","obey","leadership"];
+            var jQueryTr = $(this).parents("tr:first");
+            $.each(list,function (key,val) {
+                var text = jQueryTr.children("td[data-str='"+val+"']").text();
+                $("input[name$='["+val+"]']").val(text);
+            });
+        });
+
+    })
+</script>
 <?php
 Script::genFileUpload($model,$form->id,'ASSESS');
 

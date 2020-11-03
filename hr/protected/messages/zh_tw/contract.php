@@ -660,5 +660,8 @@ return array(
     'recall'=>'撤回',
     'unsigned'=>'未簽收',
     'sign type'=>'合同簽署狀態',
+
+    'assess history'=>'評估歷史',
+    'Insert'=>'插入',
     );
 ?>

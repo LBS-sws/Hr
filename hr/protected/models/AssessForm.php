@@ -168,6 +168,36 @@ class AssessForm extends CFormModel
 		return true;
 	}
 
+    //
+    public function getHistoryList($staff_id,$id=0){
+        $arr = array("status"=>1,"html"=>"");
+        $rows = Yii::app()->db->createCommand()->select("*")->from("hr_assess")
+            ->where("id!=:id and employee_id=:staff_id",array(":id"=>$id,":staff_id"=>$staff_id))->order("lcd desc")->queryAll();
+        if($rows){
+            $html = "";
+            foreach ($rows as $row){
+                $html.= "<tr>";
+                //service_effect,service_process,carefully,judge,deal,connects,obey,leadership,overall_effect
+                $html.= "<td>".date("Y-m-d",strtotime($row["lcd"]))."</td>";
+                $html.= "<td data-str='overall_effect'>".$row["overall_effect"]."</td>";
+                $html.= "<td data-str='service_effect'>".$row["service_effect"]."</td>";
+                $html.= "<td data-str='service_process'>".$row["service_process"]."</td>";
+                $html.= "<td data-str='carefully'>".$row["carefully"]."</td>";
+                $html.= "<td data-str='judge'>".$row["judge"]."</td>";
+                $html.= "<td data-str='deal'>".$row["deal"]."</td>";
+                $html.= "<td data-str='connects'>".$row["connects"]."</td>";
+                $html.= "<td data-str='obey'>".$row["obey"]."</td>";
+                $html.= "<td data-str='leadership'>".$row["leadership"]."</td>";
+                $html.= "<td data-str=''>".TbHtml::button(Yii::t("contract","Insert"),array("class"=>"insert_history"))."</td>";
+                $html.= "</tr>";
+            }
+            $arr["html"] = $html;
+        }else{
+            $arr = array("status"=>1,"html"=>"<tr><td colspan='11'>该员工没有评核记录</td></tr>");
+        }
+        return $arr;
+    }
+
     //刪除驗證
     public function deleteValidate(){
         return true;
