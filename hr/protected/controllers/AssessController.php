@@ -223,7 +223,8 @@ class AssessController extends Controller
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
             $id = $_POST['id'];
             $staff_id = $_POST['staff_id'];
-            $arr = AssessForm::getHistoryList($staff_id,$id);
+            $model = new AssessForm();
+            $arr = $model->getHistoryList($staff_id,$id);
             echo CJSON::encode($arr);
         }else{
             $this->redirect(Yii::app()->createUrl(''));

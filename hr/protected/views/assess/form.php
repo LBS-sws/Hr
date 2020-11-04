@@ -15,6 +15,9 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
 
 <style>
     *[readonly]{pointer-events: none;}
+    .table_div{display: block;width: 100%;overflow-x: scroll;}
+    .table-fixed{table-layout: fixed;margin: 0 auto;}
+    .table-fixed th{white-space: normal;}
 </style>
 <section class="content-header">
 	<h1>
@@ -210,29 +213,17 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title"><?php echo Yii::t("contract","assess history");?></h4>
             </div>
-            <div class="modal-body">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead>
-                    <tr>
-                        <th><?php echo Yii::t('fete','Evaluation Time')?></th>
-                        <th><?php echo Yii::t("fete","overall effect");?></th>
-                        <th><?php echo Yii::t("fete","service effect");?></th>
-                        <th><?php echo Yii::t("fete","service process");?></th>
-                        <th><?php echo Yii::t("fete","carefully");?></th>
-                        <th><?php echo Yii::t("fete","judge");?></th>
-                        <th><?php echo Yii::t("fete","deal");?></th>
-                        <th><?php echo Yii::t("fete","connect");?></th>
-                        <th><?php echo Yii::t("fete","obey");?></th>
-                        <th><?php echo Yii::t("fete","leadership");?></th>
-                        <th><?php echo Yii::t("contract","Operation");?></th>
-                    </tr>
-                    </thead>
-                    <tbody id="body_history">
+            <div class="modal-body"><!--  table-striped table-bordered table-hover-->
+                <div class="table_div">
+                    <table class="table table-fixed table-bordered table-hover">
+                        <thead>
+                        <tbody id="body_history">
                         <tr>
-                            <td colspan="11">加载中....</td>
+                            <td width='120px' class='text-center'>加载中....</td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo Yii::t("misc","Off");?></button>
@@ -259,7 +250,7 @@ $this->renderPartial('//site/removedialog');
             var staff_id = $('#staff').val();
             var num = $('#div_history').data('num');
             if(staff_id != num){
-                $('#body_history').html("<tr><td colspan='11'>加载中....</td></tr>");
+                $('#body_history').html("<tr><td width='120px' class='text-center'>加载中....</td></tr>");
                 $.ajax({
                     type: 'post',
                     url: "<?php echo Yii::app()->createUrl('assess/ajaxHistory');?>",
