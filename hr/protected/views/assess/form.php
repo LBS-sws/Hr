@@ -216,7 +216,6 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
             <div class="modal-body"><!--  table-striped table-bordered table-hover-->
                 <div class="table_div">
                     <table class="table table-fixed table-bordered table-hover">
-                        <thead>
                         <tbody id="body_history">
                         <tr>
                             <td width='120px' class='text-center'>加载中....</td>
@@ -260,6 +259,11 @@ $this->renderPartial('//site/removedialog');
                         $('#body_history').html(data.html);
                         if(data.status == 1){
                             $('#div_history').data('num',staff_id);
+                        }
+                        if(data.auto == 1){
+                            $('#body_history').parent("table").css("width","100%");
+                        }else{
+                            $('#body_history').parent("table").css("width","auto");
                         }
                     }
                 });

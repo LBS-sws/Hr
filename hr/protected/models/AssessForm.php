@@ -171,17 +171,18 @@ class AssessForm extends CFormModel
 
     //
     public function getHistoryList($staff_id,$id=0){
-        $arr = array("status"=>1,"html"=>"");
+        $arr = array("status"=>1,"html"=>"","auto"=>0);
         $staffType = PrizeList::getPrizeList();
         $rows = Yii::app()->db->createCommand()->select("*")->from("hr_assess")
             ->where("id!=:id and employee_id=:staff_id",array(":id"=>$id,":staff_id"=>$staff_id))->order("lcd desc")->queryAll();
         if($rows){
+            $arr["auto"] = count($rows)>7?1:0;
             $html = "";
-            $arr = array("lcd","staff_type","service_effect","service_process","carefully","judge","deal","connects","obey","leadership","overall_effect","characters","assess");
-            foreach ($arr as $key){
+            $list = array("lcd","staff_type","service_effect","service_process","carefully","judge","deal","connects","obey","leadership","overall_effect","characters","assess");
+            foreach ($list as $key){
                 $label = $this->getAttributeLabel($key);
                 $html.="<tr>";
-                $html.="<th width='120px' class='text-right'>".$label."</th>";
+                $html.="<th width='120px' class='text-left'>".$label."</th>";
                 for($i=0;$i<count($rows);$i++){
                     $value = $rows[$i][$key];
                     $value = $key == "lcd"?date("Y/m/d",strtotime($value)):$value;
@@ -192,7 +193,7 @@ class AssessForm extends CFormModel
             }
             $arr["html"] = $html;
         }else{
-            $arr = array("status"=>1,"html"=>"<tr><td width='200px' class='text-center'>该员工没有评核记录</td></tr>");
+            $arr = array("status"=>1,"html"=>"<tr><td width='200px' class='text-center'>该员工没有评估记录</td></tr>","auto"=>1);
         }
         return $arr;
     }
