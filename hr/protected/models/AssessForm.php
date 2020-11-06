@@ -171,29 +171,34 @@ class AssessForm extends CFormModel
 
     //
     public function getHistoryList($staff_id,$id=0){
-        $arr = array("status"=>1,"html"=>"","auto"=>0);
-        $staffType = PrizeList::getPrizeList();
+        $arr = array("status"=>1,"html"=>"");
         $rows = Yii::app()->db->createCommand()->select("*")->from("hr_assess")
             ->where("id!=:id and employee_id=:staff_id",array(":id"=>$id,":staff_id"=>$staff_id))->order("lcd desc")->queryAll();
         if($rows){
-            $arr["auto"] = count($rows)>7?1:0;
             $html = "";
-            $list = array("lcd","staff_type","service_effect","service_process","carefully","judge","deal","connects","obey","leadership","overall_effect","characters","assess");
-            foreach ($list as $key){
-                $label = $this->getAttributeLabel($key);
-                $html.="<tr>";
-                $html.="<th width='120px' class='text-left'>".$label."</th>";
-                for($i=0;$i<count($rows);$i++){
-                    $value = $rows[$i][$key];
-                    $value = $key == "lcd"?date("Y/m/d",strtotime($value)):$value;
-                    $value = $key == "staff_type"?$staffType[$value]:$value;
-                    $html.="<td data-str='$key' width='100px;' class='text-center'>".$value."</td>";
-                }
-                $html.="</tr>";
+            $staffType = PrizeList::getPrizeList();
+            foreach ($rows as $row){
+                $html.= "<tr>";
+                //service_effect,service_process,carefully,judge,deal,connects,obey,leadership,overall_effect
+                $html.= "<td>".date("Y-m-d",strtotime($row["lcd"]))."</td>";
+                $html.= "<td data-str=''>".$staffType[$row["staff_type"]]."</td>";
+                $html.= "<td data-str='overall_effect'>".$row["overall_effect"]."</td>";
+                $html.= "<td data-str='service_effect'>".$row["service_effect"]."</td>";
+                $html.= "<td data-str='service_process'>".$row["service_process"]."</td>";
+                $html.= "<td data-str='carefully'>".$row["carefully"]."</td>";
+                $html.= "<td data-str='judge'>".$row["judge"]."</td>";
+                $html.= "<td data-str='deal'>".$row["deal"]."</td>";
+                $html.= "<td data-str='connects'>".$row["connects"]."</td>";
+                $html.= "<td data-str='obey'>".$row["obey"]."</td>";
+                $html.= "<td data-str='leadership'>".$row["leadership"]."</td>";
+                $html.= "<td data-str='characters'>".$row["characters"]."</td>";
+                $html.= "<td data-str='assess'>".$row["assess"]."</td>";
+                $html.= "<td data-str=''>".TbHtml::button(Yii::t("contract","Insert"),array("class"=>"insert_history"))."</td>";
+                $html.= "</tr>";
             }
             $arr["html"] = $html;
         }else{
-            $arr = array("status"=>1,"html"=>"<tr><td width='200px' class='text-center'>该员工没有评估记录</td></tr>","auto"=>1);
+            $arr = array("status"=>1,"html"=>"<tr><td colspan='14'>该员工没有评估记录</td></tr>");
         }
         return $arr;
     }
