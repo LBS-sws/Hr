@@ -168,7 +168,7 @@ $this->pageTitle=Yii::app()->name . ' - Work Form';
     'doctype'=>'WORKEM',
     'header'=>Yii::t('misc','Attachment'),
     'ronly'=>(false),
-    'delBtn'=>($model->scenario=='new'||$model->status == 0||$model->status == 3),
+    'delBtn'=>($model->scenario=='new'||$model->status == 0||$model->status == 3||Yii::app()->user->validFunction('ZR05')),
 ));
 //$model->getInputBool()
 ?>

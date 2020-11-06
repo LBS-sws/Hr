@@ -276,7 +276,7 @@ class WorkController extends Controller
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
             $docman->fileUpload();
-            if($_POST['WorkForm']['scenario']=='new'||$model->status == 0||$model->status == 3){
+            if($_POST['WorkForm']['scenario']=='new'||$model->status == 0||$model->status == 3||Yii::app()->user->validFunction('ZR05')){
                 echo $docman->genTableFileList(false);
             }else{
                 echo $docman->genTableFileList(false,false);
@@ -293,7 +293,7 @@ class WorkController extends Controller
             $docman = new DocMan($model->docType,$model->id,'WorkForm');
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
-            if($_POST['WorkForm']['scenario']=='new'||$model->status == 0||$model->status == 3){
+            if($_POST['WorkForm']['scenario']=='new'||$model->status == 0||$model->status == 3||Yii::app()->user->validFunction('ZR05')){
                 echo $docman->genTableFileList(false);
             }else{
                 echo $docman->genTableFileList(false,false);
