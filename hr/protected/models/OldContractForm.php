@@ -108,7 +108,7 @@ class OldContractForm extends CFormModel
             ->where("id=:id and staff_status=0",array(":id"=>$this->id))->queryRow();
         if($nowList){
             $row = Yii::app()->db->createCommand()->select("id")->from("hr_sign_contract")
-                ->where("employee_id=:id and history_id = :his_id",array(":id"=>$this->id,":his_id"=>$his_id))->queryRow();
+                ->where("employee_id=:id and history_id = :his_id and status_type not in (2,3)",array(":id"=>$this->id,":his_id"=>$his_id))->queryRow();
             if($row){
                 return true;
             }else{
@@ -189,22 +189,36 @@ class OldContractForm extends CFormModel
         $row = Yii::app()->db->createCommand()->select("status_type")->from("hr_sign_contract")
             ->where("employee_id=:id and history_id=:his_id",array(":id"=>$arr["employee_id"],":his_id"=>$arr["his_id"]))->queryRow();
         if($row){
-            if($row["status_type"]==2){
-                $html.="<td>".Yii::t("contract","contract has been sent")."</td>";
-                $html.="<td>&nbsp;</td>";
-            }elseif($row["status_type"]==3){
-                $html.="<td>".Yii::t("contract","contract has been signed")."</td>";
-                $html.="<td>&nbsp;</td>";
-            }else{
-                $html.="<td>".Yii::t("contract","To be sent under contract")."</td>";
-                $html.="<td>";
-                $html.=TbHtml::button(Yii::t('contract','recall'), array('submit'=>Yii::app()->createUrl('oldContract/recall',array("index"=>$arr["his_id"]))));
-                $html.="</td>";
+            switch ($row["status_type"]){
+                case 2://合同已寄出
+                    $html.="<td>".Yii::t("contract","contract has been sent")."</td>";
+                    $html.="<td>&nbsp;</td>";
+                    break;
+                case 3://合同已签收
+                    $html.="<td>".Yii::t("contract","contract has been signed")."</td>";
+                    $html.="<td>&nbsp;</td>";
+                    break;
+                case 5://合同已签收(不顯示)
+                    $html.="<td>".Yii::t("contract","contract has been signed")."</td>";
+                    $html.="<td>";
+                    $html.=TbHtml::button(Yii::t('contract','recall'), array('submit'=>Yii::app()->createUrl('oldContract/recall',array("index"=>$arr["his_id"]))));
+                    $html.="</td>";
+                    break;
+                default://
+                    $html.="<td>".Yii::t("contract","To be sent under contract")."</td>";
+                    $html.="<td>";
+                    $html.=TbHtml::button(Yii::t('contract','recall'), array('submit'=>Yii::app()->createUrl('oldContract/recall',array("index"=>$arr["his_id"]))));
+                    $html.="</td>";
+                    break;
             }
         }else{
-            $html.="<td>".Yii::t("contract","contract has been signed")."</td>";
             $html.="<td>";
-            $html.=TbHtml::button(Yii::t('contract','unsigned'), array('submit'=>Yii::app()->createUrl('oldContract/unsigned',array("index"=>$arr["his_id"]))));
+            $html.=Yii::t("contract","Contract not received");
+            $html.=TbHtml::button(Yii::t('contract','received'), array('submit'=>Yii::app()->createUrl('oldContract/have',array("index"=>$arr["his_id"]))));
+
+            $html.="</td>";
+            $html.="<td>";
+            $html.=TbHtml::button(Yii::t('contract','Make up'), array('submit'=>Yii::app()->createUrl('oldContract/unsigned',array("index"=>$arr["his_id"]))));
             $html.="</td>";
         }
         return $html;
@@ -282,6 +296,17 @@ class OldContractForm extends CFormModel
 
     public function saveRecall(){
         Yii::app()->db->createCommand()->delete('hr_sign_contract', "employee_id=:id and history_id = :his_id",array(":id"=>$this->id,":his_id"=>$this->his_id));
+	}
+
+    public function saveHasContract(){
+        Yii::app()->db->createCommand()->insert('hr_sign_contract',array(
+            'sign_type'=>$this->old_type,
+            'employee_id'=>$this->id,
+            'history_id'=>$this->his_id,
+            'lcu'=>Yii::app()->user->id,
+            'status_type'=>5,
+            'remark'=>"检查员工旧合同专属",
+        ));
 	}
 
 

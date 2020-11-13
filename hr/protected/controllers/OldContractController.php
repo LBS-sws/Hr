@@ -29,7 +29,7 @@ class OldContractController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('checked','edit','unsigned','recall','delete'),
+                'actions'=>array('checked','edit','unsigned','recall','delete','have'),
                 'expression'=>array('OldContractController','allowReadWrite'),
             ),
             array('allow',
@@ -128,6 +128,23 @@ class OldContractController extends Controller
             $model->attributes = $_POST['OldContractForm'];
             if ($model->validateUnsigned($index)) {
                 $model->saveUnsigned();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                $this->redirect(Yii::app()->createUrl('OldContract/edit',array('index'=>$model->id)));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('OldContract/edit',array('index'=>$model->id)));
+            }
+        }
+    }
+
+    public function actionHave($index)
+    {
+        if (isset($_POST['OldContractForm'])) {
+            $model = new OldContractForm($_POST['OldContractForm']['scenario']);
+            $model->attributes = $_POST['OldContractForm'];
+            if ($model->validateUnsigned($index)) {
+                $model->saveHasContract();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('OldContract/edit',array('index'=>$model->id)));
             } else {

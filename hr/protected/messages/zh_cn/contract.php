@@ -647,6 +647,7 @@ return array(
     'for sign'=>'待签收',
     'contract has been sent'=>'合同已寄出',
     'contract has been signed'=>'合同已签收',
+    'Contract not received'=>'合同未收到',
     'new contract'=>'新合同',
     'contract renewal'=>'续约合同',
     'retirement contract'=>'退休劳务合同',
@@ -664,6 +665,8 @@ return array(
     'examine'=>'检查',
     'recall'=>'撤回',
     'unsigned'=>'未签收',
+    'Make up'=>'补回',
+    'received'=>'已收到',
     'sign type'=>'合同签署状态',
 
     'assess history'=>'评估历史',
