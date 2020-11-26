@@ -131,7 +131,7 @@ class OldContractForm extends CFormModel
         $this->update = $update;
         $html = "";
         $nowList = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
-            ->where("id=:id and staff_status=0",array(":id"=>$staff_id))->queryRow();
+            ->where("id=:id",array(":id"=>$staff_id))->queryRow();
         $rows = Yii::app()->db->createCommand()->select("*")->from("hr_employee_operate")
             ->where("employee_id=:id and opr_type='contract'",array(":id"=>$staff_id))->order("lcd desc")->queryAll();
         $nowList["employee_id"] =$staff_id;
