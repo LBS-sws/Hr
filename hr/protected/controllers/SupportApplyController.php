@@ -25,7 +25,7 @@ class SupportApplyController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','delete','save','review','early'),//'renewal'續期功能不需要
+                'actions'=>array('new','edit','draft','delete','save','saveDraft','review','early'),//'renewal'續期功能不需要
                 'expression'=>array('SupportApplyController','allowReadWrite'),
             ),
             array('allow',
@@ -143,6 +143,27 @@ class SupportApplyController extends Controller
             $model = new SupportApplyForm("review");
             $model->attributes = $_POST['SupportApplyForm'];
             $model->status_type = 6;
+            if ($model->validate()) {
+                $model->saveData();
+                $model->setScenario($_POST['SupportApplyForm']['scenario']);
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                $this->redirect(Yii::app()->createUrl('supportApply/edit',array('index'=>$model->id)));
+            } else {
+                $model->status_type = $_POST['SupportApplyForm']["status_type"];
+                $model->setScenario($_POST['SupportApplyForm']['scenario']);
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->render('form',array('model'=>$model,));
+            }
+        }
+    }
+
+    public function actionSaveDraft()
+    {
+        if (isset($_POST['SupportApplyForm'])) {
+            $model = new SupportApplyForm("review");
+            $model->attributes = $_POST['SupportApplyForm'];
+            $model->status_type = 14;
             if ($model->validate()) {
                 $model->saveData();
                 $model->setScenario($_POST['SupportApplyForm']['scenario']);

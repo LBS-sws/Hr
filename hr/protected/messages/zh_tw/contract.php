@@ -666,5 +666,8 @@ return array(
 
     'assess history'=>'評估歷史',
     'Insert'=>'插入',
+    //2020-11-30
+    'save score'=>'保存評分',
+    'audit score'=>'提交評分',
     );
 ?>

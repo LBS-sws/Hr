@@ -671,5 +671,9 @@ return array(
 
     'assess history'=>'评估历史',
     'Insert'=>'插入',
+
+    //2020-11-30
+    'save score'=>'保存评分',
+    'audit score'=>'提交评分',
 );
 ?>

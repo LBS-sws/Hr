@@ -57,8 +57,12 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
             <?php endif ?>
         <?php endif ?>
 
-        <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))): ?>
-            <?php echo TbHtml::button('<span class="fa fa-gavel"></span> '.Yii::t('contract','review score'), array(
+        <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11,14))): ?>
+            <?php echo TbHtml::button('<span class="fa fa-gavel"></span> '.Yii::t('contract','save score'), array(
+                    'submit'=>Yii::app()->createUrl('supportApply/saveDraft'))
+            );
+            ?>
+            <?php echo TbHtml::button('<span class="fa fa-gavel"></span> '.Yii::t('contract','audit score'), array(
                     'id'=>'btnConfirm','data-toggle'=>'modal','data-target'=>'#confirmDialog',)
             );
             ?>
@@ -69,7 +73,7 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
 	</div>
 
             <div class="btn-group pull-right" role="group">
-                <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))): ?>
+                <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11,14))): ?>
                     <?php echo TbHtml::button('<span class="fa fa-plug"></span> '.Yii::t('contract','early end'), array(
                             'id'=>'btnEarly','data-url'=>Yii::app()->createUrl('supportApply/early'),
                             'data-label1'=>Yii::t('contract','early date'),
@@ -267,7 +271,7 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
             </div>
             <?php
             $ReviewHandleForm = new ReviewHandleForm();
-            echo $ReviewHandleForm->reviewHandleDiv($model,$model->scenario=='edit'&&!in_array($model->status_type,array(5,8,11)));
+            echo $ReviewHandleForm->reviewHandleDiv($model,$model->scenario=='edit'&&!in_array($model->status_type,array(5,8,11,14)));
             ?>
             <?php endif ?>
 		</div>
@@ -276,7 +280,7 @@ $this->pageTitle=Yii::app()->name . ' - supportApply';
 <?php
 $this->renderPartial('//site/history',array('tableHtml'=>SupportSearchForm::getHistoryHtml($model->id)));
 $this->renderPartial('//site/removedialog');
-if(in_array($model->status_type,array(5,8,11))){
+if(in_array($model->status_type,array(5,8,11,14))){
     $this->renderPartial('//site/earlydialog',array('form'=>$form,'model'=>$model));
 }
 ?>
@@ -322,7 +326,7 @@ $('#privilege').on('change',function(){
 ";
 
 
-if($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11))){ //如果需要評分
+if($model->scenario=='edit'&&in_array($model->status_type,array(5,8,11,14))){ //如果需要評分
 $js.="
 var xmpText = '<textarea rows=\"1\" name=\":name\" class=\"form-control\" placeholder=\"".Yii::t("contract","Scoring remark")."\"></textarea>';
 $('.changeSelect').change(function(){

@@ -102,7 +102,7 @@ class SupportApplyForm extends CFormModel
     public function validateIDEarly($attribute, $params){
         $city = Yii::app()->user->city;
         $row = Yii::app()->db->createCommand()->select("apply_end_date,apply_date")->from("hr_apply_support")
-            ->where("id=:id and apply_city='$city' and status_type in (5,8,11)",array(":id"=>$this->id))->queryRow();
+            ->where("id=:id and apply_city='$city' and status_type in (5,8,11,14)",array(":id"=>$this->id))->queryRow();
         if(!$row){
             $message = "支援单不存在，无法保存";
             $this->addError($attribute,$message);
@@ -138,7 +138,7 @@ class SupportApplyForm extends CFormModel
         if(!empty($this->tem_s_ist)){
             $city = Yii::app()->user->city;
             $rows = Yii::app()->db->createCommand()->select("tem_s_ist,change_num,tem_sum")->from("hr_apply_support")
-                ->where("id=:id and apply_city='$city' and status_type in (5,8,11)",array(":id"=>$this->id))->queryRow();
+                ->where("id=:id and apply_city='$city' and status_type in (5,8,11,14)",array(":id"=>$this->id))->queryRow();
             if($rows){
                 $this->tem_sum = intval($rows["tem_sum"]);
                 $this->review_sum = 0;
