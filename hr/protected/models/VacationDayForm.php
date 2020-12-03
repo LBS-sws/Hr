@@ -325,8 +325,9 @@ class VacationDayForm
                     $sumDay+=floatval($this->employee_list["year_day"])/12*$diffMonth;
                     break;
                 case 2://吉隆坡
-                    $num = floatval($this->employee_list["year_day"])/2;
-                    $sumDay = $sumDay>$num?$num:$sumDay;//累計年假不能超過自身年假的一半
+                    //$num = floatval($this->employee_list["year_day"])/2;//累計年假不能超過自身年假的一半
+                    $num = 15;//累計的年假不允許超過15天
+                    $sumDay = $sumDay>$num?$num:$sumDay;
                     $sumDay+=floatval($this->employee_list["year_day"])/365*$diffDay;
                     break;
             }
