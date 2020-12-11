@@ -9,6 +9,7 @@ class RptPennantExList extends CReport {
 			'position'=>array('label'=>Yii::t('contract','Leader'),'width'=>20,'align'=>'L'),
 			'entry_time'=>array('label'=>Yii::t('contract','Entry Time'),'width'=>25,'align'=>'L'),
 			'prize_date'=>array('label'=>Yii::t('fete','prize date'),'width'=>25,'align'=>'L'),
+			'customer_name'=>array('label'=>Yii::t('fete','customer name'),'width'=>25,'align'=>'L'),
 			'prize_pro'=>array('label'=>Yii::t('fete','prize pro'),'width'=>25,'align'=>'L'),
 			'prize_type'=>array('label'=>Yii::t('fete','prize')."/".Yii::t('fete','testimonial'),'width'=>30,'align'=>'L'),
             'type_num'=>array('label'=>Yii::t('fete','type number'),'width'=>25,'align'=>'L'),
@@ -76,6 +77,7 @@ class RptPennantExList extends CReport {
                 $temp['prize_pro'] = $prizeList[$row['prize_pro']];
                 $temp['prize_type'] = $prizeTypeList[$row['prize_type']];
                 $temp['type_num'] = $row['type_num'];
+                $temp['customer_name'] = $this->getCustomerNameToId($row['customer_name']);
                 $temp['lcd'] = date("Y/m/d",strtotime($row['lcd']));
                 $temp['lud'] = date("Y/m/d",strtotime($row['lud']));
 				$this->data[] = $temp;
@@ -83,6 +85,17 @@ class RptPennantExList extends CReport {
 		}
 		return true;
 	}
+
+    //獲取客戶列表
+    public function getCustomerNameToId($id){
+        $suffix = Yii::app()->params['envSuffix'];
+        $sql = "select name from swoper$suffix.swo_company WHERE id ='$id'";
+        $rows = Yii::app()->db->createCommand($sql)->queryRow();
+        if($rows){
+            return $rows["name"];
+        }
+        return $id;
+    }
 	
 	public function getReportName() {
 		$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria['CITY']) : '';
