@@ -53,9 +53,10 @@ $this->pageTitle=Yii::app()->name . ' - ConfigSystem Form';
 			<?php echo $form->hiddenField($model, 'id'); ?>
 
 			<div class="form-group">
-				<div class="col-sm-4 col-sm-offset-2">
-                    <p class="form-control-static">1、yearLeaveType的值：（0：正常年假計算 1、新加坡 2、吉隆坡）</p>
-                    <p class="form-control-static">2、personnelType的值：（0：正常加班請假 2、吉隆坡）</p>
+				<div class="col-sm-10 col-sm-offset-2">
+                    <p class="form-control-static">1、yearLeaveType的值：（0：正常年假計算 1：新加坡 2：吉隆坡）</p>
+                    <p class="form-control-static">2、personnelType的值：（0：正常加班請假 2：吉隆坡）</p>
+                    <p class="form-control-static">3、bossRewardType的值：（0：老總年度考核A、B、C三項  1：忽略C部分的老總年度考核）</p>
 				</div>
 			</div>
 

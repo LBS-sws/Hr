@@ -25,7 +25,6 @@ class BossAuditList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1,$type=1)
 	{
-        BossApplyList::resetBossListScore();
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select b.name,b.code,d.name as city_name,a.* from hr_boss_audit a 
@@ -74,14 +73,26 @@ class BossAuditList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
+                $bossRewardType = BossApplyForm::getBossRewardType($record['city']);
                 $arrList = $this->statusToColor($record,$type);
+                $record["results_a"]=empty($record['results_a'])?0:floatval($record['results_a'])*0.5;
+                if($bossRewardType == 1){
+                    $record['results_c'] = "-";
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.5;
+                    $record['results_sum'] = $record["results_a"]+$record["results_b"];
+                }else{
+                    $record['results_c'] = $record['results_c']."%";
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.35;
+                    $record['results_sum'] = $record["results_a"]+$record["results_b"]+$record['results_c'];
+                }
+                $record['results_sum'] = sprintf("%.2f",$record['results_sum']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'code'=>$record['code'],
 					'name'=>$record['name'],
-					'results_a'=>empty($record['results_a'])?0:floatval($record['results_a'])*0.5,
-					'results_b'=>empty($record['results_b'])?0:floatval($record['results_b'])*0.35,
-					'results_c'=>$record['results_c']."%",
+					'results_a'=>$record['results_a']."%",
+					'results_b'=>$record['results_b']."%",
+					'results_c'=>$record['results_c'],
 					'results_sum'=>$record['results_sum']."%",
 					'audit_year'=>$record['audit_year'],
 					'city_name'=>$record['city_name'],

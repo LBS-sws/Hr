@@ -92,11 +92,6 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     </div>
                 </div>
             </div>
-            <legend><?php echo Yii::t("contract","review number");?>：
-                <span id="sum_label">
-                    <?php echo $model->results_a."*50% + ".$model->results_b."*35% + ".$model->results_c."% = ".$model->results_sum."%";?>
-                </span>
-            </legend>
             <?php
             $bossApplyModel = new BossApplyForm();
             $tabs = $bossApplyModel->getTabList($model);
@@ -107,31 +102,11 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		</div>
 	</div>
 </section>
-<script>
-    function resetTableSum() {
-        var sum = 0;
-        var sum_a = 0;
-        var sum_b = 0;
-        var sum_c = (isNaN($("#three_sum").val())||$("#three_sum").val()=='')?0:parseFloat($("#three_sum").val());
-        $('#table_id_BossReviewA').find('input[name$="[one_12]"]').each(function () {
-            sum_a+=$(this).val()==''?0:parseFloat($(this).val());
-        });
-        $('#table_id_BossReviewB').find('input[name$="[two_9]"]').each(function () {
-            sum_b+=$(this).val()==''?0:parseFloat($(this).val());
-        });
-        sum = sum_a*0.5+sum_b*0.35+sum_c;
-        sum_a = sum_a.toFixed(2);
-        sum_b = sum_b.toFixed(2);
-        sum = sum.toFixed(2);
-        $("#sum_label").text(sum_a+"*50% + "+sum_b+"*35% + "+sum_c+"% = "+sum+"%");
-    }
-</script>
 <?php
 $this->renderPartial('//site/ject',array('model'=>$model,'form'=>$form,'rejectName'=>"reject_remark",'submit'=>Yii::app()->createUrl('bossAudit/reject',array('type'=>$this->boss_type))));
 ?>
 <?php
 $js = "
-resetTableSum();
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

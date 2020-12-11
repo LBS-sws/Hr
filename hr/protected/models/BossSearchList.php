@@ -74,13 +74,25 @@ class BossSearchList extends CListPageModel
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
                 //$arrList = $this->statusToColor($record['status_type']);
+                $bossRewardType = BossApplyForm::getBossRewardType($record['city']);
+                $record["results_a"]=empty($record['results_a'])?0:floatval($record['results_a'])*0.5;
+                if($bossRewardType == 1){
+                    $record['results_c'] = "-";
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.5;
+                    $record['results_sum'] = $record["results_a"]+$record["results_b"];
+                }else{
+                    $record['results_c'] = $record['results_c']."%";
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.35;
+                    $record['results_sum'] = $record["results_a"]+$record["results_b"]+$record['results_c'];
+                }
+                $record['results_sum'] = sprintf("%.2f",$record['results_sum']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'code'=>$record['code'],
 					'name'=>$record['name'],
-					'results_a'=>empty($record['results_a'])?0:floatval($record['results_a'])*0.5,
-					'results_b'=>empty($record['results_b'])?0:floatval($record['results_b'])*0.35,
-					'results_c'=>$record['results_c']."%",
+					'results_a'=>$record['results_a']."%",
+					'results_b'=>$record['results_b']."%",
+					'results_c'=>$record['results_c'],
 					'results_sum'=>$record['results_sum']."%",
 					'audit_year'=>$record['audit_year'],
                     'city_name'=>$record['city_name'],

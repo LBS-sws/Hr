@@ -55,7 +55,6 @@ class BossApplyList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
-	    $this->resetBossListScore();
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select b.name,b.code,a.* from hr_boss_audit a 
@@ -99,14 +98,26 @@ class BossApplyList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
+                $bossRewardType = BossApplyForm::getBossRewardType($record['city']);
                 $arrList = $this->statusToColor($record);
+                $record["results_a"]=empty($record['results_a'])?0:floatval($record['results_a'])*0.5;
+                if($bossRewardType == 1){
+                    $record['results_c'] = "-";
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.5;
+                    $record['results_sum'] = $record["results_a"]+$record["results_b"];
+                }else{
+                    $record['results_c'] = $record['results_c']."%";
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.35;
+                    $record['results_sum'] = $record["results_a"]+$record["results_b"]+$record['results_c'];
+                }
+                $record['results_sum'] = sprintf("%.2f",$record['results_sum']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'code'=>$record['code'],
 					'name'=>$record['name'],
-                    'results_a'=>empty($record['results_a'])?0:floatval($record['results_a'])*0.5,
-                    'results_b'=>empty($record['results_b'])?0:floatval($record['results_b'])*0.35,
-					'results_c'=>$record['results_c']."%",
+                    'results_a'=>$record['results_a']."%",
+                    'results_b'=>$record['results_b']."%",
+					'results_c'=>$record['results_c'],
 					'results_sum'=>$record['results_sum']."%",
 					'audit_year'=>$record['audit_year'],
 					'status_type'=>$arrList['status'],
@@ -173,45 +184,4 @@ class BossApplyList extends CListPageModel
         );
     }
 
-    //初始化所有老總考核的總分
-    public function resetBossListScore(){
-        $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.id,a.results_a,a.results_b,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
-            ->from("hr_boss_audit a")
-            ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("b.city in ($city_allow) and a.status_type !=2")->queryAll();
-        if($rows){
-            $model = new BossSearchForm();
-            foreach ($rows as $row){
-                $model->json_text = json_decode($row['json_text'],true);
-                $model->lcu = $row['lcu'];
-                $model->employee_id = $row['employee_id'];
-                $model->audit_year = $row['audit_year'];
-                $model->city = $row['city'];
-                $model->status_type = $row['status_type'];
-                $model->results_c = floatval($row["results_c"]);
-                //A類驗證
-                $bossReviewA = new BossReviewA($model);
-                $bossReviewA->validateJson($model);
-                $model->json_text = $bossReviewA->json_text;
-                $model->results_a = $bossReviewA->scoreSum;
-                //B類驗證
-                $bossReviewB = new BossReviewB($model);
-                $bossReviewB->validateJson($model);
-                $model->json_text = $bossReviewB->json_text;
-                $model->results_b = $bossReviewB->scoreSum;
-                if($model->results_a == floatval($row["results_a"])&&$model->results_b == floatval($row["results_b"])){
-                    continue;//數據沒有變動，不需要更新
-                }
-
-                $model->results_sum = $model->results_a*0.5+$model->results_b*0.35+$model->results_c;
-
-                Yii::app()->db->createCommand()->update('hr_boss_audit', array(
-                    'results_a'=>$model->results_a,
-                    'results_b'=>$model->results_b,
-                    'results_sum'=>$model->results_sum,
-                ), 'id=:id', array(':id'=>$row['id']));
-            }
-        }
-    }
 }

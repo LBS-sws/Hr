@@ -98,16 +98,6 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     </div>
                 </div>
             </div>
-            <?php if ($model->status_type==2): ?>
-                <legend>
-                    <?php echo Yii::t("contract","review number");?>：
-                    <span id="sum_label" data-num="no">
-                    <?php echo $model->results_a."*50% + ".$model->results_b."*35% + ".$model->results_c."% = ".$model->results_sum."%";?>
-                    </span>
-                </legend>
-            <?php else:?>
-                <legend><?php echo Yii::t("contract","review number");?>：<span id="sum_label">0*50% + 0*35% + 0% = 0%</span></legend>
-            <?php endif; ?>
             <?php
             $tabs = $model->getTabList($model,$model->status_type == 2);
             $this->widget('bootstrap.widgets.TbTabs', array(
@@ -135,11 +125,19 @@ $this->renderPartial('//site/removedialog');
         $('#table_id_BossReviewB').find('input[name$="[two_9]"]').each(function () {
             sum_b+=$(this).val()==''?0:parseFloat($(this).val());
         });
-        sum = sum_a*0.5+sum_b*0.35+sum_c;
-        sum_a = sum_a.toFixed(2);
-        sum_b = sum_b.toFixed(2);
-        sum = sum.toFixed(2);
-        $("#sum_label").text(sum_a+"*50% + "+sum_b+"*35% + "+sum_c+"% = "+sum+"%");
+        if($("#bossRewardType").data("num")==1){
+            sum = sum_a*0.5+sum_b*0.5;
+            sum_a = sum_a.toFixed(2);
+            sum_b = sum_b.toFixed(2);
+            sum = sum.toFixed(2);
+            $("#sum_label").text(sum_a+"*50% + "+sum_b+"*50% = "+sum+"%");
+        }else{
+            sum = sum_a*0.5+sum_b*0.35+sum_c;
+            sum_a = sum_a.toFixed(2);
+            sum_b = sum_b.toFixed(2);
+            sum = sum.toFixed(2);
+            $("#sum_label").text(sum_a+"*50% + "+sum_b+"*35% + "+sum_c+"% = "+sum+"%");
+        }
     }
     function changeCofWindow() {
         $(".changeCofWindow").mouseout(function () {
@@ -304,6 +302,7 @@ changeCofWindow();
         resetTableSum();
     });
     $('#three_count').trigger('keyup');
+    resetTableSum();
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

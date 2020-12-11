@@ -81,11 +81,6 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     </div>
                 </div>
             </div>
-            <legend><?php echo Yii::t("contract","review number");?>：
-                <span id="sum_label">
-                    <?php echo $model->results_a."*50% + ".$model->results_b."*35% + ".$model->results_c."% = ".$model->results_sum."%";?>
-                </span>
-            </legend>
             <?php
             $bossApplyModel = new BossApplyForm();
             $tabs = $bossApplyModel->getTabList($model,true);

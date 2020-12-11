@@ -81,12 +81,17 @@ class BossAuditForm extends CFormModel
             $this->json_text = $bossReviewB->json_text;
             $this->results_b = $bossReviewB->scoreSum;
             //C類驗證
-            $bossReviewC = new BossReviewC($this);
-            $bossReviewC->validateJson($this,$bool);
-            $this->json_text = $bossReviewC->json_text;
-            $this->results_c = $bossReviewC->scoreSum;
-
-            $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+            $bossRewardType = BossApplyForm::getBossRewardType($this->city);
+            if($bossRewardType == 1){
+                $this->results_c = 0;
+                $this->results_sum = $this->results_a*0.5+$this->results_b*0.5;
+            }else{
+                $bossReviewC = new BossReviewC($this);
+                $bossReviewC->validateJson($this,$bool);
+                $this->json_text = $bossReviewC->json_text;
+                $this->results_c = $bossReviewC->scoreSum;
+                $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+            }
         }
     }
 

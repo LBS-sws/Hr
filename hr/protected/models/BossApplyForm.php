@@ -14,9 +14,9 @@ class BossApplyForm extends CFormModel
 	public $reject_remark;
 	public $json_text=array();
 	public $results_sum;
-	public $results_a;
-	public $results_b;
-	public $results_c;
+	public $results_a=0;
+	public $results_b=0;
+	public $results_c=0;
 
 	public function attributeLabels()
 	{
@@ -113,12 +113,17 @@ class BossApplyForm extends CFormModel
             $this->json_text = $bossReviewB->json_text;
             $this->results_b = $bossReviewB->scoreSum;
             //C類驗證
-            $bossReviewC = new BossReviewC($this);
-            $bossReviewC->validateJson($this,$bool);
-            $this->json_text = $bossReviewC->json_text;
-            $this->results_c = $bossReviewC->scoreSum;
-
-            $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+            $bossRewardType = BossApplyForm::getBossRewardType($this->city);
+            if($bossRewardType == 1){
+                $this->results_c = 0;
+                $this->results_sum = $this->results_a*0.5+$this->results_b*0.5;
+            }else{
+                $bossReviewC = new BossReviewC($this);
+                $bossReviewC->validateJson($this,$bool);
+                $this->json_text = $bossReviewC->json_text;
+                $this->results_c = $bossReviewC->scoreSum;
+                $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+            }
         }
     }
 
@@ -209,6 +214,7 @@ class BossApplyForm extends CFormModel
         $one_5 = $one_5>0?$one_5*0.03:$one_5*0.08;
         $arr["two_6"] = $one_5;//落差系数
         $arr["two_7"] = $arr["two_3"]+$arr["two_6"];//实际系数
+        $arr["two_7"] = $arr["two_7"]<0?0:$arr["two_7"];
         $arr["two_9"] = ($arr["two_7"]*$one_11)."%";//得分
         return $arr;
     }
@@ -233,11 +239,25 @@ class BossApplyForm extends CFormModel
         $one_8 = $one_8>0?$one_8*0.03:$one_8*0.08;
         $arr["one_9"] = $one_8;//落差系数
         $arr["one_10"] = $arr["one_5"]+$arr["one_9"];//实际系数
+        $arr["one_10"] = $arr["one_10"]<0?0:$arr["one_10"];
         $arr["one_12"] = ($arr["one_10"]*$one_11)."%";//得分
         return $arr;
     }
 
-	public function getContractTabList(){
+    public function getBossRewardType($city){
+        $row = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
+            ->where('set_name="bossRewardType" and set_city=:city',array(":city"=>$city))->queryScalar();
+        return $row;
+    }
+
+	public function getContractTabList($model){
+        $html = "<legend>";
+        $html.=Yii::t("contract","review number")."：";
+        if($model->status_type == 2){
+            $html.='<span id="sum_label" data-num="no">';
+        }else{
+            $html.='<span id="sum_label" >';
+        }
         $list = array(
             array(
                 "name"=>Yii::t("contract","(A)Goal setting part"),
@@ -246,17 +266,31 @@ class BossApplyForm extends CFormModel
             array(
                 "name"=>Yii::t("contract","(B)Other details"),
                 "class"=>"BossReviewB"
-            ),
-            array(
-                "name"=>Yii::t("contract","(C)Optional project section"),
-                "class"=>"BossReviewC"
             )
         );
+        $row = $this->getBossRewardType($model->city);
+        if($row!=1){//系統配置該城市不需要C部分
+            $results = $model->results_a*0.5+$model->results_b*0.35+$model->results_c;
+            $results = sprintf("%.2f",$results);
+            $html.= $model->results_a."*50% + ".$model->results_b."*35% + ".$model->results_c."% = ".$results."%";
+            $html.= "</span><span id='bossRewardType' data-num='0'></span>";
+            $list[]=array(
+                "name"=>Yii::t("contract","(C)Optional project section"),
+                "class"=>"BossReviewC"
+            );
+        }else{
+            $results = $model->results_a*0.5+$model->results_b*0.5;
+            $results = sprintf("%.2f",$results);
+            $html.= $model->results_a."*50% + ".$model->results_b."*50% = ".$results."%";
+            $html.= "</span><span id='bossRewardType' data-num='1'></span>";
+        }
+        $html.="</legend>";
+        echo $html;//輸出總分
         return $list;
     }
 
     public function getTabList($model,$searchBool=false){
-        $list = $this->getContractTabList();
+        $list = $this->getContractTabList($model);
         $tabs = array();
         foreach ($list as $key=>$item){
             $className = $item["class"];
