@@ -107,7 +107,13 @@ class SupportAuditForm extends CFormModel
                 }
                 break;
             case 2://優先權
-                $startDate = date("Y/m/31", strtotime($this->apply_date." - 6 month"));
+                $month = floatval(date("m",strtotime($this->apply_date)));
+                if($month<7){
+                    $startDate = date("Y/01/00", strtotime($this->apply_date));
+                }else{
+                    $startDate = date("Y/07/00", strtotime($this->apply_date));
+                }
+                //$startDate = date("Y/m/31", strtotime($this->apply_date." - 6 month"));
                 $row = Yii::app()->db->createCommand()->select("support_code,apply_date,apply_end_date")->from("hr_apply_support")
                     ->where("date_format(apply_end_date,'%Y/%m/%d')>:apply_date and apply_city='$city' and status_type!=1 and privilege=2 and id!=:id",
                         array(":apply_date"=>$startDate,":id"=>$this->id))->queryRow();
@@ -254,8 +260,10 @@ class SupportAuditForm extends CFormModel
             $this->apply_length = $apply_length;
             $length_type = $this->length_type == 1?"month":"day";
             $this->apply_end_date = date("Y/m/d", strtotime("$applyDate +$apply_length $length_type"));
-            if($length_type == "day"){
-                $this->apply_end_date = date("Y/m/d", strtotime("$this->apply_end_date -1 day"));
+            $this->apply_end_date = date("Y/m/d", strtotime("$this->apply_end_date -1 day"));
+            if($this->privilege == 2){//后续添加，優先權的最後日期只能是本月的最後一天
+                $date = date("Y/m/01",strtotime($applyDate));
+                $this->apply_end_date = date("Y/m/d",strtotime("$date + 1 month - 1 day"));
             }
 
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_apply_support")

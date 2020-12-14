@@ -303,11 +303,11 @@ $js = Script::genDeleteData(Yii::app()->createUrl('supportApply/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = "
-$('#apply_date').on('change',function(){
+$('#apply_date,#privilege').on('change',function(){
     $.ajax({
         type: 'post',
         url: '".Yii::app()->createUrl('supportApply/ajaxEndDate')."',
-        data: {apply_date:$('#apply_date').val(),apply_length:$('#apply_length').val(),length_type:$('#length_type').val()},
+        data: {apply_date:$('#apply_date').val(),apply_length:$('#apply_length').val(),length_type:$('#length_type').val(),privilege:$('#privilege').val()},
         dataType: 'json',
         success: function(data){
             if(data.status == 1){

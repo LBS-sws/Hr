@@ -240,12 +240,15 @@ class SupportApplyController extends Controller
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
             $model = new SupportAuditForm();
             $support = isset($_POST['support'])?$_POST['support']:0;
+            $privilege = isset($_POST['privilege'])?$_POST['privilege']:0;
             $apply_date = $_POST['apply_date'];
             $apply_length = $_POST['apply_length'];
             $length_type = $_POST['length_type'] == 1?"month":"day";
             $endDate = date("Y/m/d",strtotime("$apply_date + $apply_length $length_type"));
-            if($length_type == "day"){
-                $endDate = date("Y/m/d",strtotime("$endDate - 1 day"));
+            $endDate = date("Y/m/d",strtotime("$endDate - 1 day"));
+            if($privilege == 2){//后续添加，優先權的最後日期只能是本月的最後一天
+                $date = date("Y/m/01",strtotime($apply_date));
+                $endDate = date("Y/m/d",strtotime("$date + 1 month - 1 day"));
             }
             $html = '';
             $model->apply_date = $apply_date;

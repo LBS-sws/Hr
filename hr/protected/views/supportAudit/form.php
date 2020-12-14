@@ -348,6 +348,7 @@ $('#privilege').on('change',function(){
         $('#privilege_user').hide();
     }
 });
+
 $('#SupportAuditForm_apply_city').on('change',function(){
     $.ajax({
         type: 'post',
@@ -361,11 +362,17 @@ $('#SupportAuditForm_apply_city').on('change',function(){
         }
     });
 });
-$('#apply_date,#apply_length,#length_type').on('change',function(){
+$('#apply_date,#apply_length,#length_type,#privilege').on('change',function(){
+    if($('#length_type').val()==1){
+        $('#apply_length').val(1);
+        $('#apply_length').prop('disabled',true);
+    }else{
+        $('#apply_length').prop('disabled',false);
+    }
     $.ajax({
         type: 'post',
         url: '".Yii::app()->createUrl('supportApply/ajaxEndDate')."',
-        data: {apply_date:$('#apply_date').val(),apply_length:$('#apply_length').val(),length_type:$('#length_type').val(),support:1},
+        data: {apply_date:$('#apply_date').val(),apply_length:$('#apply_length').val(),privilege:$('#privilege').val(),length_type:$('#length_type').val(),support:1},
         dataType: 'json',
         success: function(data){
             if(data.status == 1){

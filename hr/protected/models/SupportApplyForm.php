@@ -207,7 +207,12 @@ class SupportApplyForm extends CFormModel
                 $message = Yii::t('contract','Apply Time')."必须在$startDate 至 $endDate 之间";
                 $this->addError($attribute,$message);
             }else{
-                $this->apply_end_date = date("Y/m/d", strtotime("$applyDate +1 month"));
+                if($this->privilege == 2){
+                    $this->apply_end_date = $endDate;
+                }else{
+                    $this->apply_end_date = date("Y/m/d", strtotime("$applyDate +1 month - 1 day"));
+                }
+
             }
         }
     }
@@ -228,7 +233,13 @@ class SupportApplyForm extends CFormModel
                 }
                 break;
             case 2://優先權
-                $startDate = date("Y/m/31", strtotime($this->apply_date." - 6 month"));
+                $month = floatval(date("m",strtotime($this->apply_date)));
+                if($month<7){
+                    $startDate = date("Y/01/00", strtotime($this->apply_date));
+                }else{
+                    $startDate = date("Y/07/00", strtotime($this->apply_date));
+                }
+                //$startDate = date("Y/m/31", strtotime($this->apply_date." - 6 month"));
                 $row = Yii::app()->db->createCommand()->select("support_code,apply_date,apply_end_date")->from("hr_apply_support")
                     ->where("date_format(apply_end_date,'%Y/%m/%d')>:apply_date and apply_city='$city' and status_type!=1 and privilege=2 and id!=:id",
                         array(":apply_date"=>$startDate,":id"=>$this->id))->queryRow();
