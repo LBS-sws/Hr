@@ -1,5 +1,11 @@
 <?php
-$assStr = (isset($this->searchlinkparam["type"])&&$this->searchlinkparam["type"]==1)?"BA03":"BA05";
+if(isset($this->searchlinkparam["type"])&&$this->searchlinkparam["type"]==2){
+    $assStr = "BA05";
+}elseif(isset($this->searchlinkparam["type"])&&$this->searchlinkparam["type"]==3){
+    $assStr = "BA06";
+}else{
+    $assStr = "BA03";
+}
 ?>
 <tr class='clickable-row<?php echo $this->record['style']; ?>' data-href='<?php echo $this->getLink($assStr, 'bossAudit/edit', 'bossAudit/view', array('index'=>$this->record['id'],'type'=>$this->record['link_type']));?>'>
 
