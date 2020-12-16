@@ -521,7 +521,8 @@ class Email {
     public function addSupportPreEmail(){
         $email_address = array(
             array('email'=>"tak@lbsgroup.com.cn",'username'=>"tak"),
-            array('email'=>"shunman@lbsgroup.com.cn",'username'=>"shunman")
+            array('email'=>"shunman@lbsgroup.com.cn",'username'=>"shunman"),
+            array('email'=>"kittyzhou@lbsgroup.com.cn",'username'=>"kittyzhou")
         );
         foreach ($email_address as $email){
             if(!in_array($email["email"],$this->to_addr)){
