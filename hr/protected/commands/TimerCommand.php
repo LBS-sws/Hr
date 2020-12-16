@@ -208,28 +208,24 @@ class TimerCommand extends CConsoleCommand {
                         if(empty($bool)){
                             continue;//該城市沒有提示信息
                         }
-                        if(!empty($send["auth_list"])){
-                            if(!$this->arrSearchStr($send["auth_list"],$user["a_read_write"])){
-                                continue;//用戶權限不一致
-                            }
-                        }
-                        if(!empty($send["incharge"])){//incharge：1 需要boss身份  0：不需要驗證
-                            if(empty($user["incharge"])){
-                                continue;//該用戶不是boss
-                            }
+                        $inchargeBool = !empty($send["incharge"])&&!empty($user["incharge"]);//boss身份
+                        $authBool = !empty($send["auth_list"])&&$this->arrSearchStr($send["auth_list"],$user["a_read_write"]);
+                        if($inchargeBool==false&&$authBool==false){
+                            continue;
                         }
                     }
                     $html.=$send["title"];
                     $html.="<table border='1'>".$send["table_head"]."<tbody>";
+                    $tBody="";
                     foreach ($city_list as $city){//城市循環
                         if(in_array($city,$send["city_list"])){
-                            $html .= implode("",$send[$city]["table_body"]);
+                            $tBody .= implode("",$send[$city]["table_body"]);
                         }
                     }
-                    if(!empty($html)){
-                        $html.="</tbody></table><p>&nbsp;</p><br/>";
+                    $html=$html.$tBody."</tbody></table><p>&nbsp;</p><br/>";
+                    if(!empty($tBody)){
+                        $message.=$html;
                     }
-                    $message.=$html;
                 }
 
                 if(!empty($message)){ //如果有內容則發送郵件
@@ -635,7 +631,7 @@ class TimerCommand extends CConsoleCommand {
         if($rows){
             $description="<p>下列員工的加班單“批准”3天后,还未上传附件</p>";
             $arr = $this->getJobListToStaffList($description,"加班",$rows);
-            $arr["auth_list"] = '';
+            $arr["auth_list"] = array('ZE01');
             $arr["city_allow"] = false;
             $arr["incharge"] = 1;
             if(count($arr)>6){
@@ -658,7 +654,7 @@ class TimerCommand extends CConsoleCommand {
         if($rows){
             $description="<p>下列員工的加班單“批准”7天后,还未上传附件</p>";
             $arr = $this->getJobListToStaffList($description,"加班",$rows);
-            $arr["auth_list"] = '';
+            $arr["auth_list"] = array('ZE01');
             $arr["city_allow"] = true;
             $arr["incharge"] = 1;
             if(count($arr)>6){
@@ -680,7 +676,7 @@ class TimerCommand extends CConsoleCommand {
         if($rows){
             $description="<p>下列員工的加班單“批准”15天后,还未上传附件</p>";
             $arr = $this->getJobListToStaffList($description,"加班",$rows);
-            $arr["auth_list"] = '';
+            $arr["auth_list"] = array('ZE01');
             $arr["city_allow"] = true;
             $arr["incharge"] = 1;
             $arr["joeEmail"] = true;//僅限繞生收到郵件
@@ -704,7 +700,7 @@ class TimerCommand extends CConsoleCommand {
         if($rows){
             $description="<p>下列員工的请假單“批准”3天后,还未上传附件</p>";
             $arr = $this->getJobListToStaffList($description,"请假",$rows);
-            $arr["auth_list"] = '';
+            $arr["auth_list"] = array('ZE01');
             $arr["city_allow"] = false;
             $arr["incharge"] = 1;
             if(count($arr)>6){
@@ -727,7 +723,7 @@ class TimerCommand extends CConsoleCommand {
         if($rows){
             $description="<p>下列員工的请假單“批准”7天后,还未上传附件</p>";
             $arr = $this->getJobListToStaffList($description,"请假",$rows);
-            $arr["auth_list"] = '';
+            $arr["auth_list"] = array('ZE01');
             $arr["city_allow"] = true;
             $arr["incharge"] = 1;
             if(count($arr)>6){
@@ -749,7 +745,7 @@ class TimerCommand extends CConsoleCommand {
         if($rows){
             $description="<p>下列員工的请假單“批准”15天后,还未上传附件</p>";
             $arr = $this->getJobListToStaffList($description,"请假",$rows);
-            $arr["auth_list"] = '';
+            $arr["auth_list"] = array('ZE01');
             $arr["city_allow"] = true;
             $arr["incharge"] = 1;
             $arr["joeEmail"] = true;//僅限繞生收到郵件
