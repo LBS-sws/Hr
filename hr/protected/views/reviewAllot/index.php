@@ -60,6 +60,9 @@ $js = "
     $('.submit_year,.submit_year_type').on('change',function(){
         $('form:first').submit();
     });
+";
+if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
+    $js.= "
     function resetYearType(){
         var year = $('.submit_year:first').val();
         if(year == 2020){
@@ -70,6 +73,7 @@ $js = "
     }
     resetYearType();
 ";
+}
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
