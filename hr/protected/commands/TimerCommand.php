@@ -343,7 +343,7 @@ class TimerCommand extends CConsoleCommand {
             $arr = $this->getListToStaffList($description,$rows,false);
             $arr["auth_list"] = array("ZE09");
             $arr["city_allow"] = true;
-            $arr["incharge"] = 0;
+            $arr["incharge"] = 1;
             if(count($arr)>6){
                 $this->send_list[] = $arr;
             }
@@ -365,7 +365,7 @@ class TimerCommand extends CConsoleCommand {
             $arr = $this->getListToStaffList($description,$rows,false);
             $arr["auth_list"] = array("ZE09");
             $arr["city_allow"] = true;
-            $arr["incharge"] = 0;
+            $arr["incharge"] = 1;
             $arr["joeEmail"] = true;//繞生收到郵件
             if(count($arr)>6){
                 $this->send_list[] = $arr;
