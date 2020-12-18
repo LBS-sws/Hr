@@ -72,13 +72,21 @@ class ReviewAllotList extends CListPageModel
 
     public function getReviewDateTime($year,&$year_type){
         $dateTime = $year."/";
-        if($year == 2020){
-            $year_type = 1;
-            $dateTime.="12/31";
-        }elseif($year_type==1){
-            $dateTime.="06/30";
+        if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])) {//非台灣版
+            if($year == 2020){
+                $year_type = 1;
+                $dateTime.="12/31";
+            }elseif($year_type==1){
+                $dateTime.="06/30";
+            }else{
+                $dateTime.="12/31";
+            }
         }else{
-            $dateTime.="12/31";
+            if($year_type==1){
+                $dateTime.="06/30";
+            }else{
+                $dateTime.="12/31";
+            }
         }
 	    return $dateTime;
     }
