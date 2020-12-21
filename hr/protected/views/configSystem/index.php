@@ -36,7 +36,7 @@ $this->pageTitle=Yii::app()->name . ' - config System';
         </div></div>
     <?php
     $search = array(
-        'name',
+        'set_name',
     );
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('app','Config System'),

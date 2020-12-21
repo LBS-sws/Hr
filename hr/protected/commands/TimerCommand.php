@@ -32,23 +32,7 @@ class TimerCommand extends CConsoleCommand {
         $aaa = $command->update('hr_employee', array("z_index"=>3),"staff_status=0 and fix_time='fixation' and replace(end_time,'-', '/') <'$firstday'");//合同過期
         //echo "合同過期:$aaa<br>";
 
-// 因台灣版不適用而加的判斷
-        if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) {
-            //echo "員工退休年齡(男60 女50):$aaa<br>";
-            $manDate = date("Y/m/d", strtotime("-60 year"));
-            $womanDate = date("Y/m/d", strtotime("-50 year"));
-            $manDateMonth = date("Y/m/d", strtotime("-60 year + 1 month"));
-            $womanDateMonth = date("Y/m/d", strtotime("-50 year + 1 month"));
-            $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = -1 WHERE ";
-            $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDateMonth' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDateMonth' and a.sex='man'))";
-            Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示(一個月後過期)
-            $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
-            $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
-            Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
-            $this->retireToMonth();//員工退休後是否簽署退休合同（提前一個月）
-            $this->retireToWeek();//員工退休後是否簽署退休合同（提前一個星期）
-            $this->retireToAgo();//員工退休後是否簽署退休合同（超過退休年齡未修改合同）
-        }
+        $this->retireOutContract();//員工退休年齡
 
         $this->signedContract();//是否簽署合同
         $this->signedContractEnd();//是否簽署合同
@@ -77,6 +61,39 @@ class TimerCommand extends CConsoleCommand {
         $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
         $this->resetBossListScore();//老总年度考核的總分重新計算
         echo "end\r\n";
+    }
+
+    //員工退休年齡
+    private function retireOutContract(){
+        // 因台灣版不適用而加的判斷
+        if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) {
+            $row = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
+                ->where('set_name="retirementAgeType"')->queryScalar();
+            switch ($row){
+                case 1://新加坡-62岁
+                    $manDate = date("Y/m/d", strtotime("-62 year"));
+                    $womanDate = date("Y/m/d", strtotime("-62 year"));
+                    break;
+                case 2://吉隆坡-60岁
+                    $manDate = date("Y/m/d", strtotime("-60 year"));
+                    $womanDate = date("Y/m/d", strtotime("-60 year"));
+                    break;
+                default://echo "員工退休年齡(男60 女50):$aaa<br>";
+                    $manDate = date("Y/m/d", strtotime("-60 year"));
+                    $womanDate = date("Y/m/d", strtotime("-50 year"));
+            }
+            $manDateMonth = date("Y/m/d", strtotime("$manDate + 1 month"));
+            $womanDateMonth = date("Y/m/d", strtotime("$womanDate + 1 month"));
+            $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = -1 WHERE ";
+            $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDateMonth' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDateMonth' and a.sex='man'))";
+            Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示(一個月後過期)
+            $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
+            $sql.= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
+            Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
+            $this->retireToMonth($manDate,$womanDate);//員工退休後是否簽署退休合同（提前一個月）
+            $this->retireToWeek($manDate,$womanDate);//員工退休後是否簽署退休合同（提前一個星期）
+            $this->retireToAgo($manDate,$womanDate);//員工退休後是否簽署退休合同（超過退休年齡未修改合同）
+        }
     }
 
     //入职、离职总览电邮
@@ -248,12 +265,12 @@ class TimerCommand extends CConsoleCommand {
     }
 
     //員工退休後是否簽署退休合同（提前一個月）
-    private function retireToMonth(){
+    private function retireToMonth($manDatePro,$womanDatePro){
         $command = Yii::app()->db->createCommand();
-        $manDate = date("Y/m/d", strtotime("-60 year + 1 month"));
-        $womanDate = date("Y/m/d", strtotime("-50 year + 1 month"));
-        $firstManDay = date("Y/m/d",strtotime("-60 year + 1 week"));
-        $firstWomanDay = date("Y/m/d",strtotime("-50 year + 1 week"));
+        $manDate = date("Y/m/d", strtotime("$manDatePro + 1 month"));
+        $womanDate = date("Y/m/d", strtotime("$womanDatePro + 1 month"));
+        $firstManDay = date("Y/m/d",strtotime("$manDatePro + 1 week"));
+        $firstWomanDay = date("Y/m/d",strtotime("$womanDatePro + 1 week"));
         $sql = "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
         if($rows){
@@ -269,12 +286,12 @@ class TimerCommand extends CConsoleCommand {
     }
 
     //員工退休後是否簽署退休合同（一個星期）
-    private function retireToWeek(){
+    private function retireToWeek($manDatePro,$womanDatePro){
         $command = Yii::app()->db->createCommand();
-        $manDate = date("Y/m/d", strtotime("-60 year + 1 week"));
-        $womanDate = date("Y/m/d", strtotime("-50 year + 1 week"));
-        $firstManDay = date("Y/m/d",strtotime("-60 year"));
-        $firstWomanDay = date("Y/m/d",strtotime("-50 year"));
+        $manDate = date("Y/m/d", strtotime("$manDatePro + 1 week"));
+        $womanDate = date("Y/m/d", strtotime("$womanDatePro + 1 week"));
+        $firstManDay = $manDatePro;
+        $firstWomanDay = $womanDatePro;
         $sql = "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') >'$firstWomanDay' and replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') >'$firstManDay' and replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
         if($rows){
@@ -290,10 +307,8 @@ class TimerCommand extends CConsoleCommand {
     }
 
     //員工退休後是否簽署退休合同（超過退休年齡）
-    private function retireToAgo(){
+    private function retireToAgo($manDate,$womanDate){
         $command = Yii::app()->db->createCommand();
-        $manDate = date("Y/m/d", strtotime("-60 year"));
-        $womanDate = date("Y/m/d", strtotime("-50 year"));
         $sql = "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
         $rows = $command->select("a.*,b.name as contract_name")->from("hr_employee a")->leftJoin("hr_contract b","a.contract_id=b.id")->where($sql)->queryAll();
         if($rows){

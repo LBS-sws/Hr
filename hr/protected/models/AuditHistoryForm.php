@@ -546,8 +546,21 @@ class AuditHistoryForm extends CFormModel
 
         if (!isset(Yii::app()->params['retire']) || Yii::app()->params['retire']==true) {
             //echo "員工退休年齡(男60 女50):$aaa<br>";
-            $manDate = date("Y/m/d", strtotime("-60 year"));
-            $womanDate = date("Y/m/d", strtotime("-50 year"));
+            $row = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
+                ->where('set_name="retirementAgeType"')->queryScalar();
+            switch ($row){
+                case 1://新加坡-62岁
+                    $manDate = date("Y/m/d", strtotime("-62 year"));
+                    $womanDate = date("Y/m/d", strtotime("-62 year"));
+                    break;
+                case 2://吉隆坡-60岁
+                    $manDate = date("Y/m/d", strtotime("-60 year"));
+                    $womanDate = date("Y/m/d", strtotime("-60 year"));
+                    break;
+                default://echo "員工退休年齡(男60 女50):$aaa<br>";
+                    $manDate = date("Y/m/d", strtotime("-60 year"));
+                    $womanDate = date("Y/m/d", strtotime("-50 year"));
+            }
             $sql = "UPDATE hr_employee a LEFT JOIN hr_contract b ON a.contract_id = b.id SET a.z_index = 0 WHERE ";
             $sql .= "a.birth_time is not null and a.birth_time != '' and a.staff_status=0 and b.retire=0 and ((replace(a.birth_time,'-', '/') <='$womanDate' and a.sex='woman') or (replace(a.birth_time,'-', '/') <='$manDate' and a.sex='man'))";
             $aa = Yii::app()->db->createCommand($sql)->execute();//要退休的員工前排顯示
