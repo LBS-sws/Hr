@@ -342,19 +342,19 @@ class TimerCommand extends CConsoleCommand {
         }
     }
 
-    //員工錄入后10天提示是否簽署合同
+    //員工錄入后30天提示是否簽署合同
     private function signedContract(){
         $command = Yii::app()->db->createCommand();
         $command->reset();
         $day = date("Y/m/d");
-        $firstDay = date("Y/m/d",strtotime("$day - 10 day"));
-        $endDay = date("Y/m/d",strtotime("$day - 14 day"));
+        $firstDay = date("Y/m/d",strtotime("$day - 30 day"));
+        $endDay = date("Y/m/d",strtotime("$day - 35 day"));
         $sql = "a.status_type in (0,1,4) and date_format(a.lcd,'%Y/%m/%d') <='$firstDay' and date_format(a.lcd,'%Y/%m/%d') >'$endDay'";
         $rows = $command->select("b.*")->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where($sql)->queryAll();
         if($rows){
-            $description = "<p>下列员工已超過10天未寄出合同：</p>";
+            $description = "<p>下列员工已超過30天未寄出合同：</p>";
             $arr = $this->getListToStaffList($description,$rows,false);
             $arr["auth_list"] = array("ZE09");
             $arr["city_allow"] = true;
@@ -365,18 +365,18 @@ class TimerCommand extends CConsoleCommand {
         }
     }
 
-    //員工錄入后14天提示是否簽署合同
+    //員工錄入后35天提示是否簽署合同
     private function signedContractEnd(){
         $command = Yii::app()->db->createCommand();
         $command->reset();
         $firstDay = date("Y/m/d");
-        $firstDay = date("Y/m/d",strtotime("$firstDay - 14 day"));
+        $firstDay = date("Y/m/d",strtotime("$firstDay - 35 day"));
         $sql = "a.status_type in (0,1,4) and date_format(a.lcd,'%Y/%m/%d') <='$firstDay'";
         $rows = $command->select("b.*")->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where($sql)->queryAll();
         if($rows){
-            $description = "<p>下列员工已超過14天未寄出合同：</p>";
+            $description = "<p>下列员工已超過35天未寄出合同：</p>";
             $arr = $this->getListToStaffList($description,$rows,false);
             $arr["auth_list"] = array("ZE09");
             $arr["city_allow"] = true;
