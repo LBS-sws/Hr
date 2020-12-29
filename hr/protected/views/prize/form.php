@@ -60,6 +60,13 @@ $this->pageTitle=Yii::app()->name . ' - Prize Form';
             ?>
         <?php endif; ?>
 	</div>
+            <?php if (Yii::app()->user->validFunction('ZR18')): ?>
+                <div class="btn-group pull-right" role="group">
+                    <?php echo TbHtml::button('<span class="fa fa-backward"></span> '.Yii::t('contract','send back'), array(
+                        'submit'=>Yii::app()->createUrl('prize/back')));
+                    ?>
+                </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">

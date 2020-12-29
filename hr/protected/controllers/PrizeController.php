@@ -40,6 +40,10 @@ class PrizeController extends Controller
                 'actions'=>array('AjaxCity','printImage'),
                 'expression'=>array('PrizeController','allowWrite'),
             ),
+            array('allow',
+                'actions'=>array('back'),
+                'expression'=>array('PrizeController','allowBack'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
@@ -52,6 +56,10 @@ class PrizeController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('ZE08');
+    }
+
+    public static function allowBack() {
+        return Yii::app()->user->validFunction('ZR18');
     }
 
     public static function allowWrite() {
@@ -148,6 +156,22 @@ class PrizeController extends Controller
                 $model->audit = false;
                 $this->render('form',array('model'=>$model,));
             }
+        }
+    }
+
+    //退回
+    public function actionBack()
+    {
+        $model = new PrizeForm('back');
+        $model->attributes = $_POST['PrizeForm'];
+        if ($model->validateID()) {
+            $model->saveData();
+            Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','finish to send back'));
+            $this->redirect(Yii::app()->createUrl('prize/edit',array('index'=>$model->id)));
+        } else {
+            $message = CHtml::errorSummary($model);
+            Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            $this->redirect(Yii::app()->createUrl('prize/edit',array('index'=>$model->id)));
         }
     }
 

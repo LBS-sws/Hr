@@ -78,6 +78,18 @@ class PrizeForm extends CFormModel
 		);
 	}
 
+	public function validateID(){
+        $row = Yii::app()->db->createCommand()->select("id")
+            ->from("hr_prize")->where("id=:id and status = 3",array(":id"=>$this->id))->queryRow();
+        if(!$row){
+            $message = "錦旗異常，請於管理員聯繫";
+            $this->addError("id",$message);
+            return false;
+        }else{
+            return true;
+        }
+    }
+
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
@@ -165,6 +177,13 @@ class PrizeForm extends CFormModel
 							status = :status, 
 							lcd = :lcd, 
 							luu = :luu
+						where id = :id
+						";
+                break;
+            case 'back':
+                $sql = "update hr_prize set
+							remark = '', 
+							status = 0
 						where id = :id
 						";
                 break;

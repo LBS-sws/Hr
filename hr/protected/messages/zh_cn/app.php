@@ -186,6 +186,7 @@ return array(
     'Audit sign contract'=>'合同签收',
     'delete contract for finish'=>'删除已完成的合同签收',
     'Review of old contracts'=>'检查员工旧合同',
+    'Back to prize'=>'退回锦旗',
     //沈超添加结束
 );
 ?>

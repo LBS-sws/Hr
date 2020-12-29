@@ -18,4 +18,5 @@ return array(
 	'sales group manage'=>array('access'=>'ZR14',),//銷售分組管理
 	'Back to boss review'=>array('access'=>'ZR16',),//退回老總年度考核
 	'delete contract for finish'=>array('access'=>'ZR17',),//刪除已完成的合同簽收
+	'Back to prize'=>array('access'=>'ZR18',),//退回已完成的錦旗
 );
