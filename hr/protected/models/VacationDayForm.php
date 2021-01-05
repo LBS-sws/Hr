@@ -346,9 +346,10 @@ class VacationDayForm
             ->where("employee_id=:employee_id and year=:year",array(":employee_id"=>$this->employee_id,":year"=>$foreachYear))->queryScalar();
         $sumDay+=$sum;
         //用掉的年假
-        $sum = Yii::app()->db->createCommand()->select("sum(log_time)")->from("hr$suffix.hr_employee_leave")
-            ->where("employee_id=:employee_id and status IN (1,2,4) and date_format(start_time,'%Y')=:year",
-                array(":employee_id"=>$this->employee_id,":year"=>$foreachYear))->queryScalar();
+        $sum = Yii::app()->db->createCommand()->select("sum(a.log_time)")->from("hr$suffix.hr_employee_leave a")
+            ->leftJoin("hr_vacation b","a.vacation_id = b.id")
+            ->where("b.vaca_type=:vaca_type and a.employee_id=:employee_id and a.status IN (1,2,4) and date_format(a.start_time,'%Y')=:year",
+                array(":employee_id"=>$this->employee_id,":year"=>$foreachYear,":vaca_type"=>$this->year_type))->queryScalar();
         $sumDay-=$sum;
     }
 
