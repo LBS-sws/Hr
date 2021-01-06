@@ -94,6 +94,9 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
 <?php
 $js = "
+";
+if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
+    $js = "
     $('#select_year').on('change',function(){
         var year = $(this).val();
         if(year < 2020){
@@ -110,6 +113,7 @@ $js = "
         }
     });
 ";
+}
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genLookupSearchEx();
 Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
