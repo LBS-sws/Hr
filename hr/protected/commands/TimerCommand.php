@@ -34,11 +34,15 @@ class TimerCommand extends CConsoleCommand {
 
         $this->retireOutContract();//員工退休年齡
 
-        $this->signedContract();//是否簽署合同
-        $this->signedContractEnd();//是否簽署合同
-        $this->signedContractFinish();//是否簽署合同
-        $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
-        $this->contractAgoSendEmail();//合同過期10天后（合同已過期）給饒總發送郵件
+        $signedContractType = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
+            ->where('set_name="signedContractType"')->queryScalar();
+        if(empty($signedContractType)){//需要合同寄出功能
+            $this->signedContract();//是否簽署合同
+            $this->signedContractEnd();//是否簽署合同
+            $this->signedContractFinish();//是否簽署合同
+            $this->contractCitySendEmail();//員工合同7天將過期(合同未過期)
+            $this->contractAgoSendEmail();//合同過期10天后（合同已過期）給饒總發送郵件
+        }
 
         //$this->contractAgainSendEmail();//合同续期10天后未更新附加提示，城市、老总(與合同寄出功能重複，不執行該提示)
 

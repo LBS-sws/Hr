@@ -58,6 +58,7 @@ $this->pageTitle=Yii::app()->name . ' - ConfigSystem Form';
                     <p class="form-control-static">2、personnelType的值：（0：正常加班請假 2：吉隆坡。）</p>
                     <p class="form-control-static">3、bossRewardType的值：（0：老總年度考核A、B、C三項。  1：忽略C部分的老總年度考核。）</p>
                     <p class="form-control-static">4、retirementAgeType的值：（0：正常退休年龄-男60 女50。 1：新加坡-62岁。 2：吉隆坡-60岁。）台湾没有退休年龄</p>
+                    <p class="form-control-static">5、signedContractType的值：（0：需要合同寄出功能。 1：不需要合同寄出功能 -> 新增、變更員工後不會提示需要發送員工合同。）</p>
 				</div>
 			</div>
 

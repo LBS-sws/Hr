@@ -345,7 +345,9 @@ class AuditForm extends CFormModel
 	}
 
     private function signContract(){
-        if($this->getScenario() == "audit"){
+        $signedContractType = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
+            ->where('set_name="signedContractType"')->queryScalar();
+        if(empty($signedContractType)&&$this->getScenario() == "audit"){
             Yii::app()->db->createCommand()->insert('hr_sign_contract',array(
                 'employee_id'=>$this->id,
                 'status_type'=>0,
