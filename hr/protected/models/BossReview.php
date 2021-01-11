@@ -319,7 +319,7 @@ class BossReview
             foreach ($rows as $key =>$row){
                 $row["valueOne"] = floatval($row["valueOne"]);
                 $valueTwo = $key==0?$valueTwo:floatval($rows[$key-1]["valueTwo"]);
-                $count = empty($valueTwo)||$value?0:$row["valueOne"]/$valueTwo;
+                $count = empty($valueTwo)||$valueTwo==0?0:$row["valueOne"]/$valueTwo;
                 $count*=100;
                 $sum+=$count;
             }
