@@ -116,8 +116,10 @@ class BossReviewC
 
         if(isset($this->json_text["three"]["list"])){
             $html = str_replace(":rowCount:",count($this->json_text["three"]["list"]),$html);
+            $listKey = 0;
             foreach ($this->json_text["three"]["list"] as $key =>$list){
-                $html.=$this->getRowHtml($this->ready,$list,$key);
+                $html.=$this->getRowHtml($this->ready,$list,$listKey);
+                $listKey++;
             }
         }
 
