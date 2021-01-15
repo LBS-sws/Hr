@@ -34,6 +34,12 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
             </div>
 
             <div class="btn-group pull-right" role="group">
+
+                <?php if (Yii::app()->user->validFunction('ZR19')): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-backward"></span> '.Yii::t('contract','send back'), array(
+                        'submit'=>Yii::app()->createUrl('departure/back')));
+                    ?>
+                <?php endif ?>
                 <?php
                 $counter = ($model->no_of_attm['signc'] > 0) ? ' <span id="docsignc" class="label label-info">'.$model->no_of_attm['signc'].'</span>' : ' <span id="docsignc"></span>';
                 echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('contract','sign attachment').$counter, array(

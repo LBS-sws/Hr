@@ -187,6 +187,7 @@ return array(
     'delete contract for finish'=>'删除已完成的合同签收',
     'Review of old contracts'=>'检查员工旧合同',
     'Back to prize'=>'退回锦旗',
+    'Back to leave office'=>'退回已离职员工',
     //沈超添加结束
 );
 ?>

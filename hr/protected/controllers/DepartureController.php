@@ -36,6 +36,10 @@ class DepartureController extends Controller
                 'actions'=>array('index','view','edit','fileDownload'),
                 'expression'=>array('DepartureController','allowReadOnly'),
             ),
+            array('allow',
+                'actions'=>array('back'),
+                'expression'=>array('DepartureController','allowBack'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
@@ -47,6 +51,9 @@ class DepartureController extends Controller
     }
     public static function allowReadWrite() {
         return Yii::app()->user->validRWFunction('ZE01');
+    }
+    public static function allowBack() {
+        return Yii::app()->user->validFunction('ZR19');
     }
 
     public function actionIndex($pageNum=0){
@@ -72,6 +79,21 @@ class DepartureController extends Controller
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $this->render('form',array('model'=>$model,));
+        }
+    }
+
+    public function actionBack()
+    {
+        $model = new DepartureForm('back');
+        $model->attributes = $_POST['DepartureForm'];
+        if ($model->validateBack()) {
+            $model->saveData();
+            Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','finish to send back'));
+            $this->redirect(Yii::app()->createUrl('Departure/index'));
+        } else {
+            $message = CHtml::errorSummary($model);
+            Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            $this->redirect(Yii::app()->createUrl('Departure/edit',array('index'=>$model->id)));
         }
     }
 

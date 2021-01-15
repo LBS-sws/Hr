@@ -199,6 +199,32 @@ class DepartureForm extends CFormModel
 	}
 
 
+    //
+    public function validateBack(){
+        $row = Yii::app()->db->createCommand()->select()->from("hr_employee")
+            ->where('id=:id and staff_status = -1', array(':id'=>$this->id))->queryRow();
+        if($row){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    //
+    public function saveData(){
+        $uid = Yii::app()->user->id;
+        Yii::app()->db->createCommand()->update('hr_employee', array(
+            'staff_status'=>0,
+        ), 'id=:id', array(':id'=>$this->id));
+        //記錄
+        Yii::app()->db->createCommand()->insert('hr_employee_history', array(
+            "employee_id"=>$this->id,
+            "status"=>"send back",
+            "lcu"=>$uid,
+            "lcd"=>date('Y-m-d H:i:s'),
+        ));
+    }
+
+
     //獲取可用公司
     public function getCompanyToCity(){
 	    $arr = array(""=>"");
