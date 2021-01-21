@@ -59,7 +59,7 @@ class Counter {
         $department = empty($staffList)?0:$staffList["department"];
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
+            ->where("a.status in (1) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
         return $count;
     }
 //请假审核(部門)
@@ -68,7 +68,7 @@ class Counter {
         $department = empty($staffList)?0:$staffList["department"];
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
+            ->where("a.status in (1) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
         return $count;
     }
 //加班审核(人事)
@@ -76,7 +76,7 @@ class Counter {
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
+            ->where("a.status in (1) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //请假审核(人事)
@@ -84,7 +84,7 @@ class Counter {
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
+            ->where("a.status in (1) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //员工录入(社保信息)
@@ -107,7 +107,7 @@ class Counter {
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
+            ->where("a.status in (1) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //请假审核(員工)
@@ -115,7 +115,7 @@ class Counter {
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
+            ->where("a.status in (1) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //入職審核(審核)
@@ -144,7 +144,7 @@ class Counter {
         $city_allow = Yii::app()->user->city_allow();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
+            ->where("a.status in (1) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
         return $count;
     }
 //请假审核(審核)
@@ -152,7 +152,7 @@ class Counter {
         $city_allow = Yii::app()->user->city_allow();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1,3) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
+            ->where("a.status in (1) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
         return $count;
     }
 //奖金审核(審核)
@@ -178,7 +178,7 @@ class Counter {
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_review_h a")
             ->leftJoin("hr_review b","a.review_id = b.id")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
-            ->where("a.handle_id =:handle_id and a.status_type in (1,4)",array(":handle_id"=>$employee_id))->queryScalar();
+            ->where(" c.staff_status = 0 and a.handle_id =:handle_id and a.status_type in (1,4)",array(":handle_id"=>$employee_id))->queryScalar();
         return $count;
     }
 //考核申請(老總第二次提交)
