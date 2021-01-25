@@ -85,7 +85,7 @@ class BossReviewA extends BossReview
             case "one_two"://年利润额增长目标
                 $value = $this->value($this->city,$this->audit_year-2,"00067");
                 $value = floatval($value);
-                $value = empty($value)?0:($this->json_text[$type]["one_1"]-$value)/$value;
+                $value = empty($value)?0:($this->json_text[$type]["one_1"]-$value)/abs($value);
                 $this->json_text[$type][$str] = floatval(sprintf("%.4f",$value))*100;
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "one_three"://年新业务生意额目标
@@ -144,7 +144,11 @@ class BossReviewA extends BossReview
     public function getPlanYearRate($type,$str){
         if(in_array($type,array("one_one","one_two","one_three","one_four","one_five","one_nine"))){
             $value = floatval($this->json_text[$type]["one_1"]);
-            $value = empty($value)?0:($this->json_text[$type]["one_3"]-$value)/$value;
+            if($type == "one_two"){
+                $value = empty($value)?0:($this->json_text[$type]["one_3"]-$value)/abs($value);
+            }else{
+                $value = empty($value)?0:($this->json_text[$type]["one_3"]-$value)/$value;
+            }
             $value = round($value*100);
             $name = $this->className."[json_text][".$type."]"."[".$str."]";
             $html ="<input readonly type='text' name='$name' value='$value%' class='form-control planYearRate'/>";
@@ -209,7 +213,11 @@ class BossReviewA extends BossReview
         if(in_array($type,array("one_one","one_two","one_three","one_four","one_five"))){
             //var_dump($this->json_text[$type]["one_1"]);die();
             $rate = floatval($this->json_text[$type]["one_1"]);
-            $rate = empty($rate)?0:($this->json_text[$type]["one_6"]-$rate)/$rate;
+            if($type == "one_two"){
+                $rate = empty($rate)?0:($this->json_text[$type]["one_6"]-$rate)/abs($rate);
+            }else{
+                $rate = empty($rate)?0:($this->json_text[$type]["one_6"]-$rate)/$rate;
+            }
             $this->json_text[$type][$str] = floatval(sprintf("%.2f",$rate))*100;
             return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
         }else{

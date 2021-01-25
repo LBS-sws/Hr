@@ -226,7 +226,11 @@ class BossApplyForm extends CFormModel
             $one_4 = $value;
             $arr["one_4"]= "\\";
         }else{
-            $one_4 = empty($one_0)?0:($value-$one_0)/$one_0;
+            if($name=="one_two"){
+                $one_4 = empty($one_0)?0:($value-$one_0)/abs($one_0);
+            }else{
+                $one_4 = empty($one_0)?0:($value-$one_0)/$one_0;
+            }
             $one_4 = round($one_4*100);
             $arr["one_4"]= $one_4."%";
         }
