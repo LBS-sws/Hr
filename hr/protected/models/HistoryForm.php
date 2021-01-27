@@ -174,6 +174,8 @@ class HistoryForm extends CFormModel
             'effect_time'=>Yii::t('contract','Effect Time'),
             'wechat'=>Yii::t('contract','wechat'),
             'urgency_card'=>Yii::t('contract','urgency card'),
+            'address_code'=>Yii::t('contract','Old Address').Yii::t('contract','postcode'),
+            'contact_address_code'=>Yii::t('contract','Contact Address').Yii::t('contract','postcode'),
 		);
 	}
 

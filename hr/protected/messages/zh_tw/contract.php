@@ -669,5 +669,10 @@ return array(
     //2020-11-30
     'save score'=>'保存評分',
     'audit score'=>'提交評分',
+
+    'update ago'=>'修改前',
+    'update new'=>'修改後',
+    'history ago'=>'歷史信息',
+    'history new'=>'現在信息',
     );
 ?>

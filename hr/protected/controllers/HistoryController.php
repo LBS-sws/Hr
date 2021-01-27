@@ -82,11 +82,13 @@ class HistoryController extends Controller
     public function actionDetail($index)
     {
         $model = new HistoryForm("view");
+        $oldModel = new EmployeeForm('view');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $model->staff_status = 2;
-            $this->render('detail',array('model'=>$model,));
+            $oldModel->retrieveData($model->employee_id);
+            $this->render('detail',array('model'=>$model,'oldModel'=>$oldModel));
         }
     }
 

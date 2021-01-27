@@ -70,20 +70,24 @@ class AuditHistoryController extends Controller
     public function actionEdit($index)
     {
         $model = new AuditHistoryForm('edit');
+        $oldModel = new EmployeeForm('view');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
-            $this->render('form',array('model'=>$model,));
+            $oldModel->retrieveData($model->employee_id);
+            $this->render('form',array('model'=>$model,'oldModel'=>$oldModel));
         }
     }
 
     public function actionView($index)
     {
         $model = new AuditHistoryForm('view');
+        $oldModel = new EmployeeForm('view');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
-            $this->render('form',array('model'=>$model,));
+            $oldModel->retrieveData($model->employee_id);
+            $this->render('form',array('model'=>$model,'oldModel'=>$oldModel));
         }
     }
     //審核通過
@@ -100,7 +104,7 @@ class AuditHistoryController extends Controller
                 $message = CHtml::errorSummary($model);
                 $model->historyList = AuditHistoryForm::getStaffHistoryList($model->employee_id);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->render('form',array('model'=>$model,));
+                $this->redirect(Yii::app()->createUrl('AuditHistory/edit',array('index'=>$model->id)));
             }
         }
     }

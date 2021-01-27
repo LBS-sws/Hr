@@ -171,6 +171,8 @@ class AuditHistoryForm extends CFormModel
             'group_type'=>Yii::t('contract','group type'),
             'wechat'=>Yii::t('contract','wechat'),
             'urgency_card'=>Yii::t('contract','urgency card'),
+            'address_code'=>Yii::t('contract','Old Address').Yii::t('contract','postcode'),
+            'contact_address_code'=>Yii::t('contract','Contact Address').Yii::t('contract','postcode'),
 		);
 	}
 

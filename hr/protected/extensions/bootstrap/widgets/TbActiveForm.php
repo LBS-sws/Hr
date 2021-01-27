@@ -44,6 +44,15 @@ class TbActiveForm extends CActiveForm
     public $controlWidthClass = 'col-sm-10';
 
     /**
+     * @var array .
+     */
+    public $compareList = array();
+    public $compareName = "名稱";
+    public $compareOldStr = "修改前";
+    public $compareNewStr = "修改後";
+
+
+    /**
      * Initializes the widget.
      */
     public function init()
@@ -188,6 +197,34 @@ class TbActiveForm extends CActiveForm
     }
 
     /**
+     * Generates a text field for a model attribute.
+     * @param CModel $model the data model.
+     * @param string $attribute the attribute.
+     * @param array $htmlOptions additional HTML attributes.
+     * @return string the generated input field.
+     * @see TbHtml::activeTextField
+     */
+    public function textFieldCompare($oldModel,$model, $attribute, $htmlOptions = array())
+    {
+        if($oldModel[$attribute] == $model[$attribute]){
+            return $this->createInput(TbHtml::INPUT_TYPE_TEXT, $model, $attribute, $htmlOptions);
+        }else{
+            $this->compareList[]=array(
+                "attr"=>$attribute,
+                "label"=>$model->getAttributeLabel($attribute),
+                'newValue'=>$model[$attribute],
+                'oldValue'=>$oldModel[$attribute]
+            );
+            if(key_exists("class",$htmlOptions)){
+                $htmlOptions["class"].= " compare-error";
+            }else{
+                $htmlOptions["class"] = "compare-error";
+            }
+            return $this->createInput(TbHtml::INPUT_TYPE_TEXT, $model, $attribute, $htmlOptions);
+        }
+    }
+
+    /**
      * Generates a password field for a model attribute.
      * @param CModel $model the data model.
      * @param string $attribute the attribute.
@@ -240,6 +277,34 @@ class TbActiveForm extends CActiveForm
     }
 
     /**
+     * Generates a number field for a model attribute.
+     * @param CModel $model the data model.
+     * @param string $attribute the attribute.
+     * @param array $htmlOptions additional HTML attributes.
+     * @return string the generated input field.
+     * @see TbHtml::activeNumberField
+     */
+    public function numberFieldCompare($oldModel,$model, $attribute, $htmlOptions = array())
+    {
+        if($oldModel[$attribute] == $model[$attribute]){
+            return $this->createInput(TbHtml::INPUT_TYPE_NUMBER, $model, $attribute, $htmlOptions);
+        }else{
+            $this->compareList[]=array(
+                "attr"=>$attribute,
+                "label"=>$model->getAttributeLabel($attribute),
+                'newValue'=>$model[$attribute],
+                'oldValue'=>$oldModel[$attribute]
+            );
+            if(key_exists("class",$htmlOptions)){
+                $htmlOptions["class"].= " compare-error";
+            }else{
+                $htmlOptions["class"] = "compare-error";
+            }
+            return $this->createInput(TbHtml::INPUT_TYPE_NUMBER, $model, $attribute, $htmlOptions);
+        }
+    }
+
+    /**
      * Generates a range field for a model attribute.
      * @param CModel $model the data model.
      * @param string $attribute the attribute.
@@ -275,6 +340,34 @@ class TbActiveForm extends CActiveForm
     public function textArea($model, $attribute, $htmlOptions = array())
     {
         return $this->createInput(TbHtml::INPUT_TYPE_TEXTAREA, $model, $attribute, $htmlOptions);
+    }
+
+    /**
+     * Generates a text area for a model attribute.
+     * @param CModel $model the data model.
+     * @param string $attribute the attribute.
+     * @param array $htmlOptions additional HTML attributes.
+     * @return string the generated text area.
+     * @see TbHtml::activeTextArea
+     */
+    public function textAreaCompare($oldModel,$model, $attribute, $htmlOptions = array())
+    {
+        if($oldModel[$attribute] == $model[$attribute]){
+            return $this->createInput(TbHtml::INPUT_TYPE_TEXTAREA, $model, $attribute, $htmlOptions);
+        }else{
+            $this->compareList[]=array(
+                "attr"=>$attribute,
+                "label"=>$model->getAttributeLabel($attribute),
+                'newValue'=>$model[$attribute],
+                'oldValue'=>$oldModel[$attribute]
+            );
+            if(key_exists("class",$htmlOptions)){
+                $htmlOptions["class"].= " compare-error";
+            }else{
+                $htmlOptions["class"] = "compare-error";
+            }
+            return $this->createInput(TbHtml::INPUT_TYPE_TEXTAREA, $model, $attribute, $htmlOptions);
+        }
     }
 
     /**
@@ -331,6 +424,37 @@ class TbActiveForm extends CActiveForm
     }
 
     /**
+     * Generates a dropdown list for a model attribute.
+     * @param CModel $model the data model.
+     * @param string $attribute the attribute.
+     * @param array $data data for generating the list options (value=>display).
+     * @param array $htmlOptions additional HTML attributes.
+     * @return string the generated drop down list.
+     * @see TbHtml::activeDropDownList
+     */
+    public function dropDownListCompare($oldModel,$model, $attribute, $data, $htmlOptions = array())
+    {
+        if($oldModel[$attribute] == $model[$attribute]){
+            return $this->createInput(TbHtml::INPUT_TYPE_DROPDOWNLIST, $model, $attribute, $htmlOptions, $data);
+        }else{
+            $newValue=key_exists($model[$attribute],$data)?$data[$model[$attribute]]:$model[$attribute];
+            $oldValue=key_exists($oldModel[$attribute],$data)?$data[$oldModel[$attribute]]:$oldModel[$attribute];
+            $this->compareList[]=array(
+                "attr"=>$attribute,
+                "label"=>$model->getAttributeLabel($attribute),
+                'newValue'=>$newValue,
+                'oldValue'=>$oldValue
+            );
+            if(key_exists("class",$htmlOptions)){
+                $htmlOptions["class"].= " compare-error";
+            }else{
+                $htmlOptions["class"] = "compare-error";
+            }
+            return $this->createInput(TbHtml::INPUT_TYPE_DROPDOWNLIST, $model, $attribute, $htmlOptions, $data);
+        }
+    }
+
+    /**
      * Generates a list box for a model attribute.
      * @param CModel $model the data model.
      * @param string $attribute the attribute.
@@ -371,6 +495,38 @@ class TbActiveForm extends CActiveForm
     {
         $htmlOptions['inline'] = true;
         return $this->createInput(TbHtml::INPUT_TYPE_RADIOBUTTONLIST, $model, $attribute, $htmlOptions, $data);
+    }
+
+    /**
+     * Generates an inline radio button list for a model attribute
+     * @param CModel $model the data model.
+     * @param string $attribute the attribute.
+     * @param array $data data for generating the list options (value=>display)
+     * @param array $htmlOptions additional HTML attributes.
+     * @return string the generated radio button list.
+     * @see TbHtml::activeInlineRadioButtonList
+     */
+    public function inlineRadioButtonListCompare($oldModel,$model, $attribute, $data, $htmlOptions = array())
+    {
+        $htmlOptions['inline'] = true;
+        if($oldModel[$attribute] == $model[$attribute]){
+            return $this->createInput(TbHtml::INPUT_TYPE_RADIOBUTTONLIST, $model, $attribute, $htmlOptions, $data);
+        }else{
+            $newValue=key_exists($model[$attribute],$data)?$data[$model[$attribute]]:$model[$attribute];
+            $oldValue=key_exists($oldModel[$attribute],$data)?$data[$oldModel[$attribute]]:$oldModel[$attribute];
+            $this->compareList[]=array(
+                "attr"=>$attribute,
+                "label"=>$model->getAttributeLabel($attribute),
+                'newValue'=>$newValue,
+                'oldValue'=>$oldValue
+            );
+            if(key_exists("class",$htmlOptions)){
+                $htmlOptions["class"].= " compare-error";
+            }else{
+                $htmlOptions["class"] = "compare-error";
+            }
+            return $this->createInput(TbHtml::INPUT_TYPE_RADIOBUTTONLIST, $model, $attribute, $htmlOptions, $data);
+        }
     }
 
     /**
@@ -773,5 +929,23 @@ class TbActiveForm extends CActiveForm
         $options['labelWidthClass'] = TbArray::getValue('labelWidthClass', $options, $this->labelWidthClass);
         $options['controlWidthClass'] = TbArray::getValue('controlWidthClass', $options, $this->controlWidthClass);
         return $options;
+    }
+
+    public function echoCompareDiv(){
+        $html = "";
+        if(!empty($this->compareList)){
+            $html.= "<div class='compare-bottom-div visible-lg'><table class='table table-hover table-bordered table-condensed'>";
+            $html.= "<thead><tr class='danger'><th>".$this->compareName."</th><th>".$this->compareOldStr."</th><th>".$this->compareNewStr."</th></tr></thead><tbody>";
+            foreach ($this->compareList as $compareItem){
+                $html.= "<tr class='warning'>";
+                $html.= "<th>".$compareItem["label"]."</th>";
+                $html.= "<th>".$compareItem["oldValue"]."</th>";
+                $html.= "<th>".$compareItem["newValue"]."</th>";
+                $html.= "</tr>";
+            }
+            $html.= "</tbody></table></div>";
+        }
+
+        echo $html;
     }
 }

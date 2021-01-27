@@ -6,13 +6,18 @@ $this->pageTitle=Yii::app()->name . ' - Detail Form';
 ?>
 <style>
     input[readonly="readonly"]{pointer-events: none;}
+    .compare-bottom-div{ position: fixed;bottom: 10px;right: 10px;width: 420px;max-height: 400px;box-shadow: 0 1px 1px rgba(0,0,0,0.1);background: #fff;overflow-y: scroll;z-index: 2}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
     'id'=>'detail-form',
     'enableClientValidation'=>true,
     'clientOptions'=>array('validateOnSubmit'=>true),
     'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL
-)); ?>
+));
+$form->compareName=Yii::t("code","Name");
+$form->compareOldStr=Yii::t("contract","history new");
+$form->compareNewStr=Yii::t("contract","history ago");
+?>
 
 <section class="content-header">
     <h1>
@@ -80,7 +85,8 @@ $this->pageTitle=Yii::app()->name . ' - Detail Form';
             <legend></legend>
 
             <?php
-            $this->renderPartial('//site/employform',array('model'=>$model,
+            $this->renderPartial('//site/employcompare',array(
+                'oldModel'=>$oldModel,
                 'form'=>$form,
                 'model'=>$model,
                 'readonly'=>($model->scenario=='view'),
@@ -100,7 +106,7 @@ $this->pageTitle=Yii::app()->name . ' - Detail Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'social_code',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'social_code',
+                    <?php echo $form->textFieldCompare($oldModel,$model, 'social_code',
                         array('readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
                     ); ?>
                 </div>
@@ -108,13 +114,16 @@ $this->pageTitle=Yii::app()->name . ' - Detail Form';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'jj_card',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
-                    <?php echo $form->textField($model, 'jj_card',
+                    <?php echo $form->textFieldCompare($oldModel,$model, 'jj_card',
                         array('readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
                     ); ?>
                 </div>
             </div>
         </div>
     </div>
+    <?php
+    $form->echoCompareDiv();//對比信息列表
+    ?>
 </section>
 
 
@@ -131,6 +140,9 @@ $this->pageTitle=Yii::app()->name . ' - Detail Form';
 Script::genFileUpload($model,$form->id,'EMPLOYEE');
 
 $js = "
+$('input.compare-error,select.compare-error,textarea.compare-error').each(function(){
+    $(this).parents('div:first').addClass('has-error');
+});
 var staffStatus = '".$model->staff_status."';
 $('#HistoryForm_test_type').on('change',function(){
     if($(this).val() == 1){
