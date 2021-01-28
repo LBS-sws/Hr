@@ -115,12 +115,11 @@ class BossReviewC
         $html.="</tr></thead><tbody data-num=':rowCount:'>";
 
         if(isset($this->json_text["three"]["list"])){
-            $html = str_replace(":rowCount:",count($this->json_text["three"]["list"]),$html);
-            $listKey = 0;
             foreach ($this->json_text["three"]["list"] as $key =>$list){
-                $html.=$this->getRowHtml($this->ready,$list,$listKey);
-                $listKey++;
+                $html.=$this->getRowHtml($this->ready,$list,$key);
             }
+            $key = isset($key)?$key:1;
+            $html = str_replace(":rowCount:",$key,$html);
         }
 
         $html.=$this->getRowHtml($this->ready);
