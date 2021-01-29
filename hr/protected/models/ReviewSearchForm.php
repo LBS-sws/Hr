@@ -267,11 +267,15 @@ class ReviewSearchForm extends CFormModel
             //評分排名
             if($this->ranking_bool){
                 $reviewGrade = Yii::t("contract","review sum Grade");
-                $tabs[] = array(
-                    'label'=>Yii::t("contract","review sum ranking"),
-                    'content'=>"<p>&nbsp;</p>".$this->getRankingHtml(),
-                    'active'=>false,
-                );
+                $rankingHtml =$this->getRankingHtml();
+                //隱藏排名信息
+                if(Yii::app()->user->validFunction('ZR20')){
+                    $tabs[] = array(
+                        'label'=>Yii::t("contract","review sum ranking"),
+                        'content'=>"<p>&nbsp;</p>".$rankingHtml,
+                        'active'=>false,
+                    );
+                }
             }
             $content = str_replace(":RANKINGLEAVE",$this->leave_bool,$content);
             $content = str_replace(":REVIEWGRADE",$reviewGrade,$content);

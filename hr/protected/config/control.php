@@ -20,4 +20,5 @@ return array(
 	'delete contract for finish'=>array('access'=>'ZR17',),//刪除已完成的合同簽收
 	'Back to prize'=>array('access'=>'ZR18',),//退回已完成的錦旗
 	'Back to leave office'=>array('access'=>'ZR19',),//退回已離職員工
+	'Show review rankings'=>array('access'=>'ZR20',),//顯示評核得分排名
 );

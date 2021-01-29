@@ -188,6 +188,7 @@ return array(
     'Review of old contracts'=>'檢查員工舊合同',
     'Back to prize'=>'退回錦旗',
     'Back to leave office'=>'退回已離職員工',
+    'Show review rankings'=>'顯示評核得分排名',
 //沈超添加結束
 );
 ?>
