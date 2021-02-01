@@ -46,11 +46,10 @@ class BossAuditForm extends CFormModel
 
     public function validateID($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $status_type = $this->getScenario()=="finish"?5:1;
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) and a.status_type = :status_type and boss_type=:boss_type",
-                array(':id'=>$this->id,':status_type'=>$status_type,':boss_type'=>$this->boss_type)
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type in (1,5) and boss_type=:boss_type",
+                array(':id'=>$this->id,':boss_type'=>$this->boss_type)
             )->queryRow();
         if (!$row){
             $message = "該考核不存在，無法修改";
@@ -63,6 +62,7 @@ class BossAuditForm extends CFormModel
             $this->name = $row['employee_name'];
             $this->lcu = $row['lcu'];
             $this->city = $row['city'];
+            $this->status_type = $row['status_type'];
             $this->audit_year = $row['audit_year'];
         }
     }
@@ -175,10 +175,10 @@ class BossAuditForm extends CFormModel
                 break;
             case 'reject':
                 $sql = "update hr_boss_audit set
-							status_type = 3, 
+							status_type = :status_type, 
 							reject_remark = :reject_remark, 
 							luu = :luu
-						where id = :id AND status_type = 1
+						where id = :id AND status_type in (1,5)
 						";
                 break;
         }
@@ -198,6 +198,10 @@ class BossAuditForm extends CFormModel
             $command->bindParam(':results_c',$this->results_c,PDO::PARAM_INT);
         if (strpos($sql,':results_sum')!==false)
             $command->bindParam(':results_sum',$this->results_sum,PDO::PARAM_INT);
+        if (strpos($sql,':status_type')!==false){
+            $this->status_type = $this->status_type==5?4:3;
+            $command->bindParam(':status_type',$this->status_type,PDO::PARAM_INT);
+        }
         if (strpos($sql,':reject_remark')!==false)
             $command->bindParam(':reject_remark',$this->reject_remark,PDO::PARAM_STR);
         if (strpos($sql,':json_text')!==false){

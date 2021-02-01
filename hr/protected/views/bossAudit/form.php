@@ -46,6 +46,15 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
             <?php endif ?>
         <?php endif; ?>
 	</div>
+
+            <?php if ($model->scenario!='view'&&$model->status_type == 5): ?>
+            <div class="btn-group pull-right" role="group">
+                <?php
+                echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','Rejected'), array(
+                    'name'=>'btnJect','id'=>'btnJect','data-toggle'=>'modal','data-target'=>'#jectdialog'));
+                ?>
+            </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
