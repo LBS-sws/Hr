@@ -518,9 +518,9 @@ class EmployeeForm extends CFormModel
                 $this->start_time = $row['start_time'];
                 $this->end_time = $row['end_time'];
                 $this->test_type = $row['test_type'];
-                $this->test_end_time = $row['test_end_time'];
-                $this->test_start_time = $row['test_start_time'];
-                $this->test_wage = $row['test_wage'];
+                $this->test_end_time = empty($row['test_type'])?"":$row['test_end_time'];
+                $this->test_start_time = empty($row['test_type'])?"":$row['test_start_time'];
+                $this->test_wage = empty($row['test_type'])?"":$row['test_wage'];
                 $this->word_status = $row['word_status'];
                 $this->address_code = $row['address_code'];
                 $this->contact_address_code = $row['contact_address_code'];
@@ -548,7 +548,7 @@ class EmployeeForm extends CFormModel
                 $this->sb_card = $row['sb_card'];
                 $this->jj_card = $row['jj_card'];
                 $this->historyList = AuditHistoryForm::getStaffHistoryList($this->id);
-                $this->test_length = $row['test_length'];
+                $this->test_length = empty($row['test_type'])?"":$row['test_length'];
                 $this->staff_type = $row['staff_type'];
                 $this->staff_leader = $row['staff_leader'];
                 $this->attachment = $row['attachment'];

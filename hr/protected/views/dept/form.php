@@ -96,6 +96,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">人事系统里仅仅只是员工信息裡面的关联（只是显示，没有功能），其它系统不知道。</p>
+                    </div>
                 </div>
             <?php endif; ?>
 
@@ -115,6 +118,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">中央技术支援：如果是中央支援组的技术员，请选择服务</p>
+                    </div>
                 </div>
             <?php endif; ?>
             <?php if ($model->type==1): ?>
@@ -124,6 +130,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         <?php echo $form->dropDownList($model, 'manager',EmployList::getManagerList(),
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
+                    </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">加班、请假专用：需要注意部门经理。如果是部门经理，一定要选择部门经理</p>
                     </div>
                 </div>
             <?php endif; ?>
@@ -135,6 +144,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">锦旗专用：影响锦旗表单的参与人数</p>
+                    </div>
                 </div>
             <?php endif; ?>
             <?php if ($model->type==1): ?>
@@ -145,6 +157,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">优化人才评核专用：差異性評分需要對比同部門（必須已經分配評分的員工）的員工才能計算得分類型</p>
+                    </div>
                 </div>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'review_type',array('class'=>"col-sm-2 control-label")); ?>
@@ -152,6 +167,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         <?php echo $form->dropDownList($model, 'review_type',$model->getReviewType(),
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
+                    </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">优化人才评核专用：选择不同类型，评分的计算公式不一样</p>
                     </div>
                 </div>
                 <div class="form-group">
@@ -161,6 +179,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">分配考核专用：1、选择地区时，选择评核人只能该地区可见。2、选择所有时，所有地区都可见</p>
+                    </div>
                 </div>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'manager_type',array('class'=>"col-sm-2 control-label")); ?>
@@ -168,6 +189,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         <?php echo $form->dropDownList($model, 'manager_type',$model->getManagerTypeLeave(),
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
+                    </div>
+                    <div class="col-sm-7">
+                        <p class="form-control-static">销售系统专用，具体功能问销售系统负责人</p>
                     </div>
                 </div>
             <?php endif; ?>
