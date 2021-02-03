@@ -101,20 +101,22 @@ class BossAuditController extends Controller
     public function actionEdit($index)
     {
         $model = new BossAuditForm('edit');
+        $bossType = key_exists("type",$_GET)?$_GET["type"]:1;
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
-            $this->render('form',array('model'=>$model,));
+            $this->render('form',array('model'=>$model,'bossType'=>$bossType));
         }
     }
 
     public function actionView($index)
     {
         $model = new BossAuditForm('view');
+        $bossType = key_exists("type",$_GET)?$_GET["type"]:1;
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
-            $this->render('form',array('model'=>$model,));
+            $this->render('form',array('model'=>$model,'bossType'=>$bossType));
         }
     }
 

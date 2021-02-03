@@ -30,7 +30,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 				'submit'=>Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type))));
 		?>
         <?php if ($model->scenario!='view'): ?>
-            <?php if ($model->status_type == 1): ?>
+            <?php if ($model->status_type == 1&&$model->boss_type==$bossType): ?>
                 <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                     'submit'=>Yii::app()->createUrl('bossAudit/audit',array('type'=>$this->boss_type))));
                 ?>
@@ -39,7 +39,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     'name'=>'btnJect','id'=>'btnJect','data-toggle'=>'modal','data-target'=>'#jectdialog'));
                 ?>
             <?php endif ?>
-            <?php if ($model->status_type == 5): ?>
+            <?php if ($model->status_type == 5&&$model->boss_type==$bossType): ?>
                 <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Finish'), array(
                     'submit'=>Yii::app()->createUrl('bossAudit/finish',array('type'=>$this->boss_type))));
                 ?>
@@ -47,7 +47,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
         <?php endif; ?>
 	</div>
 
-            <?php if ($model->scenario!='view'&&$model->status_type == 5): ?>
+            <?php if ($model->scenario!='view'&&$model->status_type == 5&&$model->boss_type==$bossType): ?>
             <div class="btn-group pull-right" role="group">
                 <?php
                 echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','Rejected'), array(

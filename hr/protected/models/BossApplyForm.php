@@ -74,6 +74,7 @@ class BossApplyForm extends CFormModel
                 foreach ($jsonTest["three"]["list"] as $key =>&$list){
                     if(key_exists("three_four",$list)&&isset($this->json_text["three"]["list"][$key]["three_four"])){
                         $list["three_four"] = $this->json_text["three"]["list"][$key]["three_four"];
+                        $list["three_two"] = $this->json_text["three"]["list"][$key]["three_two"];
                     }
                 }
             }

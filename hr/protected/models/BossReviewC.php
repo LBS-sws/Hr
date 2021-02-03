@@ -156,7 +156,11 @@ class BossReviewC
         }
 
         $html.="<td>".TbHtml::textArea($name."[three_one]",$list["three_one"],array('readonly'=>$ready))."</td>";
-        $html.="<td>".TbHtml::textArea($name."[three_two]",$list["three_two"],array('readonly'=>$ready))."</td>";
+        if($this->status_type == 4&&$this->className == "BossApplyForm"){
+            $html.="<td>".TbHtml::textArea($name."[three_two]",$list["three_two"],array('readonly'=>false))."</td>";
+        }else{
+            $html.="<td>".TbHtml::textArea($name."[three_two]",$list["three_two"],array('readonly'=>$ready))."</td>";
+        }
         $html.="<td>".TbHtml::textArea($name."[three_three]",$list["three_three"],array('readonly'=>$ready))."</td>";
         $html.="<td><div class='input-group'>";
         if($this->status_type == 4&&$this->className == "BossApplyForm"){
