@@ -60,3 +60,4 @@ ALTER TABLE hr_boss_audit ADD COLUMN json_listX text CHARACTER SET utf8 COLLATE 
 -- ----------------------------
 ALTER TABLE hr_kpi ADD COLUMN tacitly int(2) NOT NULL DEFAULT 1 AFTER sum_bool;
 ALTER TABLE hr_kpi ADD COLUMN city varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER sum_bool;
+ALTER TABLE hr_kpi ADD COLUMN lcu varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL AFTER tacitly;
