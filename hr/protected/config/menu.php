@@ -267,6 +267,16 @@ return array(
                 'access'=>'BA04',
                 'url'=>'/bossKPI/index',
             ),
+            //老總年度考核A項設置
+            'Setting Boss A'=>array(
+                'access'=>'BA07',
+                'url'=>'/bossSetA/index',
+            ),
+            //老總年度考核B項設置
+            'Setting Boss B'=>array(
+                'access'=>'BA08',
+                'url'=>'/bossSetB/index',
+            ),
         ),
     ),
     //銷售評分

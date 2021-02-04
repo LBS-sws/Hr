@@ -37,6 +37,17 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
             ?>
         <?php endif; ?>
 	</div>
+            <?php if ($model->scenario=='edit'): ?>
+            <div class="btn-group pull-right" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-file"></span> '.Yii::t('misc','Copy'), array(
+                    'submit'=>Yii::app()->createUrl('bossKPI/copy',array("index"=>$model->id))));
+                ?>
+                <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                );
+                ?>
+            </div>
+            <?php endif; ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -49,6 +60,22 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                 <div class="col-sm-2">
                     <?php echo $form->textField($model, 'kpi_name',
                         array('readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-4">
+                    <?php echo $form->dropDownList($model, 'city',CGeneral::getCityList(),
+                        array('readonly'=>($model->getReadonly()))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'tacitly',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-4">
+                    <?php echo $form->inlineRadioButtonList($model, 'tacitly',array(Yii::t("misc","No"),Yii::t("misc","Yes")),
+                        array('readonly'=>($model->getReadonly()))
                     ); ?>
                 </div>
             </div>
@@ -66,6 +93,11 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     <?php echo $form->dropDownList($model, 'sum_bool',$model->getSumBoolList(),
                         array('readonly'=>($model->getReadonly()),"id"=>"sum_bool")
                     ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-10 col-sm-offset-2">
+                    <p class="form-control-static text-danger">注意：老总年度考核未完成之前，考核分数都会根据kpi配置而发生变化</p>
                 </div>
             </div>
             <legend><?php echo Yii::t("contract","kpi detail");?></legend>
@@ -86,6 +118,9 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		</div>
 	</div>
 </section>
+<?php
+$this->renderPartial('//site/removedialog');
+?>
 <script>
     function changeJsonTwoMaxDiv(e) {
         if($(this).attr("href")=="#addJsonTwo"){
@@ -165,6 +200,8 @@ $js = "
     });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
+$js = Script::genDeleteData(Yii::app()->createUrl('bossKPI/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);

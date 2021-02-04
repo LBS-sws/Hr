@@ -674,5 +674,7 @@ return array(
     'update new'=>'修改後',
     'history ago'=>'歷史信息',
     'history new'=>'現在信息',
+    //2021-02-03
+    'tacitly'=>'默認',
     );
 ?>

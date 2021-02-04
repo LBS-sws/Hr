@@ -9,6 +9,7 @@
 class BossReviewCof
 {
     public $class_id='';//
+    public $city='';//
     public $size_type=0;//
     public $kpi_list=array();
 
@@ -22,7 +23,8 @@ class BossReviewCof
             return 0;
         }
         $kpiRow = Yii::app()->db->createCommand()->select("id,kpi_name,size_type,sum_bool")->from("hr_kpi")
-            ->where("kpi_name=:kpi_name",array(":kpi_name"=>$class_id))->queryRow();
+            ->where("kpi_name=:kpi_name and (city=:city or tacitly = 1)",array(":kpi_name"=>$class_id,":city"=>$this->city))
+            ->order("tacitly asc")->queryRow();
         if($kpiRow){
             $kpiList = $this->getKPIList($kpiRow,$price);
             $keyOld = 0;
@@ -58,7 +60,8 @@ class BossReviewCof
             $value = 0;
         }
         $kpiRow = Yii::app()->db->createCommand()->select("id,kpi_name,size_type,sum_bool")->from("hr_kpi")
-            ->where("kpi_name=:kpi_name",array(":kpi_name"=>$class_id))->queryRow();
+            ->where("kpi_name=:kpi_name and (city=:city or tacitly = 1)",array(":kpi_name"=>$class_id,":city"=>$this->city))
+            ->order("tacitly asc")->queryRow();
         if($kpiRow){
             $kpiList = $this->getKPIList($kpiRow,$price);
             $this->size_type = $kpiRow["size_type"];

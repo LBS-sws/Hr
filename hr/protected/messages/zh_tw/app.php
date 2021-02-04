@@ -189,6 +189,8 @@ return array(
     'Back to prize'=>'退回錦旗',
     'Back to leave office'=>'退回已離職員工',
     'Show review rankings'=>'顯示評核得分排名',
+    'Setting Boss A'=>'老總年度考核A項設置',
+    'Setting Boss B'=>'老總年度考核B項設置',
 //沈超添加結束
 );
 ?>

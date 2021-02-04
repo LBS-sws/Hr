@@ -17,6 +17,7 @@ class BossApplyForm extends CFormModel
 	public $results_a=0;
 	public $results_b=0;
 	public $results_c=0;
+    public $json_listX;
 
 	public function attributeLabels()
 	{
@@ -52,7 +53,7 @@ class BossApplyForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }
-        $row = Yii::app()->db->createCommand()->select("id,status_type,json_text,apply_date")->from("hr_boss_audit")
+        $row = Yii::app()->db->createCommand()->select("id,status_type,json_text,apply_date,json_listX")->from("hr_boss_audit")
             ->where('employee_id=:id and audit_year=:year',
                 array(':id'=>$this->employee_id,':year'=>$this->audit_year)
             )->queryRow();
@@ -67,6 +68,7 @@ class BossApplyForm extends CFormModel
             return false;
         }
         if($row&&$row["status_type"]==4){
+            $this->json_listX = json_decode($row['json_listX'],true);
             $this->apply_date = $row["apply_date"];
             $this->status_type = $this->status_type==1?5:4;
             $jsonTest = json_decode($row['json_text'],true);
@@ -105,11 +107,21 @@ class BossApplyForm extends CFormModel
 	        $bool = $this->status_type==1;
 	        //A類驗證
             $bossReviewA = new BossReviewA($this);
+            if(!empty($this->json_listX)){
+                $bossReviewA->resetListX($this->json_listX);
+            }elseif($this->getScenario()=="new"){
+                $bossReviewA->cityListX();
+            }
             $bossReviewA->validateJson($this,$bool);
             $this->json_text = $bossReviewA->json_text;
             $this->results_a = $bossReviewA->scoreSum;
             //B類驗證
             $bossReviewB = new BossReviewB($this);
+            if(!empty($this->json_listX)){
+                $bossReviewB->resetListX($this->json_listX);
+            }elseif($this->getScenario()=="new"){
+                $bossReviewB->cityListX();
+            }
             $bossReviewB->validateJson($this,$bool);
             $this->json_text = $bossReviewB->json_text;
             $this->results_b = $bossReviewB->scoreSum;
@@ -124,6 +136,13 @@ class BossApplyForm extends CFormModel
                 $this->json_text = $bossReviewC->json_text;
                 $this->results_c = $bossReviewC->scoreSum;
                 $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+            }
+
+            if(empty($this->json_listX)){
+                $this->json_listX= array(
+                    "bossA"=>$bossReviewA->getListX(),
+                    "bossB"=>$bossReviewB->getListX()
+                );
             }
         }
     }
@@ -180,12 +199,14 @@ class BossApplyForm extends CFormModel
             $this->results_a = $row['results_a'];
             $this->results_b = $row['results_b'];
             $this->results_c = $row['results_c'];
+            $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
 		}
 		return true;
 	}
 
 	public function getAjaxPlanYear($data){
         $type = key_exists("type",$data)?$data['type']:"planYearA";
+        $city = key_exists("city",$data)?$data['city']:"";
         $name = key_exists("name",$data)?$data['name']:"";
         $value = key_exists("value",$data)?$data['value']:0;
         $value = floatval($value);
@@ -198,17 +219,18 @@ class BossApplyForm extends CFormModel
         $one_11 = key_exists("one_11",$data)?$data['one_11']:0;
         $one_11 = floatval($one_11);
         if($type === "planYearB"){
-            $arr = $this->planYearB($name,$value,$one_1,$cofNow,$one_11);
+            $arr = $this->planYearB($name,$value,$one_1,$cofNow,$one_11,$city);
         }else{
-            $arr = $this->planYearA($name,$value,$one_1,$cofNow,$one_11,$one_0);
+            $arr = $this->planYearA($name,$value,$one_1,$cofNow,$one_11,$one_0,$city);
         }
         return $arr;
     }
 
     //$one_11:佔比
-    protected function planYearB($name,$value,$one_1,$cofNow,$one_11){
+    protected function planYearB($name,$value,$one_1,$cofNow,$one_11,$city=""){
         $arr = array();
         $bossReviewCof = new BossReviewCof($name);
+        $bossReviewCof->city = $city;
         $arr["two_3"] = $bossReviewCof->getClassCof($value,$one_1,$name);//系數
         $one_5 = $bossReviewCof->getClassLadder($arr["two_3"],$cofNow,$name,$one_1);//階梯落差
         $arr["two_5"] = abs($one_5);//階梯落差
@@ -220,9 +242,10 @@ class BossApplyForm extends CFormModel
         return $arr;
     }
 
-    protected function planYearA($name,$value,$one_1,$cofNow,$one_11,$one_0){
+    protected function planYearA($name,$value,$one_1,$cofNow,$one_11,$one_0,$city=""){
         $arr = array();
         $bossReviewCof = new BossReviewCof($name);
+        $bossReviewCof->city = $city;
         if(in_array($name,array("one_six","one_seven","one_eight"))){
             $one_4 = $value;
             $arr["one_4"]= "\\";
@@ -297,9 +320,19 @@ class BossApplyForm extends CFormModel
     public function getTabList($model,$searchBool=false){
         $list = $this->getContractTabList($model);
         $tabs = array();
+
         foreach ($list as $key=>$item){
             $className = $item["class"];
             $bossReviewModel = new $className($model,$searchBool);
+            //後續修改，A項、B項的內容可以自由設定（開始）
+            if(in_array($className,array("BossReviewA","BossReviewB"))){
+                if(!empty($model->json_listX)){
+                    $bossReviewModel->resetListX($model->json_listX);
+                }elseif($this->getScenario()=="new"){
+                    $bossReviewModel->cityListX();
+                }
+            }
+            //後續修改，A項、B項的內容可以自由設定（結束）
             $html = $bossReviewModel->getTableHtml();
             $tabs[] = array(
                 'id'=>"table_id_".$className,
@@ -314,7 +347,7 @@ class BossApplyForm extends CFormModel
     //刪除驗證
     public function deleteValidate(){
         $row = Yii::app()->db->createCommand()->select("employee_id")->from("hr_boss_audit")
-            ->where('id=:id and status_type in (0,3)',array(':id'=>$this->id))->queryRow();
+            ->where('id=:id and status_type in (0,3,4)',array(':id'=>$this->id))->queryRow();
         if($row){
             return true;
         }else{
@@ -340,7 +373,7 @@ class BossApplyForm extends CFormModel
 		$sql = '';
         switch ($this->scenario) {
             case 'delete':
-                $sql = "delete from hr_boss_audit where id = :id and status_type in(0,3)";
+                $sql = "delete from hr_boss_audit where id = :id and status_type in(0,3,4)";
                 break;
             case 'new':
                 $sql = "insert into hr_boss_audit(
@@ -407,11 +440,18 @@ class BossApplyForm extends CFormModel
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
+            $this->setJsonListX();
         }
 
         $this->sendEmail();//發送郵件
 		return true;
 	}
+
+	protected function setJsonListX(){
+        Yii::app()->db->createCommand()->update('hr_boss_audit', array(
+            'json_listX'=>json_encode($this->json_listX),
+        ), 'id=:id', array(':id'=>$this->id));
+    }
 
     protected function sendEmail(){
         if(in_array($this->status_type,array(1,5))){

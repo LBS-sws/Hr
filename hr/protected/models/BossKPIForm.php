@@ -5,11 +5,15 @@ class BossKPIForm extends CFormModel
 	public $id;
 	public $kpi_name;
 	public $rate_type;
+    public $tacitly;
+    public $city;
 	public $size_type=0;//大小判斷  0：小於等於  1：大於等於
 	public $sum_bool=0;//是否開啟金額分類
 
 	public $json_one;//不開啟金額分類
 	public $json_two;//開啟金額分類
+	protected $kpi_value;//開啟金額分類
+    protected $kpi_str;//開啟金額分類
 
 	public function attributeLabels()
 	{
@@ -17,6 +21,8 @@ class BossKPIForm extends CFormModel
             'kpi_name'=>Yii::t('contract','kpi name'),
             'size_type'=>Yii::t('contract','kpi type'),
             'sum_bool'=>Yii::t('contract','kpi sum bool'),
+            'tacitly'=>Yii::t("contract","tacitly"),
+            'city'=>Yii::t('contract','City')
 		);
 	}
 
@@ -26,13 +32,37 @@ class BossKPIForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,size_type, sum_bool,json_one,json_two','safe'),
+			array('id,size_type, sum_bool,json_one,json_two,city,tacitly','safe'),
             array('size_type','required'),
             array('sum_bool','required'),
             array('id','validateID'),
+            array('city','validateCity'),
+            array('tacitly','validateTacitly'),
             array('json_one','validateJsonOne'),
             array('json_two','validateJsonTwo'),
 		);
+	}
+
+    public function validateCity($attribute, $params){
+        $city = $this->city;
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_kpi")
+            ->where('id!=:id and city=:city and kpi_name=:kpi_name ', array(':id'=>$this->id,':city'=>$city,':kpi_name'=>$this->kpi_value))->queryAll();
+        if (count($rows) > 0){
+            $message = "该城市已设置".$this->kpi_name."，不需要重复设置";
+            $this->addError($attribute,$message);
+        }
+    }
+
+	public function validateTacitly($attribute, $params){
+	    if($this->tacitly!=1){
+	        $id = $this->getScenario()=="copy"?"":$this->id;
+            $row = Yii::app()->db->createCommand()->select("id")->from("hr_kpi")
+                ->where("id!=:id and tacitly = 1 and kpi_name=:kpi_name",array(":id"=>$id,":kpi_name"=>$this->kpi_value))->queryRow();
+            if(!$row){
+                $message = $this->kpi_name."必须要设定一个默认值";
+                $this->addError('kpi_name',$message);
+            }
+        }
 	}
 
 	public function validateJsonOne($attribute, $params){
@@ -118,7 +148,9 @@ class BossKPIForm extends CFormModel
         $rows = Yii::app()->db->createCommand()->select("kpi_name,kpi_str,rate_type")->from("hr_kpi")
             ->where("id=:id",array(":id"=>$this->id))->queryRow();
         if($rows){
-            $this->kpi_name = $rows["kpi_name"];
+            $this->kpi_name = Yii::t("contract",$rows['kpi_name']);;
+            $this->kpi_value = $rows["kpi_name"];
+            $this->kpi_str = $rows["kpi_str"];
             $this->rate_type = $rows["rate_type"];
         }else{
             $message = Yii::t('contract','kpi name'). Yii::t('contract',' not exist');
@@ -127,12 +159,14 @@ class BossKPIForm extends CFormModel
 	}
 
 	public function retrieveData($index) {
-        $row = Yii::app()->db->createCommand()->select("id,kpi_name,kpi_str,rate_type,size_type,sum_bool")->from("hr_kpi")
+        $row = Yii::app()->db->createCommand()->select("id,kpi_name,kpi_str,rate_type,size_type,sum_bool,city,tacitly")->from("hr_kpi")
             ->where("id=:id",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->kpi_name = Yii::t("contract",$row['kpi_name']);
             $this->rate_type = $row['rate_type'];
+            $this->tacitly = $row['tacitly'];
+            $this->city = $row['city'];
             $this->size_type = $row['size_type'];
             $this->sum_bool = $row['sum_bool'];
             $orderType = $this->size_type==1?"desc":"asc";
@@ -326,6 +360,19 @@ class BossKPIForm extends CFormModel
         );
     }
 
+    //刪除驗證
+    public function deleteValidate(){
+        $kpiName = Yii::app()->db->createCommand()->select("kpi_name")->from("hr_kpi")
+            ->where("id=:id and tacitly!=1",array(":id"=>$this->id))->queryScalar();
+        if($kpiName){
+            $row = Yii::app()->db->createCommand()->select("id")->from("hr_kpi")
+                ->where("id!=:id and kpi_name=:kpi_name and tacitly=1",array(":id"=>$this->id,":kpi_name"=>$kpiName))->queryRow();
+            if($row){
+                return true;
+            }
+        }
+        return false;//沒有配置不允許刪除
+    }
 
 	public function getReadonly(){
         if ($this->getScenario()=='view'){
@@ -350,10 +397,17 @@ class BossKPIForm extends CFormModel
 	}
 
 	protected function saveGoods(&$connection) {
+        if($this->tacitly == 1){
+            Yii::app()->db->createCommand()->update('hr_kpi', array(
+                'tacitly'=>0,
+            ),'kpi_name=:kpi_name',array(":kpi_name"=>$this->kpi_value));
+        }
         $uid = Yii::app()->user->id;
         switch ($this->scenario) {
             case 'edit':
                 $connection->createCommand()->update('hr_kpi', array(
+                    'tacitly'=>$this->tacitly,
+                    'city'=>$this->city,
                     'size_type'=>$this->size_type,
                     'sum_bool'=>$this->sum_bool,
                     'luu'=>$uid
@@ -391,6 +445,57 @@ class BossKPIForm extends CFormModel
                         ));
                     }
                 }
+                break;
+            case 'copy':
+                $connection->createCommand()->insert('hr_kpi', array(
+                    'kpi_name'=>$this->kpi_value,
+                    'kpi_str'=>$this->kpi_str,
+                    'rate_type'=>$this->rate_type,
+                    'tacitly'=>$this->tacitly,
+                    'city'=>$this->city,
+                    'size_type'=>$this->size_type,
+                    'sum_bool'=>$this->sum_bool,
+                    'lcu'=>$uid
+                ));
+                $this->id = Yii::app()->db->getLastInsertID();
+                $connection->createCommand()->delete('hr_kpi_sum', 'kpi_id=:id', array(':id'=>$this->id));
+                $connection->createCommand()->delete('hr_kpi_min', 'kpi_id=:id', array(':id'=>$this->id));
+                if($this->sum_bool ==1){
+                    foreach ($this->json_two as $item){
+                        $connection->createCommand()->insert("hr_kpi_sum", array(
+                            'kpi_id'=>$this->id,
+                            'min_sum'=>$item['min_sum'],
+                            'other_bool'=>$item['other_bool'],
+                            'lcu'=>$uid
+                        ));
+                        $id =Yii::app()->db->getLastInsertID();
+                        foreach ($item["list"] as $list){
+                            $connection->createCommand()->insert("hr_kpi_min", array(
+                                'kpi_id'=>$this->id,
+                                'sum_id'=>$id,
+                                'min_num'=>$list['min_num'],
+                                'kpi_value'=>$list['kpi_value'],
+                                'other_bool'=>$list['other_bool'],
+                                'lcu'=>$uid
+                            ));
+                        }
+                    }
+                }else{
+                    foreach ($this->json_one as $list){
+                        $connection->createCommand()->insert("hr_kpi_min", array(
+                            'kpi_id'=>$this->id,
+                            'min_num'=>$list['min_num'],
+                            'kpi_value'=>$list['kpi_value'],
+                            'other_bool'=>$list['other_bool'],
+                            'lcu'=>$uid
+                        ));
+                    }
+                }
+                break;
+            case 'delete':
+                Yii::app()->db->createCommand()->delete('hr_kpi_sum', 'kpi_id=:id', array(':id'=>$this->id));
+                Yii::app()->db->createCommand()->delete('hr_kpi_min', 'kpi_id=:id', array(':id'=>$this->id));
+                Yii::app()->db->createCommand()->delete('hr_kpi', 'id=:id', array(':id'=>$this->id));
                 break;
         }
 

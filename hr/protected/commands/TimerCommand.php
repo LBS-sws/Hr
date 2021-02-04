@@ -873,7 +873,7 @@ class TimerCommand extends CConsoleCommand {
 
     //初始化所有老總考核的總分
     public function resetBossListScore(){
-        $rows = Yii::app()->db->createCommand()->select("a.id,a.results_a,a.results_b,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
+        $rows = Yii::app()->db->createCommand()->select("a.json_listX,a.id,a.results_a,a.results_b,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.status_type !=2")->queryAll();
@@ -889,11 +889,17 @@ class TimerCommand extends CConsoleCommand {
                 $model->results_c = floatval($row["results_c"]);
                 //A類驗證
                 $bossReviewA = new BossReviewA($model);
+                if(!empty($row["json_listX"])){
+                    $bossReviewA->resetListX(json_decode($row["json_listX"],true));
+                }
                 $bossReviewA->validateJson($model);
                 $model->json_text = $bossReviewA->json_text;
                 $model->results_a = $bossReviewA->scoreSum;
                 //B類驗證
                 $bossReviewB = new BossReviewB($model);
+                if(!empty($row["json_listX"])){
+                    $bossReviewB->resetListX(json_decode($row["json_listX"],true));
+                }
                 $bossReviewB->validateJson($model);
                 $model->json_text = $bossReviewB->json_text;
                 $model->results_b = $bossReviewB->scoreSum;

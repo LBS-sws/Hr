@@ -2,13 +2,13 @@
 
 /**
  * Created by PhpStorm.
- * User: 老總年度考核
+ * User: 沈超
  * Date: 2017/6/7 0007
  * Time: 上午 11:30
  */
-class BossKPIController extends Controller
+class BossSetBController extends Controller
 {
-	public $function_id='BA04';
+	public $function_id='BA08';
 
     public function filters()
     {
@@ -29,35 +29,34 @@ class BossKPIController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','save','Delete','copy'),
-                'expression'=>array('BossKPIController','allowReadWrite'),
+                'actions'=>array('new','edit','delete','save'),
+                'expression'=>array('BossSetBController','allowReadWrite'),
             ),
             array('allow',
                 'actions'=>array('index','view'),
-                'expression'=>array('BossKPIController','allowReadOnly'),
+                'expression'=>array('BossSetBController','allowReadOnly'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
         );
     }
-
     public static function allowReadWrite() {
-        return Yii::app()->user->validRWFunction('BA04');
+        return Yii::app()->user->validRWFunction('BA08');
     }
 
     public static function allowReadOnly() {
-        return Yii::app()->user->validFunction('BA04');
+        return Yii::app()->user->validFunction('BA08');
     }
 
     public function actionIndex($pageNum=0){
-        $model = new BossKPIList;
-        if (isset($_POST['BossKPIList'])) {
-            $model->attributes = $_POST['BossKPIList'];
+        $model = new BossSetBList;
+        if (isset($_POST['BossSetBList'])) {
+            $model->attributes = $_POST['BossSetBList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['bossKPI_01']) && !empty($session['bossKPI_01'])) {
-                $criteria = $session['bossKPI_01'];
+            if (isset($session['bossSetB_01']) && !empty($session['bossSetB_01'])) {
+                $criteria = $session['bossSetB_01'];
                 $model->setCriteria($criteria);
             }
         }
@@ -66,19 +65,16 @@ class BossKPIController extends Controller
         $this->render('index',array('model'=>$model));
     }
 
-    public function actionEdit($index)
+
+    public function actionNew()
     {
-        $model = new BossKPIForm('edit');
-        if (!$model->retrieveData($index)) {
-            throw new CHttpException(404,'The requested page does not exist.');
-        } else {
-            $this->render('form',array('model'=>$model,));
-        }
+        $model = new BossSetBForm('new');
+        $this->render('form',array('model'=>$model,));
     }
 
-    public function actionCopy($index)
+    public function actionEdit($index)
     {
-        $model = new BossKPIForm('copy');
+        $model = new BossSetBForm('edit');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
@@ -88,7 +84,7 @@ class BossKPIController extends Controller
 
     public function actionView($index)
     {
-        $model = new BossKPIForm('view');
+        $model = new BossSetBForm('view');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
@@ -98,14 +94,14 @@ class BossKPIController extends Controller
 
 
     public function actionSave()
-    { //
-        if (isset($_POST['BossKPIForm'])) {
-            $model = new BossKPIForm($_POST['BossKPIForm']['scenario']);
-            $model->attributes = $_POST['BossKPIForm'];
+    {
+        if (isset($_POST['BossSetBForm'])) {
+            $model = new BossSetBForm($_POST['BossSetBForm']['scenario']);
+            $model->attributes = $_POST['BossSetBForm'];
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('bossKPI/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('bossSetB/edit',array('index'=>$model->id)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
@@ -116,17 +112,18 @@ class BossKPIController extends Controller
 
     //刪除
     public function actionDelete(){
-        $model = new BossKPIForm('delete');
-        if (isset($_POST['BossKPIForm'])) {
-            $model->attributes = $_POST['BossKPIForm'];
+        $model = new BossSetBForm('delete');
+        if (isset($_POST['BossSetBForm'])) {
+            $model->attributes = $_POST['BossSetBForm'];
             if($model->deleteValidate()){
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
-                $this->redirect(Yii::app()->createUrl('bossKPI/index'));
+                $this->redirect(Yii::app()->createUrl('bossSetB/index'));
             }else{
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
-                $this->redirect(Yii::app()->createUrl('bossKPI/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('bossSetB/edit',array('index'=>$model->id)));
             }
         }
     }
+
 }

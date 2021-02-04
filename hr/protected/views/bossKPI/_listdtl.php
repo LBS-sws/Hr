@@ -5,5 +5,7 @@
 
 
     <td><?php echo $this->record['kpi_name']; ?></td>
+    <td><?php echo $this->record['city_name']; ?></td>
+    <td><?php echo $this->record['tacitly']; ?></td>
     <td><?php echo $this->record['sum_bool']; ?></td>
 </tr>

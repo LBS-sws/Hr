@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - bossKPI';
+$this->pageTitle=Yii::app()->name . ' - bossSetB';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-    'id'=>'bossKPI-list',
+    'id'=>'bossSetB-list',
     'enableClientValidation'=>true,
     'clientOptions'=>array('validateOnSubmit'=>true,),
     'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - bossKPI';
 
 <section class="content-header">
     <h1>
-        <strong><?php echo Yii::t('app','Setting KPI'); ?></strong>
+        <strong><?php echo Yii::t('app','Setting Boss B'); ?></strong>
     </h1>
     <!--
         <ol class="breadcrumb">
@@ -24,19 +24,25 @@ $this->pageTitle=Yii::app()->name . ' - bossKPI';
 
 <section class="content">
     <div class="box"><div class="box-body">
+            <div class="btn-group" role="group">
+                <?php
+                //var_dump(Yii::app()->session['rw_func']);
+                if (Yii::app()->user->validRWFunction('BA08'))
+                    echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
+                        'submit'=>Yii::app()->createUrl('bossSetB/new'),
+                    ));
+                ?>
+            </div>
         </div></div>
     <?php
     $search = array(
-        'kpi_name',
-        'tacitly',
-        'city'
+        'set_name',
     );
-
     $this->widget('ext.layout.ListPageWidget', array(
-        'title'=>Yii::t('contract','kpi list'),
+        'title'=>Yii::t('app','Setting Boss B'),
         'model'=>$model,
-        'viewhdr'=>'//bossKPI/_listhdr',
-        'viewdtl'=>'//bossKPI/_listdtl',
+        'viewhdr'=>'//bossSetB/_listhdr',
+        'viewdtl'=>'//bossSetB/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
         'search'=>$search,
@@ -52,9 +58,6 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
-$js = "
-";
-Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

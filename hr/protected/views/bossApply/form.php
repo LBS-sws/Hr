@@ -45,7 +45,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
         <?php endif; ?>
 	</div>
             <div class="btn-group pull-right" role="group">
-                <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(0,3))): ?>
+                <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(0,3,4))): ?>
                     <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                             'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
                     );
@@ -248,6 +248,7 @@ changeCofWindow();
             one_11 = tr.find('input[name$=\"[two_8]\"]').eq(0).val();
         }
         var data ={
+                city:'$model->city',
                 name:name,
                 value:$(this).val(),
                 one_1:one_1,

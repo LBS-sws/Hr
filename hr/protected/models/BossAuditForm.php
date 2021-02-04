@@ -18,6 +18,7 @@ class BossAuditForm extends CFormModel
 	public $results_a;
 	public $results_b;
 	public $results_c;
+    public $json_listX;
 
 	public function attributeLabels()
 	{
@@ -64,19 +65,26 @@ class BossAuditForm extends CFormModel
             $this->city = $row['city'];
             $this->status_type = $row['status_type'];
             $this->audit_year = $row['audit_year'];
+            $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
         }
     }
 
     public function validateJson($attribute, $params){
-	    if(!empty($this->json_text)){
-	        $bool = $this->status_type==1;
-	        //A類驗證
+        if(!empty($this->json_text)){
+            $bool = $this->status_type==1;
+            //A類驗證
             $bossReviewA = new BossReviewA($this);
+            if(!empty($this->json_listX)){
+                $bossReviewA->resetListX($this->json_listX);
+            }
             $bossReviewA->validateJson($this,$bool);
             $this->json_text = $bossReviewA->json_text;
             $this->results_a = $bossReviewA->scoreSum;
             //B類驗證
             $bossReviewB = new BossReviewB($this);
+            if(!empty($this->json_listX)){
+                $bossReviewB->resetListX($this->json_listX);
+            }
             $bossReviewB->validateJson($this,$bool);
             $this->json_text = $bossReviewB->json_text;
             $this->results_b = $bossReviewB->scoreSum;
@@ -119,6 +127,7 @@ class BossAuditForm extends CFormModel
             $this->results_b = $row['results_b'];
             $this->results_c = $row['results_c'];
             $this->boss_type = $row['boss_type'];
+            $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
 		}
 		return true;
 	}

@@ -39,6 +39,7 @@ class BossReview
         }
         $this->searchBool = $searchBool;
         $this->cofModel = new BossReviewCof();
+        $this->cofModel->city = $this->city;
         $this->countPrice = $this->value($this->city,$this->audit_year-1,"00002");
         $this->setListX();
         $this->setListY();
@@ -47,6 +48,10 @@ class BossReview
     protected function setListX(){
         //array('value'=>'','name'=>'')
         $this->listX = array();
+    }
+
+    public function getListX(){
+        return $this->listX;
     }
 
     protected function setListY(){
@@ -67,7 +72,7 @@ class BossReview
                 }
 
                 if(key_exists("function",$listY)){
-                    call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"]);
+                    call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"],$listX);
                 }
             }
         }
@@ -106,7 +111,7 @@ class BossReview
                 $name = $this->className."[json_text][".$listX["value"]."]"."[".$listY["value"]."]";
                 $html.="<td class='".$listY["value"]."'>";
                 if(key_exists("function",$listY)){
-                    $value = call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"]);
+                    $value = call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"],$listX);
                     if(is_array($value)){
                         if (strpos($value['name'],'<input')===false){
                             $html.="<input type='hidden' name='$name' value='".$value['value']."'/>";
@@ -163,7 +168,7 @@ class BossReview
             foreach ($this->listY as $key => $listY){
                 if(key_exists("emailBool",$listY)){
                     if(key_exists("function",$listY)){
-                        call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"]);
+                        call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"],$listX);
                     }
                     if($listY["emailBool"]){
                         $searchText = !isset($this->json_text[$listX["value"]][$listY["value"]])?0:$this->json_text[$listX["value"]][$listY["value"]];
@@ -209,7 +214,7 @@ class BossReview
                     $html.="<td>";
                 }
                 if(key_exists("function",$listY)){
-                    $value = call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"]);
+                    $value = call_user_func(array($this,$listY["function"]),$listX["value"],$listY["value"],$listX);
                     if(is_array($value)){
                         if (strpos($value['name'],'<input')===false){
                             $html.="<input type='hidden' name='$name' value='".$value['value']."'>";

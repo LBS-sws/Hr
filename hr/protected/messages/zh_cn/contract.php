@@ -680,5 +680,8 @@ return array(
     'update new'=>'修改后',
     'history ago'=>'历史信息',
     'history new'=>'现在信息',
+
+    //2021-02-03
+    'tacitly'=>'默认',
 );
 ?>

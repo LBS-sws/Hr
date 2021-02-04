@@ -11,16 +11,39 @@ class BossReviewA extends BossReview
 
     protected function setListX(){
         $this->listX = array(
-            array('value'=>'one_one','name'=>Yii::t("contract","one_one")),//年生意额增长目标
-            array('value'=>'one_two','name'=>Yii::t("contract","one_two")),//年利润额增长目标
-            array('value'=>'one_three','name'=>Yii::t("contract","one_three")),//年新业务生意额目标
-            array('value'=>'one_four','name'=>Yii::t("contract","one_four")),//IA服务生意年金额
-            array('value'=>'one_five','name'=>Yii::t("contract","one_five")),//IB服务生意年金额
-            array('value'=>'one_nine','name'=>Yii::t("contract","one_nine")),//新（IA+IB）服务年金额
-            array('value'=>'one_six','name'=>Yii::t("contract","one_six"),'pro_str'=>"%"),//收款率(%)
-            array('value'=>'one_seven','name'=>Yii::t("contract","one_seven"),'pro_str'=>"%"),//服务单的停单比例(%)
-            array('value'=>'one_eight','name'=>Yii::t("contract","one_eight"))//技术员每月平均生产力
+            array('value'=>'one_one','name'=>Yii::t("contract","one_one"),'percent'=>'25','show'=>'1'),//年生意额增长目标
+            array('value'=>'one_two','name'=>Yii::t("contract","one_two"),'percent'=>'20','show'=>'1'),//年利润额增长目标
+            array('value'=>'one_three','name'=>Yii::t("contract","one_three"),'percent'=>'10','show'=>'1'),//年新业务生意额目标
+            array('value'=>'one_four','name'=>Yii::t("contract","one_four"),'percent'=>'10','show'=>'1'),//IA服务生意年金额
+            array('value'=>'one_five','name'=>Yii::t("contract","one_five"),'percent'=>'10','show'=>'1'),//IB服务生意年金额
+            array('value'=>'one_nine','name'=>Yii::t("contract","one_nine"),'percent'=>'5','show'=>'1'),//新（IA+IB）服务年金额
+            array('value'=>'one_six','name'=>Yii::t("contract","one_six"),'pro_str'=>"%",'percent'=>'10','show'=>'1'),//收款率(%)
+            array('value'=>'one_seven','name'=>Yii::t("contract","one_seven"),'pro_str'=>"%",'percent'=>'5','show'=>'1'),//服务单的停单比例(%)
+            array('value'=>'one_eight','name'=>Yii::t("contract","one_eight"),'percent'=>'5','show'=>'1')//技术员每月平均生产力
         );
+    }
+
+    //自由配置A項
+    public function resetListX($list){
+        if(is_array($list)&&key_exists("bossA",$list)){
+            $this->listX = $list['bossA'];
+        }
+    }
+
+    //自由配置A項(城市默認)
+    public function cityListX(){
+        $row = Yii::app()->db->createCommand()->select("json_text")->from("hr_boss_set_a")
+            ->where('tacitly=1 or city=:city ', array(':city'=>$this->city))->order("tacitly asc")->queryRow();
+        if($row){
+            $this->listX = array();
+            $jsonList = json_decode($row["json_text"],true);
+            foreach ($jsonList as $list){
+                if($list["show"] == 1){
+                    $list["name"] = Yii::t("contract",$list['value']);
+                    $this->listX[] = $list;
+                }
+            }
+        }
     }
 
     protected function setListY(){
@@ -42,7 +65,7 @@ class BossReviewA extends BossReview
     }
 
     //2018年度数据 - one_1
-    public function getOldYear($type,$str){
+    public function getOldYear($type,$str,$list=array()){
         switch ($type){
             case "one_one"://年生意额增长目标
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00002");
@@ -74,7 +97,7 @@ class BossReviewA extends BossReview
         }
     }
     //2018年度增长百分比 - one_2
-    public function getOldAgoYear($type,$str){
+    public function getOldAgoYear($type,$str,$list=array()){
         switch ($type){
             case "one_one"://年生意额增长目标
                 $value = $this->value($this->city,$this->audit_year-2,"00002");
@@ -124,7 +147,7 @@ class BossReviewA extends BossReview
         }
     }
     //预计2019年目标数据 - one_3
-    public function getPlanYear($type,$str){
+    public function getPlanYear($type,$str,$list=array()){
         $value = isset($this->json_text[$type][$str])?$this->json_text[$type][$str]:"";
         $name = $this->className."[json_text][".$type."]"."[".$str."]";
         $ready = $this->ready?"readonly":"";
@@ -141,7 +164,7 @@ class BossReviewA extends BossReview
         return array('value'=>$this->json_text[$type][$str],'name'=>$html);
     }
     //预计增长百分比 - one_4
-    public function getPlanYearRate($type,$str){
+    public function getPlanYearRate($type,$str,$list=array()){
         if(in_array($type,array("one_one","one_two","one_three","one_four","one_five","one_nine"))){
             $value = floatval($this->json_text[$type]["one_1"]);
             if($type == "one_two"){
@@ -161,7 +184,7 @@ class BossReviewA extends BossReview
         }
     }
     //系数 - one_5
-    public function getPlanYearCof($type,$str){
+    public function getPlanYearCof($type,$str,$list=array()){
         if(in_array($type,array("one_six","one_seven","one_eight","one_nine"))){
             $value = $this->json_text[$type]["one_3"];
         }else{
@@ -177,7 +200,7 @@ class BossReviewA extends BossReview
         return array('value'=>$this->json_text[$type][$str],'name'=>$html);
     }
     //2019年实际达成数据 - one_6
-    public function getNowYear($type,$str){
+    public function getNowYear($type,$str,$list=array()){
         switch ($type){
             case "one_one"://年生意额增长目标
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00002");
@@ -209,7 +232,7 @@ class BossReviewA extends BossReview
         }
     }
     //实际达成百分比 - one_7
-    public function getNowYearRate($type,$str){
+    public function getNowYearRate($type,$str,$list=array()){
         if(in_array($type,array("one_one","one_two","one_three","one_four","one_five"))){
             //var_dump($this->json_text[$type]["one_1"]);die();
             $rate = floatval($this->json_text[$type]["one_1"]);
@@ -226,7 +249,7 @@ class BossReviewA extends BossReview
         }
     }
     //阶梯落差 - one_8
-    public function getLadderDiffer($type,$str){
+    public function getLadderDiffer($type,$str,$list=array()){
         if(in_array($type,array("one_one","one_two","one_three","one_four","one_five"))){
             $cofNow = $this->cofModel->getClassCof($this->json_text[$type]["one_7"],$this->countPrice,$type);
             $value = $this->cofModel->getClassLadder($this->json_text[$type]["one_5"],$cofNow,$type);
@@ -242,7 +265,7 @@ class BossReviewA extends BossReview
         return array('value'=>$this->json_text[$type][$str],'name'=>$html);
     }
     //落差系数 - one_9
-    public function getLadderCof($type,$str){
+    public function getLadderCof($type,$str,$list=array()){
         $value = $this->json_text[$type]["one_8"];
         $value = $value>0?$value*0.03:$value*0.08;
         //$value += $this->json_text[$type]["one_5"];
@@ -250,49 +273,20 @@ class BossReviewA extends BossReview
         return array('value'=>$this->json_text[$type][$str],'name'=>$value);
     }
     //实际系数 - one_10
-    public function getNowCof($type,$str){
+    public function getNowCof($type,$str,$list=array()){
         $value = $this->json_text[$type]["one_5"]+$this->json_text[$type]["one_9"];
         $value = $value<=0?0:$value;
         $this->json_text[$type][$str] = $value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$value);
     }
     //占比（%） - one_11
-    public function getSumRate($type,$str){
-        $value = 0;
-        switch ($type){
-            case "one_one"://年生意额增长目标
-                $value = 25;
-                break;
-            case "one_two"://年利润额增长目标
-                $value = 20;
-                break;
-            case "one_three"://年新业务生意额目标
-                $value = 10;
-                break;
-            case "one_four"://IA服务生意年金额
-                $value = 10;
-                break;
-            case "one_five"://IB服务生意年金额
-                $value = 10;
-                break;
-            case "one_nine"://新（IA+IB）服務年金額
-                $value = 5;
-                break;
-            case "one_six"://收款率(%)
-                $value = 10;
-                break;
-            case "one_seven"://服务单的停单比例(%)
-                $value = 5;
-                break;
-            case "one_eight"://技术员每月平均生产力
-                $value = 5;
-                break;
-        }
+    public function getSumRate($type,$str,$list=array()){
+        $value = $list["percent"];
         $this->json_text[$type][$str] = $value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$value."%");
     }
     //得分 - one_12
-    public function getSumNumber($type,$str){
+    public function getSumNumber($type,$str,$list=array()){
         $value = $this->json_text[$type]["one_10"]*$this->json_text[$type]["one_11"];
         $value = floatval(sprintf("%.3f",$value));
         $this->json_text[$type][$str] = $value;
@@ -300,7 +294,7 @@ class BossReviewA extends BossReview
         return array('value'=>$this->json_text[$type][$str],'name'=>$value."%");
     }
     //备注
-    public function getRemark($type,$str){
+    public function getRemark($type,$str,$list=array()){
         $value = isset($this->json_text[$type][$str])?$this->json_text[$type][$str]:"";
         $name = $this->className."[json_text][".$type."]"."[".$str."]";
         $ready = $this->ready?"readonly":"";

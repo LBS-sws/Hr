@@ -17,6 +17,7 @@ class BossSearchForm extends CFormModel
 	public $results_a;
 	public $results_b;
 	public $results_c;
+    public $json_listX;
 
 	public function attributeLabels()
 	{
@@ -75,6 +76,7 @@ class BossSearchForm extends CFormModel
             $this->results_a = $row['results_a'];
             $this->results_b = $row['results_b'];
             $this->results_c = $row['results_c'];
+            $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
 		}
 		return true;
 	}
