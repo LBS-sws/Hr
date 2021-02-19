@@ -133,7 +133,7 @@ class BossAuditList extends CListPageModel
                 );
             case 4:
                 return array(
-                    "status"=>Yii::t("contract","audited"),//已审核
+                    "status"=>Yii::t("contract","Reviewed and to be completed"),//已审核
                     "style"=>" text-warning"
                 );
             case 5:
