@@ -554,9 +554,9 @@ return array(
 
     'matters'=>'事項',
 
-    'one_one'=>'年生意額增長目標',
-    'one_two'=>'年利潤額增長目標',
-    'one_three'=>'年新業務生意額目標',
+    'one_one'=>'整體生意額增長目標',
+    'one_two'=>'整體利潤額增長目標',
+    'one_three'=>'新業務生意額目標',
     'one_four'=>'IA服務生意年金額',
     'one_five'=>'IB服務生意年金額',
     'one_nine'=>'新（IA+IB）服务年金额',
