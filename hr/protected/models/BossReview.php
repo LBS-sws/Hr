@@ -256,7 +256,23 @@ class BossReview
             ->where("b.city = :city AND b.year_no = :year AND a.data_field=:field",
                 array(":city"=>$city,":year"=>$year,":field"=>$data_field)
             )->queryScalar();
-        return empty($sum)?0:$sum;
+        return empty($sum)||$sum==null?0:$sum;
+    }
+
+    //提取营业报告表数据
+    public function valueToOp($city,$year){
+        //
+        $suffix = Yii::app()->params['envSuffix'];
+        $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
+            ->from("operation$suffix.opr_monthly_dtl a")
+            ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
+            ->where("b.city = :city 
+            AND b.year_no = :year 
+            AND a.data_field in ('10005','10004') 
+            AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
+                array(":city"=>$city,":year"=>$year)
+            )->queryScalar();
+        return empty($sum)||$sum==null?0:$sum;
     }
 
     //平均值

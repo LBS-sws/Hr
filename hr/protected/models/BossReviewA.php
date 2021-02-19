@@ -74,7 +74,7 @@ class BossReviewA extends BossReview
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00067");
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_three"://年新业务生意额目标
-                $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00009");
+                $this->json_text[$type][$str] = $this->valueToOp($this->city,$this->audit_year-1);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_four"://IA服务生意年金额
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00003");
@@ -112,7 +112,7 @@ class BossReviewA extends BossReview
                 $this->json_text[$type][$str] = floatval(sprintf("%.4f",$value))*100;
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]."%");
             case "one_three"://年新业务生意额目标
-                $value = $this->value($this->city,$this->audit_year-2,"00009");
+                $value = $this->valueToOp($this->city,$this->audit_year-2);
                 $value = floatval($value);
                 $value = empty($value)?0:($this->json_text[$type]["one_1"]-$value)/$value;
                 $this->json_text[$type][$str] = floatval(sprintf("%.4f",$value))*100;
@@ -209,7 +209,7 @@ class BossReviewA extends BossReview
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00067");
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_three"://年新业务生意额目标
-                $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00009");
+                $this->json_text[$type][$str] = $this->valueToOp($this->city,$this->audit_year);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "one_four"://IA服务生意年金额
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00003");
