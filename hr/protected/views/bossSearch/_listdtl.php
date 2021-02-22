@@ -8,8 +8,8 @@
     <td><?php echo $this->record['name']; ?></td>
     <td><?php echo $this->record['city_name']; ?></td>
     <td><?php echo $this->record['audit_year']; ?></td>
-    <td><?php echo $this->record['results_a']; ?>%</td>
-    <td><?php echo $this->record['results_b']; ?>%</td>
+    <td><?php echo $this->record['results_a']; ?></td>
+    <td><?php echo $this->record['results_b']; ?></td>
     <td><?php echo $this->record['results_c']; ?></td>
     <td><?php echo $this->record['results_sum']; ?></td>
 </tr>
