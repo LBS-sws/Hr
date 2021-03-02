@@ -55,36 +55,44 @@ class Counter {
 
 //加班审核(部門)
     public static function getWorkOne() {
+        $staff_id = Yii::app()->user->id;
         $staffList = BindingForm::getEmployeeListToUsername();
         $department = empty($staffList)?0:$staffList["department"];
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
         return $count;
     }
 //请假审核(部門)
     public static function getLeaveOne() {
+        $staff_id = Yii::app()->user->id;
         $staffList = BindingForm::getEmployeeListToUsername();
         $department = empty($staffList)?0:$staffList["department"];
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =1 AND b.department=:department",array(":department"=>$department))->queryScalar();
         return $count;
     }
 //加班审核(人事)
     public static function getWorkTwo() {
+        $staff_id = Yii::app()->user->id;
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //请假审核(人事)
     public static function getLeaveTwo() {
+        $staff_id = Yii::app()->user->id;
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =5 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //员工录入(社保信息)
@@ -104,18 +112,22 @@ class Counter {
     }
 //加班审核(員工)
     public static function getWorkThree() {
+        $staff_id = Yii::app()->user->id;
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //请假审核(員工)
     public static function getLeaveThree() {
+        $staff_id = Yii::app()->user->id;
         $city = Yii::app()->user->city();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =2 AND b.city = '$city'")->queryScalar();
         return $count;
     }
 //入職審核(審核)
@@ -141,18 +153,22 @@ class Counter {
     }
 //加班审核(審核)
     public static function getWorkFour() {
+        $staff_id = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
         return $count;
     }
 //请假审核(審核)
     public static function getLeaveFour() {
+        $staff_id = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =3 AND b.city in ($city_allow)")->queryScalar();
         return $count;
     }
 //奖金审核(審核)
