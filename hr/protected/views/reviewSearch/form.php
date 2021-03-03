@@ -14,6 +14,9 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
     select[readonly="readonly"]{pointer-events: none;}
     td.remark{;min-width: 300px;}
     tr.text-weight>td{font-weight: bold;}
+    .remarkTable{ width: 100%;margin-bottom: 0px;background: transparent!important;}
+    .remarkTable .showNum{ border-bottom: 1px solid #f4f4f4;border-right: 1px solid #f4f4f4;}
+    .remarkTable tr>.showNum:last-child{ border-right: none;}
 </style>
 
 <section class="content-header">
@@ -165,16 +168,18 @@ Script::genFileUpload($model,$form->id,'REVIEW');
 $js = "
 $(function(){
     $('td.remark').each(function(){
-        if(!$(this).parents('.tab-pane.fade').hasClass('active')){
-            $(this).parents('.tab-pane.fade').addClass('active in');
-        }
-        var height = $(this).css('width','360px').outerHeight();
-        $(this).parent('tr').height(height);
-        $(this).css({
-            'position':'absolute',
-            'height':height+'px'
+        var showObj = $(this).prevAll('.showNum');
+        var num = showObj.length;
+        var html = '<td colspan=\"'+num+'\" style=\"padding: 0px;\"><table class=\"table remarkTable\"><tbody><tr>';
+        showObj.each(function(){
+            html+=$(this).prop('outerHTML');
+            $(this).remove();
         });
-        $(this).parents('.tab-pane.fade').removeClass('active in');
+        html+='</tr>';
+        html+='<tr><td colspan=\"'+num+'\">'+$(this).html()+'</td></tr>';
+        html+='</tbody></table></td>';
+        $(this).after(html);
+        $(this).remove();
     });
 });
 ";

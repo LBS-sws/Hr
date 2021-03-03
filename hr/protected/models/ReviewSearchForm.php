@@ -305,6 +305,7 @@ class ReviewSearchForm extends CFormModel
         $html.="</thead><tbody>";
         $num =0;
         //表格內容
+        $width = intval(50/(count($rows)+1));
         foreach ($setList["list"] as $proList) {
             $num++;
             $html.="<tr><td>$num</td>";
@@ -340,9 +341,9 @@ class ReviewSearchForm extends CFormModel
                         $proArr[]=array('color'=>$colorList[$key],'name'=>$rows[$i]['handle_name'],'remark'=>htmlspecialchars($remark));
                     }
                 }
-                $html.="<td>$proValue</td>";
+                $html.="<td class='showNum' width='$width%'>$proValue</td>";
             }
-            $html.="<td>$proSum</td>";
+            $html.="<td class='showNum' width='$width%'>$proSum</td>";
             if(!empty($proArr)){
                 $html.="<td class='remark'>";
                 if(count($proArr)>1){
