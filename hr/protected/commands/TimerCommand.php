@@ -796,16 +796,18 @@ class TimerCommand extends CConsoleCommand {
         }
         $systemId = Yii::app()->params['systemId'];
         echo "boss review start\r\n";
-        $email = new Email("老总年度考核进度".date("(Y年m月)"),"","老总年度考核进度".date("(Y年m月)"));
+        $setSubject = "老总年度考核进度".date("(Y年m月)");
+        $email = new Email($setSubject,"",$setSubject);
         $userList = $email->getUserListToPrefix("BA01");
         if($userList){
             foreach ($userList as $user){
                 $email->resetToAddr();
                 $html = $this->bossReviewEmailHtml($user);
                 if(!empty($html)){
+                    $email->setSubject($setSubject." - ".$user['name']);
                     $email->setMessage($html);
                     $email->addToAddrEmail($user['email']);
-                    $email->addToAddrUser($user['username']);
+                    $email->addEmailToOnlyCityBoss($user['city']);
                     $email->sent("系统生成",$systemId);
                 }
             }
