@@ -666,6 +666,7 @@ if (!empty($contractNum)){
             $("#test_length>option[value='']").show();
             var startDate = new Date($("#start_time").val());
             var endDate = new Date($("#end_time").val());
+            endDate.setDate(endDate.getDate()+1);;
             var Year = endDate.getFullYear()-startDate.getFullYear();
             var Month = endDate.getMonth()-startDate.getMonth();
             var dateLeng = Year*12+Month;
