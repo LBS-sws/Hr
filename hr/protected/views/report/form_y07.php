@@ -64,7 +64,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
                 <?php echo $form->labelEx($model,'year_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'year_type',ReviewAllotList::getYearTypeList(-1,$model->year),
-                        array('disabled'=>($model->scenario=='view'),'id'=>"select_year_type",'data-one'=>Yii::t("contract","first half year"),'data-two'=>Yii::t("contract","first more half year"))
+                        array('disabled'=>($model->scenario=='view'),'id'=>"select_year_type",'data-one'=>Yii::t("contract","first half year"),'data-two'=>Yii::t("contract","first more half year"),'data-three'=>Yii::t("contract","last half year"))
                     ); ?>
                 </div>
             </div>
@@ -101,6 +101,7 @@ if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])){
         var year = $(this).val();
         if(year < 2020){
             $('#select_year_type>option[value=1]').text($('#select_year_type').data('one'));
+            $('#select_year_type>option[value=2]').text($('#select_year_type').data('three'));
             $('#select_year_type>option:last').show();
         }else if(year == 2020){
             $('#select_year_type').val(1);
