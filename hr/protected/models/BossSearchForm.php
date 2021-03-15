@@ -81,13 +81,18 @@ class BossSearchForm extends CFormModel
 		return true;
 	}
 
-	public function setDataToEmployeeIdAndYear($employee_id,$year) {
+	public function setDataToEmployeeIdAndYear($employee_id,$year,$cityBool=true) {
+        if($cityBool){
+            $city_allow = Yii::app()->user->city_allow();
+            $citySql = " and b.city in ($city_allow) ";
+        }else{
+            $citySql = "";
+        }
         $suffix = Yii::app()->params['envSuffix'];
-        $city_allow = Yii::app()->user->city_allow();
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.employee_id=:employee_id and b.city in ($city_allow) and a.audit_year = :year",array(":employee_id"=>$employee_id,":year"=>$year))->queryRow();
+            ->where("a.employee_id=:employee_id $citySql and a.audit_year = :year",array(":employee_id"=>$employee_id,":year"=>$year))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->employee_id = $row['employee_id'];

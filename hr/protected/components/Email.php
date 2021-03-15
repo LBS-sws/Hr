@@ -451,8 +451,8 @@ class Email {
         }
         $userList = array();
         if(is_array($minCity)){
-            $minCity = $minCity["region"];
             $userList = array($minCity["incharge"]);
+            $minCity = $minCity["region"];
         }
         //$arrList=array("华南","华西","华北","华东");
         $suffix = Yii::app()->params['envSuffix'];
