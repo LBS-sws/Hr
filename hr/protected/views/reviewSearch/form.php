@@ -168,7 +168,7 @@ Script::genFileUpload($model,$form->id,'REVIEW');
 $js = "
 $(function(){
     $('td.remark').each(function(){
-        var showObj = $(this).prevAll('.showNum');
+        var showObj = $(this).parent('tr').find('td.showNum');
         var num = showObj.length;
         var html = '<td colspan=\"'+num+'\" style=\"padding: 0px;\"><table class=\"table remarkTable\"><tbody><tr>';
         showObj.each(function(){
