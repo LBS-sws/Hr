@@ -676,5 +676,9 @@ return array(
     'history new'=>'現在信息',
     //2021-02-03
     'tacitly'=>'默認',
+
+    //2021-02-03
+    'every monthly average'=>'每月應達成平均數',
+    'now monthly average'=>'當月應達成數據',
     );
 ?>

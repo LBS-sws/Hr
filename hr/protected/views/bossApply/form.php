@@ -51,6 +51,11 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                     );
                     ?>
                 <?php endif; ?>
+                <?php if ($model->scenario!='new'){
+                    //流程
+                    echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
+                        'name'=>'btnBossFlow','id'=>'btnBossFlow','data-toggle'=>'modal','data-target'=>'#bossflowinfodialog'));
+                } ?>
             </div>
 	</div></div>
 
@@ -108,6 +113,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 	</div>
 </section>
 <?php
+$this->renderPartial('//site/bossflow',array('model'=>$model));
 $this->renderPartial('//site/removedialog');
 ?>
 <script>

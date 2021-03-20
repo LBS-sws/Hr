@@ -683,5 +683,9 @@ return array(
 
     //2021-02-03
     'tacitly'=>'默认',
+
+    //2021-02-03
+    'every monthly average'=>'每月应达成平均数',
+    'now monthly average'=>'当月应达成数据',
 );
 ?>

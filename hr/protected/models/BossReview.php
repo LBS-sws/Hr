@@ -145,12 +145,19 @@ class BossReview
         return $html;
     }
 
+    //邮件专用
+    public function getEveryOrNowNumber($type,$str="every"){
+        return "/";
+    }
+
     //主內容橫向
     public function getTableHtmlToEmail(){
         $width="170px";
         $html="";
         $html.="<thead><tr>";
         $html.="<th width='$width'>".Yii::t("contract","matters")."</th>";
+        $tdInfo = array("one_4","two_2");
+        $tdPro = array("one_one","one_two","one_three","one_four","one_five","one_nine","two_three","two_eight","two_five");
         foreach ($this->listY as $key => $listY){
             if(key_exists("emailBool",$listY)&&$listY["emailBool"]){
                 if(key_exists("width",$listY)){
@@ -158,6 +165,10 @@ class BossReview
                 }else{
                     $html.="<th width='170px'>".$listY["name"]."</th>";
                 }
+            }
+            if(in_array($listY["value"],$tdInfo)){
+                $html.="<th width='170px'>".Yii::t("contract","every monthly average")."</th>";
+                $html.="<th width='170px'>".Yii::t("contract","now monthly average")."</th>";
             }
         }
         $html.="</tr></thead><tbody>";
@@ -181,6 +192,15 @@ class BossReview
                         $html.="<td>".$searchText."</td>";
                     }
                 }
+                if(in_array($listY["value"],$tdInfo)&&in_array($listX["value"],$tdPro)){
+                    $eveyNum = $this->getEveryOrNowNumber($listX["value"],"every");
+                    $nowNum = $this->getEveryOrNowNumber($listX["value"],"now");
+                }else{
+                    $eveyNum = "/";
+                    $nowNum = "/";
+                }
+                $html.="<td>".$eveyNum."</td>";
+                $html.="<td>".$nowNum."</td>";
             }
             $html.="</tr>";
         }

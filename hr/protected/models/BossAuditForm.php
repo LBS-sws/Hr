@@ -226,9 +226,33 @@ class BossAuditForm extends CFormModel
             $this->id = Yii::app()->db->getLastInsertID();
         }
 
+        $this->saveBossFlow();
         $this->sendEmail();//發送郵件
 		return true;
 	}
+
+    protected function saveBossFlow(){
+        switch ($this->getScenario()){
+            case "audit":
+                $state_type="Finish approval";
+                break;
+            case "finish":
+                $state_type="finish";
+                break;
+            case "reject":
+                $state_type="reject";
+                break;
+            default:
+                return;
+        }
+        Yii::app()->db->createCommand()->insert('hr_boss_flow',array(
+            'boss_id'=>$this->id,
+            'state_type'=>$state_type,
+            'state_remark'=>$this->getScenario() == "reject"?$this->reject_remark:"",
+            'none_info'=>0,
+            'lcu'=>Yii::app()->user->id,
+        ));
+    }
 
     protected function sendEmail($send_type = 1){
         $email = new Email();

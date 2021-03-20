@@ -67,7 +67,7 @@ class BossApplyForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }
-        if($row&&$row["status_type"]==4){
+        if($row&&in_array($row["status_type"],array(4,0,3))){
             $this->json_listX = json_decode($row['json_listX'],true);
             $this->apply_date = $row["apply_date"];
             $this->status_type = $this->status_type==1?5:4;
@@ -443,9 +443,22 @@ class BossApplyForm extends CFormModel
             $this->setJsonListX();
         }
 
+        $this->saveBossFlow();
         $this->sendEmail();//發送郵件
 		return true;
 	}
+
+	protected function saveBossFlow(){
+        if(in_array($this->status_type,array(1,5))){
+            Yii::app()->db->createCommand()->insert('hr_boss_flow',array(
+                'boss_id'=>$this->id,
+                'state_type'=>"For Audit",
+                'state_remark'=>"",
+                'none_info'=>0,
+                'lcu'=>Yii::app()->user->id,
+            ));
+        }
+    }
 
 	protected function setJsonListX(){
         Yii::app()->db->createCommand()->update('hr_boss_audit', array(

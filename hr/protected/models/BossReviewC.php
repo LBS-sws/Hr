@@ -94,6 +94,32 @@ class BossReviewC
         $this->scoreSum = $sum;
     }
 
+    public function getTableHtmlToEmail(){
+        $width="170px";
+        $html="";
+        $html.="<thead><tr>";
+        foreach ($this->listX as $item){
+            $html.="<th width='$width'>".$item["name"]."</th>";
+        }
+        $html.="</tr></thead>";
+        if(isset($this->json_text["three"]["list"])){
+            $html.="<tbody>";
+            foreach ($this->json_text["three"]["list"] as $key =>$list){
+                $html.="<tr>";
+                foreach ($this->listX as $item){
+                    $html.="<td width='$width'>".$list[$item["value"]]."</td>";
+                }
+                $html.="</tr>";
+            }
+            $html.="</tbody>";
+            $html.="<tfoot><tr><td colspan='3' style='text-align: right'>";
+            $html.=$this->json_text["three"]["count"]."</td>";
+            $html.="<td>".$this->json_text["three"]["sum"]."</td>";
+            $html.="</tr></tfoot>";
+        }
+        return $html;
+    }
+
     public function getTableHtml(){
         $html="<p>&nbsp;</p><div class='col-lg-12'>";
         $html.="<p><b>".Yii::t("contract","table_remark_0")."</b></p>";

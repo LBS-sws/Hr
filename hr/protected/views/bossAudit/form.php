@@ -47,14 +47,19 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
         <?php endif; ?>
 	</div>
 
-            <?php if ($model->scenario!='view'&&$model->status_type == 5&&$model->boss_type==$bossType): ?>
             <div class="btn-group pull-right" role="group">
-                <?php
-                echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','Rejected'), array(
-                    'name'=>'btnJect','id'=>'btnJect','data-toggle'=>'modal','data-target'=>'#jectdialog'));
-                ?>
+                <?php if ($model->scenario!='view'&&$model->status_type == 5&&$model->boss_type==$bossType): ?>
+                    <?php
+                    echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','Rejected'), array(
+                        'name'=>'btnJect','id'=>'btnJect','data-toggle'=>'modal','data-target'=>'#jectdialog'));
+                    ?>
+                <?php endif ?>
+                <?php if ($model->scenario!='new'){
+                    //流程
+                    echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
+                        'name'=>'btnBossFlow','id'=>'btnBossFlow','data-toggle'=>'modal','data-target'=>'#bossflowinfodialog'));
+                } ?>
             </div>
-            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -112,6 +117,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 	</div>
 </section>
 <?php
+$this->renderPartial('//site/bossflow',array('model'=>$model));
 $this->renderPartial('//site/ject',array('model'=>$model,'form'=>$form,'rejectName'=>"reject_remark",'submit'=>Yii::app()->createUrl('bossAudit/reject',array('type'=>$this->boss_type))));
 ?>
 <?php

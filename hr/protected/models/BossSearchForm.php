@@ -53,6 +53,17 @@ class BossSearchForm extends CFormModel
         }
     }
 
+	public function getBossFlowList($boss_id) {
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("c.disp_name,a.*")
+            ->from("hr_boss_flow a")
+            //->leftJoin("hr_boss_audit b","a.boss_id = b.id")
+            ->leftJoin("security$suffix.sec_user c","a.lcu = c.username")
+            ->where("a.boss_id=:id",array(":id"=>$boss_id))->queryAll();
+		return $rows?$rows:array();
+	}
+
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];

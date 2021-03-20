@@ -28,13 +28,18 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 		?>
 	</div>
 
-            <?php if (Yii::app()->user->validFunction('ZR16')): ?>
                 <div class="btn-group pull-right" role="group">
+                    <?php if (Yii::app()->user->validFunction('ZR16')): ?>
                     <?php echo TbHtml::button('<span class="fa fa-backward"></span> '.Yii::t('contract','send back'), array(
                         'submit'=>Yii::app()->createUrl('bossSearch/back')));
                     ?>
+                    <?php endif ?>
+                    <?php if ($model->scenario!='new'){
+                        //流程
+                        echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
+                            'name'=>'btnBossFlow','id'=>'btnBossFlow','data-toggle'=>'modal','data-target'=>'#bossflowinfodialog'));
+                    } ?>
                 </div>
-            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
@@ -92,6 +97,8 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 	</div>
 </section>
 <?php
+$this->renderPartial('//site/bossflow',array('model'=>$model));
+
 $js = "
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);

@@ -293,6 +293,17 @@ class BossReviewA extends BossReview
         $this->scoreSum +=$value;
         return array('value'=>$this->json_text[$type][$str],'name'=>$value."%");
     }
+
+    //邮件专用
+    public function getEveryOrNowNumber($type,$str="every"){
+        $value = $this->json_text[$type]["one_3"]/12;
+        if($str!="every"){
+            $value*=intval(date("m"));
+        }
+        $value = round($value);
+        return $value;
+    }
+
     //备注
     public function getRemark($type,$str,$list=array()){
         $value = isset($this->json_text[$type][$str])?$this->json_text[$type][$str]:"";
