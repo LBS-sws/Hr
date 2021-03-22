@@ -192,15 +192,17 @@ class BossReview
                         $html.="<td>".$searchText."</td>";
                     }
                 }
-                if(in_array($listY["value"],$tdInfo)&&in_array($listX["value"],$tdPro)){
-                    $eveyNum = $this->getEveryOrNowNumber($listX["value"],"every");
-                    $nowNum = $this->getEveryOrNowNumber($listX["value"],"now");
-                }else{
-                    $eveyNum = "/";
-                    $nowNum = "/";
+                if(in_array($listY["value"],$tdInfo)){
+                    if(in_array($listX["value"],$tdPro)){
+                        $eveyNum = $this->getEveryOrNowNumber($listX["value"],"every");
+                        $nowNum = $this->getEveryOrNowNumber($listX["value"],"now");
+                    }else{
+                        $eveyNum = "/";
+                        $nowNum = "/";
+                    }
+                    $html.="<td>".$eveyNum."</td>";
+                    $html.="<td>".$nowNum."</td>";
                 }
-                $html.="<td>".$eveyNum."</td>";
-                $html.="<td>".$nowNum."</td>";
             }
             $html.="</tr>";
         }

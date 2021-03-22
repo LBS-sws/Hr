@@ -791,7 +791,7 @@ class TimerCommand extends CConsoleCommand {
 
     //老总年度考核邮件（一个月提示一次)
     private function bossReviewEmailToMonth(){
-        if(date("d")!="22") {//每月1號
+        if(date("d")!="23") {//每月1號
             return;
         }
         $systemId = Yii::app()->params['systemId'];
@@ -856,7 +856,7 @@ class TimerCommand extends CConsoleCommand {
             $html = "<h2>城市：".$user["city_name"]."</h2>";
             $html .= "<h2>".$year."年老总年度考核 - ".$user["name"]."</h2>";
             $list = array(
-                array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","width"=>"1000px","colspan"=>6),
+                array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","width"=>"1000px","colspan"=>7),
                 array("name"=>"（B） 其他细节部分","class"=>"BossReviewB","width"=>"700px","colspan"=>5),
                 array("name"=>"（C） 自选项目部分","class"=>"BossReviewC","width"=>"800px","colspan"=>4)
             );
