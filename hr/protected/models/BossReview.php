@@ -174,8 +174,10 @@ class BossReview
         $html.="</tr></thead><tbody>";
 
         foreach ($this->listX as $listX){
-            $html.="<tr>";
-            $html.="<td><b>".$listX["name"]."</b></td>";
+            $tableTr="<tr>";
+            $tableTr.="<td><b style='color::COLORSTR:;'>".$listX["name"]."</b></td>";
+            $nowNum = "/";
+            $userNum = 0;
             foreach ($this->listY as $key => $listY){
                 if(key_exists("emailBool",$listY)){
                     if(key_exists("function",$listY)){
@@ -184,12 +186,15 @@ class BossReview
                     if($listY["emailBool"]){
                         $searchText = !isset($this->json_text[$listX["value"]][$listY["value"]])?0:$this->json_text[$listX["value"]][$listY["value"]];
                         $searchText = empty($searchText)?0:$searchText;
+                        if(in_array($listY["value"],array("one_6","two_4"))){
+                            $userNum = is_numeric($searchText)?$searchText:0;
+                        }
                         if(isset($listY["static_str"])&&$searchText!=="\\"){
                             $searchText.=$listY["static_str"];
                         }elseif(isset($listY["pro_str"])&&isset($listX["pro_str"])&&$listX["pro_str"]==$listY["pro_str"]){
                             $searchText.=$listY["pro_str"];
                         }
-                        $html.="<td>".$searchText."</td>";
+                        $tableTr.="<td style='color::COLORSTR:;'>".$searchText."</td>";
                     }
                 }
                 if(in_array($listY["value"],$tdInfo)){
@@ -200,11 +205,17 @@ class BossReview
                         $eveyNum = "/";
                         $nowNum = "/";
                     }
-                    $html.="<td>".$eveyNum."</td>";
-                    $html.="<td>".$nowNum."</td>";
+                    $tableTr.="<td style='color::COLORSTR:;'>".$eveyNum."</td>";
+                    $tableTr.="<td style='color::COLORSTR:;'>".$nowNum."</td>";
                 }
             }
-            $html.="</tr>";
+            $tableTr.="</tr>";
+            if($nowNum!="/"&&$nowNum>$userNum){
+                $tableTr = str_replace(":COLORSTR:","red",$tableTr);
+            }else{
+                $tableTr = str_replace(":COLORSTR:","#000",$tableTr);
+            }
+            $html.=$tableTr;
         }
 
         $html.="</tbody>";
