@@ -791,7 +791,7 @@ class TimerCommand extends CConsoleCommand {
 
     //老总年度考核邮件（一个月提示一次)
     private function bossReviewEmailToMonth(){
-        if(date("d")!="24") {//每月1號
+        if(date("d")!="01") {//每月1號
             return;
         }
         $systemId = Yii::app()->params['systemId'];

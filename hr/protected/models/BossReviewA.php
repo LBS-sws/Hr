@@ -298,7 +298,18 @@ class BossReviewA extends BossReview
     public function getEveryOrNowNumber($type,$str="every"){
         $value = $this->json_text[$type]["one_3"]/12;
         if($str!="every"){
-            $value*=intval(date("m"));
+            $year = intval(date("Y"));
+            if($this->audit_year == $year){
+                $num = intval(date("m"));
+                if(intval(date("d")) == 1){
+                    $num--;
+                }
+            }elseif($this->audit_year > $year){
+                $num = 0;
+            }else{
+                $num = 12;
+            }
+            $value*=$num;
         }
         $value = round($value);
         return $value;
