@@ -49,22 +49,22 @@ return array(
 		),
 	),
 	'Feedback'=>array(
-		'access'=>'FB',
+		'access'=>'HL',
 		'icon'=>'fa-paper-plane',
 		'items'=>array(
 		    //心意信
             'Apply Heart letter'=>array(
-                'access'=>'FB01',
+                'access'=>'HL01',
                 'url'=>'/heartLetter/index',
             ),
 		    //審核心意信
             'Audit Heart letter'=>array(
-                'access'=>'FB02',
+                'access'=>'HL02',
                 'url'=>'/heartLetterAudit/index',
             ),
 		    //查詢心意信得分
             'Search Heart letter'=>array(
-                'access'=>'FB03',
+                'access'=>'HL03',
                 'url'=>'/heartLetterSearch/index',
             ),
 		),

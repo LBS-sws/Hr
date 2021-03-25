@@ -1,7 +1,7 @@
-<tr class='clickable-row' data-href='<?php echo $this->getLink('FB03', 'heartLetterSearch/edit', 'heartLetterSearch/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row' data-href='<?php echo $this->getLink('HL03', 'heartLetterSearch/edit', 'heartLetterSearch/view', array('index'=>$this->record['id']));?>'>
 
 
-	<td><?php echo $this->drawEditButton('FB03', 'heartLetterSearch/edit', 'heartLetterSearch/view', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->drawEditButton('HL03', 'heartLetterSearch/edit', 'heartLetterSearch/view', array('index'=>$this->record['id'])); ?></td>
 
 
 

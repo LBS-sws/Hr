@@ -1,7 +1,7 @@
-<tr class='clickable-row<?php echo $this->record['style']; ?>' data-href='<?php echo $this->getLink('FB01', 'heartLetter/edit', 'heartLetter/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row<?php echo $this->record['style']; ?>' data-href='<?php echo $this->getLink('HL01', 'heartLetter/edit', 'heartLetter/view', array('index'=>$this->record['id']));?>'>
 
 
-	<td><?php echo $this->drawEditButton('FB01', 'heartLetter/edit', 'heartLetter/view', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->drawEditButton('HL01', 'heartLetter/edit', 'heartLetter/view', array('index'=>$this->record['id'])); ?></td>
 
 
 

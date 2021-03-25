@@ -259,7 +259,7 @@ class HeartLetterForm extends CFormModel
             $email->setDescription($description);
             $email->setMessage($message);
             $email->setSubject($subject);
-            $email->addEmailToPrefixAndCity("FB02",$row["city"]);
+            $email->addEmailToPrefixAndCity("HL02",$row["city"]);
             $email->sent();
         }
     }

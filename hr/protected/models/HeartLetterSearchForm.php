@@ -87,7 +87,7 @@ class HeartLetterSearchForm extends CFormModel
 	    $html.="<th width='8%'>".Yii::t('queue','Type')."</th>";
 	    $html.="<th>".Yii::t('queue','Subject')."</th>";
 	    $html.="<th width='25%'>".Yii::t("contract","three_four")."</th>";
-        if(Yii::app()->user->validRWFunction('FB03')){
+        if(Yii::app()->user->validRWFunction('HL03')){
             $html.="<th width='1%'>&nbsp;</th>";
         }
 	    $html.="</tr></thead><tbody>";
@@ -100,7 +100,7 @@ class HeartLetterSearchForm extends CFormModel
                 $html.="<td>".HeartLetterForm::getLetterTypeList($row["letter_type"],true)."</td>";
                 $html.="<td>".$row["letter_title"]."</td>";
                 $html.="<td>".HeartLetterAuditForm::getLetterNumToIcon($row["letter_num"])."</td>";
-                if(Yii::app()->user->validRWFunction('FB03')){
+                if(Yii::app()->user->validRWFunction('HL03')){
                     $html.="<td>";
                     $html.=TbHtml::button("<span class='fa fa-reply'></span>".Yii::t("contract","send back"),array(
                         'submit'=>Yii::app()->createUrl('heartLetterSearch/back',array("index"=>$row["id"]))
@@ -112,7 +112,7 @@ class HeartLetterSearchForm extends CFormModel
         }
 	    $html.="</tbody><tfoot><tr>";
 	    $html.="<td colspan='3' class='text-right'>".Yii::t("contract","review number")."</td>";
-        if(Yii::app()->user->validRWFunction('FB03')){
+        if(Yii::app()->user->validRWFunction('HL03')){
             $html.="<td colspan='2' class='text-center'><b class='fa-lg'>".$sum."分</b></td>";
         }else{
             $html.="<td class='text-center'><b class='fa-lg'>".$sum."分</b></td>";

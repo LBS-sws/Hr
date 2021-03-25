@@ -27,7 +27,7 @@ $this->pageTitle=Yii::app()->name . ' - heartLetter';
             <div class="btn-group" role="group">
                 <?php
                 //var_dump(Yii::app()->session['rw_func']);
-                if (Yii::app()->user->validRWFunction('FB01'))
+                if (Yii::app()->user->validRWFunction('HL01'))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
                         'submit'=>Yii::app()->createUrl('heartLetter/new'),
                     ));
