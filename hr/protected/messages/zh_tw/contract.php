@@ -680,5 +680,18 @@ return array(
     //2021-02-03
     'every monthly average'=>'每月應達成平均數',
     'now monthly average'=>'當月應達成數據',
+
+    //2021-03-23
+    'Heart letter list'=>'心意信列表',
+    'Heart letter form'=>'心意信表單',
+    'letter body'=>'信息內容',
+    'reply'=>'回復',
+    'ready end'=>'已閱讀/結束',
+    'To be processed'=>'已閱讀/待處理',
+    'Suggest that class'=>'建議類',
+    'Talk to the class'=>'傾訴類',
+    'Other class'=>'其它類',
+    'Go on'=>'繼續',
+    'Relevant letter'=>'相關心意信',
     );
 ?>

@@ -23,6 +23,7 @@ return array(
     array('code'=>'BA05','function'=>'Counter::getBossThreeAudit','color'=>'bg-maroon'),//考核審批(副總監)
     array('code'=>'AY01','function'=>'Counter::getSupportApply','color'=>'bg-green'),//考核審批(中央支援需給員工評分)
     array('code'=>'AY02','function'=>'Counter::getSupportAudit','color'=>'bg-gray'),//審核中央技术支持(中央技术支持)
+    array('code'=>'FB02','function'=>'Counter::getLetterAudit','color'=>'bg-green'),//审核心意信(意见反馈)
 );
 
 ?>

@@ -244,6 +244,14 @@ class Counter {
             ->where("status_type IN (6,2,4)")->queryScalar();
         return $count;
     }
+//审核心意信(意见反馈)
+    public static function getLetterAudit() {
+        $city_allow = Yii::app()->user->city_allow();
+        $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_letter a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.state IN (1,3) and b.city IN ($city_allow)")->queryScalar();
+        return $count;
+    }
 }
 
 ?>
