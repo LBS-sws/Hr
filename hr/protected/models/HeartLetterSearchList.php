@@ -2,11 +2,14 @@
 
 class HeartLetterSearchList extends CListPageModel
 {
+    public $searchTimeStart;//開始日期
+    public $searchTimeEnd;//結束日期
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
 	 * the same as its name with the first letter in upper case.
 	 */
+
 	public function attributeLabels()
 	{
 		return array(
@@ -21,6 +24,12 @@ class HeartLetterSearchList extends CListPageModel
             'user_num'=>Yii::t('contract','review number'),
 		);
 	}
+    public function rules()
+    {
+        return array(
+            array('attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, searchTimeStart, searchTimeEnd','safe',),
+        );
+    }
 
 	public function retrieveDataByPage($pageNum=1)
 	{
@@ -50,6 +59,14 @@ class HeartLetterSearchList extends CListPageModel
                     break;
 			}
 		}
+        if (!empty($this->searchTimeStart) && !empty($this->searchTimeStart)) {
+            $svalue = str_replace("'","\'",$this->searchTimeStart);
+            $clause .= " and a.lcd >='$svalue 00:00:00' ";
+        }
+        if (!empty($this->searchTimeEnd) && !empty($this->searchTimeEnd)) {
+            $svalue = str_replace("'","\'",$this->searchTimeEnd);
+            $clause .= " and a.lcd <='$svalue 23:59:59' ";
+        }
 		
 		$order = "";
 		if (!empty($this->orderField)) {
@@ -83,4 +100,18 @@ class HeartLetterSearchList extends CListPageModel
 		$session['heartLetterSearch_01'] = $this->getCriteria();
 		return true;
 	}
+
+    public function getCriteria() {
+        return array(
+            'searchTimeStart'=>$this->searchTimeStart,
+            'searchTimeEnd'=>$this->searchTimeEnd,
+            'searchField'=>$this->searchField,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+        );
+    }
 }

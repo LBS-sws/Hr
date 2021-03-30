@@ -29,6 +29,14 @@ $this->pageTitle=Yii::app()->name . ' - heartLetterSearch';
         'employee_name',
         'city'
     );
+    $search_add_html="";
+    $modelName = get_class($model);
+    $search_add_html .= TbHtml::textField($modelName.'[searchTimeStart]',$model->searchTimeStart,
+        array('size'=>15,'placeholder'=>Yii::t('misc','Start Date'),"class"=>"form-control","id"=>"start_time"));
+    $search_add_html.="<span>&nbsp;&nbsp;-&nbsp;&nbsp;</span>";
+    $search_add_html .= TbHtml::textField($modelName.'[searchTimeEnd]',$model->searchTimeEnd,
+        array('size'=>15,'placeholder'=>Yii::t('misc','End Date'),"class"=>"form-control","id"=>"end_time"));
+
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('contract','Heart letter list'),
         'model'=>$model,
@@ -36,6 +44,7 @@ $this->pageTitle=Yii::app()->name . ' - heartLetterSearch';
         'viewdtl'=>'//heartLetterSearch/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
+        'search_add_html'=>$search_add_html,
         'search'=>$search,
     ));
     ?>

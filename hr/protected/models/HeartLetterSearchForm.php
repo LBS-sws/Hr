@@ -72,8 +72,19 @@ class HeartLetterSearchForm extends CFormModel
             $this->employee_code = $staff["code"];
             $this->employee_name = $staff["name"];
             $this->city = CGeneral::getCityName($staff["city"]);
+            $sql = "";
+            $session = Yii::app()->session;
+            if (isset($session['heartLetterSearch_01']) && !empty($session['heartLetterSearch_01'])) {
+                $session = $session['heartLetterSearch_01'];
+                if (!empty($session["searchTimeStart"])) {
+                    $sql .= " and lcd >='".$session["searchTimeStart"]." 00:00:00' ";
+                }
+                if (!empty($session["searchTimeEnd"])) {
+                    $sql .= " and lcd <='".$session["searchTimeEnd"]." 23:59:59' ";
+                }
+            }
             $rows = Yii::app()->db->createCommand()->select("*")->from("hr_letter")
-                ->where("employee_id=:id and state=4",array(":id"=>$index))->queryAll();
+                ->where("employee_id=:id and state=4 $sql",array(":id"=>$index))->queryAll();
             $this->letterList = $rows?$rows:array();
             return true;
         }else{
