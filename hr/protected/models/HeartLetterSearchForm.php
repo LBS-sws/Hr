@@ -83,10 +83,10 @@ class HeartLetterSearchForm extends CFormModel
 
 	public function getTable(){
 	    $html="<table class='table table-bordered table-hover table-striped'><thead><tr>";
-	    $html.="<th width='12%'>".Yii::t('fete','apply for time')."</th>";
-	    $html.="<th width='8%'>".Yii::t('queue','Type')."</th>";
+	    $html.="<th width='15%'>".Yii::t('fete','apply for time')."</th>";
+	    $html.="<th width='10%'>".Yii::t('queue','Type')."</th>";
 	    $html.="<th>".Yii::t('queue','Subject')."</th>";
-	    $html.="<th width='25%'>".Yii::t("contract","three_four")."</th>";
+	    $html.="<th width='28%'>".Yii::t("contract","three_four")."</th>";
         if(Yii::app()->user->validRWFunction('HL03')){
             $html.="<th width='1%'>&nbsp;</th>";
         }

@@ -46,7 +46,7 @@ class HeartLetterAuditForm extends CFormModel
 
             'state'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
-            'lcd'=>Yii::t('fete','apply for time'),
+            'lcd'=>Yii::t('contract','send date'),
 		);
 	}
 
@@ -75,11 +75,13 @@ class HeartLetterAuditForm extends CFormModel
     }
 
 	public function validateUpdate($attribute, $params){
-        $row = Yii::app()->db->createCommand()->select("id")->from("hr_letter")
+        $row = Yii::app()->db->createCommand()->select("id,employee_id")->from("hr_letter")
             ->where('id=:id and state in (1,3)',array(':id'=>$this->id))->queryRow();
         if(!$row){
             $message = "心意信不存在，请于管理员联系";
             $this->addError($attribute,$message);
+        }else{
+            $this->employee_id = $row["employee_id"];
         }
     }
 
@@ -192,13 +194,8 @@ class HeartLetterAuditForm extends CFormModel
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("code,name,city")->from("hr_employee")
                 ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
+            var_dump($row);
             $description="心意信 - ";
-            if($this->state == 3){
-                $description.="待处理";
-            }else{
-                $description.="结束";
-            }
-            $subject=$description;
             $message="<p>员工编号：".$row["code"]."</p>";
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
@@ -209,6 +206,13 @@ class HeartLetterAuditForm extends CFormModel
                 $message.="<p>心意信回复：".$this->letter_reply."</p>";
                 $message.="<p>心意信分数：".$this->letter_num."分(满分5分)</p>";
             }
+            if($this->state == 3){
+                $description.="待处理";
+                $message.="<p>您的建议/反馈总监已收到，请等待总监下一步回复</p>";
+            }else{
+                $description.="结束";
+            }
+            $subject=$description;
             $email->setDescription($description);
             $email->setMessage($message);
             $email->setSubject($subject);

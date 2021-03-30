@@ -20,7 +20,7 @@ class HeartLetterAuditList extends CListPageModel
 
 			'state'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
-            'lcd'=>Yii::t('fete','apply for time'),
+            'lcd'=>Yii::t('contract','send date'),
 		);
 	}
 

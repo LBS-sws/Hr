@@ -44,7 +44,7 @@ class HeartLetterForm extends CFormModel
 
             'state'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
-            'lcd'=>Yii::t('fete','apply for time'),
+            'lcd'=>Yii::t('contract','send date'),
 		);
 	}
 
@@ -173,6 +173,7 @@ class HeartLetterForm extends CFormModel
 							letter_type = :letter_type, 
 							letter_title = :letter_title, 
 							letter_body = :letter_body, 
+							lcd = :lcd, 
 							luu = :luu
 						where id = :id
 						";
@@ -215,6 +216,10 @@ class HeartLetterForm extends CFormModel
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         if (strpos($sql,':lcu')!==false)
             $command->bindParam(':lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':lcd')!==false){
+            $this->lcd = date("Y-m-d H:i:s");
+            $command->bindParam(':lcd',$this->lcd,PDO::PARAM_STR);
+        }
         $command->execute();
 
         if ($this->scenario=='new'){

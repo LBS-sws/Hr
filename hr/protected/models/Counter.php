@@ -246,10 +246,13 @@ class Counter {
     }
 //审核心意信(意见反馈)
     public static function getLetterAudit() {
-        $city_allow = Yii::app()->user->city_allow();
-        $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_letter a")
-            ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.state IN (1,3) and b.city IN ($city_allow)")->queryScalar();
+        $count = 0;
+	    if(Yii::app()->user->validRWFunction('HL02')){
+            $city_allow = Yii::app()->user->city_allow();
+            $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_letter a")
+                ->leftJoin("hr_employee b","a.employee_id = b.id")
+                ->where("a.state IN (1,3) and b.city IN ($city_allow)")->queryScalar();
+        }
         return $count;
     }
 }
