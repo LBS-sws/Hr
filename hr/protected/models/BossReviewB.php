@@ -218,8 +218,9 @@ class BossReviewB extends BossReview
             if($this->audit_year == $year){
                 $num = intval(date("m"));
                 if(intval(date("d")) == 1){
-                    $num--;
+                    $num-=2;
                 }
+                $num = $num<1?1:$num;
             }elseif($this->audit_year > $year){
                 $num = 0;
             }else{

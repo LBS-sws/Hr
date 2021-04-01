@@ -791,12 +791,12 @@ class TimerCommand extends CConsoleCommand {
 
     //老总年度考核邮件（一个月提示一次)
     private function bossReviewEmailToMonth(){
-        if(date("m")=="01"||date("d")!="01") {//每月1號(1月份不需要)
+        if(date("m")=="01"||date("m")=="02"||date("d")!="01") {//每月1號(1月份不需要)
             return;
         }
         $systemId = Yii::app()->params['systemId'];
         echo "boss review start\r\n";
-        $setSubject = "老总年度考核进度".date("(Y年m月)",strtotime("-1 month"));
+        $setSubject = "老总年度考核进度".date("(Y年m月)",strtotime("-2 month"));
         $email = new Email($setSubject,"",$setSubject);
         $userList = $email->getUserListToPrefix("BA01");
         if($userList){
@@ -822,7 +822,7 @@ class TimerCommand extends CConsoleCommand {
     private function sendReviewAllEmail(){
         if(!empty($this->review_list)){
             $systemId = Yii::app()->params['systemId'];
-            $setSubject = "老总年度考核進度汇总".date("(Y年m月)",strtotime("-1 month"));
+            $setSubject = "老总年度考核進度汇总".date("(Y年m月)",strtotime("-2 month"));
             $email = new Email($setSubject,"",$setSubject);
             $userList = $email->getOnlyLRTMUserList();
             if($userList){
