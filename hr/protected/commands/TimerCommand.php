@@ -11,7 +11,6 @@ class TimerCommand extends CConsoleCommand {
 
     public function run() {
         $command = Yii::app()->db->createCommand();
-        /*暫時只發送老總年度考核郵件
         $firstday = date("Y/m/d");
         echo "----------------------------------------------\r\n";
         echo "----------------------------------------------\r\n";
@@ -62,8 +61,6 @@ class TimerCommand extends CConsoleCommand {
         $this->sendEmail();//統一發送郵件
 
         $this->dailyInAndOutHint();//入职、离职总览电邮
-*/
-        echo "test start\r\n";
         $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
         $this->resetBossListScore();//老总年度考核的總分重新計算
         echo "end\r\n";
