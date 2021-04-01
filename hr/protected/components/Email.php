@@ -196,13 +196,15 @@ class Email {
     }
 
     //添加收信人(只有地區總監收到）
-    public function addEmailToOnlyCityBoss($city){
+    public function addEmailToOnlyCityBoss($city,$notUser=array()){
         $uidList = $this->getBossUidToMinCity($city);
         if(empty($city)){
             return "";
         }else{
             foreach ($uidList as $uid){
-                $this->addEmailToLcu($uid);
+                if(!in_array($uid,$notUser)){
+                    $this->addEmailToLcu($uid);
+                }
             }
         }
     }
@@ -382,6 +384,15 @@ class Email {
         }
     }
 
+    public function deleteEmail($list){
+        if(is_array($list)){
+            $userList = array_column($list,"username");
+            $emailList = array_column($list,"email");
+            $this->to_user = array_diff($this->to_user,$userList);
+            $this->to_addr = array_diff($this->to_addr,$emailList);
+        }
+    }
+
     //發送郵件
     public function sent($uid="",$systemId="",$request_dt=""){
         $request_dt = empty($request_dt)?date('Y-m-d H:i:s'):$request_dt;
@@ -487,6 +498,24 @@ class Email {
         }
 
         return $cityList;
+    }
+
+    //查找華南、華北、華西、華東老總、繞生、林生
+    public function getOnlyLRTMUser(){
+        $userList = array();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("a.code,b.username,b.email")->from("security$suffix.sec_city a")
+            ->leftJoin("security$suffix.sec_user b","a.incharge = b.username")
+            ->where("b.status = 'A' and a.code in('HD','HD1','HN','HN1','HN2','HXHB')")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $userList[] = $row['username'];
+            }
+        }
+        $userList[] = "Franco";
+        $userList[] = "joe";
+
+        return $userList;
     }
 
     //查找華南、華北、華西、華東老總、繞生、林生

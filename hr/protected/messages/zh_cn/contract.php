@@ -686,7 +686,7 @@ return array(
 
     //2021-02-03
     'every monthly average'=>'每月应达成平均数',
-    'now monthly average'=>'当月应达成数据',
+    'now monthly average'=>'累计到当月应达成数据',
 
     //2021-03-23
     'Heart letter list'=>'心意信列表',

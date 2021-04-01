@@ -156,7 +156,8 @@ class BossReview
         $html="";
         $html.="<thead><tr>";
         $html.="<th width='$width'>".Yii::t("contract","matters")."</th>";
-        $tdInfo = array("one_4","two_2");
+        $colorInfo = array("one_6","two_4");//需要添加颜色判断的列
+        $tdInfo = array("one_4","two_2");//在某列之后添加“累计”及“本月”
         $tdPro = array("one_one","one_two","one_three","one_four","one_five","one_nine","two_three","two_eight","two_five");
         foreach ($this->listY as $key => $listY){
             if(key_exists("emailBool",$listY)&&$listY["emailBool"]){
@@ -175,8 +176,8 @@ class BossReview
 
         foreach ($this->listX as $listX){
             $tableTr="<tr>";
-            $tableTr.="<td><b style='color::COLORSTR:;'>".$listX["name"]."</b></td>";
-            $nowNum = "/";
+            $tableTr.="<td><b>".$listX["name"]."</b></td>";
+            $nowNum = 0;
             $userNum = 0;
             foreach ($this->listY as $key => $listY){
                 if(key_exists("emailBool",$listY)){
@@ -189,31 +190,43 @@ class BossReview
                         if(in_array($listY["value"],array("one_6","two_4"))){
                             $userNum = is_numeric($searchText)?$searchText:0;
                         }
+                        if(in_array($listY["value"],array("one_3","two_2"))){
+                            $nowNum = is_numeric($searchText)?$searchText:0;
+                        }
                         if(isset($listY["static_str"])&&$searchText!=="\\"){
                             $searchText.=$listY["static_str"];
                         }elseif(isset($listY["pro_str"])&&isset($listX["pro_str"])&&$listX["pro_str"]==$listY["pro_str"]){
                             $searchText.=$listY["pro_str"];
                         }
-                        $tableTr.="<td style='color::COLORSTR:;'>".$searchText."</td>";
+                        if(in_array($listY["value"],$colorInfo)){
+                            $tableTr.="<td style='color::COLORSTR:;'>".$searchText."</td>";
+                        }else{
+                            $tableTr.="<td>".$searchText."</td>";
+                        }
                     }
                 }
                 if(in_array($listY["value"],$tdInfo)){
                     if(in_array($listX["value"],$tdPro)){
                         $eveyNum = $this->getEveryOrNowNumber($listX["value"],"every");
                         $nowNum = $this->getEveryOrNowNumber($listX["value"],"now");
+                        $tableTr.="<td>".$eveyNum."</td>";
+                        $tableTr.="<td>".$nowNum."</td>";
                     }else{
                         $eveyNum = "/";
-                        $nowNum = "/";
+                        $tableTr.="<td>".$eveyNum."</td>";
+                        $tableTr.="<td>".$eveyNum."</td>";
                     }
-                    $tableTr.="<td style='color::COLORSTR:;'>".$eveyNum."</td>";
-                    $tableTr.="<td style='color::COLORSTR:;'>".$nowNum."</td>";
                 }
             }
             $tableTr.="</tr>";
-            if($nowNum!="/"&&$nowNum>$userNum){
-                $tableTr = str_replace(":COLORSTR:","red",$tableTr);
+            if(in_array($listX["value"],array("two_nine","two_ten"))){
+                $nowNum*=-1;
+                $userNum*=-1;
+            }
+            if($nowNum<=$userNum){
+                $tableTr = str_replace(":COLORSTR:","blue",$tableTr);
             }else{
-                $tableTr = str_replace(":COLORSTR:","#000",$tableTr);
+                $tableTr = str_replace(":COLORSTR:","red",$tableTr);
             }
             $html.=$tableTr;
         }

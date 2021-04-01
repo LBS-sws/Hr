@@ -791,15 +791,16 @@ class TimerCommand extends CConsoleCommand {
 
     //老总年度考核邮件（一个月提示一次)
     private function bossReviewEmailToMonth(){
-        if(date("d")!="01") {//每月1號
+        if(date("m")=="01"||date("d")!="01") {//每月1號(1月份不需要)
             return;
         }
         $systemId = Yii::app()->params['systemId'];
         echo "boss review start\r\n";
-        $setSubject = "老总年度考核进度".date("(Y年m月)");
+        $setSubject = "老总年度考核进度".date("(Y年m月)",strtotime("-1 month"));
         $email = new Email($setSubject,"",$setSubject);
         $userList = $email->getUserListToPrefix("BA01");
         if($userList){
+            $bossList = $email->getOnlyLRTMUser();
             foreach ($userList as $user){
                 $email->resetToAddr();
                 $html = $this->bossReviewEmailHtml($user);
@@ -807,7 +808,7 @@ class TimerCommand extends CConsoleCommand {
                     $email->setSubject($setSubject." - ".$user['name']);
                     $email->setMessage($html);
                     $email->addToAddrEmail($user['email']);
-                    $email->addEmailToOnlyCityBoss($user['city']);
+                    $email->addEmailToOnlyCityBoss($user['city'],$bossList);
                     $email->sent("系统生成",$systemId);
                 }
             }
@@ -821,7 +822,8 @@ class TimerCommand extends CConsoleCommand {
     private function sendReviewAllEmail(){
         if(!empty($this->review_list)){
             $systemId = Yii::app()->params['systemId'];
-            $email = new Email("老总年度考核進度汇总".date("(Y年m月)"),"","老总年度考核進度汇总".date("(Y年m月)"));
+            $setSubject = "老总年度考核進度汇总".date("(Y年m月)",strtotime("-1 month"));
+            $email = new Email($setSubject,"",$setSubject);
             $userList = $email->getOnlyLRTMUserList();
             if($userList){
                 foreach ($userList as $user){
