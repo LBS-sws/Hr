@@ -199,7 +199,7 @@ class BossReview
                             $searchText.=$listY["pro_str"];
                         }
                         if(in_array($listY["value"],$colorInfo)){
-                            $tableTr.="<td style='color::COLORSTR:;'>".$searchText."</td>";
+                            $tableTr.="<td style='border-color:#000;color::COLORSTR:;'>".$searchText."</td>";
                         }else{
                             $tableTr.="<td>".$searchText."</td>";
                         }

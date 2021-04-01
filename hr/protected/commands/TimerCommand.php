@@ -11,6 +11,7 @@ class TimerCommand extends CConsoleCommand {
 
     public function run() {
         $command = Yii::app()->db->createCommand();
+        /*暫時只發送老總年度考核郵件
         $firstday = date("Y/m/d");
         echo "----------------------------------------------\r\n";
         echo "----------------------------------------------\r\n";
@@ -61,7 +62,8 @@ class TimerCommand extends CConsoleCommand {
         $this->sendEmail();//統一發送郵件
 
         $this->dailyInAndOutHint();//入职、离职总览电邮
-
+*/
+        echo "test start\r\n";
         $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
         $this->resetBossListScore();//老总年度考核的總分重新計算
         echo "end\r\n";
@@ -791,7 +793,7 @@ class TimerCommand extends CConsoleCommand {
 
     //老总年度考核邮件（一个月提示一次)
     private function bossReviewEmailToMonth(){
-        if(date("m")=="01"||date("m")=="02"||date("d")!="01") {//每月1號(1月份不需要)
+        if(date("m")=="01"||date("m")=="02"||date("d")!="01") {//每月1號(1月、2月份不需要)
             return;
         }
         $systemId = Yii::app()->params['systemId'];
@@ -864,7 +866,7 @@ class TimerCommand extends CConsoleCommand {
             );
             foreach ($list as $key=>$item){
                 $html.="<p>&nbsp;</p>";
-                $html.="<table width='".$item["width"]."' border='1px'>";
+                $html.="<table width='".$item["width"]."' border='1px' style='border-color:#000;'>";
                 $html.="<thead><tr><td colspan='".$item["colspan"]."'><b>".$item["name"]."</b></td></tr></thead>";
                 $className = $item["class"];
                 $bossReviewModel = new $className($bossModel,true);
