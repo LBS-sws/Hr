@@ -700,5 +700,6 @@ return array(
     'Other class'=>'其它类',
     'Go on'=>'继续',
     'Relevant letter'=>'相关心意信',
+    'manager leave'=>'是否参与销售段位',
 );
 ?>

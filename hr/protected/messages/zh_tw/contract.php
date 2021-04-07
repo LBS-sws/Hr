@@ -693,5 +693,6 @@ return array(
     'Other class'=>'其它類',
     'Go on'=>'繼續',
     'Relevant letter'=>'相關心意信',
+    'manager leave'=>'是否參與銷售段位',
     );
 ?>
