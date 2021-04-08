@@ -194,7 +194,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         <p class="form-control-static">销售系统专用，具体功能问销售系统负责人</p>
                     </div>
                 </div>
-                <div class="form-group" style="display: none">
+                <div class="form-group">
                     <?php echo $form->labelEx($model,'manager_leave',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
                         <?php echo $form->dropDownList($model, 'manager_leave',array(Yii::t("contract","not Participate"),Yii::t("contract","Participate")),
@@ -216,14 +216,6 @@ $this->renderPartial('//site/removedialog');
 ?>
 <?php
 $js="
-    $('#manager_type').change(function(){
-        if($(this).val()==0){
-            $('#manager_leave').val(0);
-            $('#manager_leave').parents('div.form-group:first').hide();
-        }else{
-            $('#manager_leave').parents('div.form-group:first').show();
-        }
-    }).trigger('change');
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('dept/delete',array("type"=>$model->type)));

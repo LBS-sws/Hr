@@ -19,16 +19,19 @@
     <?php
     if($this->model->type == 1){
         echo "<td>";
-        echo DeptForm::getDeptToId($this->record['dept_class']);
+        echo $this->record['dept_class'];
         echo "</td>";
         echo "<td>";
-        echo DeptForm::getDeptToId($this->record['review_status']);
+        echo $this->record['review_status'];
         echo "</td>";
         echo "<td>";
-        echo DeptForm::getDeptToId($this->record['review_type']);
+        echo $this->record['review_type'];
         echo "</td>";
         echo "<td>";
-        echo DeptForm::getDeptToId($this->record['manager_type']);
+        echo $this->record['manager_type'];
+        echo "</td>";
+        echo "<td>";
+        echo $this->record['manager_leave'];
         echo "</td>";
     }
     ?>
