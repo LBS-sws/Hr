@@ -53,7 +53,8 @@ class BossApplyForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }
-        $row = Yii::app()->db->createCommand()->select("id,status_type,json_text,apply_date,json_listX")->from("hr_boss_audit")
+        $row = Yii::app()->db->createCommand()->select("id,status_type,json_text,apply_date,json_listX")
+            ->from("hr_boss_audit")
             ->where('employee_id=:id and audit_year=:year',
                 array(':id'=>$this->employee_id,':year'=>$this->audit_year)
             )->queryRow();
@@ -70,17 +71,21 @@ class BossApplyForm extends CFormModel
         if($row&&in_array($row["status_type"],array(4,0,3))){
             $this->json_listX = json_decode($row['json_listX'],true);
             $this->apply_date = $row["apply_date"];
-            $this->status_type = $this->status_type==1?5:4;
+            if($this->status_type==1){
+                $this->status_type=$row["status_type"]==4?5:1;
+            }else{
+                $this->status_type=$row["status_type"]==4?4:0;
+            }
             $jsonTest = json_decode($row['json_text'],true);
-            if(isset($jsonTest["three"]["list"])){
+            if(isset($jsonTest["three"]["list"])&&in_array($this->status_type,array(4,5))){
                 foreach ($jsonTest["three"]["list"] as $key =>&$list){
                     if(key_exists("three_four",$list)&&isset($this->json_text["three"]["list"][$key]["three_four"])){
                         $list["three_four"] = $this->json_text["three"]["list"][$key]["three_four"];
                         $list["three_two"] = $this->json_text["three"]["list"][$key]["three_two"];
                     }
                 }
+                $this->json_text = $jsonTest;
             }
-            $this->json_text = $jsonTest;
         }
     }
 
@@ -137,7 +142,6 @@ class BossApplyForm extends CFormModel
                 $this->results_c = $bossReviewC->scoreSum;
                 $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
             }
-
             if(empty($this->json_listX)){
                 $this->json_listX= array(
                     "bossA"=>$bossReviewA->getListX(),

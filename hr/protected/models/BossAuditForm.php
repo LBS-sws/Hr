@@ -190,6 +190,9 @@ class BossAuditForm extends CFormModel
 						where id = :id AND status_type in (1,5)
 						";
                 break;
+            case 'delete':
+                $sql = "delete from hr_boss_audit where id = :id";
+                break;
         }
 		if (empty($sql)) return false;
 
@@ -242,6 +245,9 @@ class BossAuditForm extends CFormModel
             case "reject":
                 $state_type="reject";
                 break;
+            case "delete":
+                Yii::app()->db->createCommand()->delete('hr_boss_flow', 'boss_id=:id', array(':id'=>$this->id));
+                return;
             default:
                 return;
         }
@@ -300,6 +306,7 @@ class BossAuditForm extends CFormModel
 
     //副總監修改考核狀態
     protected function deputyAudit(){
+        $state_type = "Finish approval";
         switch ($this->boss_type){
             case 1:
                 $this->boss_type = 3;//跳轉給繞生
@@ -312,6 +319,12 @@ class BossAuditForm extends CFormModel
             'boss_type'=>$this->boss_type,
             'lcu'=>"test",
         ), 'id=:id', array(':id'=>$this->id));
+        Yii::app()->db->createCommand()->insert('hr_boss_flow',array(
+            'boss_id'=>$this->id,
+            'state_type'=>$state_type,
+            'none_info'=>0,
+            'lcu'=>Yii::app()->user->id,
+        ));
         $this->sendEmail(2);
     }
 

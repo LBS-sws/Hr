@@ -53,10 +53,18 @@ class BossAuditController extends Controller
                 'actions'=>array('index','view'),
                 'expression'=>array('BossAuditController','allowReadOnly'),
             ),
+            array('allow',
+                'actions'=>array('delete'),
+                'expression'=>array('BossAuditController','allowDelete'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
         );
+    }
+
+    public static function allowDelete() {
+        return Yii::app()->user->validFunction('ZR16');
     }
 
     public static function allowReadWrite() {
@@ -170,6 +178,23 @@ class BossAuditController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
             }
             $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id,'type'=>$this->boss_type)));
+        }
+    }
+
+    public function actionDelete()
+    {
+        if (isset($_POST['BossAuditForm'])) {
+            $model = new BossAuditForm('delete');
+            $model->attributes = $_POST['BossAuditForm'];
+            $model->boss_type = $this->boss_type;
+            if ($model->validate()) {
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+            $this->redirect(Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type)));
         }
     }
 }

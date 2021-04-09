@@ -48,6 +48,12 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 	</div>
 
             <div class="btn-group pull-right" role="group">
+                <?php if (Yii::app()->user->validFunction('ZR16')): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                            'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                    );
+                    ?>
+                <?php endif ?>
                 <?php if ($model->scenario!='view'&&$model->status_type == 5&&$model->boss_type==$bossType): ?>
                     <?php
                     echo TbHtml::button('<span class="fa fa-mail-reply-all"></span> '.Yii::t('contract','Rejected'), array(
@@ -117,6 +123,7 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 	</div>
 </section>
 <?php
+$this->renderPartial('//site/removedialog');
 $this->renderPartial('//site/bossflow',array('model'=>$model));
 $this->renderPartial('//site/ject',array('model'=>$model,'form'=>$form,'rejectName'=>"reject_remark",'submit'=>Yii::app()->createUrl('bossAudit/reject',array('type'=>$this->boss_type))));
 ?>
@@ -125,6 +132,8 @@ $js = "
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
+$js = Script::genDeleteData(Yii::app()->createUrl('bossAudit/delete'));
+Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>
