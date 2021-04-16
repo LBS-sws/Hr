@@ -39,6 +39,7 @@ class Email {
 
     public function resetToAddr(){
         $this->to_addr = array();
+		$this->to_user = array();	//Percy: 2021-04-16
     }
 
     //添加收信人
