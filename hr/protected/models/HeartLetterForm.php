@@ -70,7 +70,7 @@ class HeartLetterForm extends CFormModel
                 array(':id'=>$this->id,':lcu'=>Yii::app()->user->id)
             )->queryRow();
         if(!$row){
-            $message = "心意信不存在，请于管理员联系";
+            $message = "心意信封不存在，请于管理员联系";
             $this->addError($attribute,$message);
         }
     }
@@ -253,14 +253,14 @@ class HeartLetterForm extends CFormModel
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("code,name,city")->from("hr_employee")
                 ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
-            $description="新的心意信 - ".$row["name"];
-            $subject="新的心意信 - ".$row["name"];
+            $description="新的心意信封 - ".$row["name"];
+            $subject="新的心意信封 - ".$row["name"];
             $message="<p>员工编号：".$row["code"]."</p>";
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
-            $message.="<p>心意信类型：".HeartLetterForm::getLetterTypeList($this->letter_type,true)."</p>";
-            $message.="<p>心意信标题：".$this->letter_title."</p>";
-            $message.="<p>心意信内容：".$this->letter_body."</p>";
+            $message.="<p>心意信封类型：".HeartLetterForm::getLetterTypeList($this->letter_type,true)."</p>";
+            $message.="<p>心意信封标题：".$this->letter_title."</p>";
+            $message.="<p>心意信封内容：".$this->letter_body."</p>";
             $email->setDescription($description);
             $email->setMessage($message);
             $email->setSubject($subject);

@@ -192,9 +192,9 @@ return array(
     'Setting Boss A'=>'老總年度考核A項設置',
     'Setting Boss B'=>'老總年度考核B項設置',
     'Feedback'=>'意見反饋',
-    'Apply Heart letter'=>'心意信',
-    'Audit Heart letter'=>'審核心意信',
-    'Search Heart letter'=>'查詢心意信得分',
+    'Apply Heart letter'=>'心意信封',
+    'Audit Heart letter'=>'審核心意信封',
+    'Search Heart letter'=>'查詢心意信封得分',
 //沈超添加結束
 );
 ?>

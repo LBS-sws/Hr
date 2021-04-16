@@ -192,9 +192,9 @@ return array(
     'Setting Boss A'=>'老总年度考核A项设置',
     'Setting Boss B'=>'老总年度考核B项设置',
     'Feedback'=>'意见反馈',
-    'Apply Heart letter'=>'心意信',
-    'Audit Heart letter'=>'审核心意信',
-    'Search Heart letter'=>'查询心意信得分',
+    'Apply Heart letter'=>'心意信封',
+    'Audit Heart letter'=>'审核心意信封',
+    'Search Heart letter'=>'查询心意信封得分',
     //沈超添加结束
 );
 ?>

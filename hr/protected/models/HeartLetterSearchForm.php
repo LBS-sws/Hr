@@ -56,7 +56,7 @@ class HeartLetterSearchForm extends CFormModel
         $row = Yii::app()->db->createCommand()->select("id,employee_id")->from("hr_letter")
             ->where('id=:id and state = 4',array(':id'=>$this->id))->queryRow();
         if(!$row){
-            $message = "心意信不存在，请于管理员联系";
+            $message = "心意信封不存在，请于管理员联系";
             $this->addError($attribute,$message);
         }
     }
