@@ -65,7 +65,7 @@ $this->pageTitle=Yii::app()->name . ' - Email';
 
             <div class="form-group">
                 <?php echo $form->labelEx($model,'request_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
+                <div class="col-sm-5">
                     <div class="input-group">
                         <div class="input-group-btn">
                             <?php

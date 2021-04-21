@@ -701,5 +701,8 @@ return array(
     'Go on'=>'继续',
     'Relevant letter'=>'相关心意信封',
     'manager leave'=>'是否参与销售段位',
+    'type for director'=>'总监归类',
+    'click send'=>'点击发送',
+    'wait date'=>'预计处理时间',
 );
 ?>

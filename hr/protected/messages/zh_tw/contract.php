@@ -694,5 +694,8 @@ return array(
     'Go on'=>'繼續',
     'Relevant letter'=>'相關心意信封',
     'manager leave'=>'是否參與銷售段位',
+    'type for director'=>'總監歸類',
+    'click send'=>'點擊發送',
+    'wait date'=>'預計處理時間',
     );
 ?>

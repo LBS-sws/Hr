@@ -34,13 +34,14 @@ class HeartLetterForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-            'letter_type'=>Yii::t('queue','Type'),
+            'letter_type'=>Yii::t('contract','type for director'),
             'letter_title'=>Yii::t('queue','Subject'),
             'letter_body'=>Yii::t('contract','letter body'),
             'employee_name'=>Yii::t('contract','Employee Name'),
             'employee_code'=>Yii::t('contract','Employee Code'),
             'letter_num'=>Yii::t('contract','review score'),
             'letter_reply'=>Yii::t('contract','reply'),
+            'wait_date'=>Yii::t('contract','wait date'),
 
             'state'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
@@ -203,8 +204,10 @@ class HeartLetterForm extends CFormModel
             $this->letter_id = $row?$row["id"]:0;
             $command->bindParam(':letter_id',$this->letter_id,PDO::PARAM_STR);
         }
-        if (strpos($sql,':letter_type')!==false)
+        if (strpos($sql,':letter_type')!==false){
+            $this->letter_type = 3;
             $command->bindParam(':letter_type',$this->letter_type,PDO::PARAM_STR);
+        }
         if (strpos($sql,':letter_title')!==false)
             $command->bindParam(':letter_title',$this->letter_title,PDO::PARAM_STR);
         if (strpos($sql,':letter_body')!==false)
@@ -235,7 +238,8 @@ class HeartLetterForm extends CFormModel
         $arr = array(
             Yii::t("contract","Suggest that class"),//建议类
             Yii::t("contract","Talk to the class"),//傾訴類
-            Yii::t("contract","Other class")//其他類
+            Yii::t("contract","Other class"),//其他類
+            Yii::t("fete","none")//無
         );
         if($bool){
             if(key_exists($type,$arr)){
@@ -244,6 +248,7 @@ class HeartLetterForm extends CFormModel
                 return $type;
             }
         }else{
+            unset($arr[3]);
             return $arr;
         }
     }

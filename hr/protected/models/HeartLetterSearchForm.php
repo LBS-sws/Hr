@@ -25,7 +25,7 @@ class HeartLetterSearchForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-            'letter_type'=>Yii::t('queue','Type'),
+            'letter_type'=>Yii::t('contract','type for director'),
             'letter_title'=>Yii::t('queue','Subject'),
             'letter_body'=>Yii::t('contract','letter body'),
             'employee_name'=>Yii::t('contract','Employee Name'),

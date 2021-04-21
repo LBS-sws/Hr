@@ -43,7 +43,8 @@ $this->pageTitle=Yii::app()->name . ' - heartLetterAudit Form';
             <?php endif; ?>
             <?php if ($model->state == 1): ?>
                 <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('contract','To be processed'), array(
-                    'submit'=>Yii::app()->createUrl('heartLetterAudit/save')));
+                        'name'=>'btnWait','id'=>'btnWait','data-toggle'=>'modal','data-target'=>'#waitDialog',)
+                );
                 ?>
             <?php endif; ?>
             <?php if ($model->state == 1||$model->state == 3): ?>
@@ -217,6 +218,42 @@ $this->pageTitle=Yii::app()->name . ' - heartLetterAudit Form';
     </div>
 </div>
 <?php endif; ?>
+<!-- Modal -->
+<div class="modal fade" id="waitDialog" tabindex="-1" role="dialog" aria-labelledby="myModalDialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">
+                    <?php echo Yii::t('contract','To be processed');?>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'wait_date',array('class'=>"col-lg-3 control-label")); ?>
+                    <div class="col-lg-7">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+
+                            <?php echo $form->textField($model, 'wait_date',
+                                array('class'=>'form-control','autocomplete'=>'off','id'=>"wait_date",'readonly'=>false));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <?php
+                $submit = Yii::app()->createUrl('heartLetterAudit/save');
+                echo TbHtml::button(Yii::t('dialog','Close'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY));
+                echo TbHtml::button(Yii::t('dialog','OK'), array('data-dismiss'=>'modal','color'=>TbHtml::BUTTON_COLOR_PRIMARY,'submit' => $submit));
+                ?>
+            </div>
+        </div>
+    </div>
+</div>
 
 <?php $this->renderPartial('//site/fileupload',array(
     'model'=>$model,
@@ -235,6 +272,10 @@ $js = "
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
+$js = Script::genDatePicker(array(
+    'wait_date'
+));
+Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
 ?>

@@ -15,6 +15,8 @@ class HeartLetterAuditForm extends CFormModel
 	public $letter_num=0;
 	public $letter_reply;
 
+	public $wait_date;
+
     public $lcu;
     public $luu;
 	public $city;
@@ -35,7 +37,7 @@ class HeartLetterAuditForm extends CFormModel
 	public function attributeLabels()
 	{
 		return array(
-            'letter_type'=>Yii::t('queue','Type'),
+            'letter_type'=>Yii::t('contract','type for director'),
             'letter_title'=>Yii::t('queue','Subject'),
             'letter_body'=>Yii::t('contract','letter body'),
             'employee_name'=>Yii::t('contract','Employee Name'),
@@ -43,6 +45,7 @@ class HeartLetterAuditForm extends CFormModel
 
             'letter_num'=>Yii::t('contract','review score'),
             'letter_reply'=>Yii::t('contract','reply'),
+            'wait_date'=>Yii::t('contract','wait date'),
 
             'state'=>Yii::t('contract','Status'),
             'city'=>Yii::t('contract','City'),
@@ -56,12 +59,13 @@ class HeartLetterAuditForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,letter_id,employee_id,employee_code,employee_name,city,state,letter_id,letter_type,letter_title,letter_body,letter_num,letter_reply,lcd,no_of_attm','safe'),
+			array('id,letter_id,employee_id,employee_code,employee_name,city,state,letter_id,letter_type,letter_title,letter_body,letter_num,letter_reply,lcd,no_of_attm,wait_date','safe'),
             //array('employee_id','validateUser'),
             array('letter_title','required'),
             array('letter_body','required'),
             array('id','validateUpdate'),
             array('letter_type','validateType','on'=>array("audit")),
+            array('wait_date','validateWait','on'=>array("save")),
             //array('log_time','numerical','allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
@@ -71,6 +75,20 @@ class HeartLetterAuditForm extends CFormModel
 	    if(empty($this->letter_reply)){
             $message = "内容不能为空";
             $this->addError($attribute,$message);
+        }
+    }
+
+	public function validateWait($attribute, $params){
+	    if(empty($this->wait_date)){
+            $message = Yii::t('contract','wait date')."不能为空";
+            $this->addError($attribute,$message);
+        }else{
+	        $nowDate = date("Y-m-d");
+	        $this->wait_date = date("Y-m-d",strtotime($this->wait_date));
+	        if($this->wait_date<$nowDate){
+                $message = Yii::t('contract','wait date')."不能小于".$nowDate;
+                $this->addError($attribute,$message);
+            }
         }
     }
 
@@ -184,17 +202,49 @@ class HeartLetterAuditForm extends CFormModel
             $this->id = Yii::app()->db->getLastInsertID();
         }
 
+
         //發送郵件
         $this->sendEmail();
 		return true;
 	}
+
+	//預計處理
+    protected function waitDate($message){
+        $from_addr = Yii::app()->params['adminEmail'];
+        $suffix = Yii::app()->params['envSuffix'];
+        if($this->state == 3){
+            $uid = Yii::app()->user->id;
+            $email = Yii::app()->db->createCommand()->select("email")->from("security$suffix.sec_user")
+                ->where("username=:username",array(":username"=>$uid))
+                ->queryRow();
+            $url = Yii::app()->createAbsoluteUrl('heartLetterAudit/edit',array("index"=>$this->id));
+            
+            $message.="<p><a href='$url' target='_blank'>点击处理心意信封</a></p>";
+            if($email&&!empty($email["email"])){
+                Yii::app()->db->createCommand()->insert("swoper$suffix.swo_email_queue", array(
+                    'request_dt'=>$this->wait_date,
+                    'from_addr'=>$from_addr,
+                    'to_addr'=>$email["email"],
+                    'subject'=>"心意信封 - 待处理",//郵件主題
+                    'description'=>"心意信封 - 待处理",//郵件副題
+                    'message'=>$message,//郵件內容（html）
+                    'status'=>"P",
+                    'lcu'=>"心意信封_待处理_".$this->id,
+                    'lcd'=>date('Y-m-d H:i:s'),
+                ));
+            }
+        }else{
+            Yii::app()->db->createCommand()->delete("swoper$suffix.swo_email_queue","lcu=:lcu",array(
+                ":lcu"=>"心意信封_待处理_".$this->id
+            ));
+        }
+    }
 
 	protected function sendEmail(){
         if(in_array($this->state,array(3,4))){
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("code,name,city")->from("hr_employee")
                 ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
-            var_dump($row);
             $description="心意信封 - ";
             $message="<p>员工编号：".$row["code"]."</p>";
             $message.="<p>员工姓名：".$row["name"]."</p>";
@@ -202,6 +252,7 @@ class HeartLetterAuditForm extends CFormModel
             $message.="<p>心意信封类型：".HeartLetterForm::getLetterTypeList($this->letter_type,true)."</p>";
             $message.="<p>心意信封标题：".$this->letter_title."</p>";
             $message.="<p>心意信封内容：".$this->letter_body."</p>";
+            $messageWait = $message;
             if($this->getScenario()=="audit"){
                 $message.="<p>心意信封回复：".$this->letter_reply."</p>";
                 $message.="<p>心意信封分数：".$this->letter_num."分(满分5分)</p>";
@@ -210,8 +261,9 @@ class HeartLetterAuditForm extends CFormModel
                 $description.="待处理";
                 $message.="<p>您的建议/反馈总监已收到，请等待总监下一步回复</p>";
             }else{
-                $description.="结束";
+                $description="你的意见/反馈总监已收到，谢谢";
             }
+            $this->waitDate($messageWait);//待处理的邮件通知
             $subject=$description;
             $email->setDescription($description);
             $email->setMessage($message);

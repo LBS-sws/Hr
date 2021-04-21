@@ -13,7 +13,7 @@ class HeartLetterSearchList extends CListPageModel
 	public function attributeLabels()
 	{
 		return array(
-			'letter_type'=>Yii::t('queue','Type'),
+            'letter_type'=>Yii::t('contract','type for director'),
 			'letter_title'=>Yii::t('queue','Subject'),
 			'employee_name'=>Yii::t('contract','Employee Name'),
             'employee_code'=>Yii::t('contract','Employee Code'),

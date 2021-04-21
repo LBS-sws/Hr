@@ -38,7 +38,7 @@ $this->pageTitle=Yii::app()->name . ' - heartLetter Form';
                 <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                     'submit'=>Yii::app()->createUrl('heartLetter/save')));
                 ?>
-                <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','For Audit'), array(
+                <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','click send'), array(
                     'submit'=>Yii::app()->createUrl('heartLetter/audit')));
                 ?>
             <?php endif ?>
@@ -106,6 +106,7 @@ $this->pageTitle=Yii::app()->name . ' - heartLetter Form';
                 </div>
             <?php endif; ?>
 
+            <?php if (!in_array($model->state,array(1,0))): ?>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'letter_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
@@ -114,6 +115,7 @@ $this->pageTitle=Yii::app()->name . ' - heartLetter Form';
                     ); ?>
                 </div>
             </div>
+            <?php endif; ?>
 
             <div class="form-group">
                 <?php echo $form->labelEx($model,'letter_title',array('class'=>"col-sm-2 control-label")); ?>

@@ -13,7 +13,7 @@ class HeartLetterList extends CListPageModel
 	public function attributeLabels()
 	{
 		return array(
-			'letter_type'=>Yii::t('queue','Type'),
+			'letter_type'=>Yii::t('contract','type for director'),
 			'letter_title'=>Yii::t('queue','Subject'),
 			'employee_name'=>Yii::t('contract','Employee Name'),
             'employee_code'=>Yii::t('contract','Employee Code'),
@@ -146,7 +146,7 @@ class HeartLetterList extends CListPageModel
             case 3:
                 return array(
                     "status"=>Yii::t("contract","To be processed"),//待处理
-                    "style"=>" text-green"
+                    "style"=>" text-danger"
                 );
             case 4:
                 return array(
