@@ -128,6 +128,7 @@ class HeartLetterAuditForm extends CFormModel
                 $this->lcd = $row['lcd'];
                 $this->city = $row['city'];
                 $this->no_of_attm['letter'] = $row['letterdoc'];
+                $this->wait_date = $this->state==3?$this->getWaitDate():"";
                 break;
 			}
 		}
@@ -207,6 +208,21 @@ class HeartLetterAuditForm extends CFormModel
         $this->sendEmail();
 		return true;
 	}
+
+    protected function getWaitDate(){
+        var_dump(1);
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("request_dt")->from("swoper$suffix.swo_email_queue")
+            ->where("lcu=:lcu",array(":lcu"=>"心意信封_待处理_".$this->id))
+            ->queryRow();
+        var_dump($row);
+        if($row){
+            return date("Y-m-d",strtotime($row["request_dt"]));
+        }else{
+            return "";
+        }
+
+    }
 
 	//預計處理
     protected function waitDate($message){

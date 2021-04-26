@@ -157,6 +157,17 @@ $this->pageTitle=Yii::app()->name . ' - heartLetterAudit Form';
                     </div>
                 </div>
             <?php endif; ?>
+
+            <?php if ($model->state==3): ?>
+                <div class="form-group has-error">
+                    <?php echo $form->labelEx($model,'wait_date',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3 error">
+                        <?php echo $form->textField($model, 'wait_date',
+                            array('readonly'=>(true))
+                        ); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 		</div>
 	</div>
 </section>
