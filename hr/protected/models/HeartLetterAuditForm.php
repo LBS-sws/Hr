@@ -210,12 +210,10 @@ class HeartLetterAuditForm extends CFormModel
 	}
 
     protected function getWaitDate(){
-        var_dump(1);
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()->select("request_dt")->from("swoper$suffix.swo_email_queue")
             ->where("lcu=:lcu",array(":lcu"=>"心意信封_待处理_".$this->id))
             ->queryRow();
-        var_dump($row);
         if($row){
             return date("Y-m-d",strtotime($row["request_dt"]));
         }else{
