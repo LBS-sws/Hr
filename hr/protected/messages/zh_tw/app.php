@@ -195,6 +195,7 @@ return array(
     'Apply Heart letter'=>'心意信封',
     'Audit Heart letter'=>'審核心意信封',
     'Search Heart letter'=>'查詢心意信封得分',
+    'Search Heart letter rank'=>'地區排行榜',
 //沈超添加結束
 );
 ?>

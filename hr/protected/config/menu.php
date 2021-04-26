@@ -48,6 +48,7 @@ return array(
             ),
 		),
 	),
+    //意見反饋
 	'Feedback'=>array(
 		'access'=>'HL',
 		'icon'=>'fa-paper-plane',
@@ -66,6 +67,11 @@ return array(
             'Search Heart letter'=>array(
                 'access'=>'HL03',
                 'url'=>'/heartLetterSearch/index',
+            ),
+		    //查詢心意信得分
+            'Search Heart letter rank'=>array(
+                'access'=>'HL04',
+                'url'=>'/heartLetterRank/index',
             ),
 		),
 	),

@@ -195,6 +195,7 @@ return array(
     'Apply Heart letter'=>'心意信封',
     'Audit Heart letter'=>'审核心意信封',
     'Search Heart letter'=>'查询心意信封得分',
+    'Search Heart letter rank'=>'地区排行榜',
     //沈超添加结束
 );
 ?>
