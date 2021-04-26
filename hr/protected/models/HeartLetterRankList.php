@@ -67,7 +67,7 @@ class HeartLetterRankList extends CListPageModel
             $order .= " order by ".$this->orderField." ";
             if ($this->orderType=='D') $order .= "desc ";
         }else{
-            $order .= " order by b.id desc ";
+            $order .= " order by user_num desc ";
         }
 
         $sql = $sql2.$clause." GROUP BY b.id,b.name,b.code,b.city";
