@@ -38,6 +38,7 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
     $search = array(
         'status',
         'leave_code',
+        'vacation_id',
         'employee_name',
     );
     if(Yii::app()->user->validFunction('ZR04')||!Yii::app()->user->isSingleCity()){

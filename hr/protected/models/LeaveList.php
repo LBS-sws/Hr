@@ -54,13 +54,15 @@ class LeaveList extends CListPageModel
         $employee_id = $this->employee_id;
         $manager = AuditConfigForm::getManager($employee_id);
         //,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
-		$sql1 = "select  a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city ,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
+		$sql1 = "select  a.*,f.name as vacation_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city ,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
               from hr_employee_leave a 
+              LEFT JOIN hr_vacation f ON a.vacation_id = f.id 
               LEFT JOIN hr_employee b ON a.employee_id = b.id 
               LEFT JOIN hr_dept d ON b.position = d.id 
               where a.id!=0 ";
 		$sql2 = "select count(a.id)
 				from hr_employee_leave a 
+                LEFT JOIN hr_vacation f ON a.vacation_id = f.id 
 				LEFT JOIN hr_employee b ON a.employee_id = b.id 
                 LEFT JOIN hr_dept d ON b.position = d.id 
 				where a.id!=0 ";
@@ -92,7 +94,7 @@ class LeaveList extends CListPageModel
 					$clause .= General::getSqlConditionClause('a.leave_code',$svalue);
 					break;
 				case 'vacation_id':
-					$clause .= General::getSqlConditionClause('vacation_id',$svalue);
+					$clause .= General::getSqlConditionClause('f.name',$svalue);
 					break;
                 case 'employee_name':
                     $clause .= General::getSqlConditionClause('b.name',$svalue);
@@ -142,11 +144,12 @@ class LeaveList extends CListPageModel
 					'leave_code'=>$record['leave_code'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],
+					'vacation_id'=>$record['vacation_name'],
 					'lcd'=>CGeneral::toDateTime($record['lcd']),
 					'start_time'=>date("Y/m/d",strtotime($record['start_time'])),
 					'end_time'=>date("Y/m/d",strtotime($record['end_time'])),
 					'log_time'=>$record['log_time'].Yii::t("contract","day."),
-					'vacation_id'=>VacationForm::getVacationNameToId($record['vacation_id']),
+					//'vacation_id'=>VacationForm::getVacationNameToId($record['vacation_id']),
 					'status'=>$colorList["status"],
                     'city'=>CGeneral::getCityName($record["s_city"]),
 					'style'=>$colorList["style"],

@@ -37,6 +37,7 @@ $this->pageTitle=Yii::app()->name . ' - Work';
     <?php
     $search = array(
         'work_code',
+        'work_type',
         'employee_name',
     );
     if(Yii::app()->user->validFunction('ZR03')||!Yii::app()->user->isSingleCity()){

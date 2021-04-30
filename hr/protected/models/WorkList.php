@@ -116,6 +116,9 @@ class WorkList extends CListPageModel
 				case 'work_code':
 					$clause .= General::getSqlConditionClause('a.work_code',$svalue);
 					break;
+				case 'work_type':
+                    $clause .= ' and a.work_type in '.$this->searchWorkTypeSql($svalue);
+					break;
 				case 'employee_name':
 					$clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
@@ -205,6 +208,20 @@ class WorkList extends CListPageModel
     public function getWorkTypeList(){
 	    return array(Yii::t("fete","Working days"),Yii::t("fete","Weekend off"),Yii::t("fete","Statutory leave day"),Yii::t("fete","Regular overtime"));
     }
+
+	//加班類型列表
+    protected function searchWorkTypeSql($str){
+        $sql = "";
+        $list = $this->getWorkTypeList();
+        foreach ($list as $key=>$item){
+            if (strpos($item,$str)!==false){
+                $sql.=",".$key;
+            }
+        }
+
+        return "(9".$sql.")";
+    }
+
 	//獲取小時列表
     public function getHoursList(){
         $arr = array();
