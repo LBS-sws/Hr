@@ -61,7 +61,7 @@ class TimerCommand extends CConsoleCommand {
         $this->sendEmail();//統一發送郵件
 
         $this->dailyInAndOutHint();//入职、离职总览电邮
-        $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
+        //$this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
         $this->resetBossListScore();//老总年度考核的總分重新計算
         echo "end\r\n";
     }
