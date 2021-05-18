@@ -375,9 +375,9 @@ class AuditHistoryForm extends CFormModel
         $this->sendEmail();
 	}
 
-    private function signContract($staffNew){
+    private function signContract($staffNew,$city_allow=0){
         $signedContractType = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
-            ->where('set_name="signedContractType"')->queryScalar();
+            ->where("set_name='signedContractType' and set_city in ($city_allow)")->order("set_value desc")->queryScalar();
         if(empty($signedContractType)&&$this->opr_type == "contract"){
             $sign_type = 1;//續約
             $row = Yii::app()->db->createCommand()->select("retire")->from("hr_contract")
@@ -448,10 +448,13 @@ class AuditHistoryForm extends CFormModel
     public function finish(){
         $uid = Yii::app()->user->id;
         $date = date("Y-m-d H:i:s");
+        $city_allow = array();
         $staff = Yii::app()->db->createCommand()->select()->from("hr_employee")
             ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
         $staffNew = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
             ->where('id=:id', array(':id'=>$this->id))->queryRow();
+        $city_allow[] = '"'.$staff["city"].'"';
+        $city_allow[] = '"'.$staffNew["city"].'"';
         $this->opr_type = $staffNew["opr_type"];
         unset($staff["id"]);
         unset($staff["lcd"]);
@@ -485,7 +488,7 @@ class AuditHistoryForm extends CFormModel
         $this->replaceAttachment();
 
         //判斷是否需要生成簽署合同
-        $this->signContract($staffNew);
+        $this->signContract($staffNew,implode(",",$city_allow));
     }
 
     //交換員工附件
