@@ -377,7 +377,7 @@ class AuditHistoryForm extends CFormModel
 
     private function signContract($staffNew,$city_allow=0){
         $signedContractType = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
-            ->where("set_name='signedContractType' and set_city in ($city_allow)")->order("set_value desc")->queryScalar();
+            ->where("set_name='signedContractType' and set_city in ($city_allow)")->order("set_value asc")->queryScalar();
         if(empty($signedContractType)&&$this->opr_type == "contract"){
             $sign_type = 1;//續約
             $row = Yii::app()->db->createCommand()->select("retire")->from("hr_contract")
