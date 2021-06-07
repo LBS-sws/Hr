@@ -16,7 +16,7 @@ return array(
 'Operation'=>'營運系統',
 'Personnel'=>'人事系統',
 'Sales'=>'銷售系統',
-'Quiz'=>'培訓測驗系統',
+'Quiz'=>'培訓系統',
 'Academic Credit'=>'學分系統',
     'Charity'=>'慈善分系统',
 'Online Library'=>'網上文庫',
