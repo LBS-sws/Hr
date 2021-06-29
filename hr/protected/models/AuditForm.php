@@ -371,6 +371,7 @@ class AuditForm extends CFormModel
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工所在城市：".CGeneral::getCityName($row["city"])."</p>";
             $message.="<p>员工入职日期：".$row["entry_time"]."</p>";
+            $message.="<p>员工职位：".DeptForm::getDeptToId($row["position"])."</p>";
             $message.="<p>审核日期：".date('Y-m-d H:i:s')."</p>";
             if ($this->getScenario() == "reject"){
                 $message.="<p>拒绝原因：".$this->ject_remark."</p>";

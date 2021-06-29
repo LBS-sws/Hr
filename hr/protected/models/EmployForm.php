@@ -726,6 +726,7 @@ class EmployForm extends CFormModel
         $message="<p>员工编号：".$this->code."</p>";
         $message.="<p>员工姓名：".$this->name."</p>";
         $message.="<p>员工所在城市：".Yii::app()->user->city_name()."</p>";
+        $message.="<p>员工职位：".DeptForm::getDeptToId($this->position)."</p>";
         $message.="<p>员工入职日期：".$this->entry_time."</p>";
         $email = new Email($subject,$message,$description);
         $email->addEmailToPrefix("ZG01");

@@ -585,6 +585,7 @@ class HistoryForm extends CFormModel
             $message="<p>员工编号：".$row["code"]."</p>";
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工所在城市：".CGeneral::getCityName($row["city"])."</p>";
+            $message.="<p>员工职位：".DeptForm::getDeptToId($row["position"])."</p>";
             $message.="<p>要求审核日期：".date('Y-m-d H:i:s')."</p>";
             $message.="<p>操作备注：".$row["update_remark"]."</p>";
             $email = new Email($subject,$message,$description);
