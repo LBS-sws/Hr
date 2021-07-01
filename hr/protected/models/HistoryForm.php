@@ -81,6 +81,7 @@ class HistoryForm extends CFormModel
     public $code_old;//員工編號（舊）
     public $group_type;//組別類型
     public $effect_time;//生效日期
+    public $operation;//
 
     public $wechat;//微信賬號
     public $urgency_card;//緊急聯繫人身份證
@@ -471,6 +472,7 @@ class HistoryForm extends CFormModel
                 $this->group_type = $row['group_type'];
                 $this->wechat = $row['wechat'];
                 $this->urgency_card = $row['urgency_card'];
+                $this->operation=key_exists("operation",$row)?$row["operation"]:"";
                 $this->change_city = empty($row['change_city'])?$row['city']:$row['change_city'];
                 if($this->staff_status == 1 || $this->staff_status == 3){
                     $this->scenario = $row['operation'];

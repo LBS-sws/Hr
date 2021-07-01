@@ -157,7 +157,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     ); ?>
                 </div>
             </div>
-            <?php if ($model->scenario=='departure'||!empty($model->leave_time)): ?>
+            <?php if ($model->scenario=='departure'||$model->operation=='departure'): ?>
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'leave_time',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
