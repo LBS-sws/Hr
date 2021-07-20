@@ -219,7 +219,7 @@ class BossReview
                 }
             }
             $tableTr.="</tr>";
-            if(in_array($listX["value"],array("two_nine","two_ten"))){
+            if(in_array($listX["value"],array("two_nine","two_ten","one_seven"))){
                 $nowNum*=-1;
                 $userNum*=-1;
             }
