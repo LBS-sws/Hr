@@ -167,8 +167,20 @@ class AuditForm extends CFormModel
                test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time',
                 'safe'),
 			array('ject_remark','required',"on"=>"reject"),
+            array('id','validateID'),
 		);
 	}
+    public function validateID($attribute, $params){
+        $city_allow = Yii::app()->user->city_allow();
+        $row = Yii::app()->db->createCommand()->select("city")->from("hr_employee")
+            ->where("id=:id and city in ($city_allow) and staff_status=2",array(':id'=>$this->id))->queryRow();
+        if($row){
+            $this->city = $row["city"];
+        }else{
+            $message = "审核单不存在或已审核，请刷新重试";
+            $this->addError($attribute,$message);
+        }
+    }
 
     //獲取可用公司
     public function getCompanyToCity(){
@@ -346,7 +358,7 @@ class AuditForm extends CFormModel
 
     private function signContract(){
         $signedContractType = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
-            ->where('set_name="signedContractType"')->queryScalar();
+            ->where('set_name="signedContractType" and set_city=:city',array(":city"=>$this->city))->queryScalar();
         if(empty($signedContractType)&&$this->getScenario() == "audit"){
             Yii::app()->db->createCommand()->insert('hr_sign_contract',array(
                 'employee_id'=>$this->id,
