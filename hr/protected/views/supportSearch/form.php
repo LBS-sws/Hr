@@ -7,10 +7,9 @@ $this->pageTitle=Yii::app()->name . ' - supportSearch';
 <style>
     tbody>tr{position: relative;}
     select[readonly="readonly"]{pointer-events: none;}
-    td.remark{;min-width: 350px;}
     tr.text-weight>td{font-weight: bold;}
-
-    select[readonly="readonly"]{pointer-events: none;}
+    td.remark{ width:1px;display: none;}
+    span.text-danger{ word-break: break-all;}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'supportSearch-form',
@@ -259,18 +258,15 @@ if(Yii::app()->user->validRWFunction("AY02")&&$model->apply_type == 2&&in_array(
 
 
 $js = "
-$('td.remark').each(function(){
-    if(!$(this).parents('.tab-pane.fade').hasClass('active')){
-        $(this).parents('.tab-pane.fade').addClass('active in');
-    }
-    var height = $(this).css('width','360px').outerHeight();
-    $(this).parent('tr').height(height);
-    $(this).css({
-        'position':'absolute',
-        'height':height+'px'
+    $('td.remark').each(function(){
+        var showObj = $(this).parent('tr').find('td:first');
+        var num = $(this).parent('tr').find('td.showNum').length;
+        var className = $(this).parent('tr').attr('class');
+        showObj.prop('rowspan',2);
+        html='<tr class='+className+'><td colspan=\"'+num+'\">'+$(this).html()+'</td></tr>';
+        $(this).parent('tr').after(html);
+        $(this).remove();
     });
-    $(this).parents('.tab-pane.fade').removeClass('active in');
-});
 $('#btnEarly,#btnRenewal').on('click',function(){
     var url = $(this).data('url');
     var label1 = $(this).data('label1');

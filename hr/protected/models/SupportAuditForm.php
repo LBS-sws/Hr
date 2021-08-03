@@ -426,7 +426,7 @@ class SupportAuditForm extends CFormModel
 
 
     protected function getTableHeaderHtml(){
-        $handleHtml="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered table-striped'>";
+        $handleHtml="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered'>";
         $handleHtml.="<thead>";
         $handleHtml.="<tr><th colspan='2' class='text-center' width='70%'>".Yii::t("contract","support code")."</th><th>".$this->support_code."</th></tr>";
         $handleHtml.="<tr><th colspan='2' class='text-center'>".Yii::t("contract","support employee")."</th><th>".$this->employee_name."</th></tr>";
@@ -451,15 +451,19 @@ class SupportAuditForm extends CFormModel
         //表格內容
         foreach ($setList["list"] as $proList) {
             $num++;
-            $html.="<tr><td>$num</td>";
-            $html.="<td>".$proList["name"]."</td>";
+            if($num%2 == 0){
+                $html.="<tr><td>$num</td>";
+            }else{
+                $html.="<tr class='active'><td>$num</td>";
+            }
+            $html.="<td class='showNum'>".$proList["name"]."</td>";
             if(key_exists("value",$proList)){
                 $proValue = intval($proList["value"])*intval($setList['num_ratio']);
                 $this->sumNum+=$proValue;
                 $footArr["sumNum"]+=$proValue;
-                $html.="<td>$proValue</td>";
+                $html.="<td class='showNum'>$proValue</td>";
             }else{
-                $html.="<td>-</td>";
+                $html.="<td class='showNum'>-</td>";
             }
             if(key_exists("remark",$proList)){
                 $html.="<td class='remark'>";

@@ -12,11 +12,8 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
 <style>
     tbody>tr{position: relative;}
     select[readonly="readonly"]{pointer-events: none;}
-    td.remark{;min-width: 300px;}
-    tr.text-weight>td{font-weight: bold;}
-    .remarkTable{ width: 100%;margin-bottom: 0px;background: transparent!important;}
-    .remarkTable .showNum{ border-bottom: 1px solid #f4f4f4;border-right: 1px solid #f4f4f4;}
-    .remarkTable tr>.showNum:last-child{ border-right: none;}
+    td.remark{ width:1px;display: none;}
+    span.text-danger{ word-break: break-all;}
 </style>
 
 <section class="content-header">
@@ -33,40 +30,40 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
 </section>
 
 <section class="content">
-	<div class="box"><div class="box-body">
-	<div class="btn-group" role="group">
-		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('ReviewSearch/index')));
-		?>
+    <div class="box"><div class="box-body">
+            <div class="btn-group" role="group">
+                <?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
+                    'submit'=>Yii::app()->createUrl('ReviewSearch/index')));
+                ?>
 
-        <?php if ($model->status_type != 3 && $model->login_id == $model->employee_id): ?>
-            <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
-                'submit'=>Yii::app()->createUrl('ReviewSearch/save')));
-            ?>
-        <?php endif ?>
-	</div>
+                <?php if ($model->status_type != 3 && $model->login_id == $model->employee_id): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
+                        'submit'=>Yii::app()->createUrl('ReviewSearch/save')));
+                    ?>
+                <?php endif ?>
+            </div>
 
-                <div class="btn-group pull-right" role="group">
-                    <?php if ($model->status_type == 2 || $model->status_type == 3): ?>
+            <div class="btn-group pull-right" role="group">
+                <?php if ($model->status_type == 2 || $model->status_type == 3): ?>
                     <?php echo TbHtml::button('<span class="fa fa-download"></span> '.Yii::t('contract','Down'), array(
                         'submit'=>Yii::app()->createUrl('ReviewSearch/downExcel')));
                     ?>
-                    <?php endif ?>
-                    <?php
-                    $counter = ($model->no_of_attm['review'] > 0) ? ' <span id="docreview" class="label label-info">'.$model->no_of_attm['review'].'</span>' : ' <span id="docreview"></span>';
-                    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                            'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadreview',)
-                    );
-                    ?>
-                </div>
-	</div></div>
+                <?php endif ?>
+                <?php
+                $counter = ($model->no_of_attm['review'] > 0) ? ' <span id="docreview" class="label label-info">'.$model->no_of_attm['review'].'</span>' : ' <span id="docreview"></span>';
+                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploadreview',)
+                );
+                ?>
+            </div>
+        </div></div>
 
-	<div class="box box-info">
-		<div class="box-body">
-			<?php echo $form->hiddenField($model, 'scenario'); ?>
-			<?php echo $form->hiddenField($model, 'id'); ?>
-			<?php echo $form->hiddenField($model, 'city'); ?>
-			<?php echo $form->hiddenField($model, 'year_type'); ?>
+    <div class="box box-info">
+        <div class="box-body">
+            <?php echo $form->hiddenField($model, 'scenario'); ?>
+            <?php echo $form->hiddenField($model, 'id'); ?>
+            <?php echo $form->hiddenField($model, 'city'); ?>
+            <?php echo $form->hiddenField($model, 'year_type'); ?>
 
             <?php
             $this->renderPartial('//site/reviewStaff',array(
@@ -100,6 +97,7 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
                     </div>
                 </div>
             <?php endif ?>
+
             <legend><?php echo Yii::t("contract","reviewAllot project");?></legend><!--考核项目-->
             <?php
             $tabs = $model->getTabList();
@@ -150,9 +148,9 @@ $this->pageTitle=Yii::app()->name . ' - ReviewSearch Form';
                     ); ?>
                 </div>
             </div>
-		</div>
+        </div>
 
-	</div>
+    </div>
 </section>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
@@ -168,17 +166,12 @@ Script::genFileUpload($model,$form->id,'REVIEW');
 $js = "
 $(function(){
     $('td.remark').each(function(){
-        var showObj = $(this).parent('tr').find('td.showNum');
-        var num = showObj.length;
-        var html = '<td colspan=\"'+num+'\" style=\"padding: 0px;\"><table class=\"table remarkTable\"><tbody><tr>';
-        showObj.each(function(){
-            html+=$(this).prop('outerHTML');
-            $(this).remove();
-        });
-        html+='</tr>';
-        html+='<tr><td colspan=\"'+num+'\">'+$(this).html()+'</td></tr>';
-        html+='</tbody></table></td>';
-        $(this).after(html);
+        var showObj = $(this).parent('tr').find('td:first');
+        var num = $(this).parent('tr').find('td.showNum').length;
+        var className = $(this).parent('tr').attr('class');
+        showObj.prop('rowspan',2);
+        html='<tr class='+className+'><td colspan=\"'+num+'\">'+$(this).html()+'</td></tr>';
+        $(this).parent('tr').after(html);
         $(this).remove();
     });
 });

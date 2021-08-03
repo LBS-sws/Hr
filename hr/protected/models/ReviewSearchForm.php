@@ -212,7 +212,7 @@ class ReviewSearchForm extends CFormModel
         $colspan = count($rows)+1;
         $width = intval(50/$colspan);
         $handleNameHtml = '';
-        $handleHtml="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered table-striped'>";
+        $handleHtml="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered'>";
         $handleHtml.="<thead><tr><th colspan='2' width='50%' class='text-center'>".Yii::t("contract","Performance factors")."</th>";
         foreach ($rows as $row){
             $handleHtml.="<th width='$width%'>".$row['handle_per']."(%)</th>";
@@ -308,8 +308,12 @@ class ReviewSearchForm extends CFormModel
         $width = intval(50/(count($rows)+1));
         foreach ($setList["list"] as $proList) {
             $num++;
-            $html.="<tr><td>$num</td>";
-            $html.="<td>".$proList["name"]."</td>";
+            if($num%2 == 0){
+                $html.="<tr><td>$num</td>";
+            }else{
+                $html.="<tr class='active'><td>$num</td>";
+            }
+            $html.="<td class='showNum'>".$proList["name"]."</td>";
             $proSum = 0;
             $proArr= array();
             for ($i=0;$i<count($rows);$i++){
