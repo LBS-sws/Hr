@@ -454,6 +454,7 @@ class AuditHistoryForm extends CFormModel
             ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
         $staffNew = Yii::app()->db->createCommand()->select()->from("hr_employee_operate")
             ->where('id=:id', array(':id'=>$this->id))->queryRow();
+        $staffNew["code"] = $staff["code"];//不允許變更員工編號
         $city_allow[] = '"'.$staff["city"].'"';
         $city_allow[] = '"'.$staffNew["city"].'"';
         $this->opr_type = $staffNew["opr_type"];
@@ -490,6 +491,71 @@ class AuditHistoryForm extends CFormModel
 
         //判斷是否需要生成簽署合同
         $this->signContract($staffNew,implode(",",$city_allow));
+
+        //員工姓名變更後需要修改其它數據表
+        $this->resetOtherTable($staff,$staffNew);
+    }
+
+    //強制刷新員工姓名(歷史id)
+    public static function resetOnlyHistory($history_id){
+        $staff = Yii::app()->db->createCommand()->select("employee_id as id,code,name")->from("hr_employee_operate")
+            ->where('id=:id', array(':id'=>$history_id))->queryRow();
+        if($staff){
+            $staffNew = Yii::app()->db->createCommand()->select("code,name")->from("hr_employee")
+                ->where('id=:id', array(':id'=>$staff["id"]))->queryRow();
+            if($staffNew){
+                self::resetOtherTable($staff,$staffNew,true);
+                echo "success";
+            }else{
+                echo "employee_id error";
+            }
+        }else{
+            echo "history_id error";
+        }
+    }
+
+    //員工姓名變更後需要修改其它數據表
+    private function resetOtherTable($staff,$staffNew,$echoBool=false){
+        $staffCode = $staff["code"];//員工code
+        $oldName = $staff["name"];//員工舊名字
+        $oldCodeName = $staff["name"]." (".$staff["code"].")";
+        $newName = $staffNew["name"];
+        $newCodeName = $staffNew["name"]." (".$staffNew["code"].")";
+        $suffix = Yii::app()->params['envSuffix'];
+        if($oldName!=$newName){
+            $list = array(
+                array("table"=>"swoper$suffix.swo_service","updateData"=>array("salesman"=>$newCodeName),"whereSql"=>"salesman='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_service","updateData"=>array("othersalesman"=>$newCodeName),"whereSql"=>"othersalesman='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_service","updateData"=>array("technician"=>$newCodeName),"whereSql"=>"technician='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_service","updateData"=>array("first_tech"=>$newCodeName),"whereSql"=>"first_tech='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_followup","updateData"=>array("resp_staff"=>$newCodeName),"whereSql"=>"resp_staff='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_followup","updateData"=>array("resp_tech"=>$newCodeName),"whereSql"=>"resp_tech='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_followup","updateData"=>array("follow_tech"=>$newCodeName),"whereSql"=>"follow_tech='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_followup","updateData"=>array("follow_staff"=>$newCodeName),"whereSql"=>"follow_staff='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_enquiry","updateData"=>array("follow_staff"=>$newCodeName),"whereSql"=>"follow_staff='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_enquiry","updateData"=>array("record_by"=>$newCodeName),"whereSql"=>"record_by='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_logistic","updateData"=>array("salesman"=>$newCodeName),"whereSql"=>"salesman='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_logistic","updateData"=>array("follow_staff"=>$newCodeName),"whereSql"=>"follow_staff='$oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_qc","updateData"=>array("job_staff"=>" ".$newCodeName),"whereSql"=>"job_staff=' $oldCodeName'"),
+                array("table"=>"swoper$suffix.swo_qc","updateData"=>array("qc_staff"=>" ".$newCodeName),"whereSql"=>"qc_staff=' $oldCodeName'"),
+                array("table"=>"account$suffix.acc_service_comm_copy","updateData"=>array("salesman"=>$newCodeName),"whereSql"=>"salesman='$oldCodeName'"),
+                array("table"=>"account$suffix.acc_service_comm_copy","updateData"=>array("othersalesman"=>$newCodeName),"whereSql"=>"othersalesman='$oldCodeName'"),
+                array("table"=>"account$suffix.acc_service_comm_copy","updateData"=>array("technician"=>$newCodeName),"whereSql"=>"technician='$oldCodeName'"),
+                array("table"=>"account$suffix.acc_service_comm_copy","updateData"=>array("first_tech"=>$newCodeName),"whereSql"=>"first_tech='$oldCodeName'"),
+                array("table"=>"account$suffix.acc_service_comm_hdr","updateData"=>array("employee_name"=>$newName),"whereSql"=>"employee_code='$staffCode'"),
+                array("table"=>"account$suffix.acc_request","updateData"=>array("payee_name"=>$newCodeName),"whereSql"=>"payee_name='$oldCodeName'"),
+                array("table"=>"account$suffix.acc_trans_info","updateData"=>array("field_value"=>$newCodeName),"whereSql"=>"field_id='payer_name' and field_value='$oldCodeName'"),
+                array("table"=>"account$suffix.acc_trans_info","updateData"=>array("field_value"=>$newCodeName),"whereSql"=>"field_id='handle_staff_name' and field_value='$oldCodeName'"),
+                array("table"=>"sales$suffix.sal_search","updateData"=>array("employee_name"=>$newName),"whereSql"=>"employee_code='$staffCode'"),
+            );
+            foreach ($list as $row){
+                $number = Yii::app()->db->createCommand()->update($row["table"],$row["updateData"],$row["whereSql"]);
+                if($echoBool){
+                    $table = end(explode(".",$row["table"]));
+                    echo $table." update Num:".$number."<br/>";
+                }
+            }
+        }
     }
 
     //交換員工附件

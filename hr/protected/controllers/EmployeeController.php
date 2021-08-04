@@ -29,7 +29,7 @@ class EmployeeController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','save'),
+                'actions'=>array('new','edit','save','test'),
                 'expression'=>array('EmployeeController','allowReadWrite'),
             ),
             array('allow',
@@ -55,6 +55,10 @@ class EmployeeController extends Controller
 
     public static function allowWrite() {
         return !empty(Yii::app()->user->id);
+    }
+
+    public function actionTest($id=0){
+        AuditHistoryForm::resetOnlyHistory($id);
     }
 
     public function actionIndex($pageNum=0){
