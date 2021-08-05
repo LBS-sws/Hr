@@ -63,11 +63,38 @@ $this->pageTitle=Yii::app()->name . ' - SalesReview';
 $js = "
     $('#prompt_button').on('click',function(){
         if($('#prompt').hasClass('active')){
+            //打開
             $('#prompt').removeClass('active');
+            localStorage['salesReview'] = 0;
         }else{
+            //關閉
             $('#prompt').addClass('active');
+            localStorage['salesReview'] = 1;
         }
     });
+    if(localStorage['salesReview']==1){ 
+        $('#prompt_button').trigger('click');
+    }
+    //全选
+    $('#allCheck').on('click',function(){
+        if($(this).is(':checked')){
+            $('.onlyCheck').prop('checked',true);
+        }else{
+            $('.onlyCheck').prop('checked',false);
+        }
+        tableChange();
+    });
+    //选中事件
+    $('.onlyCheck').change(tableChange);
+    
+    function tableChange(){
+        $('.showTable>tbody>tr').hide();
+        $('.onlyCheck:checked').each(function(){
+            var code = $(this).data('code');
+            console.log(code);
+            $('tr[data-code=\"'+code+'\"]').show();
+        });
+    }
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

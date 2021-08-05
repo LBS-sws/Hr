@@ -119,7 +119,7 @@ $js = "
         }
     });
     
-    $('#start_time,#end_time').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy/mm', minViewMode: 1});;
+    $('#start_time,#end_time').datepicker({autoclose: true,language: 'zh_cn', format: 'yyyy-mm', minViewMode: 1});;
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

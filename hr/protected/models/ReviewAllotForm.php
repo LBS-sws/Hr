@@ -99,10 +99,11 @@ class ReviewAllotForm extends CFormModel
 
 	public function validateName($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.name,b.review_type")->from("hr_employee a")
+        $rows = Yii::app()->db->createCommand()->select("a.city,a.name,b.review_type")->from("hr_employee a")
             ->leftJoin("hr_dept b","a.position = b.id")
             ->where("a.id=:id and a.city in ($city_allow) AND a.staff_status = 0",array(":id"=>$this->employee_id))->queryRow();
         if($rows){
+            $this->city = $rows["city"];
             $this->review_type = $rows["review_type"];
             $this->employee_name = $rows["name"];
             $rows = Yii::app()->db->createCommand()->select("id,status_type,review_type")->from("hr_review")
@@ -171,8 +172,11 @@ class ReviewAllotForm extends CFormModel
                         }
                         break;
                     case 3://銷售
-                        $row = Yii::app()->db->createCommand()->select("group_id")
-                            ->from("hr_sales_staff")->where("employee_id=:id",array(":id"=>$this->employee_id))->queryRow();
+                        $row = Yii::app()->db->createCommand()->select("a.group_id")->from("hr_sales_staff a")
+                            ->leftJoin("hr_sales_group b","a.group_id=b.id")
+                            ->where("a.employee_id=:id and b.city=:city",
+                                array(":id"=>$this->employee_id,":city"=>$this->city)
+                            )->queryRow();
                         if($row){
                             $model = new SalesReviewForm();
                             $model->retrieveData($row["group_id"],$this->year,$this->year_type);
@@ -456,8 +460,11 @@ class ReviewAllotForm extends CFormModel
         }
 
         if($this->review_type == 3){
-            $row = Yii::app()->db->createCommand()->select("group_id")
-                ->from("hr_sales_staff")->where("employee_id=:id",array(":id"=>$this->employee_id))->queryRow();
+            $row = Yii::app()->db->createCommand()->select("a.group_id")->from("hr_sales_staff a")
+                ->leftJoin("hr_sales_group b","a.group_id=b.id")
+                ->where("a.employee_id=:id and b.city=:city",
+                    array(":id"=>$this->employee_id,":city"=>$this->city)
+                )->queryRow();
             if($row){
                 $model = new SalesReviewForm();
                 $model->retrieveData($row["group_id"],$this->year,$this->year_type);

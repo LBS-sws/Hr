@@ -83,7 +83,7 @@ class SalesGroupList extends CListPageModel
 	public function getGroupStaffNum($group_id,$city){
         $staff_num = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_sales_staff a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where('a.group_id=:group_id and b.city=:city',array(':group_id'=>$group_id,':city'=>$city))->queryScalar();
+            ->where('a.group_id=:group_id',array(':group_id'=>$group_id))->queryScalar();
         return $staff_num;
     }
 }

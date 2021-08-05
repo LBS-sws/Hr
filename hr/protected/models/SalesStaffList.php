@@ -67,8 +67,9 @@ class SalesStaffList extends CListPageModel
 
     public function validateStaff($attribute, $params){
         $city = Yii::app()->user->city();
-        $bool = Yii::app()->db->createCommand()->select("id")->from("hr_sales_staff")
-            ->where("employee_id=:id",array(":id"=>$this->employee_id))->queryRow();
+        $bool = Yii::app()->db->createCommand()->select("a.id")->from("hr_sales_staff a")
+            ->leftJoin("hr_sales_group b","a.group_id=b.id")
+            ->where("a.employee_id=:id and b.city='$city'",array(":id"=>$this->employee_id))->queryRow();
         if($bool){
             $message = "该员工已分组，请刷新重试";
             $this->addError($attribute,$message);
@@ -122,13 +123,15 @@ class SalesStaffList extends CListPageModel
                 LEFT JOIN hr_employee b ON a.employee_id=b.id 
                 LEFT JOIN hr_dept c ON b.position=c.id 
                 LEFT JOIN hr_dept d ON b.department=d.id 
-                where a.group_id = '$index' AND b.city = '$city' 
+                LEFT JOIN hr_sales_group f ON a.group_id=f.id 
+                where a.group_id = '$index' AND f.city = '$city' 
 			";
 		$sql2 = "select count(a.id) from hr_sales_staff a
                 LEFT JOIN hr_employee b ON a.employee_id=b.id 
                 LEFT JOIN hr_dept c ON b.position=c.id 
                 LEFT JOIN hr_dept d ON b.department=d.id 
-                where a.group_id = '$index' AND b.city = '$city' 
+                LEFT JOIN hr_sales_group f ON a.group_id=f.id 
+                where a.group_id = '$index' AND f.city = '$city' 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -196,11 +199,14 @@ class SalesStaffList extends CListPageModel
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select("a.id,a.code,a.name")->from("hr_employee a")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("a.city='$city' AND a.staff_status = 0 AND d.review_type = 3")->order("a.id desc")->queryAll();
+            ->where("(a.city='$city' or a.id='".$this->employee_id."') AND a.staff_status = 0 AND d.review_type = 3")->order("a.id desc")->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $bool = Yii::app()->db->createCommand()->select("id")->from("hr_sales_staff")
-                    ->where("employee_id=:id",array(":id"=>$row["id"]))->queryRow();
+                $bool = Yii::app()->db->createCommand()->select("a.id")->from("hr_sales_staff a")
+                    ->leftJoin("hr_sales_group b","a.group_id = b.id")
+                    ->where("a.employee_id=:id and b.city=:city",
+                        array(":id"=>$row["id"],":city"=>$city)
+                    )->queryRow();
                 if(!$bool||$row["id"] == $this->employee_id){
                     $arr[$row["id"]] = $row["code"]." -- ".$row["name"];
                 }

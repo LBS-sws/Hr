@@ -2,14 +2,19 @@
 
 class SalesReviewForm extends CFormModel
 {
-	public $id;
+	public $id;//组名id
 	public $city;
 	public $year;
 	public $year_type;
     public $year_list;
-    public $staff_list;
+    public $staff_list=array();
     public $form_list;
 	protected $group_list;
+	protected $group_staff=array();//员工分组
+	protected $show_staff=array();//需要显示的员工
+
+	protected $auto_staff=array();
+	protected $auto_model=array();
 
 	public function attributeLabels()
 	{
@@ -31,18 +36,26 @@ class SalesReviewForm extends CFormModel
 
 	public function retrieveData($index,$year,$year_type,$city='') {
         $suffix = Yii::app()->params['envSuffix'];
+        $this->id = $index;
         $this->form_list=array();
 	    $this->year = !is_numeric($year)?2020:$year;
 	    $this->year_type = (!is_numeric($year_type)||$this->year == 2020)?1:$year_type;
         $this->group_list = SalesGroupForm::getGroupListToId($index);
-        $this->resetYearList();//重置年份區間
-        $this->getGroupStaff($index,$city);//獲取組內的員工
+        $this->resetYearList();//重置年份區間 设置year_list
+        $this->foreachGroupStaff($index);//獲取組內的員工 设置staff_list、group_list
+
+        $this->getSalesDataForStaffList();//获取销售系统的数据(不分组) 设置form_list
+		return true;
+	}
+
+	private function getSalesDataForStaffList(){
+        $suffix = Yii::app()->params['envSuffix'];
         $staffKeyList = array_keys($this->staff_list);
         $staffSql = " and b.username = ''";
         if(!empty($this->staff_list)){
             $staffSql = " and b.username in ('".implode("','",$staffKeyList)."') ";
         }
-        $minYear = current($this->year_list);
+        $minYear = $this->year_list[0];
         $maxYear = end($this->year_list);
         $svcList = array("svc_A7","svc_B6","svc_C7","svc_D6","svc_E7","svc_F4","svc_G3");//查詢該屬性的所有金額
         $notList = array("svc_F4","svc_G3");//只計算次數，不計算金額
@@ -50,41 +63,35 @@ class SalesReviewForm extends CFormModel
         $visitObjSql = " and sales$suffix.VisitObjDesc(b.visit_obj) like '%签单%'";
         $rows = Yii::app()->db->createCommand()->select("a.field_value,a.field_id,b.visit_dt,b.username")->from("sales$suffix.sal_visit_info a")
             ->leftJoin("sales$suffix.sal_visit b","b.id=a.visit_id")
-            ->where("b.id is not null and a.field_id in('$svcSql') and (a.field_value+0)>0 and date_format(b.visit_dt,'%Y/%m')>='$minYear' and date_format(b.visit_dt,'%Y/%m')<='$maxYear' $staffSql $visitObjSql",array(":id"=>$index))->queryAll();
-		if ($rows) {
-		    foreach ($rows as $row){
+            ->where("b.id is not null and a.field_id in('$svcSql') and (a.field_value+0)>0 and date_format(b.visit_dt,'%Y/%m')>='$minYear' and date_format(b.visit_dt,'%Y/%m')<='$maxYear' $staffSql $visitObjSql")->queryAll();
+        if ($rows) {
+            foreach ($rows as $row){
                 $year = date("Y/m",strtotime($row["visit_dt"]));
                 $username = $row["username"];
-                if(in_array($username,$staffKeyList)){
-                    $startTime = $this->staff_list[$username]['start_time'];
-                    $endTime = $this->staff_list[$username]['end_time'];
-                    if($year<$startTime||$year>$endTime){//超出員工的參與時間
-                        continue;
-                    }
-                }else{//員工不存在，不計算
+                if(!in_array($username,$staffKeyList)){//員工不存在，不計算
                     continue;
                 }
                 if(!key_exists($year,$this->form_list)){
-                    $this->form_list[$year] = array('sum'=>0,'count'=>0,'item'=>array());
+                    $this->form_list[$year] = array('item'=>array());
                 }
                 if(!key_exists($username,$this->form_list[$year]['item'])){
-                    $this->form_list[$year]['item'][$username] = array('sales_sum'=>0,'sales_count'=>0);
+                    $this->form_list[$year]['item'][$username] = array(
+                        'sales_sum'=>0,//开单额
+                        'sales_count'=>0//开单次数
+                    );
                 }
-                $this->form_list[$year]['count']++;
                 $this->form_list[$year]['item'][$username]['sales_count']++;
                 if(!in_array($row["field_id"],$notList)){
-                    $this->form_list[$year]['sum']+=floatval($row["field_value"]);
                     $this->form_list[$year]['item'][$username]['sales_sum']+=floatval($row["field_value"]);
                 }
             }
-		}
-		return true;
-	}
+        }
+    }
 
 	public function getTableHeader($year){
 	    $html = "";
         $html.="<legend>".$year."</legend>";
-        $html.="<div class='form-group'><div class='col-sm-12'><table class='table table-bordered table-striped'>";
+        $html.="<div class='form-group'><div class='col-sm-12'><table class='table table-bordered table-striped showTable'>";
         $html.="<thead><tr>";
         $html.="<th>".Yii::t("contract","Employee Code")."</th>";
         $html.="<th>".Yii::t("contract","Employee Name")."</th>";
@@ -161,57 +168,75 @@ class SalesReviewForm extends CFormModel
         return $html;
     }
 
-	public function getTableBody($year){
-	    $html = "<tbody>";
-	    $count = 0;
-	    foreach ($this->staff_list as &$staff){//計算該年份有多少個員工
-            if($year>=$staff["start_time"]&&$year<=$staff["end_time"]){
+    private function getGroupForBody($groupRow,$year,&$showStaff){
+        $html = "";
+        $count = 0;//本月有多少员工（不包含跨区)
+        $allSum = 0;//本月总金额
+        $allNum = 0;//本月总单数
+        foreach ($groupRow as $staffRow){//計算員工总分及总单数
+            if($year>=$staffRow["start_time"]&&$year<=$staffRow["end_time"]){
                 $count++;
+                $sum = isset($this->form_list[$year]["item"][$staffRow["user_id"]])?$this->form_list[$year]["item"][$staffRow["user_id"]]["sales_sum"]:0;
+                $num = isset($this->form_list[$year]["item"][$staffRow["user_id"]])?$this->form_list[$year]["item"][$staffRow["user_id"]]["sales_count"]:0;
+                $allNum+=$num;
+                $allSum+=$sum;
             }
         }
-	    foreach ($this->staff_list as &$staff){
-            if($year>=$staff["start_time"]&&$year<=$staff["end_time"]){
-                if(!key_exists("rankingCount",$staff)){
-                    $staff["rankingCount"]=0;
+        foreach ($groupRow as $staffRow){//生成表格
+            if($year>=$staffRow["start_time"]&&$year<=$staffRow["end_time"]){
+                $sum = isset($this->form_list[$year]["item"][$staffRow["user_id"]])?$this->form_list[$year]["item"][$staffRow["user_id"]]["sales_sum"]:0;
+                $num = isset($this->form_list[$year]["item"][$staffRow["user_id"]])?$this->form_list[$year]["item"][$staffRow["user_id"]]["sales_count"]:0;
+
+                $trHtml="<tr data-code='{$staffRow['code']}'>";
+                $trHtml.="<td>".$staffRow["code"]."</td>";
+                $trHtml.="<td>".$staffRow["name"]."</td>";
+                $trHtml.="<td>".$sum."</td>";//开单额
+                $trHtml.="<td>$allSum</td>";//开单额平均数
+                $rankingOne = empty($allSum)?0:($sum/$allSum)*100;
+                $rankingOne = round($rankingOne);
+                $trHtml.="<td>".$rankingOne."%</td>";//开单额所占比
+                $rankingOne = $this->getRankingToNum($rankingOne);
+                $trHtml.="<td class='text-danger'><b>".$rankingOne."</b></td>";//开单额评分
+                //$trHtml.="<td>&nbsp;</td>";
+                $trHtml.="<td>".$num."</td>";//开单数量
+                $trHtml.="<td>$allNum</td>";//开单数量平均数
+                $rankingTwo = empty($allNum)?0:($num/$allNum)*100;
+                $rankingTwo = round($rankingTwo);
+                $trHtml.="<td>".$rankingTwo."%</td>";//开单数量所占比
+                $rankingTwo = $this->getRankingToNum($rankingTwo);
+                $trHtml.="<td class='text-danger'><b>".$rankingTwo."</b></td>";//开单数量评分
+                $rankingSum = ($rankingTwo+$rankingOne)/2;
+                $trHtml.="<td class='text-danger'><b>$rankingSum</b></td>";//当月总评分
+                $trHtml.="</tr>";
+                $bool = key_exists($staffRow["user_id"],$showStaff);
+                if($staffRow["group_id"] == $this->id||$bool){
+                    unset($showStaff[$staffRow["user_id"]]);//不需要重复显示
+                    $html.=$trHtml;
+                    $this->staff_list[$staffRow["user_id"]]["rankingCount"]++;
+                    $this->staff_list[$staffRow["user_id"]]["ranking"]+=$rankingSum;
                 }
-                $staff["rankingCount"]++;
-            }else{
-                continue;
             }
-            $sum = isset($this->form_list[$year]["item"][$staff["user_id"]])?$this->form_list[$year]["item"][$staff["user_id"]]["sales_sum"]:0;
-            $allSum = isset($this->form_list[$year]["sum"])?$this->form_list[$year]["sum"]:0;
-            $allSum = empty($count)?0:floatval(sprintf("%.2f",$allSum/$count));
-            $num = isset($this->form_list[$year]["item"][$staff["user_id"]])?$this->form_list[$year]["item"][$staff["user_id"]]["sales_count"]:0;
-            $allNum = isset($this->form_list[$year]["count"])?$this->form_list[$year]["count"]:0;
-            $allNum = empty($count)?0:floatval(sprintf("%.2f",$allNum/$count));
-
-            if(!key_exists("ranking",$staff)){
-                $staff["ranking"]=0;
-            }
-            $html.="<tr>";
-            $html.="<td>".$staff["code"]."</td>";
-            $html.="<td>".$staff["name"]."</td>";
-            $html.="<td>".$sum."</td>";
-            $html.="<td>$allSum</td>";
-            $rankingOne = empty($allSum)?0:($sum/$allSum)*100;
-            $rankingOne = round($rankingOne);
-            $html.="<td>".$rankingOne."%</td>";
-            $rankingOne = $this->getRankingToNum($rankingOne);
-            $html.="<td class='text-danger'><b>".$rankingOne."</b></td>";
-            //$html.="<td>&nbsp;</td>";
-            $html.="<td>".$num."</td>";
-            $html.="<td>$allNum</td>";
-            $rankingTwo = empty($allNum)?0:($num/$allNum)*100;
-            $rankingTwo = round($rankingTwo);
-            $html.="<td>".$rankingTwo."%</td>";
-            $rankingTwo = $this->getRankingToNum($rankingTwo);
-            $html.="<td class='text-danger'><b>".$rankingTwo."</b></td>";
-            $rankingSum = ($rankingTwo+$rankingOne)/2;
-            $html.="<td class='text-danger'><b>$rankingSum</b></td>";
-            $html.="</tr>";
-            $staff["ranking"]+=$rankingSum;
         }
+        return $html;
+    }
 
+	public function getTableBody($year){
+        $groupList = $this->group_staff;
+	    $html = "<tbody>";
+        $showStaff=$this->show_staff;
+	    $html.= $this->getGroupForBody($groupList[$this->id],$year,$showStaff);
+        unset($groupList[$this->id]);
+        if(!empty($groupList)){
+            foreach ($groupList as $groupRow){
+                $autoHtml = $this->getGroupForBody($groupRow,$year,$showStaff);
+                if(!empty($autoHtml)){
+                    $html.="</tbody></table></div></div>";
+                    $html.=$this->getTableHeader("跨区");
+                    $html.="<tbody>";
+                    $html.=$autoHtml;
+                }
+            }
+        }
         return $html."</tbody>";
     }
 
@@ -248,6 +273,8 @@ class SalesReviewForm extends CFormModel
             $content = $this->getTableHeader($year);
             $content.=$this->getTableBody($year);
             $content.="</table></div></div>";
+            //查询跨地区员工
+            //$this->getAutoStaff();
             $tabs[] = array(
                 'label'=>$year,
                 'content'=>"<p>&nbsp;</p>".$content,
@@ -266,17 +293,21 @@ class SalesReviewForm extends CFormModel
         $html = "";
         $html.="<div class='form-group'><div class='col-sm-5 col-sm-offset-2'><table class='table table-bordered table-striped'>";
         $html.="<thead><tr>";
+        $html.="<th width='1%'>".TbHtml::checkBox("all",true,array("id"=>"allCheck"))."</th>";
         $html.="<th>".Yii::t("contract","Employee Code")."</th>";
         $html.="<th>".Yii::t("contract","Employee Name")."</th>";
         $html.="<th>".Yii::t("contract","review number")."</th>";
         $html.="</tr></thead><tbody>";
         foreach ($this->staff_list as $staff){
-            $html.="<tr>";
-            $html.="<td>".$staff["code"]."</td>";
-            $html.="<td>".$staff["name"]."</td>";
-            $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
-            $html.="<td>".sprintf("%.2f",$ranking)."</td>";
-            $html.="</tr>";
+            if(key_exists($staff["user_id"],$this->show_staff)){
+                $html.="<tr>";
+                $html.="<th>".TbHtml::checkBox("only[]",true,array("class"=>"onlyCheck","data-code"=>$staff["code"]))."</th>";
+                $html.="<td>".$staff["code"]."</td>";
+                $html.="<td>".$staff["name"]."</td>";
+                $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
+                $html.="<td>".sprintf("%.2f",$ranking)."</td>";
+                $html.="</tr>";
+            }
         }
         $html.="</tbody></table></div></div>";
 
@@ -312,29 +343,56 @@ class SalesReviewForm extends CFormModel
         }
     }
 
-    protected function getGroupStaff($index,$city=''){
-        if(empty($city)){
-            $city = Yii::app()->user->city();
-        }
-        $rows = Yii::app()->db->createCommand()->select("b.code,b.name,b.id,c.user_id,a.start_time,a.end_time")->from("hr_sales_staff a")
+    /*
+     * @$index 组名id
+     * @$num 最多循环1次
+     */
+    protected function foreachGroupStaff($index,$num=0){
+        $num++;
+        $minYear = $this->year_list[0];
+        $maxYear = end($this->year_list);
+        $rows = Yii::app()->db->createCommand()->select("a.group_id,b.code,b.name,b.id,c.user_id,a.start_time,a.end_time")->from("hr_sales_staff a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->leftJoin("hr_binding c","c.employee_id = b.id")
-            ->where('a.group_id=:group_id and b.city=:city',array(':group_id'=>$index,':city'=>$city))->queryAll();
-        if($rows){
-            $arr = array();
-            $key = 0;
-            foreach ($rows as $row){
-                $startTime = $row['start_time'];
-                $endTime = $row['end_time'];
-                $startTime = empty($startTime) ? "0000/00" : date("Y/m", strtotime($startTime));
-                $endTime = empty($endTime) ? "9999/99" : date("Y/m", strtotime($endTime));
-                $key++;
-                $row["user_id"] = empty($row["user_id"])?"null".$key:$row["user_id"];
-                $arr[$row["user_id"]] = array("id"=>$row["id"],"code"=>$row["code"],"name"=>$row["name"],"user_id"=>$row["user_id"],"start_time"=>$startTime,"end_time"=>$endTime,"rankingCount"=>0);
+            ->where('a.group_id=:group_id',array(':group_id'=>$index))->queryAll();
+        $key = 0;
+        foreach ($rows as $row){
+            if(!key_exists($index,$this->group_staff)){
+                $this->group_staff[$index] = array();
             }
-            $this->staff_list = $arr;
-        }else{
-            $this->staff_list = array();
+            $startTime = $row['start_time'];
+            $endTime = $row['end_time'];
+            $startTime = empty($startTime) ? "0000/00" : date("Y/m", strtotime($startTime));
+            $endTime = empty($endTime) ? "9999/99" : date("Y/m", strtotime($endTime));
+            $key++;
+            //生成user_id (解决有些员工未绑定账户)
+            $row["user_id"] = empty($row["user_id"])?"null".$key:$row["user_id"];
+            $staffArr=array(
+                "group_id"=>$row["group_id"],//分组id
+                "user_id"=>$row["user_id"],//账号id
+                "id"=>$row["id"],//员工id
+                "code"=>$row["code"],
+                "name"=>$row["name"],
+                "start_time"=>$startTime,
+                "end_time"=>$endTime,
+                "ranking"=>0,//总分
+                "rankingCount"=>0//计算总分用的
+            );
+            if(!key_exists($row["user_id"],$this->staff_list)){ //防止循环覆盖问题
+                $this->staff_list[$row["user_id"]]=$staffArr;
+            }
+            $this->group_staff[$index][]=$staffArr;
+            if($index==$this->id){ //当前查询分组(需要显示的员工分数)
+                $this->show_staff[$row["user_id"]] = $row["id"];
+            }
+            if($num<=1&&$startTime>$minYear&&$startTime<$maxYear){ //判断是否跨区
+                $autoRow = Yii::app()->db->createCommand()->select("group_id")->from("hr_sales_staff")
+                    ->where('group_id!=:group_id and time_off=1 and end_time<=:end_time',
+                        array(':group_id'=>$index,':end_time'=>$row['start_time']))->queryRow();
+                if($autoRow&&!key_exists($autoRow["group_id"],$this->group_staff)){
+                    $this->foreachGroupStaff($autoRow["group_id"],$num);
+                }
+            }
         }
     }
 
