@@ -83,6 +83,7 @@ class AuditHistoryForm extends CFormModel
     public $group_type;//員工編號（舊）
     public $effect_time;//生效日期
     public $wechat;//微信賬號
+    public $recommend_user;//推荐人
     public $urgency_card;//緊急聯繫人身份證
     public $no_of_attm = array(
         'employee'=>0
@@ -170,6 +171,7 @@ class AuditHistoryForm extends CFormModel
             'effect_time'=>Yii::t('contract','Effect Time'),
             'group_type'=>Yii::t('contract','group type'),
             'wechat'=>Yii::t('contract','wechat'),
+            'recommend_user'=>Yii::t('contract','recommend user'),
             'urgency_card'=>Yii::t('contract','urgency card'),
             'address_code'=>Yii::t('contract','Old Address').Yii::t('contract','postcode'),
             'contact_address_code'=>Yii::t('contract','Contact Address').Yii::t('contract','postcode'),
@@ -328,6 +330,7 @@ class AuditHistoryForm extends CFormModel
                 $this->group_type = $row['group_type'];
                 $this->effect_time = $row['effect_time'];
                 $this->wechat = $row['wechat'];
+                $this->recommend_user = $row['recommend_user'];
                 $this->urgency_card = $row['urgency_card'];
 				break;
 			}

@@ -498,6 +498,7 @@ return array(
     //2020-03-20
     'judge retire'=>'退休合同',
     'wechat'=>'微信账号',
+    'recommend user'=>'推荐人',
     'urgency card'=>'紧急联系人身份证',
     'Agent Address'=>'委托代理人地址',
 

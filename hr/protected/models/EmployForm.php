@@ -76,6 +76,7 @@ class EmployForm extends CFormModel
     public $group_type;//組別類型
 
     public $wechat;//微信賬號
+    public $recommend_user;//推荐人
     public $urgency_card;//緊急聯繫人身份證
 
     public $no_of_attm = array(
@@ -157,6 +158,7 @@ class EmployForm extends CFormModel
             'code_old'=>Yii::t('contract','Code Old'),
             'group_type'=>Yii::t('contract','group type'),
             'wechat'=>Yii::t('contract','wechat'),
+            'recommend_user'=>Yii::t('contract','recommend user'),
             'urgency_card'=>Yii::t('contract','urgency card'),
 		);
 	}
@@ -170,7 +172,7 @@ class EmployForm extends CFormModel
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, group_type code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
-              education,wechat,urgency_card, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
+              education,wechat,recommend_user,urgency_card, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
                test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, user_card_date, emergency_user, emergency_phone',
                 'safe'),
 			array('entry_time,emergency_user,emergency_phone','required','on'=>"audit"),
@@ -196,6 +198,8 @@ class EmployForm extends CFormModel
 			array('test_type','validateTestType','on'=>"audit"),
 			array('year_day','required','on'=>"audit"),
             array('year_day', 'validateYearDay','on'=>"audit"),
+            array('image_user','required','on'=>"audit"),
+            array('image_code','required','on'=>"audit"),
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
@@ -405,6 +409,7 @@ class EmployForm extends CFormModel
                 $this->code_old = $row['code_old'];
                 $this->group_type = $row['group_type'];
                 $this->wechat = $row['wechat'];
+                $this->recommend_user = $row['recommend_user'];
                 $this->urgency_card = $row['urgency_card'];
 				break;
 			}
@@ -478,11 +483,11 @@ class EmployForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_employee(
-							name,wechat,urgency_card, sex, attachment, group_type, staff_id, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
+							name,recommend_user,wechat,urgency_card, sex, attachment, group_type, staff_id, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
 							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,fix_time,user_card_date,emergency_user,emergency_phone,code_old,
 							 email,remark,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
 						) values (
-							:name,:wechat,:urgency_card, :sex, :attachment, :group_type, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
+							:name,:recommend_user,:wechat,:urgency_card, :sex, :attachment, :group_type, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
 							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,:date_user_card,:emergency_user,:emergency_phone,:code_old,
 							 :email,:remark,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
 						)";
@@ -541,6 +546,7 @@ class EmployForm extends CFormModel
 							code_old = :code_old,
 							group_type = :group_type,
 							wechat = :wechat,
+							recommend_user = :recommend_user,
 							urgency_card = :urgency_card,
 							luu = :luu 
 						where id = :id
@@ -676,6 +682,8 @@ class EmployForm extends CFormModel
             $command->bindParam(':emergency_phone',$this->emergency_phone,PDO::PARAM_STR);
         if (strpos($sql,':wechat')!==false)
             $command->bindParam(':wechat',$this->wechat,PDO::PARAM_STR);
+        if (strpos($sql,':recommend_user')!==false)
+            $command->bindParam(':recommend_user',$this->recommend_user,PDO::PARAM_STR);
         if (strpos($sql,':urgency_card')!==false)
             $command->bindParam(':urgency_card',$this->urgency_card,PDO::PARAM_STR);
 

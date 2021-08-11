@@ -137,6 +137,13 @@
             array('readonly'=>($readonly))
         ); ?>
     </div>
+    <!--分割-->
+    <?php echo $form->labelEx($model,'recommend_user',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'recommend_user',
+            array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
+        ); ?>
+    </div>
 </div>
 <div class="form-group">
     <?php echo $form->labelEx($model,'nation',array('class'=>"col-sm-2 control-label")); ?>
@@ -471,7 +478,7 @@ if (!empty($contractNum)){
 
 <legend><?php echo Yii::t("contract","archives");?></legend>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'image_user',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'image_user',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php
         if($readonly){
@@ -496,7 +503,7 @@ if (!empty($contractNum)){
     </div>
 </div>
 <div class="form-group">
-    <?php echo $form->labelEx($model,'image_code',array('class'=>"col-sm-2 control-label")); ?>
+    <?php echo $form->label($model,'image_code',array('class'=>"col-sm-2 control-label",'required'=>true)); ?>
     <div class="col-sm-3">
         <?php
         if($readonly){

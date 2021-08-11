@@ -77,6 +77,7 @@ class DepartureForm extends CFormModel
     public $code_old;//員工編號（舊）
     public $group_type;//組別類型
     public $wechat;//微信賬號
+    public $recommend_user;//推荐人
     public $urgency_card;//緊急聯繫人身份證
     public $no_of_attm = array(
         'employ'=>0,
@@ -163,6 +164,7 @@ class DepartureForm extends CFormModel
             'emergency_phone'=>Yii::t('contract','Emergency Phone'),
             'code_old'=>Yii::t('contract','Code Old'),
             'wechat'=>Yii::t('contract','wechat'),
+            'recommend_user'=>Yii::t('contract','recommend user'),
             'urgency_card'=>Yii::t('contract','urgency card'),
 		);
 	}
@@ -360,6 +362,7 @@ class DepartureForm extends CFormModel
                 $this->code_old = $row['code_old'];
                 $this->group_type = $row['group_type'];
                 $this->wechat = $row['wechat'];
+                $this->recommend_user = $row['recommend_user'];
                 $this->urgency_card = $row['urgency_card'];
 				break;
 			}
