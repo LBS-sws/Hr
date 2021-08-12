@@ -356,9 +356,7 @@ class SalesReviewForm extends CFormModel
             ->leftJoin("hr_binding c","c.employee_id = b.id")
             ->where('a.group_id=:group_id',array(':group_id'=>$index))->queryAll();
         $key = 0;
-        var_dump($num);echo "<br>";
         foreach ($rows as $row){
-            var_dump($row["name"]);echo "<br>";
             if(!key_exists($index,$this->group_staff)){
                 $this->group_staff[$index] = array();
             }
@@ -389,15 +387,8 @@ class SalesReviewForm extends CFormModel
             }
             if($num<=1&&$startTime>$minYear&&$startTime<$maxYear){ //判断是否跨区
                 $autoRow = Yii::app()->db->createCommand()->select("group_id")->from("hr_sales_staff")
-                    ->where('group_id!=:group_id and time_off=1 and end_time<=:end_time',
-                        array(':group_id'=>$index,':end_time'=>$row['start_time']))->queryRow();
-
-                var_dump($row['start_time']);echo "<br>";
-                var_dump($autoRow);echo "<br>";
-                echo "<br>";
-                var_dump($num);
-                echo "<br>";
-                echo "<br>";
+                    ->where('group_id!=:group_id and time_off=1 and end_time<=:end_time and employee_id=:employee_id',
+                        array(':group_id'=>$index,':end_time'=>$row['start_time'],':employee_id'=>$row['id']))->queryRow();
                 if($autoRow&&!key_exists($autoRow["group_id"],$this->group_staff)){
                     $this->foreachGroupStaff($autoRow["group_id"],$num);
                 }
