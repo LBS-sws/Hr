@@ -145,7 +145,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         ); ?>
                     </div>
                     <div class="col-sm-7">
-                        <p class="form-control-static">锦旗专用：影响锦旗表单的参与人数</p>
+                        <p class="form-control-static">锦旗：影响锦旗表单的参与人数。  测验系统：必须进行每年的测验</p>
                     </div>
                 </div>
             <?php endif; ?>

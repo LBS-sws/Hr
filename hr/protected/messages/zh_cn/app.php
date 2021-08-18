@@ -197,6 +197,7 @@ return array(
     'Audit Heart letter'=>'审核心意信封',
     'Search Heart letter'=>'查询心意信封得分',
     'Search Heart letter rank'=>'地区排行榜',
+    'Estimated statement report'=>'老总年度考核预计数据报表',
     //沈超添加结束
 );
 ?>

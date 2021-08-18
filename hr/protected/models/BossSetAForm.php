@@ -7,28 +7,38 @@ class BossSetAForm extends CFormModel
 	public $tacitly;
 	public $city;
 	public $json_text;
-    protected $listX = array(
-        array('value'=>'one_one','percent'=>'25','show'=>'1'),//年生意额增长目标
-        array('value'=>'one_two','percent'=>'20','show'=>'1'),//年利润额增长目标
-        array('value'=>'one_three','percent'=>'10','show'=>'1'),//年新业务生意额目标
-        array('value'=>'one_four','percent'=>'10','show'=>'1'),//IA服务生意年金额
-        array('value'=>'one_five','percent'=>'10','show'=>'1'),//IB服务生意年金额
-        array('value'=>'one_nine','percent'=>'5','show'=>'1'),//新（IA+IB）服务年金额
-        array('value'=>'one_six','pro_str'=>"%",'percent'=>'10','show'=>'1'),//收款率(%)
-        array('value'=>'one_seven','pro_str'=>"%",'percent'=>'5','show'=>'1'),//服务单的停单比例(%)
-        array('value'=>'one_eight','percent'=>'5','show'=>'1')//技术员每月平均生产力
-    );
-/*	protected $listX = array(
-        array('value'=>'one_one','name'=>Yii::t("contract","one_one")),//年生意额增长目标
-        array('value'=>'one_two','name'=>Yii::t("contract","one_two")),//年利润额增长目标
-        array('value'=>'one_three','name'=>Yii::t("contract","one_three")),//年新业务生意额目标
-        array('value'=>'one_four','name'=>Yii::t("contract","one_four")),//IA服务生意年金额
-        array('value'=>'one_five','name'=>Yii::t("contract","one_five")),//IB服务生意年金额
-        array('value'=>'one_nine','name'=>Yii::t("contract","one_nine")),//新（IA+IB）服务年金额
-        array('value'=>'one_six','name'=>Yii::t("contract","one_six"),'pro_str'=>"%"),//收款率(%)
-        array('value'=>'one_seven','name'=>Yii::t("contract","one_seven"),'pro_str'=>"%"),//服务单的停单比例(%)
-        array('value'=>'one_eight','name'=>Yii::t("contract","one_eight"))//技术员每月平均生产力
-    );*/
+    protected $listX;
+    public function __construct($scenario = '')
+    {
+        $this->listX = self::getListX();
+        parent::__construct($scenario);
+    }
+
+    /*	protected $listX = array(
+            array('value'=>'one_one','name'=>Yii::t("contract","one_one")),//年生意额增长目标
+            array('value'=>'one_two','name'=>Yii::t("contract","one_two")),//年利润额增长目标
+            array('value'=>'one_three','name'=>Yii::t("contract","one_three")),//年新业务生意额目标
+            array('value'=>'one_four','name'=>Yii::t("contract","one_four")),//IA服务生意年金额
+            array('value'=>'one_five','name'=>Yii::t("contract","one_five")),//IB服务生意年金额
+            array('value'=>'one_nine','name'=>Yii::t("contract","one_nine")),//新（IA+IB）服务年金额
+            array('value'=>'one_six','name'=>Yii::t("contract","one_six"),'pro_str'=>"%"),//收款率(%)
+            array('value'=>'one_seven','name'=>Yii::t("contract","one_seven"),'pro_str'=>"%"),//服务单的停单比例(%)
+            array('value'=>'one_eight','name'=>Yii::t("contract","one_eight"))//技术员每月平均生产力
+        );*/
+
+    public static function getListX(){
+        return array(
+            array('value'=>'one_one','percent'=>'25','show'=>'1'),//年生意额增长目标
+            array('value'=>'one_two','percent'=>'20','show'=>'1'),//年利润额增长目标
+            array('value'=>'one_three','percent'=>'10','show'=>'1'),//年新业务生意额目标
+            array('value'=>'one_four','percent'=>'10','show'=>'1'),//IA服务生意年金额
+            array('value'=>'one_five','percent'=>'10','show'=>'1'),//IB服务生意年金额
+            array('value'=>'one_nine','percent'=>'5','show'=>'1'),//新（IA+IB）服务年金额
+            array('value'=>'one_six','pro_str'=>"%",'percent'=>'10','show'=>'1'),//收款率(%)
+            array('value'=>'one_seven','pro_str'=>"%",'percent'=>'5','show'=>'1'),//服务单的停单比例(%)
+            array('value'=>'one_eight','percent'=>'5','show'=>'1')//技术员每月平均生产力
+        );
+    }
 
 	public function attributeLabels()
 	{

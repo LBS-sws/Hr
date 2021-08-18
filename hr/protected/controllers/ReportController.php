@@ -8,6 +8,7 @@ class ReportController extends Controller
         'pennantculist'=>'YB06',
         'reviewlist'=>'YB07',
         'leavelist'=>'YB03',
+        'estimated'=>'YB08',
     );
 	
 	public function filters()
@@ -86,6 +87,24 @@ class ReportController extends Controller
             }
         }
         $this->render('form_y03',array('model'=>$model));
+    }
+
+    public function actionEstimated() {
+		$this->function_id = self::$actions['estimated'];
+		Yii::app()->session['active_func'] = $this->function_id;
+
+        $model = new ReportEstimatedForm;
+        if (isset($_POST['ReportEstimatedForm'])) {
+            $model->attributes = $_POST['ReportEstimatedForm'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('estimated',array('model'=>$model));
     }
 
     public function actionPennantexlist() {

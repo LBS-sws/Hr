@@ -61,6 +61,9 @@ class ExcelTool {
 		$this->objPHPExcel->getActiveSheet()->getDefaultRowDimension()
 			->setRowHeight(-1);
 	}
+	public function getObjPHPExcel(){
+	    return $this->objPHPExcel;
+    }
 	
 	public function getOutput() {
 		header('Content-Type: application/vnd.ms-excel');

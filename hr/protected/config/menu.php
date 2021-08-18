@@ -440,6 +440,10 @@ return array(
 				'access'=>'YB07',
                 'url'=>'/report/reviewlist',
 			),
+			'Estimated statement report'=>array(//老总年度考核预计数据报表
+				'access'=>'YB08',
+                'url'=>'/report/estimated',
+			),
 			'Report Manager'=>array(
 				'access'=>'YB01',
                 'url'=>'/queue/index',
