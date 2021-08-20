@@ -68,7 +68,7 @@ class RptEstimatedList extends CReport {
         $j = 1;
         $this->excel->getActiveSheet()->freezePane('B1');
         $this->excel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight(39);
-        $this->excel->writeCell($j, $this->current_row,"大陆地区预计{$this->year}年目标数据",array("align"=>"C","valign"=>"C"));
+        $this->excel->writeCell($j, $this->current_row,"{$this->year}年大陆地区预计目标数据",array("align"=>"C","valign"=>"C"));
         $this->excel->getActiveSheet()->getStyleByColumnAndRow($j,$this->current_row)->getFont()->setBold(true)->getColor()->setRGB('ff0000');
 
         $this->current_row++;
