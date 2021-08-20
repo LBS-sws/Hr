@@ -17,11 +17,12 @@ class RptEstimatedList extends CReport {
         $this->year = $this->criteria['YEAR'];
         $rows = Yii::app()->db->createCommand()->select("a.json_text,b.name,c.name as city_name")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
-            ->leftJoin("security{$suffix}.sec_city c","b.city=c.code")
+            ->leftJoin("security{$suffix}.sec_city c","a.city=c.code")
             ->where("a.audit_year=:year",array(":year"=>$this->year))->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $this->headList[] = $row["city_name"]."\n（{$row['name']}）";
+                $this->headList[] = $row["city_name"];
+                //$this->headList[] = $row["city_name"]."\n（{$row['name']}）";
                 $json_text = json_decode($row["json_text"],true);
                 foreach ($listX as $item){
                     if(!key_exists($item["value"],$this->bodyList)){
