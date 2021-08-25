@@ -15,10 +15,12 @@ class RptEstimatedList extends CReport {
 	    $listX = BossSetAForm::getListX();
         $suffix = Yii::app()->params['envSuffix'];
         $this->year = $this->criteria['YEAR'];
+        //相同城市保留最後申請的申請記錄
+        $exprSql = " and (a.city,a.id) in (SELECT city,max(id) FROM hr_boss_audit where audit_year=:year GROUP BY city)";
         $rows = Yii::app()->db->createCommand()->select("a.json_text,b.name,c.name as city_name")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->leftJoin("security{$suffix}.sec_city c","a.city=c.code")
-            ->where("a.audit_year=:year",array(":year"=>$this->year))->queryAll();
+            ->where("a.audit_year=:year $exprSql",array(":year"=>$this->year))->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $this->headList[] = $row["city_name"];
@@ -43,7 +45,7 @@ class RptEstimatedList extends CReport {
                     $this->bodyList[$item["value"]]["list"][] = $value;
                     $this->bodyList[$item["value"]]["sum"]+=$num;
                     $this->bodyList[$item["value"]]["count"]++;
-                    if(key_exists("pro_str",$item)&&$item["pro_str"]=="%"){
+                    if(in_array($item["value"],array("one_eight","one_seven","one_six"))){
                         $this->bodyList[$item["value"]]["show"]=0;
                     }
                 }
@@ -75,10 +77,13 @@ class RptEstimatedList extends CReport {
         $this->setTextForTop(0,"事项");
         $this->excel->setColWidth(0, 30);
         $this->excel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight(55);
-        foreach ($this->headList as $text){
-            $this->setTextForTop($j,$text);
-            $j++;
+        if(!empty($this->headList)){
+            foreach ($this->headList as $text){
+                $this->setTextForTop($j,$text);
+                $j++;
+            }
         }
+        $j = $j==1?2:$j;
         $str = PHPExcel_Cell::stringFromColumnIndex($j-1);
         $this->excel->getActiveSheet()->mergeCells("B1:{$str}1");
         $this->setTextForTop($j,"总和");
