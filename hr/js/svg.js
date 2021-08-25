@@ -133,8 +133,12 @@
         var newLeft = left+(width/2-80);
         var newTop = top-140;
         var html = "<div class='supportDiv' id='supportDivTop'>";
-        html+="<p>支援编号：<a href='"+data['url']+"'>"+data['support_code']+"</a></p>";
-        html+="<p>支援城市："+data['city_name']+"</p>";
+        if(data['url']==""||data['url']==undefined){
+            html+="<p>支点城市："+data['city_name']+"</p>";
+        }else{
+            html+="<p>支援编号：<a href='"+data['url']+"'>"+data['support_code']+"</a></p>";
+            html+="<p>支援城市："+data['city_name']+"</p>";
+        }
         html+="<p>开始日期："+data['start_date']+"</p>";
         html+="<p>結束日期："+data['end_date']+"</p>";
         html+="</div>";
