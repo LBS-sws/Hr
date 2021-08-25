@@ -28,23 +28,50 @@ $this->pageTitle=Yii::app()->name . ' - supportEmployee';
 <section class="content">
     <div class="box">
         <div class="box-body">
+            <ul class="nav nav-tabs nav-justified">
+                <?php
+                $type = key_exists("type",$_GET)?$_GET["type"]:0;
+                if($type == 0){
+                    echo "<li class='active'>";
+                }else{
+                    echo "<li>";
+                }
+                echo "<a href='".Yii::app()->createUrl('supportEmployee/index')."'>".Yii::t("contract","Supports overview")."</a>";
+                echo "</li>";
+                if($type != 0){
+                    echo "<li class='active'>";
+                }else{
+                    echo "<li>";
+                }
+                echo "<a href='".Yii::app()->createUrl('supportEmployee/index',array("type"=>1))."'>".Yii::t("contract","Support overview")."</a>";
+                echo "</li>";
+                ?>
+            </ul>
+            <p>&nbsp;</p>
             <div class="col-lg-12">
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'year',array('class'=>"")); ?>
                     <?php echo $form->dropDownList($model, 'year',$model->getYearList(),
-                        array('class'=>'form-control'));
+                        array('class'=>'form-control changeSelect'));
                     ?>
                 </div>
                 <div class="form-group">
-                    <?php echo $form->labelEx($model,'employee_id',array('class'=>"")); ?>
-                    <?php echo $form->dropDownList($model, 'employee_id',$model->getEmployeeList(),
-                        array('class'=>'form-control'));
+                    <?php
+                    if($type != 0){
+                        echo $form->labelEx($model,'staff_id',array('class'=>""));
+                        echo $form->dropDownList($model, 'employee_id',$model->getStaffList(),
+                            array('class'=>'form-control changeSelect'));
+                    }else{
+                        echo $form->labelEx($model,'employee_id',array('class'=>""));
+                        echo $form->dropDownList($model, 'employee_id',$model->getEmployeeList(),
+                            array('class'=>'form-control changeSelect'));
+                    }
                     ?>
                 </div>
 
                 <div class="btn-group" role="group">
                     <?php echo TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('misc','Search'), array(
-                        'submit'=>Yii::app()->createUrl('supportEmployee/index')));
+                        'submit'=>Yii::app()->createUrl('supportEmployee/index',array("type"=>$type))));
                     ?>
                 </div>
             </div>
@@ -65,12 +92,16 @@ $js = "
 $(window).resize(function(){
     $('#svgSupport').svgSupport({'dataList':".json_encode($model->attr).",'yList':".json_encode($model->cityList)."});
 }).trigger('resize');
+
+$('.changeSelect').change(function(){
+    jQuery.yii.submitForm(this,'".Yii::app()->createUrl('supportEmployee/index',array("type"=>$type))."',{});return false;
+});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();
 Yii::app()->clientScript->registerScript('readonlyClass',$js,CClientScript::POS_READY);
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/svg.js", CClientScript::POS_END);//
+Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl . "/js/svg.js?1", CClientScript::POS_END);//
 ?>
 
 <?php $this->endWidget(); ?>

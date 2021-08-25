@@ -705,5 +705,11 @@ return array(
     'type for director'=>'总监归类',
     'click send'=>'点击发送',
     'wait date'=>'预计处理时间',
+
+    'history point'=>'历史支点',
+    'wage city'=>'发工资城市',
+    'Supports overview'=>'支援概况',
+    'Support overview'=>'支点概况',
+    'support staff'=>'支点员工',
 );
 ?>

@@ -698,5 +698,11 @@ return array(
     'type for director'=>'總監歸類',
     'click send'=>'點擊發送',
     'wait date'=>'預計處理時間',
+
+    'history point'=>'歷史支點',
+    'wage city'=>'發工資城市',
+    'Supports overview'=>'支援概況',
+    'Support overview'=>'支點概況',
+    'support staff'=>'支點員工',
     );
 ?>

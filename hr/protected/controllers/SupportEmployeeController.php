@@ -40,17 +40,19 @@ class SupportEmployeeController extends Controller
 
     public function actionIndex($pageNum=0){
         $model = new SupportEmployeeList;
+        $type = key_exists("type",$_GET)?$_GET["type"]:0;
+        $type = in_array($type,array(0,1))?$type:0;
         if (isset($_POST['SupportEmployeeList'])) {
             $model->attributes = $_POST['SupportEmployeeList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['supportEmployee_01']) && !empty($session['supportEmployee_01'])) {
-                $criteria = $session['supportEmployee_01'];
+            if (isset($session["supportEmployee_0{$type}"]) && !empty($session["supportEmployee_0{$type}"])) {
+                $criteria = $session["supportEmployee_0{$type}"];
                 $model->setCriteria($criteria);
             }
         }
         $model->determinePageNum($pageNum);
-        $model->retrieveDataByPage($model->pageNum);
+        $model->retrieveDataAll($type);
         $this->render('index',array('model'=>$model));
     }
 }
