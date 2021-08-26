@@ -387,6 +387,7 @@ class HistoryForm extends CFormModel
             }
             $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
                 ->where("id=:id and city in ($city_allow) and staff_status=0", array(':id'=>$index))->queryAll();
+            //var_dump($rows[0]["employdoc"]);
         }else{
             $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOYEE',id) as employeedoc")->from("hr_employee_operate")
                 ->where('id=:id', array(':id'=>$index))->queryAll();
@@ -613,7 +614,7 @@ class HistoryForm extends CFormModel
         $connection = Yii::app()->db;
         $uid = Yii::app()->user->id;
         $suffix = Yii::app()->params['envSuffix'];
-        $sql="SELECT a.id,b.display_name,b.phy_file_name,b.phy_path_name,b.file_type,b.remove,b.archive FROM docman$suffix.dm_master a,docman$suffix.dm_file b WHERE a.id = b.mast_id AND a.doc_type_code='EMPLOY' AND a.doc_id=".$this->employee_id;
+        $sql="SELECT b.lcd,a.id,b.display_name,b.phy_file_name,b.phy_path_name,b.file_type,b.remove,b.archive FROM docman$suffix.dm_master a,docman$suffix.dm_file b WHERE a.id = b.mast_id AND a.doc_type_code='EMPLOY' AND a.doc_id=".$this->employee_id;
         $attachment_old = $connection->createCommand($sql)->queryAll();
         if($attachment_old){//如果有附件
             $connection->createCommand()->insert("docman$suffix.dm_master", array(
