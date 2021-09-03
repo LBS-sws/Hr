@@ -172,6 +172,7 @@ class BossReview
                 $html.="<th width='170px'>".Yii::t("contract","now monthly average")."</th>";
             }
         }
+        $html.="<th width='170px'>{$this->audit_year}".Yii::t("contract"," monthly complete")."</th>";
         $html.="</tr></thead><tbody>";
 
         foreach ($this->listX as $listX){
@@ -218,6 +219,13 @@ class BossReview
                     }
                 }
             }
+            if($listX["value"]=="two_one"||(key_exists("pro_str",$listX)&&$listX["pro_str"]=="%")){
+                $completeNum="/";
+            }else{
+                $completeNum = $this->getEveryOrNowNumber($listX["value"],"complete");
+                $completeNum.="%";
+            }
+            $tableTr.="<td>".$completeNum."</td>";
             $tableTr.="</tr>";
             if(in_array($listX["value"],array("two_nine","two_ten","one_seven"))){
                 $nowNum*=-1;

@@ -212,23 +212,35 @@ class BossReviewB extends BossReview
     }
     //邮件专用
     public function getEveryOrNowNumber($type,$str="every"){
-        $value = $this->json_text[$type]["two_2"]/12;
-        if($str!="every"){
-            $year = intval(date("Y"));
-            if($this->audit_year == $year){
-                $num = intval(date("m"));
-                if(intval(date("d")) == 1){
-                    $num-=2;
+        $value = $this->json_text[$type]["two_2"];
+        switch ($str){
+            case "complete"://目标实际完成 = XX年实际达成数据÷预计XX年目标数据
+                $value=empty($value)?0:$this->json_text[$type]["two_4"]/$value;
+                $value*=100;
+                $value = round($value,2);
+                break;
+            case "every"://每月应达成平均数
+                $value=$value/12;
+                $value = round($value);
+                break;
+            case "now"://累计到当月应达成数据
+                $value=$value/12;
+                $year = intval(date("Y"));
+                if($this->audit_year == $year){
+                    $num = intval(date("m"));
+                    if(intval(date("d")) == 1){
+                        $num-=2;
+                    }
+                    $num = $num<1?1:$num;
+                }elseif($this->audit_year > $year){
+                    $num = 0;
+                }else{
+                    $num = 12;
                 }
-                $num = $num<1?1:$num;
-            }elseif($this->audit_year > $year){
-                $num = 0;
-            }else{
-                $num = 12;
-            }
-            $value*=$num;
+                $value*=$num;
+                $value = round($value);
+                break;
         }
-        $value = round($value);
         return $value;
     }
     //备注 - two_10
