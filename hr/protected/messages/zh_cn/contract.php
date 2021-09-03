@@ -592,7 +592,7 @@ return array(
     'one_4'=>'预计增长百分比',
     'one_5'=>'系数',
     'one_6'=>'年实际达成数据',
-    'one_7'=>'实际达成百分比',
+    'one_7'=>'增长百分比实际完成',
     'one_8'=>'阶梯落差',
     'one_9'=>'落差系数',
     'one_10'=>'实际系数',
@@ -711,5 +711,7 @@ return array(
     'Supports overview'=>'支援概况',
     'Support overview'=>'支点概况',
     'support staff'=>'支点员工',
+
+    ' monthly complete'=>'目标实际完成',
 );
 ?>

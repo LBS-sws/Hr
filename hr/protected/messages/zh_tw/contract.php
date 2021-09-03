@@ -587,7 +587,7 @@ return array(
     'one_4'=>'預計增長百分比',
     'one_5'=>'系數',
     'one_6'=>'年實際達成數據',
-    'one_7'=>'實際達成百分比',
+    'one_7'=>'增長百分比實際完成',
     'one_8'=>'階梯落差',
     'one_9'=>'落差系數',
     'one_10'=>'實際系數',
@@ -704,5 +704,7 @@ return array(
     'Supports overview'=>'支援概況',
     'Support overview'=>'支點概況',
     'support staff'=>'支點員工',
+
+    ' monthly complete'=>'目標實際完成',
     );
 ?>
