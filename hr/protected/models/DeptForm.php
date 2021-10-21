@@ -1,6 +1,7 @@
 <?php
 
 /**
+ *
  * UserForm class.
  * UserForm is the data structure for keeping
  * user form data. It is used by the 'user' action of 'SiteController'.

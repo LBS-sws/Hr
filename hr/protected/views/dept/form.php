@@ -18,6 +18,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
 		<strong><?php echo $model->getTypeName().Yii::t('contract',' Form'); ?></strong>
 	</h1>
 <!--
+1
 	<ol class="breadcrumb">
 		<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
 		<li><a href="#">Layout</a></li>
