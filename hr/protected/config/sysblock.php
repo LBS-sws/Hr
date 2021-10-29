@@ -18,6 +18,12 @@ return array(
         'function'=>'RE02',
         'message'=>Yii::t('block','Please complete Personnel System - Appraisial before using other functions.'),
     ),
+    'hr.ZE01' => array(
+        'validation'=>'validateSocialCode',//新入職員工一個月後提示錄入社会保障卡号
+        'system'=>'hr',
+        'function'=>'',
+        'message'=>Yii::t('block','validateSocialCode'),
+    ),
 
     'quiz.EM02' => array( //新用戶三個月後限制用戶行為（函數內判斷了地區是否適用）
         'validation'=>'validateNewStaff',

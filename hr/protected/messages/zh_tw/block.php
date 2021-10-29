@@ -14,5 +14,7 @@ return array(
    'Please complete Report System - Sales Summary Report Submission before using other functions.'
     =>'在使用其他功能前，請先完成日报表系统-月报表总结提交。',
     'EveryYearForExamination'=>'親愛的同事，為鞏固技術服務只是和服務品質,請於次月底完成一年一次的培訓測驗<br/>要求：答題正確率為85%, 否則需繼續測驗',
-);
+    'validateSocialCode'=>'以下員工入職已滿一個月，員工資料內的社會保障卡號欄位仍未輸入，請盡快補回！',
+    'username'=>'姓名',
+    );
 ?>
