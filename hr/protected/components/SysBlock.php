@@ -373,7 +373,7 @@ class SysBlock {
         $thisDay = intval(date("d"));
         $maxDay = intval(date("t"));
         $oldDate = date("Y-m-d",strtotime("-1 months"));
-        if($thisDay==4||$thisDay==$maxDay){//每月16號及最後一天彈窗提示
+        if($thisDay==16||$thisDay==$maxDay){//每月16號及最後一天彈窗提示
             $uid = Yii::app()->user->id;
             $city = Yii::app()->user->city();
             $suffix = Yii::app()->params['envSuffix'];
