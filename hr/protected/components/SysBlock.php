@@ -384,7 +384,7 @@ class SysBlock {
             if($row){//有員工錄入及入職審核權限
                 $dateSql = "replace(entry_time,'/', '-')<='{$oldDate}' ";//一個月以前
                 $staffRows = Yii::app()->db->createCommand()->select("name")->from("hr$suffix.hr_employee")
-                    ->where("city=:city and staff_status in (0,4) and $dateSql",array(":city"=>$city))->queryAll();
+                    ->where("city=:city and staff_status in (0,4) and social_code!='' and $dateSql",array(":city"=>$city))->queryAll();
                 if($staffRows){
                     //有員工沒有填社保號
                     $staffList = array();
