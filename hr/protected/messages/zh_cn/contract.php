@@ -713,5 +713,6 @@ return array(
     'support staff'=>'支点员工',
 
     ' monthly complete'=>'目标实际完成',
+    'two_service'=>'蔚诺租赁服务机器台数',
 );
 ?>

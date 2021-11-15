@@ -61,6 +61,15 @@ $this->pageTitle=Yii::app()->name . ' - bossSetB Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'num_ratio',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php
+                    echo $form->numberField($model, 'num_ratio',
+                        array('readonly'=>($model->getReadonly()),'append'=>'%')
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'tacitly',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-4">
                     <?php echo $form->inlineRadioButtonList($model, 'tacitly',array(Yii::t("misc","No"),Yii::t("misc","Yes")),

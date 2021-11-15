@@ -12,6 +12,7 @@ class BossSetBList extends CListPageModel
         return array(
             'list_text'=>Yii::t("contract","matters"),
             'tacitly'=>Yii::t("contract","tacitly"),
+            'num_ratio'=>Yii::t("contract","one_11"),
             'city'=>Yii::t('contract','City')
         );
 	}
@@ -20,7 +21,7 @@ class BossSetBList extends CListPageModel
 	{
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select a.id,a.city,a.list_text,a.tacitly,b.name from hr_boss_set_b a 
+		$sql1 = "select a.id,a.city,a.list_text,a.tacitly,a.num_ratio,b.name from hr_boss_set_b a 
                 LEFT JOIN security$suffix.sec_city b ON a.city=b.code 
                 where a.id>0 
 			";
@@ -65,6 +66,7 @@ class BossSetBList extends CListPageModel
 					'id'=>$record['id'],
 					'list_text'=>$record['list_text'],
 					'city_name'=>$record['name'],
+					'num_ratio'=>$record['num_ratio']."%",
 					'tacitly'=>$record['tacitly']==1?Yii::t("contract","tacitly"):""
 				);
 			}

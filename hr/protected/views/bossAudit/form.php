@@ -129,6 +129,7 @@ $this->renderPartial('//site/ject',array('model'=>$model,'form'=>$form,'rejectNa
 ?>
 <?php
 $js = "
+    $('.bossHintTitle').popover();
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

@@ -11,6 +11,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('num_ratio').$this->drawOrderArrow('a.num_ratio'),'#',$this->createOrderLink('bossSetA-list','a.num_ratio'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('tacitly').$this->drawOrderArrow('a.tacitly'),'#',$this->createOrderLink('bossSetA-list','a.tacitly'))
 			;
 		?>

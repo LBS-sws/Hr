@@ -17,6 +17,9 @@ class BossApplyForm extends CFormModel
 	public $results_a=0;
 	public $results_b=0;
 	public $results_c=0;
+    public $ratio_a=50;//占比
+    public $ratio_b=35;//占比
+    public $ratio_c=15;//占比
     public $json_listX;
 
 	public function attributeLabels()
@@ -53,7 +56,7 @@ class BossApplyForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }
-        $row = Yii::app()->db->createCommand()->select("id,status_type,json_text,apply_date,json_listX")
+        $row = Yii::app()->db->createCommand()->select("id,status_type,ratio_a,ratio_b,ratio_c,json_text,apply_date,json_listX")
             ->from("hr_boss_audit")
             ->where('employee_id=:id and audit_year=:year',
                 array(':id'=>$this->employee_id,':year'=>$this->audit_year)
@@ -71,6 +74,9 @@ class BossApplyForm extends CFormModel
         if($row&&in_array($row["status_type"],array(4,0,3))){
             $this->json_listX = json_decode($row['json_listX'],true);
             $this->apply_date = $row["apply_date"];
+            $this->ratio_a = $row["ratio_a"];
+            $this->ratio_b = $row["ratio_b"];
+            $this->ratio_c = $row["ratio_c"];
             if($this->status_type==1){
                 $this->status_type=$row["status_type"]==4?5:1;
             }else{
@@ -132,15 +138,18 @@ class BossApplyForm extends CFormModel
             $this->results_b = $bossReviewB->scoreSum;
             //C類驗證
             $bossRewardType = BossApplyForm::getBossRewardType($this->city);
+            $ratio_a = $this->ratio_a*0.01;
+            $ratio_b = $this->ratio_b*0.01;
+            $this->ratio_c = 100-($this->ratio_a+$this->ratio_b);
             if($bossRewardType == 1){
                 $this->results_c = 0;
-                $this->results_sum = $this->results_a*0.5+$this->results_b*0.5;
+                $this->results_sum = $this->results_a*$ratio_a+$this->results_b*$ratio_b;
             }else{
                 $bossReviewC = new BossReviewC($this);
                 $bossReviewC->validateJson($this,$bool);
                 $this->json_text = $bossReviewC->json_text;
                 $this->results_c = $bossReviewC->scoreSum;
-                $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+                $this->results_sum = $this->results_a*$ratio_a+$this->results_b*$ratio_b+$this->results_c;
             }
             if(empty($this->json_listX)){
                 $this->json_listX= array(
@@ -203,6 +212,9 @@ class BossApplyForm extends CFormModel
             $this->results_a = $row['results_a'];
             $this->results_b = $row['results_b'];
             $this->results_c = $row['results_c'];
+            $this->ratio_a = $row['ratio_a'];
+            $this->ratio_b = $row['ratio_b'];
+            $this->ratio_c = $row['ratio_c'];
             $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
 		}
 		return true;
@@ -301,19 +313,22 @@ class BossApplyForm extends CFormModel
             )
         );
         $row = $this->getBossRewardType($model->city);
+        $ratio_a = $model->ratio_a*0.01;
+        $ratio_b = $model->ratio_b*0.01;
+        $model->ratio_c = 100-($model->ratio_a+$model->ratio_b);
         if($row!=1){//系統配置該城市不需要C部分
-            $results = $model->results_a*0.5+$model->results_b*0.35+$model->results_c;
+            $results = $model->results_a*$ratio_a+$model->results_b*$ratio_b+$model->results_c;
             $results = sprintf("%.2f",$results);
-            $html.= $model->results_a."*50% + ".$model->results_b."*35% + ".$model->results_c."% = ".$results."%";
+            $html.= $model->results_a."*{$model->ratio_a}% + ".$model->results_b."*{$model->ratio_b}% + ".$model->results_c."% = ".$results."%";
             $html.= "</span><span id='bossRewardType' data-num='0'></span>";
             $list[]=array(
                 "name"=>Yii::t("contract","(C)Optional project section"),
                 "class"=>"BossReviewC"
             );
         }else{
-            $results = $model->results_a*0.5+$model->results_b*0.5;
+            $results = $model->results_a*$ratio_a+$model->results_b*$ratio_b;
             $results = sprintf("%.2f",$results);
-            $html.= $model->results_a."*50% + ".$model->results_b."*50% = ".$results."%";
+            $html.= $model->results_a."*{$model->ratio_a}% + ".$model->results_b."*{$model->ratio_b}% = ".$results."%";
             $html.= "</span><span id='bossRewardType' data-num='1'></span>";
         }
         $html.="</legend>";
@@ -381,9 +396,9 @@ class BossApplyForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_boss_audit(
-							employee_id,results_a,results_b, results_c, results_sum, status_type, audit_year, json_text, city, apply_date, lcu
+							employee_id,results_a,results_b, results_c,ratio_a,ratio_b, ratio_c, results_sum, status_type, audit_year, json_text, city, apply_date, lcu
 						) values (
-							:employee_id,:results_a,:results_b, :results_c, :results_sum, :status_type, :audit_year, :json_text, :city, :apply_date, :lcu
+							:employee_id,:results_a,:results_b, :results_c,:ratio_a,:ratio_b, :ratio_c, :results_sum, :status_type, :audit_year, :json_text, :city, :apply_date, :lcu
 						)";
                 break;
             case 'edit':
@@ -419,6 +434,12 @@ class BossApplyForm extends CFormModel
             $command->bindParam(':results_b',$this->results_b,PDO::PARAM_INT);
         if (strpos($sql,':results_c')!==false)
             $command->bindParam(':results_c',$this->results_c,PDO::PARAM_INT);
+        if (strpos($sql,':ratio_a')!==false)
+            $command->bindParam(':ratio_a',$this->ratio_a,PDO::PARAM_INT);
+        if (strpos($sql,':ratio_b')!==false)
+            $command->bindParam(':ratio_b',$this->ratio_b,PDO::PARAM_INT);
+        if (strpos($sql,':ratio_c')!==false)
+            $command->bindParam(':ratio_c',$this->ratio_c,PDO::PARAM_INT);
         if (strpos($sql,':results_sum')!==false)
             $command->bindParam(':results_sum',$this->results_sum,PDO::PARAM_INT);
         if (strpos($sql,':status_type')!==false)
@@ -484,9 +505,11 @@ class BossApplyForm extends CFormModel
             $message.="<p>员工姓名：".$this->name."</p>";
             $message.="<p>员工城市：".$cityName."</p>";
             $message.="<p>考核年份：".$this->audit_year."年</p>";
+            $ratio_a = $this->ratio_a*0.01;
+            $ratio_b = $this->ratio_b*0.01;
             if($this->status_type == 5){
-                $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
-                $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
+                $message.="<p>得分（A）项：".($this->results_a*$ratio_a)."</p>";
+                $message.="<p>得分（B）项：".($this->results_b*$ratio_b)."</p>";
                 $message.="<p>得分（C）项：".$this->results_c."</p>";
                 $message.="<p>总得分：".$this->results_sum."</p>";
             }

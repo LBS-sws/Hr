@@ -7,5 +7,6 @@
 
     <td><?php echo $this->record['city_name']; ?></td>
     <td><?php echo $this->record['list_text']; ?></td>
+    <td><?php echo $this->record['num_ratio']; ?></td>
     <td><?php echo $this->record['tacitly']; ?></td>
 </tr>

@@ -17,6 +17,9 @@ class BossSearchForm extends CFormModel
 	public $results_a;
 	public $results_b;
 	public $results_c;
+    public $ratio_a=50;//占比
+    public $ratio_b=35;//占比
+    public $ratio_c=15;//占比
     public $json_listX;
 
 	public function attributeLabels()

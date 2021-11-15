@@ -73,16 +73,18 @@ class BossAuditList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
+                $ratio_a = $record['ratio_a']*0.01;
+                $ratio_b = $record['ratio_b']*0.01;
                 $bossRewardType = BossApplyForm::getBossRewardType($record['city']);
                 $arrList = $this->statusToColor($record,$type);
-                $record["results_a"]=empty($record['results_a'])?0:floatval($record['results_a'])*0.5;
+                $record["results_a"]=empty($record['results_a'])?0:floatval($record['results_a'])*$ratio_a;
                 if($bossRewardType == 1){
                     $record['results_c'] = "-";
-                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.5;
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*$ratio_b;
                     $record['results_sum'] = $record["results_a"]+$record["results_b"];
                 }else{
                     $record['results_c'] = $record['results_c']."%";
-                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*0.35;
+                    $record["results_b"]=empty($record['results_b'])?0:floatval($record['results_b'])*$ratio_b;
                     $record['results_sum'] = $record["results_a"]+$record["results_b"]+$record['results_c'];
                 }
                 $record['results_sum'] = sprintf("%.2f",$record['results_sum']);

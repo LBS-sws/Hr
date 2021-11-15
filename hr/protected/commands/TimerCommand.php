@@ -877,7 +877,7 @@ class TimerCommand extends CConsoleCommand {
 
     //初始化所有老總考核的總分
     public function resetBossListScore(){
-        $rows = Yii::app()->db->createCommand()->select("a.json_listX,a.id,a.results_a,a.results_b,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
+        $rows = Yii::app()->db->createCommand()->select("a.json_listX,a.ratio_a,a.ratio_b,a.ratio_c,a.id,a.results_a,a.results_b,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.status_type !=2")->queryAll();
@@ -889,6 +889,9 @@ class TimerCommand extends CConsoleCommand {
                 $model->employee_id = $row['employee_id'];
                 $model->audit_year = $row['audit_year'];
                 $model->city = $row['city'];
+                $model->ratio_a = $row['ratio_a'];
+                $model->ratio_b = $row['ratio_b'];
+                $model->ratio_c = $row['ratio_c'];
                 $model->status_type = $row['status_type'];
                 $model->results_c = floatval($row["results_c"]);
                 //A類驗證
@@ -912,10 +915,12 @@ class TimerCommand extends CConsoleCommand {
                 }
 
                 $bossRewardType = BossApplyForm::getBossRewardType($row['city']);
+                $ratio_a = $model->ratio_a*0.01;
+                $ratio_b = $model->ratio_b*0.01;
                 if($bossRewardType == 1){
-                    $model->results_sum = $model->results_a*0.5+$model->results_b*0.5;
+                    $model->results_sum = $model->results_a*$ratio_a+$model->results_b*$ratio_b;
                 }else{
-                    $model->results_sum = $model->results_a*0.5+$model->results_b*0.35+$model->results_c;
+                    $model->results_sum = $model->results_a*$ratio_a+$model->results_b*$ratio_b+$model->results_c;
                 }
 
                 Yii::app()->db->createCommand()->update('hr_boss_audit', array(

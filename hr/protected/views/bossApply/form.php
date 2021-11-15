@@ -136,13 +136,13 @@ $this->renderPartial('//site/removedialog');
             sum_a = sum_a.toFixed(2);
             sum_b = sum_b.toFixed(2);
             sum = sum.toFixed(2);
-            $("#sum_label").text(sum_a+"*50% + "+sum_b+"*50% = "+sum+"%");
+            $("#sum_label").text(sum_a+"*<?php echo $model->ratio_a?>% + "+sum_b+"*<?php echo $model->ratio_b?>% = "+sum+"%");
         }else{
             sum = sum_a*0.5+sum_b*0.35+sum_c;
             sum_a = sum_a.toFixed(2);
             sum_b = sum_b.toFixed(2);
             sum = sum.toFixed(2);
-            $("#sum_label").text(sum_a+"*50% + "+sum_b+"*35% + "+sum_c+"% = "+sum+"%");
+            $("#sum_label").text(sum_a+"*<?php echo $model->ratio_a?>% + "+sum_b+"*<?php echo $model->ratio_b?>% + "+sum_c+"% = "+sum+"%");
         }
     }
     function changeCofWindow() {
@@ -159,7 +159,7 @@ $this->renderPartial('//site/removedialog');
             var num=0,left,top;
             var oldCof = $(this).val();
             var nowCof = $(this).parents('tr:first').find('input[name$="[cofNow]"]').eq(0).val();
-            var nameArr =["one_eight","two_one","two_two","two_three","two_five","one_nine","two_eight"];
+            var nameArr =["one_eight","two_one","two_two","two_three","two_five","one_nine","two_eight","two_service"];
             var ratio_value = "<?php echo Yii::t('contract','ratio value');?>";
             html+="<th width='75%' class='text-center'>"+ratio_value+"</th><th class='text-center'>";
             html+="<?php echo Yii::t('contract','one_5');?>";
@@ -238,6 +238,7 @@ $this->widget('bootstrap.widgets.TbModal', array(
 $js = Script::genDeleteData(Yii::app()->createUrl('bossApply/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 $js = "
+    $('.bossHintTitle').popover();
 changeCofWindow();
     $('.planYearA,.planYearB').on('keyup',function(){
         var name = $(this).data('name');
@@ -304,7 +305,7 @@ changeCofWindow();
         $('#table_three .changeThreeFour').each(function(){
             sum+=$(this).val()==''?0:parseFloat($(this).val());
         });
-        sum = count==0?0:(sum/count)*15;
+        sum = count==0?0:(sum/count)*{$model->ratio_c};
         $('#three_sum').val(sum.toFixed(2));
         resetTableSum();
     });

@@ -18,6 +18,9 @@ class BossAuditForm extends CFormModel
 	public $results_a;
 	public $results_b;
 	public $results_c;
+    public $ratio_a=50;//占比
+    public $ratio_b=35;//占比
+    public $ratio_c=15;//占比
     public $json_listX;
 
 	public function attributeLabels()
@@ -60,6 +63,9 @@ class BossAuditForm extends CFormModel
             $this->json_text = json_decode($row["json_text"],true);
             $this->employee_id = $row['employee_id'];
             $this->code = $row['employee_code'];
+            $this->ratio_a = $row["ratio_a"];
+            $this->ratio_b = $row["ratio_b"];
+            $this->ratio_c = $row["ratio_c"];
             $this->name = $row['employee_name'];
             $this->lcu = $row['lcu'];
             $this->city = $row['city'];
@@ -90,15 +96,18 @@ class BossAuditForm extends CFormModel
             $this->results_b = $bossReviewB->scoreSum;
             //C類驗證
             $bossRewardType = BossApplyForm::getBossRewardType($this->city);
+            $ratio_a = $this->ratio_a*0.01;
+            $ratio_b = $this->ratio_b*0.01;
+            $this->ratio_c = 100-($this->ratio_a+$this->ratio_b);
             if($bossRewardType == 1){
                 $this->results_c = 0;
-                $this->results_sum = $this->results_a*0.5+$this->results_b*0.5;
+                $this->results_sum = $this->results_a*$ratio_a+$this->results_b*$ratio_b;
             }else{
                 $bossReviewC = new BossReviewC($this);
                 $bossReviewC->validateJson($this,$bool);
                 $this->json_text = $bossReviewC->json_text;
                 $this->results_c = $bossReviewC->scoreSum;
-                $this->results_sum = $this->results_a*0.5+$this->results_b*0.35+$this->results_c;
+                $this->results_sum = $this->results_a*$ratio_a+$this->results_b*$ratio_b+$this->results_c;
             }
         }
     }
@@ -127,6 +136,9 @@ class BossAuditForm extends CFormModel
             $this->results_b = $row['results_b'];
             $this->results_c = $row['results_c'];
             $this->boss_type = $row['boss_type'];
+            $this->ratio_a = $row['ratio_a'];
+            $this->ratio_b = $row['ratio_b'];
+            $this->ratio_c = $row['ratio_c'];
             $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
 		}
 		return true;
@@ -281,11 +293,13 @@ class BossAuditForm extends CFormModel
         $message.="<p>员工姓名：".$this->name."</p>";
         $message.="<p>员工城市：".$cityName."</p>";
         $message.="<p>考核年份：".$this->audit_year."年</p>";
+        $ratio_a = $this->ratio_a*0.01;
+        $ratio_b = $this->ratio_b*0.01;
         if($this->getScenario() == "reject"){
             $message.="<p>拒绝原因：".$this->reject_remark."</p>";
         }elseif($this->getScenario() == "finish"){
-            $message.="<p>得分（A）项：".($this->results_a*0.5)."</p>";
-            $message.="<p>得分（B）项：".($this->results_b*0.35)."</p>";
+            $message.="<p>得分（A）项：".($this->results_a*$ratio_a)."</p>";
+            $message.="<p>得分（B）项：".($this->results_b*$ratio_b)."</p>";
             $message.="<p>得分（C）项：".$this->results_c."</p>";
             $message.="<p>总得分：".$this->results_sum."</p>";
         }

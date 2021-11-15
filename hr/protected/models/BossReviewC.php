@@ -16,11 +16,13 @@ class BossReviewC
     public $listY=array();
     public $json_text=array();
     public $scoreSum=0;
+    public $ratio_c=15;//占比
     protected $searchBool = false;
 
     public function __construct($model='',$searchBool=false)
     {
         if(!empty($model)){
+            $this->ratio_c = $model->ratio_c;
             $this->json_text = $model->json_text;
             $this->status_type = isset($model->status_type)?$model->status_type:0;//表單狀態
             $this->audit_year = $model->audit_year;
@@ -82,11 +84,11 @@ class BossReviewC
                     return false;
                 }
             }
-            $sum = empty($this->json_text["three"]['count'])?0:($sum/$this->json_text["three"]['count'])*15;
+            $sum = empty($this->json_text["three"]['count'])?0:($sum/$this->json_text["three"]['count'])*$this->ratio_c;
             $sum = floatval(sprintf("%.2f",$sum));
             $this->json_text["three"]['sum'] = $sum;
-            if($this->json_text["three"]['sum']>15){
-                $message = Yii::t('contract',"(C)Optional project section")." - 不能大于15";
+            if($this->json_text["three"]['sum']>$this->ratio_c){
+                $message = Yii::t('contract',"(C)Optional project section")." - 不能大于$this->ratio_c";
                 $model->addError('json_text',$message);
                 return false;
             }

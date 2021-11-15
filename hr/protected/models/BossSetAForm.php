@@ -5,6 +5,7 @@ class BossSetAForm extends CFormModel
 	public $id;
 	public $list_text='';
 	public $tacitly;
+	public $num_ratio;
 	public $city;
 	public $json_text;
     protected $listX;
@@ -45,6 +46,7 @@ class BossSetAForm extends CFormModel
 		return array(
             'list_text'=>Yii::t("contract","matters"),
             'json_text'=>Yii::t("contract","matters"),
+            'num_ratio'=>Yii::t("contract","one_11"),
             'tacitly'=>Yii::t("contract","tacitly"),
             'city'=>Yii::t('contract','City')
 		);
@@ -56,9 +58,10 @@ class BossSetAForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, json_text, city,tacitly','safe'),
+			array('id, json_text, city,tacitly,num_ratio','safe'),
             array('tacitly','required'),
             array('city','required'),
+            array('num_ratio','required'),
             array('json_text','required'),
             array('city','validateCity'),
             array('json_text','validateName'),
@@ -118,13 +121,14 @@ class BossSetAForm extends CFormModel
 
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
-		$rows = Yii::app()->db->createCommand()->select("id,city,list_text,tacitly,json_text")
+		$rows = Yii::app()->db->createCommand()->select("id,city,list_text,tacitly,json_text,num_ratio")
             ->from("hr_boss_set_a")->where("id=:id",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->json_text = json_decode($row['json_text'],true);
                 $this->tacitly = $row['tacitly'];
+                $this->num_ratio = $row['num_ratio'];
                 $this->city = $row['city'];
                 break;
 			}
@@ -205,15 +209,16 @@ class BossSetAForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_boss_set_a(
-							city,list_text,tacitly,json_text
+							city,list_text,tacitly,num_ratio,json_text
 						) values (
-							:city,:list_text,:tacitly,:json_text
+							:city,:list_text,:tacitly,:num_ratio,:json_text
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_boss_set_a set
 							json_text = :json_text, 
 							tacitly = :tacitly, 
+							num_ratio = :num_ratio, 
 							list_text = :list_text, 
 							city = :city
 						where id = :id
@@ -230,7 +235,9 @@ class BossSetAForm extends CFormModel
             $command->bindParam(':id',$this->id,PDO::PARAM_INT);
         //id,city,list_text,tacitly,json_text
         if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$this->city,PDO::PARAM_INT);
+            $command->bindParam(':city',$this->city,PDO::PARAM_STR);
+        if (strpos($sql,':num_ratio')!==false)
+            $command->bindParam(':num_ratio',$this->num_ratio,PDO::PARAM_INT);
         if (strpos($sql,':list_text')!==false)
             $command->bindParam(':list_text',$this->list_text,PDO::PARAM_STR);
         if (strpos($sql,':tacitly')!==false)
