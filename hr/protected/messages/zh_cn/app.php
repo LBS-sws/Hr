@@ -198,6 +198,13 @@ return array(
     'Search Heart letter'=>'查询心意信封得分',
     'Search Heart letter rank'=>'地区排行榜',
     'Estimated statement report'=>'老总年度考核预计数据报表',
+    'Pin'=>'襟章',
+    'Apply For Pin'=>'襟章登记',
+    'Pin Inventory'=>'襟章库存',
+    'Pin Class'=>'襟章种类',
+    'Pin Name'=>'襟章名称',
+    'Pin Table'=>'襟章发放统计表',
+    'Pin Report'=>'襟章明细报表',
     //沈超添加结束
 );
 ?>

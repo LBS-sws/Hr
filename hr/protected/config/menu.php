@@ -75,6 +75,38 @@ return array(
             ),
 		),
 	),
+    //襟章
+	'Pin'=>array(
+		'access'=>'PI',
+		'icon'=>'fa-cube',
+		'items'=>array(
+		    //襟章登記
+            'Apply For Pin'=>array(
+                'access'=>'PI01',
+                'url'=>'/pinApply/index',
+            ),
+		    //襟章庫存
+            'Pin Inventory'=>array(
+                'access'=>'PI02',
+                'url'=>'/pinInventory/index',
+            ),
+		    //襟章種類
+            'Pin Class'=>array(
+                'access'=>'PI03',
+                'url'=>'/pinClass/index',
+            ),
+		    //襟章名稱
+            'Pin Name'=>array(
+                'access'=>'PI04',
+                'url'=>'/pinName/index',
+            ),
+		    //襟章发放统计表
+            'Pin Table'=>array(
+                'access'=>'PI05',
+                'url'=>'/pinTable/index',
+            ),
+		),
+	),
     //人事
     'Personnel Audit'=>array(
         'access'=>'ZP',
@@ -444,6 +476,10 @@ return array(
 				'access'=>'YB08',
                 'url'=>'/report/estimated',
 			),
+            'Pin Report'=>array(
+                'access'=>'YB09',
+                'url'=>'/report/pinReport',
+            ),
 			'Report Manager'=>array(
 				'access'=>'YB01',
                 'url'=>'/queue/index',

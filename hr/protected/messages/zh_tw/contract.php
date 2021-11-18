@@ -707,5 +707,21 @@ return array(
 
     ' monthly complete'=>'目標實際完成',
     'two_service'=>'蔚诺租赁服务机器台数',
+    'Pin Image'=>'襟章圖片',
+    'inventory num'=>'庫存數量',
+    'old num'=>'修改前数量',
+    'now num'=>'修改後数量',
+    'safe stock'=>'安全庫存',
+    'Inventory History'=>'庫存記錄',
+    'Inventory Update'=>'庫存修改',
+    'Pin new'=>'登記新增',
+    'Pin Update'=>'登記修改',
+    'Pin Delete'=>'登記刪除',
+    'Pin Num'=>'襟章數量',
+    'Pin Date'=>'獲章日期',
+    'Pin Code'=>'登記編號',
+    'remaining inventory'=>'剩餘庫存',
+    'remaining num'=>'剩餘數量',
+    'sum num'=>'總計數量',
     );
 ?>

@@ -714,5 +714,21 @@ return array(
 
     ' monthly complete'=>'目标实际完成',
     'two_service'=>'蔚诺租赁服务机器台数',
+    'Pin Image'=>'襟章图片',
+    'inventory num'=>'库存数量',
+    'old num'=>'修改前数量',
+    'now num'=>'修改后数量',
+    'safe stock'=>'安全库存',
+    'Inventory History'=>'库存记录',
+    'Inventory Update'=>'库存修改',
+    'Pin new'=>'登记新增',
+    'Pin Update'=>'登记修改',
+    'Pin Delete'=>'登记删除',
+    'Pin Num'=>'襟章数量',
+    'Pin Date'=>'获章日期',
+    'Pin Code'=>'登记编号',
+    'remaining inventory'=>'剩余库存',
+    'remaining num'=>'剩余数量',
+    'sum num'=>'总计数量',
 );
 ?>
