@@ -24,17 +24,18 @@ class PinInventoryList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_name = Yii::app()->user->city_name();
-		$sql1 = "select a.residue_num,a.safe_stock,b.id,g.name as city_name,b.name as pin_name,f.name as class_name,ifnull(a.inventory,'null') as inventory,a.z_index from hr_pin_name b 
-                LEFT JOIN hr_pin_inventory a ON a.pin_name_id=b.id
+		$sql1 = "select a.residue_num,a.safe_stock,b.id,g.name as city_name,b.name as pin_name,f.name as class_name,ifnull(a.inventory,'null') as inventory,a.z_index
+                from (select *,'$city' as cityPx from hr_pin_name) b 
+                LEFT JOIN hr_pin_inventory a ON a.pin_name_id=b.id AND a.city=b.cityPx
                 LEFT JOIN hr_pin_class f ON b.class_id=f.id
                 LEFT JOIN security$suffix.sec_city g ON a.city=g.code
-                where (a.city='$city' or a.city IS NULL) 
+                where (b.cityPx='$city') 
 			";
-		$sql2 = "select count(b.id) from hr_pin_name b 
-                LEFT JOIN hr_pin_inventory a ON a.pin_name_id=b.id
+		$sql2 = "select count(b.id) from (select *,'$city' as cityPx from hr_pin_name) b 
+                LEFT JOIN hr_pin_inventory a ON a.pin_name_id=b.id AND a.city=b.cityPx
                 LEFT JOIN hr_pin_class f ON b.class_id=f.id
                 LEFT JOIN security$suffix.sec_city g ON a.city=g.code
-                where (a.city='$city' or a.city IS NULL) 
+                where (b.cityPx='$city') 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
