@@ -94,12 +94,12 @@ class PinApplyForm extends CFormModel
 	}
 
     //获取所有员工列表
-    public static function getEmployeeList(){
+    public static function getEmployeeList($id=0){
         $city_allow = Yii::app()->user->city_allow();
         $arr = array();
         $rows = Yii::app()->db->createCommand()->select("a.id,a.code,a.name,a.entry_time,b.name as dept_name")->from("hr_employee a")
             ->leftJoin("hr_dept b","a.position=b.id")
-            ->where("a.staff_status=0 and b.dept_class='Technician' and a.city in({$city_allow})")
+            ->where("a.id='{$id}' or (a.staff_status=0 and b.dept_class='Technician' and a.city in({$city_allow}))")
             ->order("a.name asc")->queryAll();
         if($rows){
             foreach ($rows as $row){

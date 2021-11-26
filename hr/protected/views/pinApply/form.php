@@ -74,7 +74,7 @@ $this->pageTitle=Yii::app()->name . ' - pinApply';
             <div class="form-group">
                 <?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo PinApplyForm::getSelectForData($model, 'employee_id',PinApplyForm::getEmployeeList(),
+                    <?php echo PinApplyForm::getSelectForData($model, 'employee_id',PinApplyForm::getEmployeeList($model->employee_id),
                         array('readonly'=>($model->scenario=='view'),'class'=>"changeStaff")
                     ); ?>
                 </div>
