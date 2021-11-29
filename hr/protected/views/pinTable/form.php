@@ -33,6 +33,19 @@ $this->pageTitle=Yii::app()->name . ' - pinTable';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 
+            <?php if (!Yii::app()->user->isSingleCity()): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'city', General::getCityList(Yii::app()->user->city_allow()),
+                            array('id'=>"city")
+                        ); ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <?php echo $form->hiddenField($model, 'city'); ?>
+            <?php endif ?>
+
             <div class="form-group">
                 <div class="col-sm-12">
                     <?php
@@ -45,8 +58,12 @@ $this->pageTitle=Yii::app()->name . ' - pinTable';
 	</div>
 </section>
 <?php
-
+$url = Yii::app()->createUrl('pinTable/index');
 $js = "
+    $('#city').on('change',function(){
+        var city=$(this).val();
+        window.location.href='{$url}?city='+city;
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

@@ -13,6 +13,7 @@ class PinTableForm extends CFormModel
 	{
         return array(
             'name'=>Yii::t('app','Pin Class'),
+            'city'=>Yii::t('contract','City'),
             'z_index'=>Yii::t('contract','Level'),
         );
 	}
@@ -23,7 +24,7 @@ class PinTableForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,name,z_index','safe'),
+			array('id,city','safe'),
             array('z_index,name','required'),
 		);
 	}
