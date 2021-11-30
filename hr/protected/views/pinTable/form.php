@@ -37,7 +37,7 @@ $this->pageTitle=Yii::app()->name . ' - pinTable';
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'city', General::getCityList(Yii::app()->user->city_allow()),
+                        <?php echo $form->dropDownList($model, 'city', PinTableForm::getAllowCity(),
                             array('id'=>"city")
                         ); ?>
                     </div>

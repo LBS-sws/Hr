@@ -29,6 +29,21 @@ class PinTableForm extends CFormModel
 		);
 	}
 
+    //所有城市
+    public static function getAllowCity(){
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+        $arr = array(""=>"");
+        $rows = Yii::app()->db->createCommand()->select("code,name")
+            ->from("security$suffix.sec_city")->where("code in ($city_allow)")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row['code']] = $row['name'];
+            }
+        }
+        return $arr;
+    }
+
     public function retrieveData($city="") {
 	    if(empty($city)){
             $city = Yii::app()->user->city();
