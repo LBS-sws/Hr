@@ -573,8 +573,9 @@ Riki: TPA0016
         $email_address = array(
             array('email'=>"eyu@lbsgroup.com.tw",'username'=>"ernest"),
             array('email'=>"pamela.tp@lbsgroup.com.tw",'username'=>"pamela"),
-            array('email'=>"riki.tp@lbsgroup.com.tw",'username'=>"TPA0016"),
-            array('email'=>"ginny.tp@lbsgroup.com.tw",'username'=>"TPA0004")
+            array('email'=>"ting.tp@lbsgroup.com.tw",'username'=>"TPA0036"),
+            //array('email'=>"riki.tp@lbsgroup.com.tw",'username'=>"TPA0016"),
+            //array('email'=>"ginny.tp@lbsgroup.com.tw",'username'=>"TPA0004")
         );
         foreach ($email_address as $email){
             if(!in_array($email["email"],$this->to_addr)){
