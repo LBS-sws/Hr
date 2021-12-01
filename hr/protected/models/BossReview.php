@@ -326,7 +326,7 @@ class BossReview
     //提取营业报告表数据
     public function valueToOp($city,$year){
         //
-        if($year>=202){//2022年需要计算隔油池及ID服务
+        if($year>=2021){//2021年需要计算隔油池及ID服务
             $suffix = Yii::app()->params['envSuffix'];
             $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
                 ->from("operation$suffix.opr_monthly_dtl a")

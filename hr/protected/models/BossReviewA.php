@@ -303,7 +303,7 @@ class BossReviewA extends BossReview
         $value = $this->json_text[$type]["one_3"];
         switch ($str){
             case "complete"://目标实际完成 = XX年实际达成数据÷预计XX年目标数据
-                $value=empty($value)?0:$this->json_text[$type]["one_7"]/$value;
+                $value=empty($value)?0:$this->json_text[$type]["one_6"]/$value;
                 $value*=100;
                 $value = round($value,2);
                 break;
