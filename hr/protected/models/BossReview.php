@@ -12,9 +12,6 @@ class BossReview
     public $className="";//表單的name前綴
     public $audit_year=0;//考核年限
     public $city='';//城市
-    public $ratio_a=50;//占比
-    public $ratio_b=35;//占比
-    public $ratio_c=15;//占比
     public $employee_id='';//員工
     public $username='';//賬號
     public $listX=array();
@@ -24,24 +21,19 @@ class BossReview
     public $cofModel;
     public $scoreSum=0;// 總分數
 
-    protected $model;
     protected $countPrice;//年生意額
 
     protected $searchBool = false;
 
 
-    public function __construct(&$model='',$searchBool=false)
+    public function __construct($model='',$searchBool=false)
     {
         if(!empty($model)){
-            $this->model = $model;
             $this->username = $model->lcu;
             $this->employee_id = $model->employee_id;
             $this->json_text = $model->json_text;
             $this->audit_year = $model->audit_year;
             $this->city = $model->city;
-            $this->ratio_a = $model->ratio_a;
-            $this->ratio_b = $model->ratio_b;
-            $this->ratio_c = $model->ratio_c;
             $this->ready = $model->getInputBool();
             $this->className = get_class($model);
         }
@@ -100,12 +92,10 @@ class BossReview
             }
         }
         $html.="</tr></thead><tbody>";
-        $title=Yii::t("bossHint","title");
 
         foreach ($this->listX as $listX){
-            $content = Yii::t("bossHint",$listX["value"]);
             $html.="<tr>";
-            $html.="<td><a class='bossHintTitle' role='button' tabindex='0' data-toggle='popover' data-trigger='focus' title='$title' data-content='$content'><b>".$listX["name"]."</b></a></td>";
+            $html.="<td><b>".$listX["name"]."</b></td>";
             foreach ($this->listY as $key => $listY){
                 if($this->searchBool){
                     $searchText = !isset($this->json_text[$listX["value"]][$listY["value"]])?0:$this->json_text[$listX["value"]][$listY["value"]];
@@ -326,30 +316,16 @@ class BossReview
     //提取营业报告表数据
     public function valueToOp($city,$year){
         //
-        if($year>=2021){//2021年需要计算隔油池及ID服务
-            $suffix = Yii::app()->params['envSuffix'];
-            $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
-                ->from("operation$suffix.opr_monthly_dtl a")
-                ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
-                ->where("b.city = :city 
-            AND b.year_no = :year 
-            AND a.data_field in ('10005','100055','10004','20001','20002') 
-            AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
-                    array(":city"=>$city,":year"=>$year)
-                )->queryScalar();
-            $sum = $sum?$sum:0;
-        }else{
-            $suffix = Yii::app()->params['envSuffix'];
-            $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
-                ->from("operation$suffix.opr_monthly_dtl a")
-                ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
-                ->where("b.city = :city 
+        $suffix = Yii::app()->params['envSuffix'];
+        $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
+            ->from("operation$suffix.opr_monthly_dtl a")
+            ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
+            ->where("b.city = :city 
             AND b.year_no = :year 
             AND a.data_field in ('10005','10004') 
             AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
-                    array(":city"=>$city,":year"=>$year)
-                )->queryScalar();
-        }
+                array(":city"=>$city,":year"=>$year)
+            )->queryScalar();
         return empty($sum)||$sum==null?0:$sum;
     }
 
@@ -402,16 +378,6 @@ class BossReview
             $sum = $sum/count($rows);
         }
         return floatval(sprintf("%.2f",$sum));
-    }
-
-    //蔚诺租赁服务机器台数
-    public function valueServiceNum($employee_id,$year){
-        $suffix = Yii::app()->params['envSuffix'];
-        $row = Yii::app()->db->createCommand()->select("sum(pieces)")->from("swoper$suffix.swo_serviceid")
-            ->where("date_format(status_dt,'%Y')=:year AND status in ('N','C') AND salesman_id=:salesman_id",
-                array(":year"=>$year,":salesman_id"=>$employee_id)
-            )->queryScalar();
-        return empty($row)?0:$row;
     }
 
     //收款比例
