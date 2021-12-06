@@ -50,10 +50,10 @@ class PinTableController extends Controller
         return Yii::app()->user->validFunction('PI05');
     }
 
-    public function actionIndex()
+    public function actionIndex($city='')
     {
         $model = new PinTableForm('edit');
-        if (!$model->retrieveData()) {
+        if (!$model->retrieveData($city)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $this->render('form',array('model'=>$model,));
