@@ -32,10 +32,14 @@ class BossReviewA extends BossReview
 
     //自由配置A項(城市默認)
     public function cityListX(){
-        $row = Yii::app()->db->createCommand()->select("json_text")->from("hr_boss_set_a")
+        $row = Yii::app()->db->createCommand()->select("json_text,num_ratio")->from("hr_boss_set_a")
             ->where('tacitly=1 or city=:city ', array(':city'=>$this->city))->order("tacitly asc")->queryRow();
         if($row){
             $this->listX = array();
+            $this->ratio_a = $row["num_ratio"];
+            if(!empty($this->model)){
+                $this->model->ratio_a=$this->ratio_a;
+            }
             $jsonList = json_decode($row["json_text"],true);
             foreach ($jsonList as $list){
                 if($list["show"] == 1){
