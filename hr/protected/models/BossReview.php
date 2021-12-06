@@ -409,7 +409,7 @@ class BossReview
         $suffix = Yii::app()->params['envSuffix'];
         //服務類型的第二欄是非一次性服務
         $row = Yii::app()->db->createCommand()->select("sum(a.amt_money)")->from("swoper$suffix.swo_serviceid a")
-            ->leftJoin("swoper$suffix.swo_customer_type_twoname b","b.id = a.cust_type_name")
+            ->leftJoin("swoper$suffix.swo_customer_type_info b","b.id = a.cust_type_name")
             ->where("b.single=0 and date_format(a.status_dt,'%Y')=:year AND a.status='N' AND a.salesman_id=:salesman_id",
                 array(":year"=>$year,":salesman_id"=>$employee_id)
             )->queryScalar();
