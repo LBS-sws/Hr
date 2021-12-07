@@ -20,7 +20,7 @@ class BossReviewB extends BossReview
             array('value'=>'two_six','name'=>Yii::t("contract","two_six"),'pro_str'=>"%",'percent'=>'5','show'=>'1'),//提交销售5步曲数量培训销售部分
             array('value'=>'two_nine','name'=>Yii::t("contract","two_nine"),'pro_str'=>"%",'percent'=>'5','show'=>'1'),//IA物料使用率
             array('value'=>'two_ten','name'=>Yii::t("contract","two_ten"),'pro_str'=>"%",'percent'=>'5','show'=>'1'),//IB物料使用率
-            array('value'=>'two_service','name'=>Yii::t("contract","two_service"),'percent'=>'0','show'=>'1'),//蔚诺租赁服务机器台数
+            //array('value'=>'two_service','name'=>Yii::t("contract","two_service"),'percent'=>'0','show'=>'1'),//蔚诺租赁服务机器台数
             //array('value'=>'two_seven','name'=>Yii::t("contract","two_seven"),'pro_str'=>"%")//提交销售5步曲数量培训销售经理部分
         );
     }
