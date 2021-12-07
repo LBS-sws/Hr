@@ -33,8 +33,12 @@ class PinNameController extends Controller
                 'expression'=>array('PinNameController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','PrintImage'),
+                'actions'=>array('index','view'),
                 'expression'=>array('PinNameController','allowReadOnly'),
+            ),
+            array('allow',
+                'actions'=>array('PrintImage'),
+                'expression'=>array('PinNameController','allowAll'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
@@ -48,6 +52,10 @@ class PinNameController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('PI04');
+    }
+
+    public static function allowAll() {
+        return true;
     }
 
     public function actionIndex($pageNum=0){
