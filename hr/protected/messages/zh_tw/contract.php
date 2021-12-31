@@ -706,7 +706,7 @@ return array(
     'support staff'=>'支點員工',
 
     ' monthly complete'=>'目標實際完成',
-    'two_service'=>'蔚诺租赁服务年金額',
+    'two_service'=>'蔚諾租賃服務+隔油池年金額',
     'Pin Image'=>'襟章圖片',
     'inventory num'=>'庫存數量',
     'old num'=>'修改前数量',

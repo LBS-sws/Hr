@@ -713,7 +713,7 @@ return array(
     'support staff'=>'支点员工',
 
     ' monthly complete'=>'目标实际完成',
-    'two_service'=>'蔚诺租赁服务年金额',
+    'two_service'=>'蔚诺租赁服务+隔油池年金额',
     'Pin Image'=>'襟章图片',
     'inventory num'=>'库存数量',
     'old num'=>'修改前数量',

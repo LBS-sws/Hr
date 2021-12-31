@@ -105,7 +105,7 @@ class BossReview
         foreach ($this->listX as $listX){
             $content = Yii::t("bossHint",$listX["value"]);
             $html.="<tr>";
-            $html.="<td><a class='bossHintTitle' role='button' tabindex='0' data-toggle='popover' data-trigger='focus' title='$title' data-content='$content'><b>".$listX["name"]."</b></a></td>";
+            $html.="<td><a class='bossHintTitle' role='button' tabindex='0' data-toggle='popover' data-trigger='focus' title='$title' data-html='true' data-content='$content'><b>".Yii::t("contract",$listX["value"])."</b></a></td>";
             foreach ($this->listY as $key => $listY){
                 if($this->searchBool){
                     $searchText = !isset($this->json_text[$listX["value"]][$listY["value"]])?0:$this->json_text[$listX["value"]][$listY["value"]];
@@ -407,13 +407,24 @@ class BossReview
     //蔚诺租赁服务机器台数
     public function valueServiceNum($city,$year){
         $suffix = Yii::app()->params['envSuffix'];
-        //服務類型的第二欄是非一次性服務
+        //服務類型的第二欄是非一次性服務(ID服務)
         $row = Yii::app()->db->createCommand()->select("sum(a.amt_money)")->from("swoper$suffix.swo_serviceid a")
             ->leftJoin("swoper$suffix.swo_customer_type_info b","b.id = a.cust_type_name")
             ->where("b.single=0 and date_format(a.status_dt,'%Y')=:year AND a.status='N' AND a.city=:city",
                 array(":year"=>$year,":city"=>$city)
             )->queryScalar();
-        return empty($row)?0:$row;
+        $row = empty($row)?0:$row;
+        //隔油池金額 (非ID服務)
+        $serviceMoney =Yii::app()->db->createCommand()
+            ->select("sum(CASE WHEN a.paid_type = 'M' THEN a.amt_paid*a.ctrt_period ELSE a.amt_paid END)")
+            ->from("swoper$suffix.swo_service a")
+            ->leftJoin("swoper$suffix.swo_customer_type_twoname b","a.cust_type_name = b.id")
+            ->leftJoin("swoper$suffix.swo_customer_type c","a.cust_type = c.id")
+            ->where("b.bring = 1 and a.status = 'N' and date_format(a.first_dt,'%Y')=:year AND a.city=:city",
+                array(":year"=>$year,":city"=>$city)
+            )->queryScalar();
+        $serviceMoney = empty($serviceMoney)?0:$serviceMoney;
+        return $serviceMoney+$row;
     }
 
     //收款比例
