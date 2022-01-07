@@ -182,8 +182,8 @@ class SalesReviewForm extends CFormModel
                 $allSum+=$sum;
             }
         }
-        $allSum = empty($allSum)?0:$allSum/$count;
-        $allNum = empty($allNum)?0:$allNum/$count;
+        $allSum = empty($allSum)?0:round($allSum/$count,1);
+        $allNum = empty($allNum)?0:round($allNum/$count,1);
         foreach ($groupRow as $staffRow){//生成表格
             if($year>=$staffRow["start_time"]&&$year<=$staffRow["end_time"]){
                 $sum = isset($this->form_list[$year]["item"][$staffRow["user_id"]])?$this->form_list[$year]["item"][$staffRow["user_id"]]["sales_sum"]:0;
@@ -406,5 +406,48 @@ class SalesReviewForm extends CFormModel
         }else{
             return $str;
         }
+    }
+
+    //由於平均分計算異常，統一修改所有的銷售考核單
+    public function errorCompany($year){
+        if(date("Y-m-d")>"2022-01-08"){
+            return "long time";
+        }
+        $reviewRows = Yii::app()->db->createCommand()
+            ->select("a.id,a.change_num,a.employee_id,a.year,a.year_type,b.city,b.name")
+            ->from("hr_review a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where("a.review_type=3 and a.year='{$year}'")->queryAll();
+        echo "start<br/>";
+        if($reviewRows){
+            foreach ($reviewRows as $reviewRow){
+                echo "staff:{$reviewRow['name']}({$reviewRow['employee_id']}) - ({$reviewRow['year']}/{$reviewRow['year_type']}) - ";
+                $row = Yii::app()->db->createCommand()->select("a.group_id")->from("hr_sales_staff a")
+                    ->leftJoin("hr_sales_group b","a.group_id=b.id")
+                    ->where("a.employee_id=:id and b.city=:city",
+                        array(":id"=>$reviewRow['employee_id'],":city"=>$reviewRow['city'])
+                    )->queryRow();
+                if($row){
+                    $change_num=0;
+                    $model = new SalesReviewForm();
+                    $model->retrieveData($row["group_id"],$reviewRow["year"],$reviewRow["year_type"]);
+                    $model->getTabList();
+                    foreach ($model->staff_list as $staff){
+                        if($staff["id"] == $reviewRow['employee_id']){
+                            $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
+                            $change_num = sprintf("%.2f",$ranking);
+                        }
+                    }
+                    Yii::app()->db->createCommand()->update('hr_review', array(
+                        'change_num'=>$change_num
+                    ), 'id=:id', array(':id'=>$reviewRow['id']));
+                    echo " success ({$reviewRow['change_num']}->{$change_num})";
+                }else{
+                    echo "error group_id";
+                }
+                echo "<br/>";
+            }
+        }
+        echo "end";
     }
 }

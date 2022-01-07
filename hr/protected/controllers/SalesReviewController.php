@@ -29,11 +29,11 @@ class SalesReviewController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','save','undo','back','fileupload','fileRemove','fileRemove'),
+                'actions'=>array('test2'),
                 'expression'=>array('SalesReviewController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload'),
+                'actions'=>array('index','view','test'),
                 'expression'=>array('SalesReviewController','allowReadOnly'),
             ),
             array('deny',  // deny all users
@@ -73,5 +73,13 @@ class SalesReviewController extends Controller
         } else {
             $this->render('form',array('model'=>$model,));
         }
+    }
+
+    public function actionTest($year=2021)
+    {
+        $year=is_numeric($year)?$year:2021;
+        $model = new SalesReviewForm('view');
+        $model->errorCompany($year);
+        Yii::app()->end();
     }
 }
