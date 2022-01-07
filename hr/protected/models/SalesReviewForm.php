@@ -182,6 +182,8 @@ class SalesReviewForm extends CFormModel
                 $allSum+=$sum;
             }
         }
+        $allSum = empty($allSum)?0:$allSum/$count;
+        $allNum = empty($allNum)?0:$allNum/$count;
         foreach ($groupRow as $staffRow){//生成表格
             if($year>=$staffRow["start_time"]&&$year<=$staffRow["end_time"]){
                 $sum = isset($this->form_list[$year]["item"][$staffRow["user_id"]])?$this->form_list[$year]["item"][$staffRow["user_id"]]["sales_sum"]:0;
@@ -224,8 +226,10 @@ class SalesReviewForm extends CFormModel
         $groupList = $this->group_staff;
 	    $html = "<tbody>";
         $showStaff=$this->show_staff;
-	    $html.= $this->getGroupForBody($groupList[$this->id],$year,$showStaff);
-        unset($groupList[$this->id]);
+        if(key_exists($this->id,$groupList)){
+            $html.= $this->getGroupForBody($groupList[$this->id],$year,$showStaff);
+            unset($groupList[$this->id]);
+        }
         if(!empty($groupList)){
             foreach ($groupList as $groupRow){
                 $autoHtml = $this->getGroupForBody($groupRow,$year,$showStaff);
