@@ -386,7 +386,7 @@ class SalesReviewForm extends CFormModel
                 $this->staff_list[$row["user_id"]]=$staffArr;
             }
             $this->group_staff[$index][]=$staffArr;
-            if($index==$this->id){ //当前查询分组(需要显示的员工分数)
+            if($index==$this->id&&!($startTime>$maxYear||$endTime<$minYear)){ //当前查询分组(需要显示的员工分数)
                 $this->show_staff[$row["user_id"]] = $row["id"];
             }
             if($num<=1&&$startTime>$minYear&&$startTime<$maxYear){ //判断是否跨区
@@ -410,18 +410,20 @@ class SalesReviewForm extends CFormModel
 
     //由於平均分計算異常，統一修改所有的銷售考核單
     public function errorCompany($year){
-        if(date("Y-m-d")>"2022-01-08"){
-            return "long time";
+        set_time_limit(0);
+        if(date("Y-m-d")>"2022-01-12"){
+            echo "long time";
+            return false;
         }
         $reviewRows = Yii::app()->db->createCommand()
-            ->select("a.id,a.change_num,a.employee_id,a.year,a.year_type,b.city,b.name")
+            ->select("a.id,a.status_type,a.change_num,a.employee_id,a.year,a.year_type,b.city,b.name")
             ->from("hr_review a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
             ->where("a.review_type=3 and a.year='{$year}'")->queryAll();
         echo "start<br/>";
         if($reviewRows){
             foreach ($reviewRows as $reviewRow){
-                echo "staff:{$reviewRow['name']}({$reviewRow['employee_id']}) - ({$reviewRow['year']}/{$reviewRow['year_type']}) - ";
+                echo "id:{$reviewRow['id']},staff:{$reviewRow['name']}({$reviewRow['employee_id']}) - ({$reviewRow['year']}/{$reviewRow['year_type']}) - ";
                 $row = Yii::app()->db->createCommand()->select("a.group_id")->from("hr_sales_staff a")
                     ->leftJoin("hr_sales_group b","a.group_id=b.id")
                     ->where("a.employee_id=:id and b.city=:city",
@@ -434,12 +436,28 @@ class SalesReviewForm extends CFormModel
                     $model->getTabList();
                     foreach ($model->staff_list as $staff){
                         if($staff["id"] == $reviewRow['employee_id']){
+                            echo " rankingCount:{$staff["rankingCount"]},ranking:{$staff["ranking"]} ";
                             $ranking = empty($staff["rankingCount"])?0:$staff["ranking"]/$staff["rankingCount"];
                             $change_num = sprintf("%.2f",$ranking);
                         }
                     }
+                    unset($model);
+                    //修改總分
+                    $detailRows = Yii::app()->db->createCommand()->select("*")->from("hr_review_h")
+                        ->where('review_id=:review_id',
+                            array(':review_id'=>$reviewRow["id"]))->queryAll();
+                    $review_sum=0;
+                    if($detailRows){
+                        foreach ($detailRows as $detail){
+                            $detail["review_sum"] = empty($detail["review_sum"])?0:intval($detail["review_sum"]);
+                            //$review_sum+=$row["review_sum"];
+                            $review_sum+=$this->sumReview($detail);
+                        }
+                    }
+                    $review_sum+=$change_num*7;
                     Yii::app()->db->createCommand()->update('hr_review', array(
-                        'change_num'=>$change_num
+                        'change_num'=>$change_num,
+                        'review_sum'=>$reviewRow["status_type"]==3?$review_sum:null,
                     ), 'id=:id', array(':id'=>$reviewRow['id']));
                     echo " success ({$reviewRow['change_num']}->{$change_num})";
                 }else{
@@ -449,5 +467,12 @@ class SalesReviewForm extends CFormModel
             }
         }
         echo "end";
+    }
+
+    private function sumReview($arr){
+        $sum = intval($arr["review_sum"]);
+        $pro = intval($arr["handle_per"]);
+        $num = intval($arr["tem_sum"])*10;
+        return sprintf("%.2f",($sum/$num)*$pro);
     }
 }
