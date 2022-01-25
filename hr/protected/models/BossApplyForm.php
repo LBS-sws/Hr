@@ -56,10 +56,11 @@ class BossApplyForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }
+        $city = Yii::app()->user->city();
         $row = Yii::app()->db->createCommand()->select("id,status_type,ratio_a,ratio_b,ratio_c,json_text,apply_date,json_listX")
             ->from("hr_boss_audit")
-            ->where('employee_id=:id and audit_year=:year',
-                array(':id'=>$this->employee_id,':year'=>$this->audit_year)
+            ->where('employee_id=:id and audit_year=:year and city=:city',
+                array(':id'=>$this->employee_id,':year'=>$this->audit_year,':city'=>$city)
             )->queryRow();
 	    if($this->getScenario()=='new'&&$row){
             $message = "該考核已存在，不允許重複添加";
