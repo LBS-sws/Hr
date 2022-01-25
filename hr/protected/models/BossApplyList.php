@@ -55,16 +55,17 @@ class BossApplyList extends CListPageModel
 
 	public function retrieveDataByPage($pageNum=1)
 	{
+        $city = Yii::app()->user->city();
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select b.name,b.code,a.* from hr_boss_audit a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
-                where a.employee_id = '$this->employee_id' 
+                where a.employee_id = '$this->employee_id' and a.city='$city' 
 			";
 		$sql2 = "select count(a.id)
 				from hr_boss_audit a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id 
-                where a.employee_id = '$this->employee_id' 
+                where a.employee_id = '$this->employee_id' and a.city='$city' 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
