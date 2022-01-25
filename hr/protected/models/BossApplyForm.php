@@ -161,9 +161,10 @@ class BossApplyForm extends CFormModel
     }
 
     public function getBossApplyYearHtml(){
+        $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select("a.audit_year")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("b.id=:id",array(":id"=>$this->employee_id))->queryAll();
+            ->where("b.id=:id and a.city=:city",array(":id"=>$this->employee_id,":city"=>$city))->queryAll();
         if($rows){
             $rows = array_column($rows,"audit_year");
         }else{
