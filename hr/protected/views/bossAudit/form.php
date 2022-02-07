@@ -102,6 +102,14 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo TbHtml::label(Yii::t("contract","City"),'',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php echo TbHtml::textField('city',CGeneral::getCityName($model->city),
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'audit_year',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-2">
                     <div class="input-group">

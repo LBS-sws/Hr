@@ -321,7 +321,7 @@ class BossApplyForm extends CFormModel
         if($row!=1){//系統配置該城市不需要C部分
             $results = $model->results_a*$ratio_a+$model->results_b*$ratio_b+$model->results_c;
             $results = sprintf("%.2f",$results);
-            $html.= $model->results_a."*{$model->ratio_a}% + ".$model->results_b."*{$model->ratio_b}% + ".$model->results_c."% = ".$results."%";
+            $html.= $model->results_a."*{$model->ratio_a}% + ".$model->results_b."*{$model->ratio_b}% + ".$model->results_c."% = ".$results;
             $html.= "</span><span id='bossRewardType' data-num='0'></span>";
             $list[]=array(
                 "name"=>Yii::t("contract","(C)Optional project section"),

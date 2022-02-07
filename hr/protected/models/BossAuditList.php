@@ -97,7 +97,7 @@ class BossAuditList extends CListPageModel
 					'results_a'=>$record['results_a'],
 					'results_b'=>$record['results_b'],
 					'results_c'=>$record['results_c'],
-					'results_sum'=>$record['results_sum']."%",
+					'results_sum'=>$record['results_sum'],
 					'audit_year'=>$record['audit_year'],
 					'city_name'=>$record['city_name'],
 					'status_type'=>$arrList['status'],
