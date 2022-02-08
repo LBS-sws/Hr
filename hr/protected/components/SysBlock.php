@@ -15,7 +15,7 @@ class SysBlock {
         $sysId = Yii::app()->params['systemId'];
 
         foreach ($this->checkItems as $key=>$value) {
-            if (!isset($sysblock[$key]) || $sysblock[$key]==false) {
+            if (!isset($sysblock[$key]) || $sysblock[$key]["bool"]==false) {
                 $result = call_user_func_array('self::'.$value['validation'],array($key,&$value));
                 $sysblock[$key] = array(
                     "bool"=>$result,
@@ -263,7 +263,7 @@ class SysBlock {
                 where city='$city' and  request_dt>= '$star' and  request_dt<= '$end' and subject='$subject' 	
 			";
         $row = Yii::app()->db->createCommand($sql)->queryAll();
-        if(count($row)==1){
+        if(count($row)>=1){
             return true;
         }else{
             return false;
