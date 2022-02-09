@@ -99,10 +99,13 @@ class ReviewAllotForm extends CFormModel
 
 	public function validateName($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $rows = Yii::app()->db->createCommand()->select("a.city,a.name,b.review_type")->from("hr_employee a")
+        $rows = Yii::app()->db->createCommand()->select("a.city,a.entry_time,a.name,b.review_type")->from("hr_employee a")
             ->leftJoin("hr_dept b","a.position = b.id")
             ->where("a.id=:id and a.city in ($city_allow) AND a.staff_status = 0",array(":id"=>$this->employee_id))->queryRow();
         if($rows){
+            $entry_time=CGeneral::toDate($rows["entry_time"]);
+            $dateTime = ReviewAllotList::getReviewDateTime($this->year,$this->year_type);
+            $endDate = date("Y/m/d",strtotime("$dateTime - 2 month"));
             $this->city = $rows["city"];
             $this->review_type = $rows["review_type"];
             $this->employee_name = $rows["name"];
@@ -117,6 +120,9 @@ class ReviewAllotForm extends CFormModel
                     $message = "考核單已存在不可重複提交,錯誤碼:".$rows["status_type"];
                     $this->addError($attribute,$message);
                 }
+            }elseif ($entry_time>$endDate){
+                $message = "该员工入职未满一个月，不符合条件";
+                $this->addError($attribute,$message);
             }else{
                 $this->setScenario("new");
             }

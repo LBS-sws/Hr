@@ -70,7 +70,7 @@ class ReviewAllotList extends CListPageModel
         );
     }
 
-    public function getReviewDateTime($year,&$year_type){
+    public static function getReviewDateTime($year,&$year_type){
         $dateTime = $year."/";
         if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])) {//非台灣版
             if($year == 2020){
@@ -96,7 +96,8 @@ class ReviewAllotList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        $dateTime = $this->getReviewDateTime($this->year,$this->year_type);
+        $dateTime = self::getReviewDateTime($this->year,$this->year_type);
+        $endDate = date("Y/m/d",strtotime("$dateTime - 2 month"));
         //$dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
 		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name,d.review_type ,e.name as ment_name 
@@ -166,6 +167,10 @@ class ReviewAllotList extends CListPageModel
             $reviewTypeList = DeptForm::getReviewType();
 			foreach ($records as $k=>$record) {
                 $arr = $this->resetStatus($record);
+                $record["entry_time"]=CGeneral::toDate($record["entry_time"]);
+                if($record["entry_time"]>$endDate){
+                    $arr["style"] = " text-muted";
+                }
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
