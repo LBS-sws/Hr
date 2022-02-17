@@ -174,9 +174,9 @@ return array(
     'Boss Apply'=>'申請年度考核',
     'Boss Search'=>'查詢年度考核',
     'Boss Audit'=>'審批年度考核',
-    'Boss Audit(director)'=>'審批年度考核（會計經理）',
+    'Boss Audit(director)'=>'審批年度考核（總監）',
     'Boss Audit(Deputy director)'=>'審批年度考核（副總監）',
-    'Boss Audit(Joe)'=>'審批年度考核（總監）',
+    'Boss Audit(Joe)'=>'審批年度考核（饒生）',
 
     'Email support employee'=>'員工支點分配',
     'Setting KPI'=>'KPI設置',
