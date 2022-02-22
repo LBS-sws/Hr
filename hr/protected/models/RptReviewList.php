@@ -39,7 +39,7 @@ class RptReviewList extends CReport {
                 }elseif ($year == 2020){
                     $year_period = "$year 4月 - $year 12月";
                 }else{
-                    $year_period = "$year 7月 - ".$year." 12月";
+                    $year_period = "$year 1月 - ".$year." 6月";
                 }
             }
         }else{
