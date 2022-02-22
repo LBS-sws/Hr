@@ -105,7 +105,7 @@ class ReviewAllotForm extends CFormModel
         if($rows){
             $entry_time=CGeneral::toDate($rows["entry_time"]);
             $dateTime = ReviewAllotList::getReviewDateTime($this->year,$this->year_type);
-            $endDate = date("Y/m/d",strtotime("$dateTime - 2 month"));
+            $endDate = date("Y/m/d",strtotime("$dateTime - 1 month"));
             $this->city = $rows["city"];
             $this->review_type = $rows["review_type"];
             $this->employee_name = $rows["name"];
