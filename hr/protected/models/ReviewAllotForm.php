@@ -109,7 +109,6 @@ class ReviewAllotForm extends CFormModel
             if ($entry_time>$endDate){
                 $message = "该员工入职未满一个月，不符合条件";
                 $this->addError($attribute,$message);
-                return false;
             }
             $this->city = $rows["city"];
             $this->review_type = $rows["review_type"];
