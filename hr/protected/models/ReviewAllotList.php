@@ -97,7 +97,7 @@ class ReviewAllotList extends CListPageModel
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $dateTime = self::getReviewDateTime($this->year,$this->year_type);
-        $endDate = date("Y/m/d",strtotime("$dateTime - 2 month"));
+        $endDate = date("Y/m/d",strtotime("$dateTime - 1 month"));
         //$dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
 		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name,d.review_type ,e.name as ment_name 

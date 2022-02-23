@@ -106,6 +106,11 @@ class ReviewAllotForm extends CFormModel
             $entry_time=CGeneral::toDate($rows["entry_time"]);
             $dateTime = ReviewAllotList::getReviewDateTime($this->year,$this->year_type);
             $endDate = date("Y/m/d",strtotime("$dateTime - 1 month"));
+            if ($entry_time>$endDate){
+                $message = "该员工入职未满一个月，不符合条件";
+                $this->addError($attribute,$message);
+                return false;
+            }
             $this->city = $rows["city"];
             $this->review_type = $rows["review_type"];
             $this->employee_name = $rows["name"];
@@ -120,9 +125,6 @@ class ReviewAllotForm extends CFormModel
                     $message = "考核單已存在不可重複提交,錯誤碼:".$rows["status_type"];
                     $this->addError($attribute,$message);
                 }
-            }elseif ($entry_time>$endDate){
-                $message = "该员工入职未满一个月，不符合条件";
-                $this->addError($attribute,$message);
             }else{
                 $this->setScenario("new");
             }
