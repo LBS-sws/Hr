@@ -184,6 +184,18 @@ $this->pageTitle=Yii::app()->name . ' - heartLetterAudit Form';
             </div>
             <div class="modal-body">
                 <div class="form-group">
+                    <div class="col-lg-11 col-lg-offset-1">
+                        <ul class="list-unstyled">
+                            <li>评分规则：</li>
+                            <li>1星：一般的建议，出于鼓励视情况给予1星或没星</li>
+                            <li>2星：提出不错的建议但暂不适合的给2星</li>
+                            <li>3星：系统及完善类的建议给3星</li>
+                            <li>4星：视为地区采纳（同事可申请“心意信封”慈善分，1分）</li>
+                            <li>5星：视为集团采纳（同事可申请“心意信封”慈善分，3分）</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group">
                     <?php echo $form->labelEx($model,'letter_num',array('class'=>"col-lg-2 control-label")); ?>
                     <div class="col-lg-9">
                         <?php echo $form->hiddenField($model, 'letter_num',array("id"=>"letter_num")); ?>
