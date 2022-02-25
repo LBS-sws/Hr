@@ -550,6 +550,7 @@ class Email {
     //中央支援郵箱，需要添加額外郵箱地址
     public function addSupportPreEmail(){
         $email_address = array(
+            array('email'=>"candy@lbsgroup.com.cn",'username'=>"candy"),
             array('email'=>"tak@lbsgroup.com.cn",'username'=>"tak"),
             array('email'=>"shunman@lbsgroup.com.cn",'username'=>"shunman"),
             array('email'=>"kittyzhou@lbsgroup.com.cn",'username'=>"kittyzhou")
