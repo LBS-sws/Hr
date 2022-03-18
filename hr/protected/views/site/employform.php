@@ -140,8 +140,8 @@
     <!--分割-->
     <?php echo $form->labelEx($model,'recommend_user',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
-        <?php echo $form->textField($model, 'recommend_user',
-            array('size'=>18,'maxlength'=>18,'readonly'=>($readonly))
+        <?php echo $form->dropDownList($model, 'recommend_user',EmployForm::getEmployeeList($model->recommend_user),
+            array('disabled'=>($readonly))
         ); ?>
     </div>
 </div>

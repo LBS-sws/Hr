@@ -337,6 +337,19 @@ class EmployForm extends CFormModel
         }
         return "";
     }
+    //根據id獲取員列表
+    public static function getEmployeeList($id=0){
+        $city = Yii::app()->user->city();
+        $arr = array(""=>"");
+        $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
+            ->where('id=:id or city=:city ', array(':id'=>$id,':city'=>$city))->order("name asc")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row['id']] = $row["name"]." ({$row['code']})";
+            }
+        }
+        return $arr;
+    }
 
 	public function retrieveData($index)
 	{
