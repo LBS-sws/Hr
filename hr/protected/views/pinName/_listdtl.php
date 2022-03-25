@@ -7,5 +7,6 @@
 
     <td><?php echo $this->record['name']; ?></td>
     <td><?php echo $this->record['class_id']; ?></td>
+    <td><?php echo $this->record['pin_type']; ?></td>
     <td><?php echo $this->record['z_index']; ?></td>
 </tr>

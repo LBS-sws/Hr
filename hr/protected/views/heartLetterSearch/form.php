@@ -65,7 +65,7 @@ $this->pageTitle=Yii::app()->name . ' - heartLetterSearch Form';
                 </div>
             </div>
             <div class="form-group">
-                <div class="col-lg-8 col-lg-offset-2">
+                <div class="col-lg-10 col-lg-offset-1">
                     <?php
                     echo $model->getTable();
                     ?>

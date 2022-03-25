@@ -730,5 +730,9 @@ return array(
     'remaining inventory'=>'剩余库存',
     'remaining num'=>'剩余数量',
     'sum num'=>'总计数量',
+    'pin type'=>'襟章类型',
+    'Ordinary Pin'=>'普通襟章',
+    'Two Pin'=>'两项襟章',
+    'Audit Date'=>'审核日期',
 );
 ?>

@@ -95,6 +95,7 @@ class HeartLetterSearchForm extends CFormModel
 	public function getTable(){
 	    $html="<table class='table table-bordered table-hover table-striped'><thead><tr>";
 	    $html.="<th width='15%'>".Yii::t('fete','apply for time')."</th>";
+	    $html.="<th width='15%'>".Yii::t('contract','Audit Date')."</th>";
 	    $html.="<th width='10%'>".Yii::t('queue','Type')."</th>";
 	    $html.="<th>".Yii::t('queue','Subject')."</th>";
 	    $html.="<th width='28%'>".Yii::t("contract","three_four")."</th>";
@@ -108,6 +109,7 @@ class HeartLetterSearchForm extends CFormModel
                 $sum += $row["letter_num"];
 	            $html.="<tr>";
                 $html.="<td>".$row["lcd"]."</td>";
+                $html.="<td>".$row["lud"]."</td>";
                 $html.="<td>".HeartLetterForm::getLetterTypeList($row["letter_type"],true)."</td>";
                 $html.="<td>".$row["letter_title"]."</td>";
                 $html.="<td>".HeartLetterAuditForm::getLetterNumToIcon($row["letter_num"])."</td>";
@@ -122,7 +124,7 @@ class HeartLetterSearchForm extends CFormModel
             }
         }
 	    $html.="</tbody><tfoot><tr>";
-	    $html.="<td colspan='3' class='text-right'>".Yii::t("contract","review number")."</td>";
+	    $html.="<td colspan='4' class='text-right'>".Yii::t("contract","review number")."</td>";
         if(Yii::app()->user->validRWFunction('HL03')){
             $html.="<td colspan='2' class='text-center'><b class='fa-lg'>".$sum."分</b></td>";
         }else{

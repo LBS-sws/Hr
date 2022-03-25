@@ -6,6 +6,7 @@ class PinNameForm extends CFormModel
 	public $name;
 	public $class_id;
 	public $image_url;
+	public $pin_type;
 	public $z_index=0;
 
 	public function attributeLabels()
@@ -15,6 +16,7 @@ class PinNameForm extends CFormModel
             'class_id'=>Yii::t('app','Pin Class'),
             'image_url'=>Yii::t('contract','Pin Image'),
             'z_index'=>Yii::t('contract','Level'),
+            'pin_type'=>Yii::t('contract','pin type'),
         );
 	}
 
@@ -24,9 +26,9 @@ class PinNameForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id,name,class_id,z_index,image_url','safe'),
+			array('id,name,class_id,z_index,image_url,pin_type','safe'),
             array('z_index,class_id,name','required'),
-            array('image_url','validateImage'),
+            //array('image_url','validateImage'),
             array('id','validateId',"on"=>array("delete")),
 		);
 	}
@@ -50,13 +52,14 @@ class PinNameForm extends CFormModel
     }
 
 	public function retrieveData($index) {
-		$row = Yii::app()->db->createCommand()->select("id,name,image_url,class_id,z_index")->from("hr_pin_name")
+		$row = Yii::app()->db->createCommand()->select("id,name,pin_type,image_url,class_id,z_index")->from("hr_pin_name")
             ->where("id=:id",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->name = $row['name'];
             $this->class_id = $row['class_id'];
             $this->image_url = $row['image_url'];
+            $this->pin_type = $row['pin_type'];
             $this->z_index = $row['z_index'];
             return true;
 		}
@@ -65,7 +68,7 @@ class PinNameForm extends CFormModel
 
     //获取所有名称列表
     public static function getPinNameList(){
-        $rows = Yii::app()->db->createCommand()->select("a.id,a.name,a.z_index")
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.name,a.pin_type,a.z_index")
             ->from("hr_pin_name a")
             ->leftJoin("hr_pin_class b",'a.class_id=b.id')
             ->order("b.z_index asc,a.z_index asc")->queryAll();
@@ -105,9 +108,9 @@ class PinNameForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_pin_name(
-							name,z_index,class_id,image_url, lcu
+							name,z_index,class_id,image_url,pin_type, lcu
 						) values (
-							:name,:z_index,:class_id,:image_url, :lcu
+							:name,:z_index,:class_id,:image_url,:pin_type, :lcu
 						)";
                 break;
             case 'edit':
@@ -116,6 +119,7 @@ class PinNameForm extends CFormModel
 							class_id = :class_id, 
 							z_index = :z_index, 
 							image_url = :image_url, 
+							pin_type = :pin_type, 
 							luu = :luu
 						where id = :id
 						";
@@ -137,6 +141,8 @@ class PinNameForm extends CFormModel
             $command->bindParam(':image_url',$this->image_url,PDO::PARAM_STR);
         if (strpos($sql,':class_id')!==false)
             $command->bindParam(':class_id',$this->class_id,PDO::PARAM_INT);
+        if (strpos($sql,':pin_type')!==false)
+            $command->bindParam(':pin_type',$this->pin_type,PDO::PARAM_INT);
         if (strpos($sql,':z_index')!==false)
             $command->bindParam(':z_index',$this->z_index,PDO::PARAM_INT);
 

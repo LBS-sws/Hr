@@ -25,6 +25,7 @@ class AuditPrizeForm extends CFormModel
     public $reject_remark;
     public $lcd;
     public $lcu;
+    public $lud;
 
     public function attributeLabels()
     {
@@ -50,6 +51,7 @@ class AuditPrizeForm extends CFormModel
             'type_num_ex'=>Yii::t('fete','A commendatory letter is equal to two flags'),
             'prize_type'=>Yii::t('fete','prize type'),
             'lcd'=>Yii::t('contract','Apply Date'),
+            'lud'=>Yii::t('contract','Audit Date'),
         );
     }
 
@@ -97,6 +99,7 @@ class AuditPrizeForm extends CFormModel
                 $this->remark = $row['remark'];
                 $this->lcu = $row['lcu'];
                 $this->lcd = date("Y-m-d",strtotime($row['lcd']));
+                $this->lud = date("Y-m-d",strtotime($row['lud']));
                 $this->reject_remark = $row['reject_remark'];
                 break;
             }

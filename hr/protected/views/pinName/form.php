@@ -87,6 +87,16 @@ $this->pageTitle=Yii::app()->name . ' - pinName';
             </div>
 
             <div class="form-group">
+                <?php echo $form->labelEx($model,'pin_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php
+                    echo $form->dropDownList($model, 'pin_type',PinNameList::getPinType(),
+                        array('disabled'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'z_index',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php

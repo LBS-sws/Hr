@@ -7,6 +7,14 @@
                 array('readonly'=>(true))
             ); ?>
         </div>
+        <?php if ($model->status==3||$model->status==2): ?>
+            <?php echo $form->labelEx($model,'lud',array('class'=>"col-sm-2 control-label")); ?>
+            <div class="col-sm-3">
+                <?php echo $form->textField($model, 'lud',
+                    array('readonly'=>(true))
+                ); ?>
+            </div>
+        <?php endif ?>
     </div>
 <?php endif ?>
 <div class="form-group">

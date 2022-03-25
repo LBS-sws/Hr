@@ -13,6 +13,7 @@ class PinNameList extends CListPageModel
             'name'=>Yii::t('app','Pin Name'),
             'class_id'=>Yii::t('app','Pin Class'),
             'z_index'=>Yii::t('contract','Level'),
+            'pin_type'=>Yii::t('contract','pin type'),
 		);
 	}
 
@@ -20,7 +21,7 @@ class PinNameList extends CListPageModel
 	{
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
-		$sql1 = "select a.id,a.name,a.z_index,b.name as class_name from hr_pin_name a 
+		$sql1 = "select a.id,a.name,a.pin_type,a.z_index,b.name as class_name from hr_pin_name a 
                 LEFT JOIN  hr_pin_class b ON a.class_id=b.id
                 where a.id>0 
 			";
@@ -66,6 +67,7 @@ class PinNameList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'class_id'=>$record['class_name'],
+					'pin_type'=>self::getPinType($record['pin_type'],true),
 					'z_index'=>$record['z_index'],
 				);
 			}
@@ -74,4 +76,20 @@ class PinNameList extends CListPageModel
 		$session['pinName_01'] = $this->getCriteria();
 		return true;
 	}
+
+    public static function getPinType($key=0,$bool=false){
+        $list = array(
+            0=>Yii::t("contract","Ordinary Pin"),
+            1=>Yii::t("contract","Two Pin"),
+        );
+        if($bool){
+            if(key_exists($key,$list)){
+                return $list[$key];
+            }else{
+                return $key;
+            }
+        }else{
+            return $list;
+        }
+    }
 }
