@@ -37,7 +37,7 @@ class EmployController extends Controller
                 'expression'=>array('EmployController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('generate','addDate','printImage','changeDepart'),
+                'actions'=>array('generate','addDate','printImage','changeDepart','changeUserCard'),
                 'expression'=>array('EmployController','allowWrite'),
             ),
             array('deny',  // deny all users
@@ -237,6 +237,19 @@ class EmployController extends Controller
             }
             $lastDate = date('Y-m-d', strtotime("$lastDate - 1 day"));
             echo CJSON::encode($lastDate);
+        }else{
+            $this->redirect(Yii::app()->createUrl('employ/index'));
+        }
+    }
+
+    //身份證號碼
+    public function actionChangeUserCard(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $id = Yii::app()->request->getPost('id',"");
+            $userCard = Yii::app()->request->getPost('userCard',"666666");
+            $model = new EmployForm();
+            $json =$model->changeUserCard($id,$userCard);
+            echo CJSON::encode($json);
         }else{
             $this->redirect(Yii::app()->createUrl('employ/index'));
         }

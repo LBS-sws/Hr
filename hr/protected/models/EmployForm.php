@@ -350,6 +350,29 @@ class EmployForm extends CFormModel
         }
         return $arr;
     }
+    //根據id獲取員列表
+    public function changeUserCard($id,$userCard){
+        $userCard = is_numeric($userCard)?$userCard:"666666";
+        $data = array('status'=>0,'html'=>'');
+        $city = Yii::app()->user->city();
+        $rows = Yii::app()->db->createCommand()->select("id,code,name,user_card,address")->from("hr_employee")
+            ->where("id!=:id and user_card like '{$userCard}%'", array(':id'=>$id))->order("name asc")->queryAll();
+        if($rows){
+            $data['status'] = 1;
+            $data['html'] = '<div class="popover fade bottom in" id="userCardHint">';
+            $data['html'].= '<div class="arrow"></div>';
+            $data['html'].= '<div class="popover-title">户籍相似的员工</div><div class="popover-content">';
+            $html="";
+            foreach ($rows as $row){
+                $html.=!empty($html)?"<p style='margin-bottom: 0px;'>---------------------------------------</p>":"";
+                $html.= "<p style='margin-bottom: 0px;'>员工姓名:{$row['name']} - {$row['code']}</p>";
+                $html.= "<p style='margin-bottom: 0px;'>户籍地址:{$row['address']}</p>";
+                $html.= "<p style='margin-bottom: 0px;'>身份证号:{$row['user_card']}</p>";
+            }
+            $data['html'].= $html.'</div></div>';
+        }
+        return $data;
+    }
 
 	public function retrieveData($index)
 	{

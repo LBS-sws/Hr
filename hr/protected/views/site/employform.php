@@ -82,7 +82,7 @@
     <?php echo $form->label($model,'user_card',array('class'=>"col-sm-2 control-label","required"=>true)); ?>
     <div class="col-sm-3">
         <?php echo $form->textField($model, 'user_card',
-            array('readonly'=>($readonly))
+            array('readonly'=>($readonly),'id'=>'user_card')
         ); ?>
     </div>
     <?php echo $form->labelEx($model,'user_card_date',array('class'=>"col-sm-2 control-label")); ?>
@@ -663,6 +663,42 @@ if (!empty($contractNum)){
         //$("#position").trigger("change");
         //後續添加的无用要求
         $(".fixTime,#start_time,#end_time").change(changeTestMonthLength);
+
+        //身份證號碼檢索
+        $("#user_card").keyup(function () {
+           var value = $(this).val()+"";
+           var id = '<?php echo $model->id;?>'
+           if(value.length>=6){
+               $.ajax({
+                   type: 'post',
+                   url: '<?php echo Yii::app()->createUrl('employ/changeUserCard');?>',
+                   data: {
+                       id: id,
+                       userCard: value
+                   },
+                   dataType: 'json',
+                   success: function (data) {
+                        if(data["status"]==1){
+                            $('#userCardHint').remove();
+                            $('body').append(data["html"]);
+                            var width =$('#userCardHint').show().outerWidth(true);
+                            var left = $('#user_card').outerWidth(true)/2+$('#user_card').offset().left;
+                            var top = $('#user_card').outerHeight(true)+$('#user_card').offset().top+2;
+                            left-=width/2;
+                            $('#userCardHint').css({
+                                "left":left+"px",
+                                "top":top+"px"
+                            });
+                        }
+                   }
+               });
+           }else{
+               $('#userCardHint').remove();
+           }
+        });
+        $("#user_card").focusout(function () {
+            $('#userCardHint').remove();
+        });
     });
     function changeTestMonthLength() {
         var value = $("#test_length").val();
