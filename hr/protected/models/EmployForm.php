@@ -352,11 +352,13 @@ class EmployForm extends CFormModel
     }
     //根據id獲取員列表
     public function changeUserCard($id,$userCard){
-        $userCard = is_numeric($userCard)?$userCard:"666666";
+        $userCard="".$userCard;
+        $userCard= strlen($userCard)>5?$userCard:"666666";
+        $userCard = substr($userCard,0,6);
         $data = array('status'=>0,'html'=>'');
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select("id,code,name,user_card,address")->from("hr_employee")
-            ->where("id!=:id and user_card like '{$userCard}%'", array(':id'=>$id))->order("name asc")->queryAll();
+            ->where("id!=:id and user_card like '{$userCard}%' and city=:city", array(':id'=>$id,':city'=>$city))->order("name asc")->queryAll();
         if($rows){
             $data['status'] = 1;
             $data['html'] = '<div class="popover fade bottom in" id="userCardHint">';
