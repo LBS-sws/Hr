@@ -39,8 +39,8 @@ class DownFormForm extends CFormModel
             array('id, name, docx_url, file, remark','safe'),
 			array('name','required'),
 			array('name','validateName'),
-            array('file', 'file', 'types'=>'xlsx,xls,doc,docx', 'allowEmpty'=>false, 'maxFiles'=>1,'on'=>"new"),
-            array('file', 'file', 'types'=>'xlsx,xls,doc,docx', 'allowEmpty'=>true, 'maxFiles'=>1,'on'=>"edit"),
+            array('file', 'file', 'types'=>'xlsx,xls,doc,docx,pdf', 'allowEmpty'=>false, 'maxFiles'=>1,'on'=>"new"),
+            array('file', 'file', 'types'=>'xlsx,xls,doc,docx,pdf', 'allowEmpty'=>true, 'maxFiles'=>1,'on'=>"edit"),
 		);
 	}
 
