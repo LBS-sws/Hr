@@ -74,7 +74,8 @@ class BossReviewB extends BossReview
                 $this->json_text[$type][$str] = $this->valueStaffReview($this->employee_id,$this->audit_year-1);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_two"://月报表分数
-                $this->json_text[$type][$str] = MonthList::getSumAverageByYear($this->audit_year-1,$this->city);
+                //$this->json_text[$type][$str] = MonthList::getSumAverageByYear($this->audit_year-1,$this->city);
+                $this->json_text[$type][$str] = $this->valueHdr($this->city,$this->audit_year-1);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_three"://质检拜访量
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year-1,"00042");
@@ -146,7 +147,8 @@ class BossReviewB extends BossReview
                 $this->json_text[$type][$str] = $this->valueStaffReview($this->employee_id,$this->audit_year);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_two"://月报表分数
-                $this->json_text[$type][$str] = MonthList::getSumAverageByYear($this->audit_year,$this->city);
+                //$this->json_text[$type][$str] = MonthList::getSumAverageByYear($this->audit_year,$this->city);
+                $this->json_text[$type][$str] = $this->valueHdr($this->city,$this->audit_year);
                 return array('value'=>$this->json_text[$type][$str],'name'=>$this->json_text[$type][$str]);
             case "two_three"://质检拜访量
                 $this->json_text[$type][$str] = $this->value($this->city,$this->audit_year,"00042");

@@ -19,6 +19,7 @@ class ReportEstimatedForm extends CReportForm
     protected function queueItemEx() {
         return array(
             'YEAR'=>$this->year,
+            'CITY'=>$this->city,
         );
     }
 

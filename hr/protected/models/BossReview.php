@@ -24,6 +24,7 @@ class BossReview
     public $cofModel;
     public $scoreSum=0;// 總分數
 
+    protected $detailList=array();//每项的详情（报表专用）
     protected $model;
     protected $countPrice;//年生意額
 
@@ -56,6 +57,10 @@ class BossReview
     protected function setListX(){
         //array('value'=>'','name'=>'')
         $this->listX = array();
+    }
+
+    public function getDetailList(){
+        return $this->detailList;
     }
 
     public function getListX(){
@@ -162,10 +167,12 @@ class BossReview
 
     //主內容橫向
     public function getTableHtmlToEmail(){
+        $this->detailList=array();
         $width="170px";
         $html="";
         $html.="<thead><tr>";
         $html.="<th width='$width'>".Yii::t("contract","matters")."</th>";
+        $this->detailList["title"]["list"][]=Yii::t("contract","matters");
         $colorInfo = array("one_6","two_4");//需要添加颜色判断的列
         $tdInfo = array("one_4","two_2");//在某列之后添加“累计”及“本月”
         $tdPro = array("one_one","one_two","one_three","one_four","one_five","one_nine","two_three","two_eight","two_five");
@@ -176,18 +183,27 @@ class BossReview
                 }else{
                     $html.="<th width='170px'>".$listY["name"]."</th>";
                 }
+                $this->detailList["title"]["list"][]=$listY["name"];
             }
             if(in_array($listY["value"],$tdInfo)){
                 $html.="<th width='170px'>".Yii::t("contract","every monthly average")."</th>";
                 $html.="<th width='170px'>".Yii::t("contract","now monthly average")."</th>";
+                $this->detailList["title"]["list"][]=Yii::t("contract","every monthly average");
+                $this->detailList["title"]["list"][]=Yii::t("contract","now monthly average");
             }
         }
         $html.="<th width='170px'>{$this->audit_year}".Yii::t("contract"," monthly complete")."</th>";
+        $this->detailList["title"]["list"][]=$this->audit_year.Yii::t("contract"," monthly complete");
         $html.="</tr></thead><tbody>";
 
-        foreach ($this->listX as $listX){
+        for($i=1;$i<=12;$i++){
+            $this->detailList["title"]["info"][$i]=array('num'=>$i,'text'=>$i.Yii::t("report","Month"),'len'=>0);
+        }
+
+        foreach ($this->listX as $rowKey=>$listX){
             $tableTr="<tr>";
             $tableTr.="<td><b>".$listX["name"]."</b></td>";
+            $this->detailList[$rowKey]["list"][]=$listX["name"];
             $nowNum = 0;
             $userNum = 0;
             foreach ($this->listY as $key => $listY){
@@ -214,6 +230,7 @@ class BossReview
                         }else{
                             $tableTr.="<td>".$searchText."</td>";
                         }
+                        $this->detailList[$rowKey]["list"][]=$searchText;
                     }
                 }
                 if(in_array($listY["value"],$tdInfo)){
@@ -227,6 +244,8 @@ class BossReview
                         $tableTr.="<td>".$eveyNum."</td>";
                         $tableTr.="<td>".$eveyNum."</td>";
                     }
+                    $this->detailList[$rowKey]["list"][]=$eveyNum;
+                    $this->detailList[$rowKey]["list"][]=$eveyNum;
                 }
             }
             if($listX["value"]=="two_one"||(key_exists("pro_str",$listX)&&$listX["pro_str"]=="%")){
@@ -236,6 +255,8 @@ class BossReview
                 $completeNum.="%";
             }
             $tableTr.="<td>".$completeNum."</td>";
+            $this->detailList[$rowKey]["list"][]=$completeNum;
+            $this->detailList[$rowKey]["info"]=$this->getDetailInfo($listX);
             $tableTr.="</tr>";
             if(in_array($listX["value"],array("two_nine","two_ten","one_seven"))){
                 $nowNum*=-1;
@@ -251,6 +272,40 @@ class BossReview
 
         $html.="</tbody>";
         return $html;
+    }
+
+    //由于不能直接在A里面添加函数，所以后续需要判断
+    protected function getDetailInfo($listX){
+        $detailList = array();
+        $functionList = array(
+            //A部分
+            'one_one'=>array("function"=>"valueForDetail","data_field"=>"00002"),//年生意额增长目标
+            'one_two'=>array("function"=>"valueForDetail","data_field"=>"00067"),//年利润额增长目标
+            'one_three'=>array("function"=>"valueToOpForDetail"),//年新业务生意额目标
+            'one_four'=>array("function"=>"valueForDetail","data_field"=>"00003"),//IA服务生意年金额
+            'one_five'=>array("function"=>"valueForDetail","data_field"=>"00004"),//IB服务生意年金额
+            'one_nine'=>array("function"=>"valueForDetail","data_field"=>"00006"),//新（IA+IB）服务年金额
+            'one_six'=>array("function"=>"valueOnToRateForDetail","data_field"=>"00067"),//收款率(%)
+            'one_seven'=>array("function"=>"valueStopToRateForDetail","arr"=>array("00017","00002")),//服务单的停单比例(%)
+            'one_eight'=>array("function"=>"valueForDetail","data_field"=>"00018"),//技术员每月平均生产力
+            //B部分
+            'two_one'=>array("function"=>"valueStaffReviewForDetail"),//优化人才评核
+            'two_two'=>array("function"=>"valueHdrForDetail"),//月报表分数
+            'two_three'=>array("function"=>"valueForDetail","data_field"=>"00042"),//质检拜访量
+            'two_eight'=>array("function"=>"valueForDetail","data_field"=>"00069"),//洗地易销售桶数
+            'two_four'=>array("function"=>"valueStopToRateForDetail","arr"=>array("00038","00036")),//高效客诉解决效率
+            'two_five'=>array("function"=>"valueFeedbackForDetail"),//总经理回馈次数
+            //'two_six'=>array("function"=>"valueSalesOneForDetail"),//提交销售5步曲数量培训销售部分(太麻烦了，不想实现)
+            'two_nine'=>array("function"=>"valueStopToRateForDetail","arr"=>array("00023","00003")),//IA物料使用率
+            'two_ten'=>array("function"=>"valueStopToRateForDetail","arr"=>array("00024","00004")),//IB物料使用率
+            'two_service'=>array("function"=>"valueServiceNumForDetail"),//蔚诺租赁服务机器台数
+        );
+        if(key_exists($listX["value"],$functionList)){
+            $func = $functionList[$listX["value"]]["function"];
+            $detailList = $this->$func($listX,$functionList[$listX["value"]]);
+        }
+
+        return $detailList;
     }
 
     //主內容豎向（不使用）
@@ -323,10 +378,57 @@ class BossReview
         return empty($sum)||$sum==null?0:$sum;
     }
 
+    //提取月报表数据
+    public function valueHdr($city,$year){
+        $suffix = Yii::app()->params['envSuffix'];
+        $sum = Yii::app()->db->createCommand()->select("AVG(f73)")
+            ->from("swoper$suffix.swo_monthly_hdr")
+            ->where("city = :city AND year_no = :year",
+                array(":city"=>$city,":year"=>$year)
+            )->queryScalar();
+        return empty($sum)||$sum==null?0:$sum;
+    }
+
+    //提取月报表数据
+    protected function valueHdrForDetail($listX,$funcList){
+        $suffix = Yii::app()->params['envSuffix'];
+        $list = array();
+        $rows = Yii::app()->db->createCommand()->select("f73,month_no")
+            ->from("swoper$suffix.swo_monthly_hdr")
+            ->where("city = :city AND year_no = :year",
+                array(":city"=>$this->city,":year"=>$this->audit_year)
+            )->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[]=array('num'=>$row["month_no"],"text"=>floatval($row["f73"]),"len"=>0);
+            }
+        }
+        return $list;
+    }
+
+    //提取月报表数据(详情)
+    protected function valueForDetail($listX,$funcList){
+        $data_field =$funcList["data_field"];
+        //$data_field 00002:生意額增長 00067:利潤增長 00021:收款率 00017:停單比例 00018:技术员每月平均生产力
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("a.data_value,b.month_no")
+            ->from("swoper$suffix.swo_monthly_dtl a")
+            ->leftJoin("swoper$suffix.swo_monthly_hdr b","b.id = a.hdr_id")
+            ->where("b.city = :city AND b.year_no = :year AND a.data_field=:field",
+                array(":city"=>$this->city,":year"=>$this->audit_year,":field"=>$data_field)
+            )->order("b.month_no asc")->queryAll();
+        $list=array();
+        foreach ($rows as $row){
+            $key=$row["month_no"];
+            $list[]=array('num'=>$key,'text'=>$row["data_value"],'len'=>0);
+        }
+        return $list;
+    }
+
     //提取营业报告表数据
     public function valueToOp($city,$year){
         //
-        if($year>=202){//2022年需要计算隔油池及ID服务
+        if($year>=2022){//2022年需要计算隔油池及ID服务
             $suffix = Yii::app()->params['envSuffix'];
             $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
                 ->from("operation$suffix.opr_monthly_dtl a")
@@ -351,6 +453,39 @@ class BossReview
                 )->queryScalar();
         }
         return empty($sum)||$sum==null?0:$sum;
+    }
+
+    //提取营业报告表数据(详情)
+    protected function valueToOpForDetail($listX,$funcList){
+        //
+        $suffix = Yii::app()->params['envSuffix'];
+        if($this->audit_year>=2022){//2022年需要计算隔油池及ID服务
+            $rows = Yii::app()->db->createCommand()->select("a.data_value,b.month_no")
+                ->from("operation$suffix.opr_monthly_dtl a")
+                ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
+                ->where("b.city = :city 
+            AND b.year_no = :year 
+            AND a.data_field in ('10005','100055','10004','20001','20002') 
+            AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
+                    array(":city"=>$this->city,":year"=>$this->audit_year)
+                )->order("b.month_no asc")->queryAll();
+        }else{
+            $rows = Yii::app()->db->createCommand()->select("a.data_value,b.month_no")
+                ->from("operation$suffix.opr_monthly_dtl a")
+                ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
+                ->where("b.city = :city 
+            AND b.year_no = :year 
+            AND a.data_field in ('10005','10004') 
+            AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
+                    array(":city"=>$this->city,":year"=>$this->audit_year)
+                )->order("b.month_no asc")->queryAll();
+        }
+        $list=array();
+        foreach ($rows as $row){
+            $key=$row["month_no"];
+            $list[]=array('num'=>$key,'text'=>$row["data_value"],'len'=>0);
+        }
+        return $list;
     }
 
     //平均值
@@ -404,6 +539,27 @@ class BossReview
         return floatval(sprintf("%.2f",$sum));
     }
 
+    //服务单的停单比例(详情)
+    protected function valueStopToRateForDetail($listX,$funcList){
+        //$listX,$funcList
+        $city = $this->city;
+        $year = $this->audit_year;
+        $arr = $funcList["arr"];//
+        //00017:今月停單生意額   00002:今月生意額  rate = 今月停單/今月的生意額 * 100
+        $rows = $this->getValueListToArr($arr,$city,$year);
+        $list = array();//month_no
+        if($rows){
+            foreach ($rows as $row){
+                $row["valueOne"] = floatval($row["valueOne"]);
+                $row["valueTwo"] = floatval($row["valueTwo"]);
+                $count = empty($row["valueTwo"])||$row["valueTwo"]==0?0:$row["valueOne"]/$row["valueTwo"];
+                $count*=100;
+                $list[]=array('num'=>$row["month_no"],"text"=>$count,"len"=>0);
+            }
+        }
+        return $list;
+    }
+
     //蔚诺租赁服务机器台数
     public function valueServiceNum($city,$year){
         $suffix = Yii::app()->params['envSuffix'];
@@ -425,6 +581,44 @@ class BossReview
             )->queryScalar();
         $serviceMoney = empty($serviceMoney)?0:$serviceMoney;
         return $serviceMoney+$row;
+    }
+
+    //蔚诺租赁服务机器台数(详情)
+    protected function valueServiceNumForDetail($listX,$funcList){
+        $suffix = Yii::app()->params['envSuffix'];
+        $list = array();
+        //服務類型的第二欄是非一次性服務(ID服務)
+        $serviceIDRows = Yii::app()->db->createCommand()->select("date_format(a.status_dt,'%c') as month_no,sum(a.amt_money) as sum_num")->from("swoper$suffix.swo_serviceid a")
+            ->leftJoin("swoper$suffix.swo_customer_type_info b","b.id = a.cust_type_name")
+            ->where("b.single=0 and date_format(a.status_dt,'%Y')=:year AND a.status='N' AND a.city=:city",
+                array(":year"=>$this->audit_year,":city"=>$this->city)
+            )->group("date_format(a.status_dt,'%c')")->queryAll();
+        if($serviceIDRows){
+            foreach ($serviceIDRows as $row){
+                if(!key_exists($row["month_no"],$list)){
+                    $list[$row["month_no"]] = array('num'=>$row["month_no"],'text'=>0,'len'=>0);
+                }
+                $list[$row["month_no"]]['text']+=floatval($row["sum_num"]);
+            }
+        }
+        //隔油池金額 (非ID服務)
+        $serviceOtherRows =Yii::app()->db->createCommand()
+            ->select("date_format(a.first_dt,'%c') as month_no,sum(CASE WHEN a.paid_type = 'M' THEN a.amt_paid*a.ctrt_period ELSE a.amt_paid END) as sum_num")
+            ->from("swoper$suffix.swo_service a")
+            ->leftJoin("swoper$suffix.swo_customer_type_twoname b","a.cust_type_name = b.id")
+            ->leftJoin("swoper$suffix.swo_customer_type c","a.cust_type = c.id")
+            ->where("b.bring = 1 and a.status = 'N' and date_format(a.first_dt,'%Y')=:year AND a.city=:city",
+                array(":year"=>$this->audit_year,":city"=>$this->city)
+            )->group("date_format(a.status_dt,'%c')")->queryAll();
+        if($serviceOtherRows){
+            foreach ($serviceOtherRows as $row){
+                if(!key_exists($row["month_no"],$list)){
+                    $list[$row["month_no"]] = array('num'=>$row["month_no"],'text'=>0,'len'=>0);
+                }
+                $list[$row["month_no"]]['text']+=floatval($row["sum_num"]);
+            }
+        }
+        return $list;
     }
 
     //收款比例
@@ -450,6 +644,31 @@ class BossReview
         return floatval(sprintf("%.2f",$sum));
     }
 
+    //收款比例(详情)
+    protected function valueOnToRateForDetail($listX,$funcList){
+        $city = $this->city;
+        $year = $this->audit_year;
+        //00021:今月收款额   00002:今月生意額  rate = 今月收款额/上月的生意額 * 100
+        $rows = $this->getValueListToArr(array("00021","00002"),$city,$year);
+        $list = array();
+        if($rows){
+            if($rows[0]["month_no"] == 1){
+                $valueTwo = $this->valueAndMonth($city,$year-1,12,"00002"); //上一年12月份的生意額
+            }else{
+                $valueTwo = 0; //上月份的生意額
+            }
+            foreach ($rows as $key =>$row){
+                $row["valueOne"] = floatval($row["valueOne"]);
+                $valueTwo = $key==0?$valueTwo:floatval($rows[$key-1]["valueTwo"]);
+                $count = empty($valueTwo)||$valueTwo==0?0:$row["valueOne"]/$valueTwo;
+                $count*=100;
+                //month_no
+                $list[]=array('num'=>$row["month_no"],"text"=>$count,"len"=>0);
+            }
+        }
+        return $list;
+    }
+
     //員工考核分數
     public function valueStaffReview($employee_id,$year){
         $sum = 0;
@@ -465,6 +684,23 @@ class BossReview
         return $sum;
     }
 
+    //員工考核分數(详情)
+    protected function valueStaffReviewForDetail($listX,$funcList){
+        $employee_id = $this->employee_id;
+        $year = $this->audit_year;
+        $list = array();//month_no
+        $rows = Yii::app()->db->createCommand()->select("review_sum,year_type")->from("hr_review")
+            ->where("status_type=3 and employee_id=:employee_id and year=:year",array(":year"=>$year,":employee_id"=>$employee_id))
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $num = $row["year_type"]==1?1:7;
+                $list[]=array('num'=>$num,"text"=>floatval($row["review_sum"]),"len"=>5);
+            }
+        }
+        return $list;
+    }
+
     //总经理回馈次数
     public function valueFeedback($city,$year){
         $suffix = Yii::app()->params['envSuffix'];
@@ -474,6 +710,23 @@ class BossReview
             )
             ->queryScalar();
         return empty($row)?0:$row;
+    }
+
+    //总经理回馈次数(详情)
+    protected function valueFeedbackForDetail($listX,$funcList){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("date_format(request_dt,'%c') as month_no,count(id) as count_num")->from("swoper$suffix.swo_mgr_feedback")
+            ->where("date_format(request_dt,'%Y')=:year AND city=:city AND status='Y' AND (DATEDIFF(feedback_dt,request_dt)=0 OR DATEDIFF(feedback_dt,request_dt)=1)",
+                array(":year"=>$this->audit_year,":city"=>$this->city)
+            )->group("date_format(request_dt,'%c')")
+            ->queryAll();
+        $list=array();
+        if($rows){
+            foreach ($rows as $row){
+                $list[]=array('num'=>$row["month_no"],"text"=>$row["count_num"],"len"=>0);
+            }
+        }
+        return $list;
     }
 
     //销售5步曲 - 销售部分

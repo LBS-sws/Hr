@@ -10,6 +10,8 @@ class TimerCommand extends CConsoleCommand {
     protected $review_list = array();//老總年度考核列表
 
     public function run() {
+        $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
+
         $command = Yii::app()->db->createCommand();
         $firstday = date("Y/m/d");
         echo "----------------------------------------------\r\n";
@@ -61,7 +63,6 @@ class TimerCommand extends CConsoleCommand {
         $this->sendEmail();//統一發送郵件
 
         $this->dailyInAndOutHint();//入职、离职总览电邮
-        $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
         $this->resetBossListScore();//老总年度考核的總分重新計算
         echo "end\r\n";
     }
@@ -794,7 +795,6 @@ class TimerCommand extends CConsoleCommand {
             return;
         }
         $systemId = Yii::app()->params['systemId'];
-        echo "boss review start\r\n";
         $setSubject = "老总年度考核进度".date("(Y年m月)",strtotime("-2 month"));
         $email = new Email($setSubject,"",$setSubject);
         $userList = $email->getUserListToPrefix("BA01");
@@ -802,6 +802,7 @@ class TimerCommand extends CConsoleCommand {
             $bossList = $email->getOnlyLRTMUser();
             foreach ($userList as $user){
                 $email->resetToAddr();
+                $email->resetAttr();
                 $html = $this->bossReviewEmailHtml($user);
                 if(!empty($html)){
                     $email->setSubject($setSubject." - ".$user['name']);
@@ -827,12 +828,14 @@ class TimerCommand extends CConsoleCommand {
             if($userList){
                 foreach ($userList as $user){
                     $email->resetToAddr();
+                    $email->resetAttr();
                     $html ="";
 
                     foreach ($this->review_list as $reviewList){
                         if(empty($user["cityList"])||in_array($reviewList["city"],$user["cityList"])){
                             $html.=empty($html)?"":"<p style='border-bottom: 2px dashed #000'>&nbsp;</p>";
                             $html.=$reviewList["html"];
+                            $email->insertAttr($reviewList["attr"]["title"],$reviewList["attr"]["attr"]);
                         }
                     }
                     if(!empty($html)){
@@ -849,18 +852,24 @@ class TimerCommand extends CConsoleCommand {
     private function bossReviewEmailHtml($user){
         $year = date("Y");
         $html = "";
+        $rptBossPlanModel = new RptBossPlanList();
+        $rptBossPlanModel->year = $year;
+        $rptBossPlanModel->cityName = $user["city_name"];
+        $rptBossPlanModel->userName = $user["name"]." - ".$user["code"];
         $bossModel = new BossSearchForm();
         $bossModel->setDataToEmployeeIdAndYear($user["id"],$year,false);
         $bossModel->city = $user["city"];
         $bossModel->lcu = $user["username"];
         if($bossModel->status_type != 2){
             $html = "<h2>城市：".$user["city_name"]."</h2>";
-            $html .= "<h2>".$year."年老总年度考核 - ".$user["name"]."</h2>";
+            $title = $year."年老总年度考核 - ".$user["name"];
+            $html .= "<h2>{$title}</h2>";
             $list = array(
                 array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","width"=>"auto","colspan"=>8),
                 array("name"=>"（B） 其他细节部分","class"=>"BossReviewB","width"=>"auto","colspan"=>6),
                 array("name"=>"（C） 自选项目部分","class"=>"BossReviewC","width"=>"800px","colspan"=>4)
             );
+            $bodyList=array();
             foreach ($list as $key=>$item){
                 $html.="<p>&nbsp;</p>";
                 $html.="<table width='".$item["width"]."' border='1px' style='border-color:#000;'>";
@@ -868,9 +877,16 @@ class TimerCommand extends CConsoleCommand {
                 $className = $item["class"];
                 $bossReviewModel = new $className($bossModel,true);
                 $html .= $bossReviewModel->getTableHtmlToEmail();
+                $bodyList[$key]["title"]=$item["name"];
+                $bodyList[$key]["list"]=$bossReviewModel->getDetailList();
                 $html.="</table>";
             }
-            $this->review_list[] = array('city'=>$user["city"],'html'=>$html);
+            $rptBossPlanModel->setBodyList($bodyList);
+            $attr = array(
+                "title"=>$title,
+                "attr"=>$rptBossPlanModel->genReport(false)
+            );
+            $this->review_list[] = array('city'=>$user["city"],'html'=>$html,'attr'=>$attr);
         }
         return $html;
     }

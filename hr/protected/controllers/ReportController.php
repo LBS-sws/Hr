@@ -10,6 +10,7 @@ class ReportController extends Controller
         'leavelist'=>'YB03',
         'estimated'=>'YB08',
         'pinReport'=>'YB09',
+        'bossReport'=>'YB10',
     );
 	
 	public function filters()
@@ -95,6 +96,26 @@ class ReportController extends Controller
 		Yii::app()->session['active_func'] = $this->function_id;
 
         $model = new ReportEstimatedForm;
+        if (isset($_POST['ReportEstimatedForm'])) {
+            $model->attributes = $_POST['ReportEstimatedForm'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('estimated',array('model'=>$model));
+    }
+
+    public function actionBossReport() {
+		$this->function_id = self::$actions['bossReport'];
+		Yii::app()->session['active_func'] = $this->function_id;
+
+        $model = new ReportEstimatedForm;
+        $model->id = 'RptBossPlanList';
+        $model->name = Yii::t('app','Boss Audit Plan Report');
         if (isset($_POST['ReportEstimatedForm'])) {
             $model->attributes = $_POST['ReportEstimatedForm'];
             if ($model->validate()) {

@@ -205,6 +205,7 @@ return array(
     'Pin Name'=>'襟章名称',
     'Pin Table'=>'襟章发放统计表',
     'Pin Report'=>'襟章明细报表',
+    'Boss Audit Plan Report'=>'老总年度考核进度报表',
     //沈超添加结束
 );
 ?>

@@ -10,11 +10,20 @@ class Email {
 	protected $to_user=array(); 	//因通知記錄需要
 	protected $form_id='Email';
 	protected $rec_id=0;
+	protected $attrList=array();//附件
 
     public function __construct($subject="",$message="",$description=""){
         $this->subject = $subject;
         $this->message = $message;
         $this->description = $description;
+    }
+
+    public function insertAttr($file_name,$content){
+        $this->attrList[] = array('name'=>$file_name,'content'=>$content);
+    }
+
+    public function resetAttr(){
+        $this->attrList = array();
     }
 
     public function setMessage($message){
@@ -420,6 +429,16 @@ class Email {
             'lcu'=>$uid,
             'lcd'=>date('Y-m-d H:i:s'),
         ));
+
+        if(!empty($this->attrList)){
+            $id = Yii::app()->db->getLastInsertID();
+            if(is_numeric($id)&&!empty($id)){
+                foreach ($this->attrList as $attr){
+                    $attr["queue_id"]=$id;
+                    Yii::app()->db->createCommand()->insert("swoper$suffix.swo_email_queue_attm", $attr);
+                }
+            }
+        }
 
 		//新增通知記錄
  		$connection = Yii::app()->db;

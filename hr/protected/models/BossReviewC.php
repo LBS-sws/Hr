@@ -18,6 +18,7 @@ class BossReviewC
     public $scoreSum=0;
     public $ratio_c=15;//占比
     protected $searchBool = false;
+    private $detailList=array();//报表专用
 
     public function __construct($model='',$searchBool=false)
     {
@@ -102,6 +103,7 @@ class BossReviewC
         $html.="<thead><tr>";
         foreach ($this->listX as $item){
             $html.="<th width='$width'>".$item["name"]."</th>";
+            $this->detailList["title"][]=$item["name"];
         }
         $html.="</tr></thead>";
         if(isset($this->json_text["three"]["list"])){
@@ -110,6 +112,7 @@ class BossReviewC
                 $html.="<tr>";
                 foreach ($this->listX as $item){
                     $html.="<td width='$width'>".$list[$item["value"]]."</td>";
+                    $this->detailList[$key][]=$list[$item["value"]];
                 }
                 $html.="</tr>";
             }
@@ -118,6 +121,8 @@ class BossReviewC
             $html.=$this->json_text["three"]["count"]."</td>";
             $html.="<td>".$this->json_text["three"]["sum"]."</td>";
             $html.="</tr></tfoot>";
+            $this->detailList["footer"][]=$this->json_text["three"]["count"];
+            $this->detailList["footer"][]=$this->json_text["three"]["sum"];
         }
         return $html;
     }
@@ -204,5 +209,9 @@ class BossReviewC
         $html.="</tr>";
 
         return $html;
+    }
+
+    public function getDetailList(){
+        return $this->detailList;
     }
 }

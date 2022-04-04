@@ -476,6 +476,10 @@ return array(
 				'access'=>'YB08',
                 'url'=>'/report/estimated',
 			),
+            'Boss Audit Plan Report'=>array(//老总年度考核进度报表
+                'access'=>'YB10',
+                'url'=>'/report/bossReport',
+            ),
             'Pin Report'=>array(
                 'access'=>'YB09',
                 'url'=>'/report/pinReport',

@@ -6,7 +6,9 @@ class ExcelTool {
 	public function start() {
 		$phpExcelPath = Yii::getPathOfAlias('ext.phpexcel');
 		spl_autoload_unregister(array('YiiBase','autoload'));
-		include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+		if(!class_exists("PHPExcel",false)){
+            include($phpExcelPath . DIRECTORY_SEPARATOR . 'PHPExcel.php');
+        }
 	}
 	
 	public function end() {
