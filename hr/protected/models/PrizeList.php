@@ -87,7 +87,7 @@ class PrizeList extends CListPageModel
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
 
 		$this->attr = array();
-		$prizeList = $this->getPrizeList();
+		$prizeList = self::getPrizeList();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
 			    $colorList = $this->statusToColor($record['status']);
@@ -121,7 +121,7 @@ class PrizeList extends CListPageModel
         return $arr;
     }
 
-	public function getPrizeList(){
+	public static function getPrizeList(){
 	    return array(
 	        ''=>'',
 	        1=>Yii::t("fete","cleaner"), //清潔

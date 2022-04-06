@@ -309,7 +309,7 @@ class DeptForm extends CFormModel
         return $arr;
     }
     //獲取職位名字
-	public function getDeptToId($dept_id){
+	public static function getDeptToId($dept_id){
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
             ->where('id=:id', array(':id'=>$dept_id))->queryRow();
         if ($rows){

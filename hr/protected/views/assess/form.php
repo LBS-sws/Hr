@@ -215,32 +215,30 @@ $this->pageTitle=Yii::app()->name . ' - Assess Form';
             </div>
             <div class="modal-body"><!--  table-striped table-bordered table-hover-->
                 <div class="table_div">
-                    <table class="table table-fixed table-bordered table-hover">
-                        <table class="table table-striped table-bordered table-hover table-fixed">
-                            <thead>
-                            <tr>
-                                <th width="110px"><?php echo Yii::t('fete','Evaluation Time')?></th>
-                                <th width="90px"><?php echo Yii::t("fete","staff type");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","overall effect");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","service effect");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","service process");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","carefully");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","judge");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","deal");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","connect");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","obey");?></th>
-                                <th width="90px"><?php echo Yii::t("fete","leadership");?></th>
-                                <th width="100px"><?php echo Yii::t("fete","character");?></th>
-                                <th width="100px"><?php echo Yii::t("fete","assess");?></th>
-                                <th width="80px"><?php echo Yii::t("contract","Operation");?></th>
-                            </tr>
-                            </thead>
-                            <tbody id="body_history">
-                            <tr>
-                                <td colspan="14">加载中....</td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <table class="table table-striped table-bordered table-hover table-fixed">
+                        <thead>
+                        <tr>
+                            <th width="110px"><?php echo Yii::t('fete','Evaluation Time')?></th>
+                            <th width="90px"><?php echo Yii::t("fete","staff type");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","overall effect");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","service effect");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","service process");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","carefully");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","judge");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","deal");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","connect");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","obey");?></th>
+                            <th width="90px"><?php echo Yii::t("fete","leadership");?></th>
+                            <th width="200px"><?php echo Yii::t("fete","character");?></th>
+                            <th width="500px"><?php echo Yii::t("fete","assess");?></th>
+                            <th width="80px"><?php echo Yii::t("contract","Operation");?></th>
+                        </tr>
+                        </thead>
+                        <tbody id="body_history">
+                        <tr>
+                            <td colspan="14">加载中....</td>
+                        </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>

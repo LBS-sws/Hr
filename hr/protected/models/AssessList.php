@@ -232,37 +232,25 @@ class AssessList extends CListPageModel
         $rows = $connection->createCommand()->select("a.*,b.name as employee_name,b.code AS employee_code,b.city AS s_city,b.position")
             ->from("hr_assess a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id in ($checkId)")->queryAll();
+            ->where("a.id in ($checkId)")->order("a.employee_id asc,a.lcd desc")->queryAll();
         if($rows){
             $message = "";
             $email_title = "技术员评估 - ";
-            $staffTypeList = PrizeList::getPrizeList();
+            $list = array("name"=>array(),"staff"=>array());
             foreach ($rows as $row){
-                $message .= "<p>员工编号：".$row["employee_code"]."</p>";
-                $message .= "<p>员工名字：".$row["employee_name"]."</p>";
-                $message .= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
-                $message .= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
-                if(array_key_exists($row["staff_type"],$staffTypeList)){
-                    $message .= "<p>工种：".$staffTypeList[$row["staff_type"]]."</p>";
-                }else{
-                    $message .= "<p>工种：</p>";
+                if(!in_array($row["employee_name"],$list["name"])){
+                    $list["name"][]=$row["employee_name"];
                 }
-                $message .= "<p>整体效果：".$row["overall_effect"]."</p>";
-                $message .= "<p>服务效果：".$row["service_effect"]."</p>";
-                $message .= "<p>服务流程：".$row["service_process"]."</p>";
-                $message .= "<p>细心度：".$row["carefully"]."</p>";
-                $message .= "<p>判断力：".$row["judge"]."</p>";
-                $message .= "<p>处理能力：".$row["deal"]."</p>";
-                $message .= "<p>沟通能力：".$row["connects"]."</p>";
-                $message .= "<p>服从度：".$row["obey"]."</p>";
-                $message .= "<p>领导力：".$row["leadership"]."</p>";
-                $message .= "<p>性格：".$row["characters"]."</p>";
-                $message .= "<p>评估：".$row["assess"]."</p>";
-                $message .= "<p>评估人：".$this->getDisNameToUsername($row["lcu"])."</p>";
-                $message .="<p>&nbsp;</p>";
-                $message .="<p>------------------------------------------</p>";
-                $message .="<p>&nbsp;</p>";
-                $email_title.=$row["employee_name"]."、";
+                $list["staff"][$row["employee_id"]][]=$row;
+            }
+            $email_title.=implode("、",$list["name"]);
+            foreach ($list["staff"] as $staff_id=>$staffRows){
+                if(count($staffRows)>=2){
+                    $message.=$this->getMessageForMore($staffRows);
+                }else{//选择一个的时候，发送该员工的历史记录
+                    $id= $staffRows[0]["id"];
+                    $message.=$this->getMessageForOne($staff_id,$id);
+                }
             }
             $connection->createCommand()->insert("swoper$suffix.swo_email_queue", array(
                 'request_dt'=>date('Y-m-d H:i:s'),
@@ -279,5 +267,95 @@ class AssessList extends CListPageModel
                 'email_list'=>$to_addr,
             ), "id in ($checkId)");
         }
+    }
+
+    private function getMessageForOne($staff_id,$id){
+        $message="";
+        $staffTypeList = PrizeList::getPrizeList();
+        $rows = Yii::app()->db->createCommand()->select("a.*,b.name as employee_name,b.code AS employee_code,b.city AS s_city,b.position")
+            ->from("hr_assess a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.employee_id='{$staff_id}' and (a.email_bool=1 or a.id='$id')")->order("a.lcd desc")->limit(5)->queryAll();
+        if($rows){
+            $row = $rows[0];
+            $message.= "<p>员工编号：".$row["employee_code"]."</p>";
+            $message.= "<p>员工名字：".$row["employee_name"]."</p>";
+            $message.= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
+            $message.= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
+            $message.="<table style='table-layout:fixed' border='1px'><thead><tr>";
+            $message.='<th width="110px">评估日期</th>';
+            $message.='<th width="80px">工种</th>';
+            $message.='<th width="80px">整体效果</th>';
+            $message.='<th width="80px">服务效果</th>';
+            $message.='<th width="80px">服务流程</th>';
+            $message.='<th width="80px">细心度</th>';
+            $message.='<th width="80px">判断力</th>';
+            $message.='<th width="80px">处理能力</th>';
+            $message.='<th width="80px">沟通能力</th>';
+            $message.='<th width="80px">服从度</th>';
+            $message.='<th width="80px">领导力</th>';
+            $message.='<th width="200px">性格</th>';
+            $message.='<th width="500px">评估</th>';
+            $message.="</tr></thead>";
+            $message.="<tbody>";
+            foreach ($rows as $row){
+                $message.="<tr>";
+                $message.="<td>".date("Y-m-d",strtotime($row["lcd"]))."</td>";
+                if(array_key_exists($row["staff_type"],$staffTypeList)){
+                    $message.="<td>".$staffTypeList[$row["staff_type"]]."</td>";
+                }else{
+                    $message .= "<td>工种：无</td>";
+                }
+                $message.= "<td>".$row["overall_effect"]."</td>";
+                $message.= "<td>".$row["service_effect"]."</td>";
+                $message.= "<td>".$row["service_process"]."</td>";
+                $message.= "<td>".$row["carefully"]."</td>";
+                $message.= "<td>".$row["judge"]."</td>";
+                $message.= "<td>".$row["deal"]."</td>";
+                $message.= "<td>".$row["connects"]."</td>";
+                $message.= "<td>".$row["obey"]."</td>";
+                $message.= "<td>".$row["leadership"]."</td>";
+                $message.= "<td>".$row["characters"]."</td>";
+                $message.= "<td>".$row["assess"]."</td>";
+                $message.="</tr>";
+            }
+            $message.="</tbody></table>";
+            $message .="<p>&nbsp;</p>";
+            $message .="<p>------------------------------------------</p>";
+            $message .="<p>&nbsp;</p>";
+        }
+        return $message;
+    }
+
+    private function getMessageForMore($staffRows){
+        $staffTypeList = PrizeList::getPrizeList();
+        $message="";
+        foreach ($staffRows as $row){
+            $message .= "<p>员工编号：".$row["employee_code"]."</p>";
+            $message .= "<p>员工名字：".$row["employee_name"]."</p>";
+            $message .= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
+            $message .= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
+            if(array_key_exists($row["staff_type"],$staffTypeList)){
+                $message .= "<p>工种：".$staffTypeList[$row["staff_type"]]."</p>";
+            }else{
+                $message .= "<p>工种：</p>";
+            }
+            $message .= "<p>整体效果：".$row["overall_effect"]."</p>";
+            $message .= "<p>服务效果：".$row["service_effect"]."</p>";
+            $message .= "<p>服务流程：".$row["service_process"]."</p>";
+            $message .= "<p>细心度：".$row["carefully"]."</p>";
+            $message .= "<p>判断力：".$row["judge"]."</p>";
+            $message .= "<p>处理能力：".$row["deal"]."</p>";
+            $message .= "<p>沟通能力：".$row["connects"]."</p>";
+            $message .= "<p>服从度：".$row["obey"]."</p>";
+            $message .= "<p>领导力：".$row["leadership"]."</p>";
+            $message .= "<p>性格：".$row["characters"]."</p>";
+            $message .= "<p>评估：".$row["assess"]."</p>";
+            $message .= "<p>评估人：".$this->getDisNameToUsername($row["lcu"])."</p>";
+            $message .="<p>&nbsp;</p>";
+            $message .="<p>------------------------------------------</p>";
+            $message .="<p>&nbsp;</p>";
+        }
+        return $message;
     }
 }
