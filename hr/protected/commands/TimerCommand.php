@@ -10,6 +10,7 @@ class TimerCommand extends CConsoleCommand {
     protected $review_list = array();//老總年度考核列表
 
     public function run() {
+
         $this->bossReviewEmailToMonth();//老总年度考核邮件（一个月提示一次)
 
         $command = Yii::app()->db->createCommand();
@@ -62,6 +63,7 @@ class TimerCommand extends CConsoleCommand {
 
         $this->sendEmail();//統一發送郵件
 
+        $this->probationEndHint();//试用期即将结束的邮件提醒14天、7天、当天
         $this->dailyInAndOutHint();//入职、离职总览电邮
         $this->resetBossListScore();//老总年度考核的總分重新計算
         echo "end\r\n";
@@ -944,6 +946,42 @@ class TimerCommand extends CConsoleCommand {
                     'results_b'=>$model->results_b,
                     'results_sum'=>$model->results_sum,
                 ), 'id=:id', array(':id'=>$row['id']));
+            }
+        }
+    }
+
+    //试用期即将结束的邮件提醒14天、7天、当天
+    private function probationEndHint(){
+        $systemId = Yii::app()->params['systemId'];
+        $suffix = Yii::app()->params['envSuffix'];
+        $dayOne = date("Y-m-d");
+        $dayTwo = date("Y-m-d",strtotime("+7 days"));
+        $dayThree = date("Y-m-d",strtotime("+14 days"));
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.code,a.name,a.entry_time,a.city,a.test_start_time,a.test_end_time,f.name as city_name,b.name as dept_name")
+            ->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->leftJoin("security{$suffix}.sec_city f","a.city = f.code")
+            ->where("a.test_type=1 and a.staff_status not in (-1,1) and replace(test_end_time,'/', '-') in ('{$dayOne}','{$dayTwo}','{$dayThree}')")->queryAll();
+        //var_dump($rows);
+        if($rows){
+            $setSubject="试用期到期提醒";
+            $email = new Email($setSubject,"",$setSubject);
+            foreach ($rows as $row){
+                $email->resetToAddr();
+                $message ="<p>员工编号：{$row['code']}</p>";
+                $message.="<p>员工姓名：{$row['name']}</p>";
+                $message.="<p>员工城市：{$row['city_name']}</p>";
+                $message.="<p>员工职位：{$row['dept_name']}</p>";
+                $message.="<p>入职日期：{$row['entry_time']}</p>";
+                $message.="<p>试用期时间：".CGeneral::toDate($row['test_start_time'])." ~ ".CGeneral::toDate($row['test_end_time'])."</p>";
+                $message.="<p style='color: red;'>温馨提示：该员工试用期准备到期，请提前做好试用期转正准备。如已处理，请忽略本条信息。</p>";
+                $email->setMessage($message);
+                $email->setSubject($row["name"].$setSubject);
+                $email->setDescription($row["name"].$setSubject);
+                $email->addEmailToPrefixAndOnlyCity("ZE01",$row["city"]);
+                $email->addEmailToCity($row["city"]);
+                $email->sent("系统发送",$systemId);
             }
         }
     }
