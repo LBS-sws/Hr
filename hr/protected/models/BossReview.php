@@ -372,7 +372,7 @@ class BossReview
     public function value($city,$year,$data_field){
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and b.month_no<='$this->search_month'";
+            $sqlExpr=" and b.month_no<=$this->search_month ";
         }
         //$data_field 00002:生意額增長 00067:利潤增長 00021:收款率 00017:停單比例 00018:技术员每月平均生产力
         $suffix = Yii::app()->params['envSuffix'];
@@ -389,7 +389,7 @@ class BossReview
     public function valueHdr($city,$year){
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and month_no<='$this->search_month'";
+            $sqlExpr=" and month_no<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $sum = Yii::app()->db->createCommand()->select("AVG(f73)")
@@ -404,7 +404,7 @@ class BossReview
     protected function valueHdrForDetail($listX,$funcList){
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and month_no<='$this->search_month'";
+            $sqlExpr=" and month_no<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $list = array();
@@ -425,7 +425,7 @@ class BossReview
     protected function valueForDetail($listX,$funcList){
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and b.month_no<='$this->search_month'";
+            $sqlExpr=" and b.month_no<=$this->search_month ";
         }
         $data_field =$funcList["data_field"];
         //$data_field 00002:生意額增長 00067:利潤增長 00021:收款率 00017:停單比例 00018:技术员每月平均生产力
@@ -449,7 +449,7 @@ class BossReview
         //
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and b.month_no<='$this->search_month'";
+            $sqlExpr=" and b.month_no<=$this->search_month ";
         }
         if($year>=2022){//2022年需要计算隔油池及ID服务
             $suffix = Yii::app()->params['envSuffix'];
@@ -483,7 +483,7 @@ class BossReview
         //
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and b.month_no<='$this->search_month'";
+            $sqlExpr=" and b.month_no<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         if($this->audit_year>=2022){//2022年需要计算隔油池及ID服务
@@ -520,7 +520,7 @@ class BossReview
         //00018:技术员每月平均生产力
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and b.month_no<='$this->search_month'";
+            $sqlExpr=" and b.month_no<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $sum = 0;
@@ -596,8 +596,8 @@ class BossReview
         $sqlExpr1 = "";
         $sqlExpr2 = "";
         if(!empty($this->search_month)){
-            $sqlExpr1=" and date_format(a.status_dt,'%c')<='$this->search_month'";
-            $sqlExpr2=" and date_format(a.first_dt,'%c')<='$this->search_month'";
+            $sqlExpr1=" and date_format(a.status_dt,'%c')<=$this->search_month ";
+            $sqlExpr2=" and date_format(a.first_dt,'%c')<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         //服務類型的第二欄是非一次性服務(ID服務)
@@ -625,8 +625,8 @@ class BossReview
         $sqlExpr1 = "";
         $sqlExpr2 = "";
         if(!empty($this->search_month)){
-            $sqlExpr1=" and date_format(a.status_dt,'%c')<='$this->search_month'";
-            $sqlExpr2=" and date_format(a.first_dt,'%c')<='$this->search_month'";
+            $sqlExpr1=" and date_format(a.status_dt,'%c')<=$this->search_month ";
+            $sqlExpr2=" and date_format(a.first_dt,'%c')<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $list = array();
@@ -757,7 +757,7 @@ class BossReview
     public function valueFeedback($city,$year){
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and date_format(request_dt,'%c')<='$this->search_month'";
+            $sqlExpr=" and date_format(request_dt,'%c')<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()->select("count(*)")->from("swoper$suffix.swo_mgr_feedback")
@@ -772,7 +772,7 @@ class BossReview
     protected function valueFeedbackForDetail($listX,$funcList){
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and date_format(request_dt,'%c')<='$this->search_month'";
+            $sqlExpr=" and date_format(request_dt,'%c')<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()->select("date_format(request_dt,'%c') as month_no,count(id) as count_num")->from("swoper$suffix.swo_mgr_feedback")
@@ -803,14 +803,7 @@ class BossReview
         if($rows){
             $count = count($rows);
             foreach ($rows as $row){
-                /*  查询月份不影响销售5步曲分数
-                if(!empty($this->search_month)){
-                    if(date("Y/n",strtotime($row["entry_time"]))>"{$year}/$this->search_month"){
-                        $count--;
-                        continue; //入职时间大于查询时间
-                    }
-                }
-                */
+                /*  查询月份不影响销售5步曲分数*/
                 $datetime = date("Y/m/d",strtotime($row["entry_time"]." + 2 month"));
                 $bool = Yii::app()->db->createCommand()->select("username")->from("sales$suffix.sal_fivestep")
                     ->where("step in ('1','2','3') and username=:username and date_format(rec_dt,'%Y/%m/%d') <=:datetime",
@@ -873,7 +866,7 @@ class BossReview
     private function getValueListToArr($arr,$city,$year){
         $sqlExpr = "";
         if(!empty($this->search_month)){
-            $sqlExpr=" and b.month_no<='$this->search_month'";
+            $sqlExpr=" and b.month_no<=$this->search_month ";
         }
         $suffix = Yii::app()->params['envSuffix'];
         $sql = "SELECT b.year_no,b.month_no,
