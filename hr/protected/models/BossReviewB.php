@@ -238,20 +238,8 @@ class BossReviewB extends BossReview
                 break;
             case "now"://累计到当月应达成数据
                 $value=$value/12;
-                $year = intval(date("Y"));
-                if($this->audit_year == $year){
-                    $num = intval(date("m"));
-                    if(intval(date("d")) == 1){
-                        $num-=2;
-                    }
-                    $num = $num<1?1:$num;
-                }elseif($this->audit_year > $year){
-                    $num = 0;
-                }else{
-                    $num = 12;
-                }
-                $value*=$num;
                 $value = round($value);
+                $value*=$this->search_month;
                 break;
         }
         return $value;

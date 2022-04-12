@@ -113,11 +113,9 @@ class ReportController extends Controller
 		$this->function_id = self::$actions['bossReport'];
 		Yii::app()->session['active_func'] = $this->function_id;
 
-        $model = new ReportEstimatedForm;
-        $model->id = 'RptBossPlanList';
-        $model->name = Yii::t('app','Boss Audit Plan Report');
-        if (isset($_POST['ReportEstimatedForm'])) {
-            $model->attributes = $_POST['ReportEstimatedForm'];
+        $model = new ReportBossAuditForm();
+        if (isset($_POST['ReportBossAuditForm'])) {
+            $model->attributes = $_POST['ReportBossAuditForm'];
             if ($model->validate()) {
                 $model->addQueueItem();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
@@ -126,7 +124,7 @@ class ReportController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
             }
         }
-        $this->render('estimated',array('model'=>$model));
+        $this->render('bossAudit',array('model'=>$model));
     }
 
     public function actionPennantexlist() {

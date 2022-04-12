@@ -11,6 +11,7 @@ class BossReview
     public $ready=true;//禁止用戶修改
     public $className="";//表單的name前綴
     public $audit_year=0;//考核年限
+    public $search_month=0;//查詢的月份（0:所有月份）
     public $city='';//城市
     public $ratio_a=50;//占比
     public $ratio_b=35;//占比
@@ -196,7 +197,7 @@ class BossReview
         $this->detailList["title"]["list"][]=$this->audit_year.Yii::t("contract"," monthly complete");
         $html.="</tr></thead><tbody>";
 
-        for($i=1;$i<=12;$i++){
+        for($i=1;$i<=$this->search_month;$i++){
             $this->detailList["title"]["info"][$i]=array('num'=>$i,'text'=>$i.Yii::t("report","Month"),'len'=>0);
         }
 
@@ -239,13 +240,15 @@ class BossReview
                         $nowNum = $this->getEveryOrNowNumber($listX["value"],"now");
                         $tableTr.="<td>".$eveyNum."</td>";
                         $tableTr.="<td>".$nowNum."</td>";
+                        $this->detailList[$rowKey]["list"][]=$eveyNum;
+                        $this->detailList[$rowKey]["list"][]=$nowNum;
                     }else{
                         $eveyNum = "/";
                         $tableTr.="<td>".$eveyNum."</td>";
                         $tableTr.="<td>".$eveyNum."</td>";
+                        $this->detailList[$rowKey]["list"][]=$eveyNum;
+                        $this->detailList[$rowKey]["list"][]=$eveyNum;
                     }
-                    $this->detailList[$rowKey]["list"][]=$eveyNum;
-                    $this->detailList[$rowKey]["list"][]=$eveyNum;
                 }
             }
             if($listX["value"]=="two_one"||(key_exists("pro_str",$listX)&&$listX["pro_str"]=="%")){
@@ -367,12 +370,16 @@ class BossReview
 
     //提取月报表数据
     public function value($city,$year,$data_field){
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and b.month_no<='$this->search_month'";
+        }
         //$data_field 00002:生意額增長 00067:利潤增長 00021:收款率 00017:停單比例 00018:技术员每月平均生产力
         $suffix = Yii::app()->params['envSuffix'];
         $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
             ->from("swoper$suffix.swo_monthly_dtl a")
             ->leftJoin("swoper$suffix.swo_monthly_hdr b","b.id = a.hdr_id")
-            ->where("b.city = :city AND b.year_no = :year AND a.data_field=:field",
+            ->where("b.city = :city $sqlExpr AND b.year_no = :year AND a.data_field=:field",
                 array(":city"=>$city,":year"=>$year,":field"=>$data_field)
             )->queryScalar();
         return empty($sum)||$sum==null?0:$sum;
@@ -380,10 +387,14 @@ class BossReview
 
     //提取月报表数据
     public function valueHdr($city,$year){
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and month_no<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $sum = Yii::app()->db->createCommand()->select("AVG(f73)")
             ->from("swoper$suffix.swo_monthly_hdr")
-            ->where("city = :city AND year_no = :year",
+            ->where("city = :city AND year_no = :year $sqlExpr",
                 array(":city"=>$city,":year"=>$year)
             )->queryScalar();
         return empty($sum)||$sum==null?0:$sum;
@@ -391,11 +402,15 @@ class BossReview
 
     //提取月报表数据
     protected function valueHdrForDetail($listX,$funcList){
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and month_no<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $list = array();
         $rows = Yii::app()->db->createCommand()->select("f73,month_no")
             ->from("swoper$suffix.swo_monthly_hdr")
-            ->where("city = :city AND year_no = :year",
+            ->where("city = :city AND year_no = :year $sqlExpr",
                 array(":city"=>$this->city,":year"=>$this->audit_year)
             )->queryAll();
         if($rows){
@@ -408,13 +423,17 @@ class BossReview
 
     //提取月报表数据(详情)
     protected function valueForDetail($listX,$funcList){
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and b.month_no<='$this->search_month'";
+        }
         $data_field =$funcList["data_field"];
         //$data_field 00002:生意額增長 00067:利潤增長 00021:收款率 00017:停單比例 00018:技术员每月平均生产力
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()->select("a.data_value,b.month_no")
             ->from("swoper$suffix.swo_monthly_dtl a")
             ->leftJoin("swoper$suffix.swo_monthly_hdr b","b.id = a.hdr_id")
-            ->where("b.city = :city AND b.year_no = :year AND a.data_field=:field",
+            ->where("b.city = :city $sqlExpr AND b.year_no = :year AND a.data_field=:field",
                 array(":city"=>$this->city,":year"=>$this->audit_year,":field"=>$data_field)
             )->order("b.month_no asc")->queryAll();
         $list=array();
@@ -428,12 +447,16 @@ class BossReview
     //提取营业报告表数据
     public function valueToOp($city,$year){
         //
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and b.month_no<='$this->search_month'";
+        }
         if($year>=2022){//2022年需要计算隔油池及ID服务
             $suffix = Yii::app()->params['envSuffix'];
             $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
                 ->from("operation$suffix.opr_monthly_dtl a")
                 ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
-                ->where("b.city = :city 
+                ->where("b.city = :city $sqlExpr 
             AND b.year_no = :year 
             AND a.data_field in ('10005','100055','10004','20001','20002') 
             AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
@@ -445,7 +468,7 @@ class BossReview
             $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
                 ->from("operation$suffix.opr_monthly_dtl a")
                 ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
-                ->where("b.city = :city 
+                ->where("b.city = :city $sqlExpr 
             AND b.year_no = :year 
             AND a.data_field in ('10005','10004') 
             AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
@@ -458,12 +481,16 @@ class BossReview
     //提取营业报告表数据(详情)
     protected function valueToOpForDetail($listX,$funcList){
         //
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and b.month_no<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         if($this->audit_year>=2022){//2022年需要计算隔油池及ID服务
             $rows = Yii::app()->db->createCommand()->select("a.data_value,b.month_no")
                 ->from("operation$suffix.opr_monthly_dtl a")
                 ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
-                ->where("b.city = :city 
+                ->where("b.city = :city $sqlExpr 
             AND b.year_no = :year 
             AND a.data_field in ('10005','100055','10004','20001','20002') 
             AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
@@ -473,7 +500,7 @@ class BossReview
             $rows = Yii::app()->db->createCommand()->select("a.data_value,b.month_no")
                 ->from("operation$suffix.opr_monthly_dtl a")
                 ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
-                ->where("b.city = :city 
+                ->where("b.city = :city $sqlExpr 
             AND b.year_no = :year 
             AND a.data_field in ('10005','10004') 
             AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
@@ -491,12 +518,16 @@ class BossReview
     //平均值
     public function valueAverage($city,$year,$data_field='00018'){
         //00018:技术员每月平均生产力
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and b.month_no<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $sum = 0;
         $rows = Yii::app()->db->createCommand()->select("a.data_value")
             ->from("swoper$suffix.swo_monthly_dtl a")
             ->leftJoin("swoper$suffix.swo_monthly_hdr b","b.id = a.hdr_id")
-            ->where("b.city = :city AND b.year_no = :year AND a.data_field=:field",
+            ->where("b.city = :city $sqlExpr AND b.year_no = :year AND a.data_field=:field",
                 array(":city"=>$city,":year"=>$year,":field"=>$data_field)
             )->queryAll();
         if($rows){
@@ -562,11 +593,17 @@ class BossReview
 
     //蔚诺租赁服务机器台数
     public function valueServiceNum($city,$year){
+        $sqlExpr1 = "";
+        $sqlExpr2 = "";
+        if(!empty($this->search_month)){
+            $sqlExpr1=" and date_format(a.status_dt,'%c')<='$this->search_month'";
+            $sqlExpr2=" and date_format(a.first_dt,'%c')<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         //服務類型的第二欄是非一次性服務(ID服務)
         $row = Yii::app()->db->createCommand()->select("sum(a.amt_money)")->from("swoper$suffix.swo_serviceid a")
             ->leftJoin("swoper$suffix.swo_customer_type_info b","b.id = a.cust_type_name")
-            ->where("b.single=0 and date_format(a.status_dt,'%Y')=:year AND a.status='N' AND a.city=:city",
+            ->where("b.single=0 $sqlExpr1 and date_format(a.status_dt,'%Y')=:year AND a.status='N' AND a.city=:city",
                 array(":year"=>$year,":city"=>$city)
             )->queryScalar();
         $row = empty($row)?0:$row;
@@ -576,7 +613,7 @@ class BossReview
             ->from("swoper$suffix.swo_service a")
             ->leftJoin("swoper$suffix.swo_customer_type_twoname b","a.cust_type_name = b.id")
             ->leftJoin("swoper$suffix.swo_customer_type c","a.cust_type = c.id")
-            ->where("b.bring = 1 and a.status = 'N' and date_format(a.first_dt,'%Y')=:year AND a.city=:city",
+            ->where("b.bring = 1 and a.status = 'N' $sqlExpr2 and date_format(a.first_dt,'%Y')=:year AND a.city=:city",
                 array(":year"=>$year,":city"=>$city)
             )->queryScalar();
         $serviceMoney = empty($serviceMoney)?0:$serviceMoney;
@@ -585,12 +622,18 @@ class BossReview
 
     //蔚诺租赁服务机器台数(详情)
     protected function valueServiceNumForDetail($listX,$funcList){
+        $sqlExpr1 = "";
+        $sqlExpr2 = "";
+        if(!empty($this->search_month)){
+            $sqlExpr1=" and date_format(a.status_dt,'%c')<='$this->search_month'";
+            $sqlExpr2=" and date_format(a.first_dt,'%c')<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $list = array();
         //服務類型的第二欄是非一次性服務(ID服務)
         $serviceIDRows = Yii::app()->db->createCommand()->select("date_format(a.status_dt,'%c') as month_no,sum(a.amt_money) as sum_num")->from("swoper$suffix.swo_serviceid a")
             ->leftJoin("swoper$suffix.swo_customer_type_info b","b.id = a.cust_type_name")
-            ->where("b.single=0 and date_format(a.status_dt,'%Y')=:year AND a.status='N' AND a.city=:city",
+            ->where("b.single=0 $sqlExpr1 and date_format(a.status_dt,'%Y')=:year AND a.status='N' AND a.city=:city",
                 array(":year"=>$this->audit_year,":city"=>$this->city)
             )->group("date_format(a.status_dt,'%c')")->queryAll();
         if($serviceIDRows){
@@ -607,9 +650,9 @@ class BossReview
             ->from("swoper$suffix.swo_service a")
             ->leftJoin("swoper$suffix.swo_customer_type_twoname b","a.cust_type_name = b.id")
             ->leftJoin("swoper$suffix.swo_customer_type c","a.cust_type = c.id")
-            ->where("b.bring = 1 and a.status = 'N' and date_format(a.first_dt,'%Y')=:year AND a.city=:city",
+            ->where("b.bring = 1 and a.status = 'N' $sqlExpr2 and date_format(a.first_dt,'%Y')=:year AND a.city=:city",
                 array(":year"=>$this->audit_year,":city"=>$this->city)
-            )->group("date_format(a.status_dt,'%c')")->queryAll();
+            )->group("date_format(a.first_dt,'%c')")->queryAll();
         if($serviceOtherRows){
             foreach ($serviceOtherRows as $row){
                 if(!key_exists($row["month_no"],$list)){
@@ -671,9 +714,13 @@ class BossReview
 
     //員工考核分數
     public function valueStaffReview($employee_id,$year){
+        $sqlExpr = "";
+        if(!empty($this->search_month)&&$this->search_month<=6){
+            $sqlExpr=" and year_type=1";
+        }
         $sum = 0;
         $rows = Yii::app()->db->createCommand()->select("review_sum")->from("hr_review")
-            ->where("status_type=3 and employee_id=:employee_id and year=:year",array(":year"=>$year,":employee_id"=>$employee_id))
+            ->where("status_type=3 and employee_id=:employee_id and year=:year $sqlExpr",array(":year"=>$year,":employee_id"=>$employee_id))
             ->queryAll();
         if($rows){
             foreach ($rows as $row){
@@ -686,16 +733,21 @@ class BossReview
 
     //員工考核分數(详情)
     protected function valueStaffReviewForDetail($listX,$funcList){
+        $sqlExpr = "";
+        if(!empty($this->search_month)&&$this->search_month<=6){
+            $sqlExpr=" and year_type=1";
+        }
         $employee_id = $this->employee_id;
         $year = $this->audit_year;
         $list = array();//month_no
         $rows = Yii::app()->db->createCommand()->select("review_sum,year_type")->from("hr_review")
-            ->where("status_type=3 and employee_id=:employee_id and year=:year",array(":year"=>$year,":employee_id"=>$employee_id))
+            ->where("status_type=3 and employee_id=:employee_id and year=:year $sqlExpr",array(":year"=>$year,":employee_id"=>$employee_id))
             ->queryAll();
         if($rows){
-            foreach ($rows as $row){
+            foreach ($rows as $key=>$row){
+                $len = !empty($this->search_month)&&$this->search_month<=6?$this->search_month-1:($key==0?5:$this->search_month-7);
                 $num = $row["year_type"]==1?1:7;
-                $list[]=array('num'=>$num,"text"=>floatval($row["review_sum"]),"len"=>5);
+                $list[]=array('num'=>$num,"text"=>floatval($row["review_sum"]),"len"=>$len);
             }
         }
         return $list;
@@ -703,9 +755,13 @@ class BossReview
 
     //总经理回馈次数
     public function valueFeedback($city,$year){
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and date_format(request_dt,'%c')<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()->select("count(*)")->from("swoper$suffix.swo_mgr_feedback")
-            ->where("date_format(request_dt,'%Y')=:year AND city=:city AND status='Y' AND (DATEDIFF(feedback_dt,request_dt)=0 OR DATEDIFF(feedback_dt,request_dt)=1)",
+            ->where("date_format(request_dt,'%Y')=:year $sqlExpr AND city=:city AND status='Y' AND (DATEDIFF(feedback_dt,request_dt)=0 OR DATEDIFF(feedback_dt,request_dt)=1)",
                 array(":year"=>$year,":city"=>$city)
             )
             ->queryScalar();
@@ -714,9 +770,13 @@ class BossReview
 
     //总经理回馈次数(详情)
     protected function valueFeedbackForDetail($listX,$funcList){
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and date_format(request_dt,'%c')<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $rows = Yii::app()->db->createCommand()->select("date_format(request_dt,'%c') as month_no,count(id) as count_num")->from("swoper$suffix.swo_mgr_feedback")
-            ->where("date_format(request_dt,'%Y')=:year AND city=:city AND status='Y' AND (DATEDIFF(feedback_dt,request_dt)=0 OR DATEDIFF(feedback_dt,request_dt)=1)",
+            ->where("date_format(request_dt,'%Y')=:year $sqlExpr AND city=:city AND status='Y' AND (DATEDIFF(feedback_dt,request_dt)=0 OR DATEDIFF(feedback_dt,request_dt)=1)",
                 array(":year"=>$this->audit_year,":city"=>$this->city)
             )->group("date_format(request_dt,'%c')")
             ->queryAll();
@@ -732,7 +792,7 @@ class BossReview
     //销售5步曲 - 销售部分
     public function valueSalesOne($year,$city){
         $suffix = Yii::app()->params['envSuffix'];
-        $count = 0;
+        $sum = 0;
         $rows = Yii::app()->db->createCommand()->select("d.user_id,a.entry_time")->from("hr_binding d")
             ->leftJoin("hr_employee a","d.employee_id=a.id")
             ->leftJoin("hr_dept b","a.position=b.id")
@@ -741,22 +801,31 @@ class BossReview
                 array(":year"=>$year,":city"=>$city)
             )->queryAll();
         if($rows){
+            $count = count($rows);
             foreach ($rows as $row){
+                /*  查询月份不影响销售5步曲分数
+                if(!empty($this->search_month)){
+                    if(date("Y/n",strtotime($row["entry_time"]))>"{$year}/$this->search_month"){
+                        $count--;
+                        continue; //入职时间大于查询时间
+                    }
+                }
+                */
                 $datetime = date("Y/m/d",strtotime($row["entry_time"]." + 2 month"));
                 $bool = Yii::app()->db->createCommand()->select("username")->from("sales$suffix.sal_fivestep")
                     ->where("step in ('1','2','3') and username=:username and date_format(rec_dt,'%Y/%m/%d') <=:datetime",
                         array(":username"=>$row["user_id"],":datetime"=>$datetime)
                     )->queryRow();
                 if($bool){
-                    $count++;
+                    $sum++;
                 }
             }
-            $count = ($count/count($rows))*100;
+            $sum = empty($count)?0:($sum/$count)*100;
         }
-        return floatval(sprintf("%.2f",$count));
+        return floatval(sprintf("%.2f",$sum));
     }
 
-    //销售5步曲 - 销售经理部分
+    //销售5步曲 - 销售经理部分(已弃置)
     public function valueSalesTwo($year,$city){
         $suffix = Yii::app()->params['envSuffix'];
         $count = 0;
@@ -802,13 +871,17 @@ class BossReview
 
     //將某兩行轉換成兩列 （用於當月的兩個值相除）
     private function getValueListToArr($arr,$city,$year){
+        $sqlExpr = "";
+        if(!empty($this->search_month)){
+            $sqlExpr=" and b.month_no<='$this->search_month'";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $sql = "SELECT b.year_no,b.month_no,
                     SUM(CASE a.data_field WHEN '".$arr[0]."' THEN convert(a.data_value,decimal(18,2)) ELSE 0 END) as valueOne,
                     SUM(CASE a.data_field WHEN '".$arr[1]."' THEN convert(a.data_value,decimal(18,2)) ELSE 0 END) as valueTwo 
                 FROM swoper$suffix.swo_monthly_dtl a
                 LEFT JOIN swoper$suffix.swo_monthly_hdr b ON a.hdr_id = b.id
-                WHERE b.city='$city' AND a.data_field in('".implode("','",$arr)."') AND b.year_no = '$year' 
+                WHERE b.city='$city' AND a.data_field in('".implode("','",$arr)."') AND b.year_no = '$year' $sqlExpr  
                 GROUP BY b.year_no,b.month_no ORDER BY b.month_no ASC";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         return $rows;

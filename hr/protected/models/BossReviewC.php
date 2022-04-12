@@ -11,6 +11,7 @@ class BossReviewC
     public $ready=true;//禁止用戶修改
     public $className="";//表單的name前綴
     public $audit_year;//考核年限
+    public $search_month=0;//查詢的月份（0:所有月份）
     public $status_type;//表單狀態
     public $listX=array();
     public $listY=array();
@@ -49,6 +50,10 @@ class BossReviewC
 
     protected function setListY(){
         $this->listY = array();
+    }
+
+    public function resetListX($list){
+        return;
     }
 
     public function validateJson(&$model,$bool=true){
@@ -112,7 +117,7 @@ class BossReviewC
                 $html.="<tr>";
                 foreach ($this->listX as $item){
                     $html.="<td width='$width'>".$list[$item["value"]]."</td>";
-                    $this->detailList[$key][]=$list[$item["value"]];
+                    $this->detailList["{$key}_01"][]=$list[$item["value"]];
                 }
                 $html.="</tr>";
             }

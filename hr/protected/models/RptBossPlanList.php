@@ -4,6 +4,7 @@ class RptBossPlanList extends CReport {
     protected $sheetname="无";
     private $city="HK";
     public $year="2021";
+    public $month=0;
     public $userName="";
     public $cityName="";
     private $headList = array();
@@ -22,6 +23,7 @@ class RptBossPlanList extends CReport {
 
 	protected function retrieveData() {
         $this->year = $this->criteria['YEAR'];
+        $this->month = $this->criteria['MONTH'];
         $this->city = $this->criteria['CITY'];
         $this->cityName = $this->criteria['CITY_NAME'];
 
@@ -38,6 +40,8 @@ class RptBossPlanList extends CReport {
             foreach ($list as $key=>$item){
                 $className = $item["class"];
                 $bossReviewModel = new $className($bossModel,true);
+                $bossReviewModel->resetListX($bossModel->json_listX);
+                $bossReviewModel->search_month = $this->month;
                 $bossReviewModel->getTableHtmlToEmail();
                 $this->bodyList[$key]["title"]=$item["name"];
                 $this->bodyList[$key]["list"]=$bossReviewModel->getDetailList();
@@ -117,7 +121,7 @@ class RptBossPlanList extends CReport {
                 $listCount = 0;
                 if(key_exists("list",$bodyList)&&!empty($bodyList["list"])){
                     foreach ($bodyList["list"] as $key=>$row){
-                        $this->excel->setColWidth($j, 15);
+                        $this->excel->setColWidth($j, 20);
                         $this->excel->writeCell($j, $this->current_row,$row,array("align"=>"C","valign"=>"C"));
 
                         if($bodyKey=="title"||$key==0){
@@ -156,9 +160,13 @@ class RptBossPlanList extends CReport {
         $this->current_row = 1;
         $this->excel->getActiveSheet()->setTitle($sheet["title"]);
         if($index!=3){
-            $this->excel->getActiveSheet()->freezePane('B6');
+            if($index==1){
+                $this->excel->getActiveSheet()->freezePane('G6');
+            }else{
+                $this->excel->getActiveSheet()->freezePane('F6');
+            }
         }
-        $this->setTextForTop(1,"年份：{$this->year}");
+        $this->setTextForTop(1,"年份：{$this->year}   月份：1月至{$this->month}月");
         $this->excel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight(25);
         $this->current_row++;
         $this->setTextForTop(1,"员工：{$this->userName}");

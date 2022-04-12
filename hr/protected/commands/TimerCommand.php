@@ -853,9 +853,12 @@ class TimerCommand extends CConsoleCommand {
 
     private function bossReviewEmailHtml($user){
         $year = date("Y");
+        $month = date("n",strtotime("-2 months"));
+        $month = $month>10?0:$month;
         $html = "";
         $rptBossPlanModel = new RptBossPlanList();
         $rptBossPlanModel->year = $year;
+        $rptBossPlanModel->month = $month;
         $rptBossPlanModel->cityName = $user["city_name"];
         $rptBossPlanModel->userName = $user["name"]." - ".$user["code"];
         $bossModel = new BossSearchForm();
@@ -878,6 +881,8 @@ class TimerCommand extends CConsoleCommand {
                 $html.="<thead><tr><td colspan='".$item["colspan"]."'><b>".$item["name"]."</b></td></tr></thead>";
                 $className = $item["class"];
                 $bossReviewModel = new $className($bossModel,true);
+                $bossReviewModel->resetListX($bossModel->json_listX);
+                $bossReviewModel->search_month = $month;
                 $html .= $bossReviewModel->getTableHtmlToEmail();
                 $bodyList[$key]["title"]=$item["name"];
                 $bodyList[$key]["list"]=$bossReviewModel->getDetailList();
