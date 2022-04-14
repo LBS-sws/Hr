@@ -141,7 +141,7 @@
     <?php echo $form->labelEx($model,'recommend_user',array('class'=>"col-sm-2 control-label")); ?>
     <div class="col-sm-3">
         <?php echo $form->dropDownList($model, 'recommend_user',EmployForm::getEmployeeList($model->recommend_user),
-            array('disabled'=>($readonly))
+            array('disabled'=>($readonly),'id'=>'recommend_user')
         ); ?>
     </div>
 </div>
@@ -580,6 +580,12 @@ if (!empty($contractNum)){
 
 <script>
     $(function ($) {
+        <?php
+            if(!$readonly){
+                echo '$("#recommend_user").select2({ multiple:false});';
+            }
+        ?>
+
         $("body").append('<div class="modal fade text-center" style="padding-top: 30px;" id="bigImgDiv"></div>');
         $("body").delegate(".openBigImg,.fileImgShow img","click",function () {
             var imgSrc = $(this).attr("src");
