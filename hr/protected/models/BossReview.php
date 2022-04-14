@@ -508,7 +508,6 @@ class BossReview
                 )->order("b.month_no asc")->queryAll();
         }
         $list=array();
-        $sum = 0;
         foreach ($rows as $row){
             $key=intval($row["month_no"]);
             if(!key_exists($key,$list)){
@@ -516,9 +515,8 @@ class BossReview
             }
             $number = is_numeric($row["data_value"])?round($row["data_value"],2):0;
             $list[$key]["text"]+=$number;
-            $sum+=$number;
         }
-        $list[14]=array('num'=>14,'text'=>$sum,'len'=>0);//測試bug
+        //$list[14]=array('num'=>14,'text'=>$sum,'len'=>0);//測試bug
         return $list;
     }
 
