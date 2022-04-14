@@ -397,7 +397,7 @@ class BossReview
             ->where("city = :city AND year_no = :year $sqlExpr",
                 array(":city"=>$city,":year"=>$year)
             )->queryScalar();
-        return empty($sum)||$sum==null?0:$sum;
+        return empty($sum)||$sum==null?0:round($sum,2);
     }
 
     //提取月报表数据
@@ -508,14 +508,17 @@ class BossReview
                 )->order("b.month_no asc")->queryAll();
         }
         $list=array();
+        $sum = 0;
         foreach ($rows as $row){
-            $key=$row["month_no"];
+            $key=intval($row["month_no"]);
             if(!key_exists($key,$list)){
                 $list[$key]=array('num'=>$key,'text'=>0,'len'=>0);
             }
-            $number = is_numeric($row["data_value"])?number_format($row["data_value"],2):0;
-            $list[$key]["text"]+=floatval($number);
+            $number = is_numeric($row["data_value"])?round($row["data_value"],2):0;
+            $list[$key]["text"]+=$number;
+            $sum+=$number;
         }
+        $list[14]=array('num'=>14,'text'=>$sum,'len'=>0);//測試bug
         return $list;
     }
 
