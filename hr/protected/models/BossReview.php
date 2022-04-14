@@ -510,7 +510,11 @@ class BossReview
         $list=array();
         foreach ($rows as $row){
             $key=$row["month_no"];
-            $list[]=array('num'=>$key,'text'=>$row["data_value"],'len'=>0);
+            if(!key_exists($key,$list)){
+                $list[$key]=array('num'=>$key,'text'=>0,'len'=>0);
+            }
+            $number = is_numeric($row["data_value"])?number_format($row["data_value"],2):0;
+            $list[$key]["text"]+=floatval($number);
         }
         return $list;
     }
@@ -585,6 +589,7 @@ class BossReview
                 $row["valueTwo"] = floatval($row["valueTwo"]);
                 $count = empty($row["valueTwo"])||$row["valueTwo"]==0?0:$row["valueOne"]/$row["valueTwo"];
                 $count*=100;
+                $count=sprintf("%.2f",$count)."%";
                 $list[]=array('num'=>$row["month_no"],"text"=>$count,"len"=>0);
             }
         }
@@ -705,6 +710,7 @@ class BossReview
                 $valueTwo = $key==0?$valueTwo:floatval($rows[$key-1]["valueTwo"]);
                 $count = empty($valueTwo)||$valueTwo==0?0:$row["valueOne"]/$valueTwo;
                 $count*=100;
+                $count = sprintf("%.2f",$count)."%";
                 //month_no
                 $list[]=array('num'=>$row["month_no"],"text"=>$count,"len"=>0);
             }
