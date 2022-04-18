@@ -270,11 +270,13 @@ class AssessList extends CListPageModel
     }
 
     private function getMessageForOne($staff_id,$id){
+        $suffix = Yii::app()->params['envSuffix'];
         $message="";
         $staffTypeList = PrizeList::getPrizeList();
-        $rows = Yii::app()->db->createCommand()->select("a.*,b.name as employee_name,b.code AS employee_code,b.city AS s_city,b.position")
+        $rows = Yii::app()->db->createCommand()->select("a.*,d.disp_name,b.name as employee_name,b.code AS employee_code,b.city AS s_city,b.position")
             ->from("hr_assess a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("security$suffix.sec_user d","a.lcu = d.username")
             ->where("a.employee_id='{$staff_id}' and (a.email_bool=1 or a.id='$id')")->order("a.lcd desc")->limit(5)->queryAll();
         if($rows){
             $row = $rows[0];
@@ -282,8 +284,9 @@ class AssessList extends CListPageModel
             $message.= "<p>员工名字：".$row["employee_name"]."</p>";
             $message.= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
             $message.= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
-            $message.="<table width='1610px' border='1'><thead><tr>";
+            $message.="<table width='1690px' border='1'><thead><tr>";
             $message.='<th width="110px">评估日期</th>';
+            $message.='<th width="80px">评估人</th>';
             $message.='<th width="80px">工种</th>';
             $message.='<th width="80px">整体效果</th>';
             $message.='<th width="80px">服务效果</th>';
@@ -301,6 +304,7 @@ class AssessList extends CListPageModel
             foreach ($rows as $row){
                 $message.="<tr>";
                 $message.="<td>".date("Y-m-d",strtotime($row["lcd"]))."</td>";
+                $message.= "<td>".$row["disp_name"]."</td>";
                 if(array_key_exists($row["staff_type"],$staffTypeList)){
                     $message.="<td>".$staffTypeList[$row["staff_type"]]."</td>";
                 }else{
