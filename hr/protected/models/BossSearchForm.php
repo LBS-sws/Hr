@@ -73,7 +73,7 @@ class BossSearchForm extends CFormModel
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and a.status_type = 2 and b.city IN ($city_allow)",array(":id"=>$index))->queryRow();
+            ->where("a.id=:id and a.status_type = 2 and a.city IN ($city_allow)",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->employee_id = $row['employee_id'];
