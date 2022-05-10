@@ -458,10 +458,11 @@ class BossReview
                 ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
                 ->where("b.city = :city $sqlExpr 
             AND b.year_no = :year 
-            AND a.data_field in ('10005','100055','10004','20001','20002') 
-            AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
-                    array(":city"=>$city,":year"=>$year)
-                )->queryScalar();
+            AND (
+                (a.data_field in ('10005','100055','10004') AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED')
+                or
+                (a.data_field in ('20001','20002') AND workflow$suffix.RequestStatus('OPRPT2',b.id,b.lcd)='ED')
+            ) ",array(":city"=>$city,":year"=>$year))->queryScalar();
             $sum = $sum?$sum:0;
         }else{
             $suffix = Yii::app()->params['envSuffix'];
@@ -492,8 +493,11 @@ class BossReview
                 ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
                 ->where("b.city = :city $sqlExpr 
             AND b.year_no = :year 
-            AND a.data_field in ('10005','100055','10004','20001','20002') 
-            AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED'",
+            AND (
+                (a.data_field in ('10005','100055','10004') AND workflow$suffix.RequestStatus('OPRPT',b.id,b.lcd)='ED')
+                or
+                (a.data_field in ('20001','20002') AND workflow$suffix.RequestStatus('OPRPT2',b.id,b.lcd)='ED')
+            ) ",
                     array(":city"=>$this->city,":year"=>$this->audit_year)
                 )->order("b.month_no asc")->queryAll();
         }else{
