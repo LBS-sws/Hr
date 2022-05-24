@@ -161,7 +161,7 @@ class RptReviewList extends CReport {
                 $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
                     ->leftJoin("hr_employee c","c.id = b.employee_id")
                     ->leftJoin("hr_dept e","c.position = e.id")
-                    ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
+                    ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and b.year=:year and b.year_type=:year_type",
                         array(":department"=>$staff["department"],":year"=>$arr["year"],":year_type"=>$arr["year_type"])
                     )->order("b.review_sum desc")->queryAll();
                 if(count($reviewRows)<5){ //少於5個人不參與差異性評分

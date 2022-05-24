@@ -385,7 +385,7 @@ class ReviewSearchForm extends CFormModel
             $this->ranking_sum = Yii::app()->db->createCommand()->select("count(b.id)")->from("hr_review b")
                 ->leftJoin("hr_employee c","c.id = b.employee_id")
                 ->leftJoin("hr_dept e","c.position = e.id")
-                ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
+                ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and b.year=:year and b.year_type=:year_type",
                     array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
                 )->order("b.review_sum desc")->queryScalar();//組別內超過5個人並且需要差異性排名
             if($this->ranking_sum>=5){
@@ -421,7 +421,7 @@ class ReviewSearchForm extends CFormModel
         $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type as review_status_type,c.*,e.name as dept_name")->from("hr_review b")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
             ->leftJoin("hr_dept e","c.position = e.id")
-            ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
+            ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and b.year=:year and b.year_type=:year_type",
                 array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
             )->order("b.review_sum desc")->queryAll();
         if($reviewRows){//組別內超過10個人並且需要差異性排名
