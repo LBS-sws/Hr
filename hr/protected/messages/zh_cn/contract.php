@@ -734,5 +734,6 @@ return array(
     'Ordinary Pin'=>'普通襟章',
     'Two Pin'=>'两项襟章',
     'Audit Date'=>'审核日期',
+    'review ranking bool'=>'是否拉curve排名',
 );
 ?>

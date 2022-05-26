@@ -15,6 +15,7 @@ class RptReviewList extends CReport {
             'year_period'=>array('label'=>Yii::t('contract','Evaluation period'),'width'=>25,'align'=>'C'),
             'review_sum'=>array('label'=>Yii::t('contract','review sum'),'width'=>20,'align'=>'C'),
             'review_grade'=>array('label'=>Yii::t('contract','review grade'),'width'=>20,'align'=>'C'),
+            'ranking_bool'=>array('label'=>Yii::t('contract','review ranking bool'),'width'=>25,'align'=>'C'),
 		);
 	}
 	
@@ -96,6 +97,7 @@ class RptReviewList extends CReport {
                 $temp['name_list'] = Yii::t("contract","undistributed");
                 $temp['review_sum'] = Yii::t("contract","undistributed");
                 $temp['review_grade'] = Yii::t("contract","undistributed");
+                $temp['ranking_bool'] = Yii::t("misc","No");
 
                 $this->resetTemp($row,$temp);
 				$this->data[] = $temp;
@@ -110,8 +112,8 @@ class RptReviewList extends CReport {
         $arr = Yii::app()->db->createCommand()->select("id,name_list,review_sum,ranking_bool,ranking_review,ranking_sum,status_type,year,year_type")->from("hr_review")
             ->where("year = :year and year_type = :year_type and employee_id = :employee_id",
                 array(":year"=>$year,":year_type"=>$year_type,":employee_id"=>$row['id']))->queryRow();
-
         if($arr){
+            $temp['ranking_bool'] = empty($arr["ranking_bool"])?Yii::t("misc","No"):Yii::t("misc","Yes");
             switch ($arr["status_type"]){
                 case 1:
                     $temp['name_list'] = $arr["name_list"];

@@ -804,6 +804,12 @@ class ReviewSearchForm extends CFormModel
 
     public static function setOldReviewRanking(){
         $year="";
+        $insertSql="ALTER TABLE hr_review ADD COLUMN ranking_review varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '參與差異性的考核id' AFTER change_num;";
+        self::searchMysqlColumns("hr_review","ranking_review",$insertSql);
+        $insertSql="ALTER TABLE hr_review ADD COLUMN ranking_bool int(11) NOT NULL DEFAULT 0 COMMENT '是否參與差異性排名 0：不參與' AFTER change_num;";
+        self::searchMysqlColumns("hr_review","ranking_bool",$insertSql);
+        $insertSql="ALTER TABLE hr_review ADD COLUMN ranking_sum int(11) NOT NULL DEFAULT 0 COMMENT '差異性參與總人數' AFTER change_num;";
+        self::searchMysqlColumns("hr_review","ranking_sum",$insertSql);
         $year_type="";
         $rows = Yii::app()->db->createCommand()->select("employee_id,year,year_type")
             ->from("hr_review")->where("status_type in (1,2,3)")
@@ -818,6 +824,22 @@ class ReviewSearchForm extends CFormModel
                 self::reviewBool($row["employee_id"],$row["year"],$row["year_type"]);
             }
         }
+    }
 
+    public static function searchMysqlColumns($table_name,$column,$insertSql){
+        $sql="SELECT count(*) FROM information_schema.COLUMNS WHERE table_name = '{$table_name}'";
+        $sql.=" and column_name = '{$column}'";
+        $count = Yii::app()->db->createCommand($sql)->queryScalar();
+        if(empty($count)){
+            Yii::app()->db->createCommand($insertSql)->execute();
+        }
+    }
+
+    public static function searchMysqlTables($table_name,$insertSql){
+        $sql="SELECT count(*) FROM information_schema.tables WHERE table_name = '{$table_name}'";
+        $count = Yii::app()->db->createCommand($sql)->queryScalar();
+        if(empty($count)){
+            Yii::app()->db->createCommand($insertSql)->execute();
+        }
     }
 }
