@@ -20,9 +20,10 @@ class ReviewSearchForm extends CFormModel
 	public $review_type;
 	public $change_num;
     public $department;//部門
-    public $ranking_bool = false;//评分差异排名
     public $leave_bool = '待定';//評分差異排名後的等級顯示
+    public $ranking_bool = false;//评分差异排名
     public $ranking_sum = false;//评分差异排名参与人数
+    public $ranking_review;//參與差異性的考核id(新)
 
     public $employee_remark;
     public $review_remark;
@@ -130,7 +131,8 @@ class ReviewSearchForm extends CFormModel
             $expr_sql.=" and (FIND_IN_SET('$this->login_id',b.id_s_list) or b.employee_id = '$this->login_id' or b.lcu = '$this->login_id')";
         }
 		$row = Yii::app()->db->createCommand()
-            ->select("c.department,b.review_type,b.change_num,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,docman$suffix.countdoc('REVIEW',b.id) as reviewdoc")
+            ->select("c.department,b.review_type,b.ranking_sum,b.ranking_bool,b.ranking_review,
+            b.change_num,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,docman$suffix.countdoc('REVIEW',b.id) as reviewdoc")
             //->select("c.department,b.review_type,b.change_num,b.employee_remark,b.review_remark,b.strengths,b.target,b.improve,b.tem_s_ist,b.review_sum,b.name_list,,b.employee_id,c.name,c.code,c.phone,c.city,c.entry_time,d.name as company_name,e.name as dept_name,b.status_type,b.year,b.year_type,b.id,docman$suffix.countdoc('REVIEW',b.id) as reviewdoc")
             ->from("hr_review b")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
@@ -164,6 +166,10 @@ class ReviewSearchForm extends CFormModel
             $this->strengths = '';
             $this->target = '';
             $this->improve = '';
+            /*固定差異性排名*/
+            $this->ranking_bool = empty($row['ranking_bool'])?false:true;
+            $this->ranking_sum = $row['ranking_sum'];
+            $this->ranking_review = empty($row['ranking_review'])?"''":$row['ranking_review'];
             return true;
 		}else{
 		    return false;
@@ -369,33 +375,6 @@ class ReviewSearchForm extends CFormModel
         return $html;
     }
 
-    protected function reviewBool(){
-        $row = Yii::app()->db->createCommand()->select("a.department,a.position")->from("hr_employee a")
-            ->leftJoin("hr_dept b","a.position = b.id")
-            ->where("a.id=:id and b.review_status = 1 and a.staff_leader = 'Nil'",array(":id"=>$this->employee_id))->queryRow();
-        if($row){
-            $this->department=$row["department"];
-            /* 後續修改：把組別內總數修改成分配員工的總數（未分配的員工不參與差異性評分）
-            $dateTime = ReviewAllotList::getReviewDateTime($this->year,$this->year_type);
-            $this->ranking_sum = Yii::app()->db->createCommand()->select("count(*)")->from("hr_employee a")
-                            ->leftJoin("hr_dept b","a.position = b.id")
-                            ->where("b.review_status = 1 and a.department=:department and a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",
-                                array(":department"=>$row["department"]))->queryScalar();
-            */
-            $this->ranking_sum = Yii::app()->db->createCommand()->select("count(b.id)")->from("hr_review b")
-                ->leftJoin("hr_employee c","c.id = b.employee_id")
-                ->leftJoin("hr_dept e","c.position = e.id")
-                ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and b.year=:year and b.year_type=:year_type",
-                    array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
-                )->order("b.review_sum desc")->queryScalar();//組別內超過5個人並且需要差異性排名
-            if($this->ranking_sum>=5){
-                $this->ranking_bool = true;
-                return true;
-            }
-        }
-        $this->ranking_bool = false;
-    }
-
     protected function getRankingHtml(){
         // table-striped
         $html="<div class='form-group'><div class='col-sm-8 col-sm-offset-2'><table class='table table-bordered'>";
@@ -421,9 +400,8 @@ class ReviewSearchForm extends CFormModel
         $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type as review_status_type,c.*,e.name as dept_name")->from("hr_review b")
             ->leftJoin("hr_employee c","c.id = b.employee_id")
             ->leftJoin("hr_dept e","c.position = e.id")
-            ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and b.year=:year and b.year_type=:year_type",
-                array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
-            )->order("b.review_sum desc")->queryAll();
+            ->where("b.id in ({$this->ranking_review})")
+            ->order("b.review_sum desc")->queryAll();
         if($reviewRows){//組別內超過10個人並且需要差異性排名
             foreach ($reviewRows as $row){
                 if($row['review_status_type']==4){
@@ -437,16 +415,6 @@ class ReviewSearchForm extends CFormModel
                 }
             }
         }
-/*        $orderSql = empty($reviewId)?"":"find_in_set(a.id,'".implode(",",array_reverse($reviewId))."') desc";
-        $dateTime = ReviewAllotList::getReviewDateTime($this->year,$this->year_type);
-        $rows = Yii::app()->db->createCommand()->select("a.*,b.name as dept_name")->from("hr_employee a")
-            ->leftJoin("hr_dept b","a.position = b.id")
-            ->where("b.review_status = 1 and a.department=:department and a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",
-                array(":department"=>$this->department))
-            ->order($orderSql)->queryAll();
-        if(count($rows)!=count($reviewRows)){
-            $show_ranking = false;
-        }*/
         if($show_ranking){
             $html.="<th>".Yii::t("contract","review grade")."</th>";
         }
@@ -525,9 +493,6 @@ class ReviewSearchForm extends CFormModel
     }
 
     public function returnTableFoot($footArr,$str="",$bool=false){
-        if($bool){
-            $this->reviewBool();//判斷部門下參與評分的人數是否多餘10人
-        }
         $withFoot = $this->with_foot;
         $nameStr = (in_array($this->review_type,array(2,4))&&$this->status_type==3&&$bool)?Yii::t("contract","employee total score"):Yii::t("contract","Percentage Sum");
         $footList = array(
@@ -705,7 +670,6 @@ class ReviewSearchForm extends CFormModel
     }
 
     public function getReviewLeave(){
-        $this->reviewBool();
         if($this->ranking_bool){
             $str = "经高低差异化(拉curve)后评级";
             $reviewLevel = "待定";
@@ -716,12 +680,12 @@ class ReviewSearchForm extends CFormModel
                 array("maxNum"=>round($this->ranking_sum*0.2),"list"=>array(),"leave"=>"IV","class"=>"active"),
                 array("maxNum"=>round($this->ranking_sum*0.1),"list"=>array(),"leave"=>"V","class"=>"danger"),
             );
-            $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
+
+            $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type as review_status_type,c.*,e.name as dept_name")->from("hr_review b")
                 ->leftJoin("hr_employee c","c.id = b.employee_id")
                 ->leftJoin("hr_dept e","c.position = e.id")
-                ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and c.staff_status = 0 and b.year=:year and b.year_type=:year_type",
-                    array(":department"=>$this->department,":year"=>$this->year,":year_type"=>$this->year_type)
-                )->order("b.review_sum desc")->queryAll();
+                ->where("b.id in ({$this->ranking_review})")
+                ->order("b.review_sum desc")->queryAll();
             if($reviewRows){
                 if($this->ranking_sum==count($reviewRows)){
                     foreach ($reviewRows as $row){
@@ -812,4 +776,48 @@ class ReviewSearchForm extends CFormModel
 
 		return true;
 	}
+
+    //判斷員工是否參與差異性排名
+    public static function reviewBool($employee_id,$year,$year_type){
+        $arr = array();
+        $row = Yii::app()->db->createCommand()->select("a.department,a.position")
+            ->from("hr_employee a")
+            ->leftJoin("hr_dept b","a.position = b.id")
+            ->where("a.id=:id and b.review_status = 1 and a.staff_leader = 'Nil'",array(":id"=>$employee_id))->queryRow();
+        if($row){
+            $ranking_review = Yii::app()->db->createCommand()->select("b.id")->from("hr_review b")
+                ->leftJoin("hr_employee c","c.id = b.employee_id")
+                ->leftJoin("hr_dept e","c.position = e.id")
+                ->where("b.status_type!=4 and c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and b.year=:year and b.year_type=:year_type",
+                    array(":department"=>$row["department"],":year"=>$year,":year_type"=>$year_type)
+                )->order("b.review_sum desc")->queryAll();//組別內超過5個人並且需要差異性排名
+            $ranking_sum = $ranking_review?count($ranking_review):0;
+            if($ranking_sum>=5){
+                $arr["ranking_bool"]=1;
+                $arr["ranking_sum"]=$ranking_sum;
+                $arr["ranking_review"]=implode(",",array_column($ranking_review,"id"));
+                Yii::app()->db->createCommand()->update('hr_review', $arr, "id in ({$arr['ranking_review']})");
+            }
+        }
+        return $arr;
+    }
+
+    public static function setOldReviewRanking(){
+        $year="";
+        $year_type="";
+        $rows = Yii::app()->db->createCommand()->select("employee_id,year,year_type")
+            ->from("hr_review")->where("status_type in (1,2,3)")
+            ->order("year asc,year_type asc")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                if($year!=$row["year"]&&$year_type!=$row["year_type"]){
+                    $year = $row["year"];
+                    $year_type = $row["year_type"];
+                    echo "year:{$year}   ||   year_type:{$year_type}<br/>";
+                }
+                self::reviewBool($row["employee_id"],$row["year"],$row["year_type"]);
+            }
+        }
+
+    }
 }

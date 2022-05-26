@@ -30,7 +30,6 @@ class ReviewAllotForm extends CFormModel
     public $count_num=100;
     public $change_num;
 
-
     public $no_of_attm = array(
         'review'=>0
     );
@@ -622,9 +621,25 @@ class ReviewAllotForm extends CFormModel
 
     //刪除驗證
     public function validateUndo(){
-        $row = Yii::app()->db->createCommand()->select("id")->from("hr_review")
+        $row = Yii::app()->db->createCommand()->select("id,ranking_review")->from("hr_review")
             ->where("id=:id and status_type=1",array(":id"=>$this->review_id))->queryRow();
         if($row){
+            if(!empty($row["ranking_review"])){ //刪除記錄的差異性排名
+                $reviewList = explode(",",$row["ranking_review"]);
+                foreach ($reviewList as $key=>$value){
+                    if($value==$this->review_id){
+                        unset($reviewList[$key]);
+                    }
+                }
+                $ranking_sum = count($reviewList);
+                $arr = array(
+                    'ranking_bool'=>$ranking_sum>=5?1:0,
+                    'ranking_sum'=>$ranking_sum,
+                    'ranking_review'=>implode(",",$reviewList),
+                );
+                Yii::app()->db->createCommand()->update('hr_review', $arr, "id in ({$row["ranking_review"]})");
+
+            }
             return true;
         }
         return false;
@@ -693,12 +708,15 @@ class ReviewAllotForm extends CFormModel
             case 'undo':
                 $connection->createCommand()->update('hr_review', array(
                     'status_type'=>4,
+                    'ranking_bool'=>0,
+                    'ranking_sum'=>0,
+                    'ranking_review'=>'',
                     'luu'=>$uid,
                 ), 'id=:id', array(':id'=>$this->review_id));
                 $connection->createCommand()->delete('hr_review_h', 'review_id=:review_id', array(':review_id'=>$this->review_id));
                 break;
         }
-
+        ReviewSearchForm::reviewBool($this->employee_id,$this->year,$this->year_type);//差異性排名
         $this->sendReview($connection);
 		return true;
 	}

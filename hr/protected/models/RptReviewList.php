@@ -107,7 +107,7 @@ class RptReviewList extends CReport {
 	protected function resetTemp($row,&$temp){
         $year = $this->criteria['YEAR'];
         $year_type = $this->criteria['YEARTYPE'];
-        $arr = Yii::app()->db->createCommand()->select("name_list,review_sum,status_type,year,year_type")->from("hr_review")
+        $arr = Yii::app()->db->createCommand()->select("id,name_list,review_sum,ranking_bool,ranking_review,ranking_sum,status_type,year,year_type")->from("hr_review")
             ->where("year = :year and year_type = :year_type and employee_id = :employee_id",
                 array(":year"=>$year,":year_type"=>$year_type,":employee_id"=>$row['id']))->queryRow();
 
@@ -134,38 +134,28 @@ class RptReviewList extends CReport {
 
     protected function getReviewLeave($staff,$arr){
 	    //review_status
-        if($staff["review_status"]==1&&$staff["staff_leader"]=="Nil"){ //差異性評分
-            if(key_exists($staff["department"],$this->leave_list)){
-                switch ($this->leave_list[$staff["department"]]['caseNum']){
+        if(!empty($arr["ranking_bool"])){ //差異性評分
+            if(key_exists($arr["ranking_review"],$this->leave_list)){
+                switch ($this->leave_list[$arr["ranking_review"]]['caseNum']){
                     case 1://差異性評分（評分完成）
-                        if(key_exists($staff["id"],$this->leave_list[$staff["department"]]['list'])){
-                            return $this->leave_list[$staff["department"]]['list'][$staff["id"]];
+                        if(key_exists($staff["id"],$this->leave_list[$arr["ranking_review"]]['list'])){
+                            return $this->leave_list[$arr["ranking_review"]]['list'][$staff["id"]];
                         }else{
                             return "异常";
                         }
                     case 2://差異性評分（評分未完成）
                         return "待定";
-                        break;
                     case 3://差異性評分（人數不滿10人）
                         return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
                 }
             }else{
-                /* 後續修改：把組別內總數修改成分配員工的總數（未分配的員工不參與差異性評分）
-                $maxCount = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee a")
-                    ->leftJoin("hr_dept d","a.position = d.id")
-                    ->where("a.department=:department and d.review_status=1",array(":department"=>$staff["department"]))->queryScalar();
-                if($maxCount<10){
-                    $this->leave_list[$staff["department"]]=array('caseNum'=>3);
-                    return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
-                }*/
                 $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
                     ->leftJoin("hr_employee c","c.id = b.employee_id")
                     ->leftJoin("hr_dept e","c.position = e.id")
-                    ->where("c.staff_leader = 'Nil' and e.review_status = 1 and c.department=:department and b.year=:year and b.year_type=:year_type",
-                        array(":department"=>$staff["department"],":year"=>$arr["year"],":year_type"=>$arr["year_type"])
-                    )->order("b.review_sum desc")->queryAll();
+                    ->where("b.id in ({$arr["ranking_review"]})")
+                    ->order("b.review_sum desc")->queryAll();
                 if(count($reviewRows)<5){ //少於5個人不參與差異性評分
-                    $this->leave_list[$staff["department"]]=array('caseNum'=>3);
+                    $this->leave_list[$arr["ranking_review"]]=array('caseNum'=>3);
                     return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
                 }else{
                     $maxCount = count($reviewRows);
@@ -176,16 +166,16 @@ class RptReviewList extends CReport {
                         array("maxNum"=>round($maxCount*0.2),"list"=>array(),"leave"=>"IV"),
                         array("maxNum"=>round($maxCount*0.1),"list"=>array(),"leave"=>"V"),
                     );
-                    $this->leave_list[$staff["department"]]=array('caseNum'=>1,'list'=>array());
+                    $this->leave_list[$arr["ranking_review"]]=array('caseNum'=>1,'list'=>array());
                     $leave = "待定";
                     foreach ($reviewRows as $review){
                         if($review['status_type']!=3){
                             $leave = "待定";
-                            $this->leave_list[$staff["department"]]['caseNum']=2;
+                            $this->leave_list[$arr["ranking_review"]]['caseNum']=2;
                             break;
                         }else{
                             $leave = $this->resetRanking($rankingArr,$review);
-                            $this->leave_list[$staff["department"]]['list'][$review["employee_id"]]=$leave;
+                            $this->leave_list[$arr["ranking_review"]]['list'][$review["employee_id"]]=$leave;
                         }
                     }
                     return $leave;

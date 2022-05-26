@@ -29,7 +29,7 @@ class ReviewSearchController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('index','view','save','downExcel','fileDownload'),
+                'actions'=>array('index','view','test','save','downExcel','fileDownload'),
                 'expression'=>array('ReviewSearchController','allowReadOnly'),
             ),
             array('deny',  // deny all users
@@ -43,6 +43,13 @@ class ReviewSearchController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('RE03');
+    }
+
+    public function actionTest(){
+        echo "start:<br/>";
+        ReviewSearchForm::setOldReviewRanking();
+        echo "end<br/>";
+        Yii::app()->end();
     }
 
     public function actionIndex($pageNum=0){
@@ -78,7 +85,6 @@ class ReviewSearchController extends Controller
             throw new CHttpException(404,Yii::t("contract",'The account has no binding staff, please contact the administrator'));
         }
     }
-
 
     public function actionSave()
     {
