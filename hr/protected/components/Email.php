@@ -310,9 +310,9 @@ class Email {
             }
             $likeSql .=")";
         }
-        $rs = Yii::app()->db->createCommand()->select("b.email, b.username, b.city, h.name as city_name, d.id, d.name, d.code")->from("hr_binding e")
-            ->leftJoin("hr_employee d","d.id = e.employee_id")
-            ->leftJoin("hr_dept f","f.id = d.position")
+        $rs = Yii::app()->db->createCommand()->select("b.email, b.username, b.city, h.name as city_name, d.id, d.name, d.code")->from("hr$suffix.hr_binding e")
+            ->leftJoin("hr$suffix.hr_employee d","d.id = e.employee_id")
+            ->leftJoin("hr$suffix.hr_dept f","f.id = d.position")
             ->leftJoin("security$suffix.sec_user_access a","a.username = e.user_id")
             ->leftJoin("security$suffix.sec_user b","a.username=b.username")
             ->leftJoin("security$suffix.sec_city h","b.city=h.code")
@@ -342,9 +342,9 @@ class Email {
             }
             $likeSql .=")";
         }
-        $rs = Yii::app()->db->createCommand()->select("b.email, b.username")->from("hr_binding e")
-            ->leftJoin("hr_employee d","d.id = e.employee_id")
-            ->leftJoin("hr_dept f","f.id = d.position")
+        $rs = Yii::app()->db->createCommand()->select("b.email, b.username")->from("hr$suffix.hr_binding e")
+            ->leftJoin("hr$suffix.hr_employee d","d.id = e.employee_id")
+            ->leftJoin("hr$suffix.hr_dept f","f.id = d.position")
             ->leftJoin("security$suffix.sec_user_access a","a.username = e.user_id")
             ->leftJoin("security$suffix.sec_user b","a.username=b.username")
             ->where("a.system_id='$systemId' $likeSql $sql and b.email != '' and b.status='A'")
@@ -365,7 +365,7 @@ class Email {
     public function addEmailToLcu($lcu){
         $suffix = Yii::app()->params['envSuffix'];
         $email = Yii::app()->db->createCommand()->select("email, username")->from("security$suffix.sec_user")
-            ->where("username=:username",array(":username"=>$lcu))
+            ->where("username=:username and email !=''",array(":username"=>$lcu))
             ->queryRow();
         if($email){
             if(!in_array($email["email"],$this->to_addr)){
@@ -380,9 +380,9 @@ class Email {
     //添加收信人(員工id）
     public function addEmailToStaffId($staffId){
         $suffix = Yii::app()->params['envSuffix'];
-        $email = Yii::app()->db->createCommand()->select("b.email, b.username")->from("hr_binding a")
+        $email = Yii::app()->db->createCommand()->select("b.email, b.username")->from("hr$suffix.hr_binding a")
             ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
-            ->where("a.employee_id=:employee_id",array(":employee_id"=>$staffId))
+            ->where("a.employee_id=:employee_id and b.email !=''",array(":employee_id"=>$staffId))
             ->queryRow();
         if($email){
             if(!in_array($email["email"],$this->to_addr)){
@@ -441,18 +441,20 @@ class Email {
         }
 
 		//新增通知記錄
- 		$connection = Yii::app()->db;
-		SystemNotice::addNotice($connection, array(
-				'note_type'=>'notice',
-				'subject'=>$this->subject,//郵件主題
-				'description'=>$this->description,//郵件副題
-				'message'=>$this->message,
-				'username'=>json_encode($this->to_user),
-				'system_id'=>$systemId,
-				'form_id'=>$this->form_id,
-				'rec_id'=>$this->rec_id,
-			)
-		);
+        if(!empty($this->to_user)){
+            $connection = Yii::app()->db;
+            SystemNotice::addNotice($connection, array(
+                    'note_type'=>'notice',
+                    'subject'=>$this->subject,//郵件主題
+                    'description'=>$this->description,//郵件副題
+                    'message'=>$this->message,
+                    'username'=>json_encode($this->to_user),
+                    'system_id'=>$systemId,
+                    'form_id'=>$this->form_id,
+                    'rec_id'=>$this->rec_id,
+                )
+            );
+        }
    }
 
     //查找管轄某城市的所有城市（根據小城市查找大城市）
@@ -559,7 +561,8 @@ class Email {
 
     //需要添加額外郵箱地址(支點郵件通知)
     public function addSupportPreEmailToEmployeeId($employee_id){
-        $row = Yii::app()->db->createCommand()->select("support_city")->from("hr_apply_support_email")
+        $suffix = Yii::app()->params['envSuffix'];
+        $row = Yii::app()->db->createCommand()->select("support_city")->from("hr$suffix.hr_apply_support_email")
             ->where("employee_id=:id",array(":id"=>$employee_id))->queryRow();
         if($row){
             $this->addEmailToPrefixAndOnlyCity("AY01",$row["support_city"]);
