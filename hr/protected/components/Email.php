@@ -553,9 +553,11 @@ class Email {
                 $userList[] = array('username'=>$row['username'],'email'=>$row['email'],'cityList'=>$cityList);
             }
         }
-        $userList[] = array('username'=>"Franco",'email'=>"flam@lbsgroup.com.hk",'cityList'=>array());
-        $userList[] = array('username'=>"joe",'email'=>"joeyiu@lbsgroup.com.cn",'cityList'=>array());
-
+        $systemName = Yii::app()->name;
+        if (strpos($systemName,'UAT')===false){ //測試版不需要該郵件
+            $userList[] = array('username'=>"Franco",'email'=>"flam@lbsgroup.com.hk",'cityList'=>array());
+            $userList[] = array('username'=>"joe",'email'=>"joeyiu@lbsgroup.com.cn",'cityList'=>array());
+        }
         return $userList;
     }
 
