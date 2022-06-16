@@ -355,7 +355,7 @@ class ReviewAllotForm extends CFormModel
             ->from("hr_employee a")
             ->leftJoin("hr_company c","a.company_id = c.id")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("a.id=:id and a.city in ($city_allow) AND a.staff_status = 0 AND replace(entry_time,'-', '/')<='$dateTime'",array(":id"=>$index))->queryRow();
+            ->where("a.id=:id and a.city in ($city_allow) AND replace(entry_time,'-', '/')<='$dateTime'",array(":id"=>$index))->queryRow();
 		if ($row) {
             $this->review_type = $row['review_type'];
             $this->year = $year;

@@ -100,18 +100,18 @@ class ReviewAllotList extends CListPageModel
         $endDate = date("Y/m/d",strtotime("$dateTime - 1 month"));
         //$dateTime = date("Y/m/d",strtotime("$dateTime - 3 month"));
         //$expr_sql = " and (b.year=$this->year or b.year is null) and (b.year_type=$this->year_type or b.year_type is null)";
-		$sql1 = "select a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name,d.review_type ,e.name as ment_name 
+		$sql1 = "select a.id,a.staff_status,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name,d.review_type ,e.name as ment_name 
                 from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept e ON a.department = e.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
+                where a.city IN ($city_allow) AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
 			";
 		$sql2 = "select count(*) from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept e ON a.department = e.id
-                where a.city IN ($city_allow) AND a.staff_status = 0 AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
+                where a.city IN ($city_allow) AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -170,6 +170,10 @@ class ReviewAllotList extends CListPageModel
                 $record["entry_time"]=CGeneral::toDate($record["entry_time"]);
                 if($record["entry_time"]>$endDate){
                     $arr["style"] = " text-muted";
+                }
+                // AND a.staff_status = 0
+                if(intval($record["staff_status"])===-1){ //已离职
+                    $arr = array("style"=>"","status"=>"已离职");
                 }
 				$this->attr[] = array(
 					'id'=>$record['id'],
