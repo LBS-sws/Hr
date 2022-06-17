@@ -105,13 +105,17 @@ class ReviewAllotList extends CListPageModel
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept e ON a.department = e.id
+                LEFT JOIN hr_review g ON a.id = g.employee_id and year={$this->year} and year_type={$this->year_type} 
                 where a.city IN ($city_allow) AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
+                and (a.staff_status=0 or (a.staff_status=-1 and g.id is NOT NULL))
 			";
 		$sql2 = "select count(*) from hr_employee a 
                 LEFT JOIN hr_company c ON a.company_id = c.id
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept e ON a.department = e.id
+                LEFT JOIN hr_review g ON a.id = g.employee_id and year={$this->year} and year_type={$this->year_type} 
                 where a.city IN ($city_allow) AND d.review_type IN (1,2,3,4) AND replace(a.entry_time,'-', '/')<='$dateTime' 
+                and (a.staff_status=0 or (a.staff_status=-1 and g.id is NOT NULL))
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
