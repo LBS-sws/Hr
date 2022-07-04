@@ -28,7 +28,8 @@ class RptStaffList extends CReport {
 	public function genReport() {
 		$this->retrieveData();
 		$this->title = $this->getReportName();
-		$this->subtitle = '';
+		$month = date('Y/m', strtotime($this->criteria['TARGET_DT'].' -1 month'));
+		$this->subtitle = Yii::t('report','Date of Month').': '.$month;
 		$output = $this->exportExcel();
 		$this->submitEmail($output);
 		return $output;
