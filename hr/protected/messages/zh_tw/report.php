@@ -35,6 +35,7 @@ return array(
 	'Remarks'=>'备注',
 	'Staffs'=>'员工',
 	'Staff No.'=>'员工编号',
+	'Date of Month'=>'月份',
 
 );
 ?>
