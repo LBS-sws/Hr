@@ -689,7 +689,7 @@ class ReviewSearchForm extends CFormModel
             if($reviewRows){
                 if($this->ranking_sum==count($reviewRows)){
                     foreach ($reviewRows as $row){
-                        if($row['status_type']!=3){
+                        if($row['review_status_type']!=3){
                             $reviewLevel = "待定";
                             break;
                         }
