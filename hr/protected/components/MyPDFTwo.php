@@ -201,8 +201,8 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(45, 11, 155,115, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["leave_cause"];
         $this->_PDF->writeHTMLCell(45, 11, 155,130, $html, 0, 1, 0, true, 'C', true);
-        $html = date("Y-m-d",strtotime($arr["lcd"]));
-        $this->_PDF->writeHTMLCell(55, 6, 145,165, $html, 0, 1, 0, true, 'C', true);
+        //$html = date("Y-m-d",strtotime($arr["lcd"]));
+        //$this->_PDF->writeHTMLCell(55, 6, 145,165, $html, 0, 1, 0, true, 'C', true);
 
         $html = "复核：";
         $this->_PDF->writeHTMLCell(45, 6, 11,176, $html, 0, 1, 0, true, 'L', true);
@@ -379,8 +379,8 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(45, 11, 155,119, $html, 0, 1, 0, true, 'C', true);
         $html = $arr["leave_cause"];
         $this->_PDF->writeHTMLCell(45, 11, 155,130, $html, 0, 1, 0, true, 'C', true);
-        $html = date("Y-m-d",strtotime($arr["lcd"]));
-        $this->_PDF->writeHTMLCell(55, 6, 145,161, $html, 0, 1, 0, true, 'C', true);
+        //$html = date("Y-m-d",strtotime($arr["lcd"]));
+        //$this->_PDF->writeHTMLCell(55, 6, 145,161, $html, 0, 1, 0, true, 'C', true);
 
         $html = "Review:";
         $this->_PDF->writeHTMLCell(45, 6, 11,172, $html, 0, 1, 0, true, 'L', true);
@@ -517,6 +517,7 @@ class MyPDFTwo {
         //部门主管意见
         $html = "<p>部门主管</p><br><p>意见</p>";
         $this->_PDF->writeHTMLCell(40, 10, 10,157, $html, 0, 1, false, true, 'C', true);
+        /* 不需要日期及簽名
         if(!empty($arr["user_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["user_lcd"]));
             $this->_PDF->writeHTMLCell(148, 8, 51,171, $html, 0, 1, false, true, 'R', true);
@@ -525,6 +526,7 @@ class MyPDFTwo {
                 $this->setSignature($signature, 80, 170, 0,25);
             }
         }
+        */
 
         //公司法定代表人/负责人(或经依法授权的代理人)审批
         $html = "<p>公司法定代</p>";
@@ -537,6 +539,7 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(40, 10, 10,199, $html, 0, 1, false, true, 'C', true);
         $html = "<p>审批</p>";
         $this->_PDF->writeHTMLCell(40, 10, 10,204, $html, 0, 1, false, true, 'C', true);
+        /* 不需要日期及簽名
         if(!empty($arr["area_lcd"])){
             $html = date("Y年m月d日",strtotime($arr["area_lcd"]));
             $this->_PDF->writeHTMLCell(148, 8, 51,205, $html, 0, 1, false, true, 'R', true);
@@ -545,6 +548,7 @@ class MyPDFTwo {
                 $this->setSignature($signature, 80, 182, 0,25);
             }
         }
+        */
 
         //法定代表人(後期刪除，改成員工簽字
         $html = "<p>员工确认签</p><br><p>字</p>";
