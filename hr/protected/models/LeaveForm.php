@@ -580,7 +580,7 @@ class LeaveForm extends CFormModel
         }
         $arr = array();
         $rows = Yii::app()->db->createCommand()->select("a.id,a.name")
-            ->from("hr_vacation a")->where("a.city='$city' OR a.only='default' OR a.id=:id",array(":id"=>$id))->order("a.vaca_type in ('E') desc")->queryAll();
+            ->from("hr_vacation a")->where("((a.city='$city' OR a.only='default') and a.z_display=1) OR a.id=:id",array(":id"=>$id))->order("a.vaca_type in ('E') desc")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
