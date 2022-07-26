@@ -43,7 +43,7 @@ class SupportEmailForm extends CFormModel
 		return array(
 			array('id,employee_id,status_type,support_city,wage_city,start_date,end_date,supportInfo','safe'),
             array('employee_id','required'),
-            array('support_city,start_date,end_date','required'),
+            array('support_city,start_date','required'),
             array('employee_id','validateName'),
             array('supportInfo','validateDetail'),
 		);
@@ -175,6 +175,7 @@ class SupportEmailForm extends CFormModel
         $oldRow =Yii::app()->db->createCommand()->select("*")->from("hr_apply_support_email")
             ->where("id=:id",array(":id"=>$this->id))->queryRow();
         $uid = Yii::app()->user->id;
+        $this->end_date=empty($this->end_date)?null:$this->end_date;
         switch ($this->scenario) {
             case 'new':
                 $connection->createCommand()->insert("hr_apply_support_email", array(
@@ -220,7 +221,9 @@ class SupportEmailForm extends CFormModel
             $message.="</p>";
             $message.="<p>";
             $message.="<dt style='float: left;width: 300px;'>开始时间：".CGeneral::toMyDate($this->start_date)."</dt>";
-            $message.="<dt>结束时间：".CGeneral::toMyDate($this->end_date)."</dt>";
+            if(!empty($this->end_date)){
+                $message.="<dt>结束时间：".CGeneral::toMyDate($this->end_date)."</dt>";
+            }
             $message.="</p>";
             $message.="<p>";
             $message.="<dt style='float: left;width: 300px;'>原发工资城市：".CGeneral::getCityName($oldRow["wage_city"])."</dt>";
