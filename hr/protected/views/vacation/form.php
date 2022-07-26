@@ -37,7 +37,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('vacation/save')));
             ?>
-            <?php if ($model->scenario=='edit'): ?>
+            <?php if ($model->scenario=='edit'&&!$model->isReadonly()): ?>
                 <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                         'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
                 );
@@ -52,16 +52,18 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
 
+            <!--
             <div class="form-group">
                 <div class="col-sm-10 col-sm-offset-2 text-danger">
                     扣减工资= 员工合同约定月工资÷出勤天数×請假天数×倍率
                 </div>
             </div>
+            -->
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-4">
 					<?php echo $form->textField($model, 'name',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->isReadonly()))
 					); ?>
 				</div>
 			</div>
@@ -69,7 +71,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <?php echo $form->labelEx($model,'vaca_type',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'vaca_type',VacationForm::getVacaTypeList(),
-                        array('disabled'=>($model->scenario=='view'))
+                        array('disabled'=>($model->isReadonly()))
                     ); ?>
                 </div>
             </div>
@@ -77,7 +79,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
-                        array('disabled'=>($model->scenario=='view'))
+                        array('disabled'=>($model->isReadonly()))
                     ); ?>
                 </div>
             </div>
@@ -85,7 +87,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <?php echo $form->labelEx($model,'log_bool',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'log_bool',array(Yii::t("misc","No"),Yii::t("misc","Yes")),
-                        array('disabled'=>($model->scenario=='view'),"class"=>"changeBool")
+                        array('disabled'=>($model->isReadonly()),"class"=>"changeBool")
                     ); ?>
                 </div>
             </div>
@@ -100,7 +102,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <?php echo $form->labelEx($model,'ass_bool',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'ass_bool',array(Yii::t("misc","No"),Yii::t("misc","Yes")),
-                        array('disabled'=>($model->scenario=='view'),"class"=>"changeBool")
+                        array('disabled'=>($model->isReadonly()),"class"=>"changeBool")
                     ); ?>
                 </div>
             </div>
@@ -114,7 +116,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                         ); ?>
                         <span class="input-group-btn">
                 <?php echo TbHtml::button(Yii::t('dialog','Select'), array(
-                        'class'=>'btn btn-primary','id'=>'btnSelect','data-toggle'=>'modal','data-target'=>'#lookupdialog',)
+                        'class'=>'btn btn-primary','id'=>'btnSelect','disabled'=>$model->isReadonly(),'data-toggle'=>'modal','data-target'=>'#lookupdialog',)
                 );
                 ?>
                         </span>
@@ -125,7 +127,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <?php echo $form->labelEx($model,'sub_bool',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'sub_bool',array(Yii::t("misc","No"),Yii::t("misc","Yes")),
-                        array('disabled'=>($model->scenario=='view'),"class"=>"changeBool")
+                        array('disabled'=>($model->isReadonly()),"class"=>"changeBool")
                     ); ?>
                 </div>
             </div>
@@ -134,7 +136,7 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <div class="col-sm-3">
                     <div class="input-group">
                         <?php echo $form->textField($model, 'sub_multiple',
-                            array('readonly'=>($model->scenario=='view'))
+                            array('readonly'=>($model->isReadonly()))
                         ); ?>
                         <span class="input-group-addon">%</span>
                     </div>
@@ -145,7 +147,25 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
                 <?php echo $form->labelEx($model,'only',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->inlineRadioButtonList($model, 'only',array("local"=>Yii::t("fete","local"),"default"=>Yii::t("fete","default")),
-                        array('readonly'=>($model->scenario=='view'))
+                        array('disabled'=>($model->isReadonly()))
+                    ); ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'z_display',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->inlineRadioButtonList($model, 'z_display',array(0=>Yii::t("contract","none"),1=>Yii::t("contract","show")),
+                        array('disabled'=>($model->isReadonly()))
+                    ); ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'remark',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-5">
+                    <?php echo $form->textArea($model, 'remark',
+                        array('readonly'=>($model->scenario=='view'),'rows'=>4)
                     ); ?>
                 </div>
             </div>

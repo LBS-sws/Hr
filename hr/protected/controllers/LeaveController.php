@@ -320,6 +320,8 @@ class LeaveController extends Controller
             $leave_type = $_POST["leave_type"];
             $model = new VacationDayForm($index,$leave_type,$time);
             $useDay = $model->getVacationSum();
+            $remark = $model->vacation_list;
+            $remark = key_exists("remark",$remark)?$remark["remark"]:"";
             if($model->remain_bool){
                 $entry_time = $model->getEndTime();
                 $html = "<p class='form-control-static text-success'>".Yii::t("contract","remaining days")."：".$useDay."</p>";
@@ -327,7 +329,7 @@ class LeaveController extends Controller
                 $entry_time = date("Y/m/d",strtotime(date("Y/m/d")."+2 year"));
                 $html = "";
             }
-            echo CJSON::encode(array("status"=>1,"html"=>$html,"entry_time"=>$entry_time));
+            echo CJSON::encode(array("status"=>1,"html"=>$html,"remark"=>$remark,"entry_time"=>$entry_time));
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }

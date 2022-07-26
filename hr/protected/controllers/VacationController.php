@@ -99,7 +99,7 @@ class VacationController extends Controller
         if (isset($_POST['VacationForm'])) {
             $model = new VacationForm($_POST['VacationForm']['scenario']);
             $model->attributes = $_POST['VacationForm'];
-            if ($model->validate()) {
+            if ($model->validate()||!$model->rwFunction()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('vacation/edit',array('index'=>$model->id)));

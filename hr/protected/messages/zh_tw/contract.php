@@ -728,5 +728,9 @@ return array(
     'Two Pin'=>'兩項襟章',
     'Audit Date'=>'審核日期',
     'review ranking bool'=>'是否拉curve排名',
+    'Vacation Type Remark'=>'請假類型說明',
+    'display'=>'是否顯示',
+    'show'=>'顯示',
+    'none'=>'隱藏',
     );
 ?>

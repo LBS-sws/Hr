@@ -13,7 +13,9 @@ class VacationForm extends CFormModel
     public $ass_id_name;
     public $ass_id;
     public $ass_bool;
+    public $z_display=1; //1:显示  0：隐藏
     public $vaca_type;//休假類型
+    public $remark;//請假類型說明
 
 	public function attributeLabels()
 	{
@@ -29,6 +31,8 @@ class VacationForm extends CFormModel
             'vaca_type'=>Yii::t('fete','Vacation Type'),
             'ass_id_name'=>Yii::t('contract','associated config'),
             'ass_bool'=>Yii::t('contract','associated bool'),
+            'remark'=>Yii::t('contract','Vacation Type Remark'),
+            'z_display'=>Yii::t('contract','display'),
 		);
 	}
 
@@ -38,7 +42,7 @@ class VacationForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, name,log_bool,max_log,sub_bool,city,sub_multiple,only,vaca_type,ass_id_name,ass_id,ass_bool','safe'),
+			array('id, name, z_display, remark,log_bool,max_log,sub_bool,city,sub_multiple,only,vaca_type,ass_id_name,ass_id,ass_bool','safe'),
             array('name','required'),
             array('city','required'),
             array('ass_bool','required'),
@@ -182,6 +186,8 @@ class VacationForm extends CFormModel
                 $this->ass_bool = $row['ass_bool'];
                 $this->ass_id = $row['ass_id'];
                 $this->ass_id_name = $row['ass_id_name'];
+                $this->remark = $row['remark'];
+                $this->z_display = $row['z_display'];
                 break;
 			}
 		}
@@ -249,7 +255,7 @@ class VacationForm extends CFormModel
 
     //假期規則
     public function parentTable(){
-        $bool = $this->getScenario()=='view';
+        $bool = $this->isReadonly();
         $num = is_array($this->max_log)?count($this->max_log):0;
         $html = "<table class='table table-bordered table-striped' id='ruleTable'><thead><tr>";
         $html.="<th width='50%'>".Yii::t("contract","Holiday monthLong")."</th>";
@@ -293,8 +299,8 @@ class VacationForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->saveGoods($connection);
-			$transaction->commit();
+            $this->saveGoods($connection);
+            $transaction->commit();
 		}
 		catch(Exception $e) {
 			$transaction->rollback();
@@ -304,20 +310,23 @@ class VacationForm extends CFormModel
 
 	protected function saveGoods(&$connection) {
 		$sql = '';
-        switch ($this->scenario) {
-            case 'delete':
-                $sql = "delete from hr_vacation where id = :id";
-                break;
-            case 'new':
-                $sql = "insert into hr_vacation(
-							name,log_bool,max_log, sub_bool, sub_multiple, vaca_type, city, ass_id_name, ass_id, ass_bool, only, lcu
+		if($this->rwFunction()){
+            switch ($this->scenario) {
+                case 'delete':
+                    $sql = "delete from hr_vacation where id = :id";
+                    break;
+                case 'new':
+                    $sql = "insert into hr_vacation(
+							name,remark,z_display,log_bool,max_log, sub_bool, sub_multiple, vaca_type, city, ass_id_name, ass_id, ass_bool, only, lcu
 						) values (
-							:name,:log_bool,:max_log, :sub_bool, :sub_multiple, :vaca_type, :city, :ass_id_name, :ass_id, :ass_bool, :only, :lcu
+							:name,:remark,:z_display,:log_bool,:max_log, :sub_bool, :sub_multiple, :vaca_type, :city, :ass_id_name, :ass_id, :ass_bool, :only, :lcu
 						)";
-                break;
-            case 'edit':
-                $sql = "update hr_vacation set
+                    break;
+                case 'edit':
+                    $sql = "update hr_vacation set
 							name = :name, 
+							remark = :remark, 
+							z_display = :z_display, 
 							log_bool = :log_bool, 
 							vaca_type = :vaca_type, 
 							max_log = :max_log, 
@@ -331,7 +340,14 @@ class VacationForm extends CFormModel
 							luu = :luu
 						where id = :id
 						";
-                break;
+                    break;
+            }
+        }else{
+            $sql = "update hr_vacation set
+							remark = :remark, 
+							luu = :luu
+						where id = :id
+						";
         }
 		if (empty($sql)) return false;
 
@@ -360,6 +376,10 @@ class VacationForm extends CFormModel
             $command->bindParam(':ass_id',$this->ass_id,PDO::PARAM_STR);
         if (strpos($sql,':ass_bool')!==false)
             $command->bindParam(':ass_bool',$this->ass_bool,PDO::PARAM_STR);
+        if (strpos($sql,':z_display')!==false)
+            $command->bindParam(':z_display',$this->z_display,PDO::PARAM_INT);
+        if (strpos($sql,':remark')!==false)
+            $command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
 
         if (strpos($sql,':only')!==false)
             $command->bindParam(':only',$this->only,PDO::PARAM_STR);
@@ -377,4 +397,12 @@ class VacationForm extends CFormModel
         }
 		return true;
 	}
+
+	public function isReadonly(){
+        return $this->scenario=='view'||!$this->rwFunction();
+    }
+
+    public function rwFunction(){
+	    return Yii::app()->user->validRWFunction('ZC12');
+    }
 }

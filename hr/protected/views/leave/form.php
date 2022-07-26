@@ -233,6 +233,7 @@ $('#leave_type,.s_time,#employee_id').on('change',function(){
         success: function(data){
             ajaxBool = true;
             if(data.status == 1){
+                var remark = data.remark;
                 var html = data.html;
                 var entry_time = data.entry_time;
                 var parentDiv = $('#leave_type').parents('div.form-group:first');
@@ -241,6 +242,7 @@ $('#leave_type,.s_time,#employee_id').on('change',function(){
                 }else{
                     parentDiv.append('<div class=\"col-sm-7 yearDay\">'+html+'</div>');
                 }
+                $('#vacation_remark').val(remark);
                 if(entry_time!=''){//修改年假最大日期
                     $('#end_time').datepicker('setEndDate',entry_time);
                     if($('#end_time').val()!=''&&Date.parse($('#end_time').val())>Date.parse(entry_time)){

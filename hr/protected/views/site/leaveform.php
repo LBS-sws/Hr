@@ -40,9 +40,17 @@
 <div class="form-group">
     <?php echo TbHtml::label($model->getAttributeLabel("vacation_id").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
     <div class="col-lg-3">
-        <?php echo $form->dropDownList($model, 'vacation_id',LeaveForm::getLeaveTypeList($model->city),
+        <?php echo $form->dropDownList($model, 'vacation_id',LeaveForm::getLeaveTypeList($model->city,$model->vacation_id),
             array('readonly'=>($model->getInputBool()),"id"=>"leave_type")
         ); ?>
+    </div>
+</div>
+<div class="form-group">
+    <?php echo TbHtml::label(Yii::t('contract','Vacation Type Remark'),"",array('class'=>"col-lg-2 control-label"));?>
+    <div class="col-lg-5">
+        <?php
+        echo TbHtml::textArea("vacation_remark",LeaveForm::getLeaveTypeRemark($model->vacation_id),array("readonly"=>true,"id"=>"vacation_remark","rows"=>4))
+        ?>
     </div>
 </div>
 <div class="form-group">

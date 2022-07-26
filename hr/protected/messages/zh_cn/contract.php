@@ -735,5 +735,9 @@ return array(
     'Two Pin'=>'两项襟章',
     'Audit Date'=>'审核日期',
     'review ranking bool'=>'是否拉curve排名',
+    'Vacation Type Remark'=>'请假类型说明',
+    'display'=>'是否显示',
+    'show'=>'显示',
+    'none'=>'隐藏',
 );
 ?>
