@@ -46,18 +46,20 @@ class VacationDayForm
     }
 
     public function setYearLeaveType($int=-1){
+        $yearLeaveType = 0;
         if(in_array($int,array(0,1,2))){
-            $this->yearLeaveType = $int;
+            $yearLeaveType = $int;
         }else{
             $suffix = Yii::app()->params['envSuffix'];
             $row = Yii::app()->db->createCommand()->select("set_value")->from("hr$suffix.hr_setting")
                 ->where('set_name="yearLeaveType" and set_city=:city',array(":city"=>$this->city))->queryRow();
             if($row){
                 if(in_array($row["set_value"],array(0,1,2))){
-                    $this->yearLeaveType = $row["set_value"];
+                    $yearLeaveType = $row["set_value"];
                 }
             }
         }
+        $this->yearLeaveType = $yearLeaveType;
     }
 
     public function setEmployeeList($employee_id){
@@ -97,7 +99,6 @@ class VacationDayForm
                 ->where("vaca_type=:vaca_type",array(":vaca_type"=>$this->year_type))
                 ->queryAll();//查找所有的年假屬性
             if($rows){
-                $this->vacation_id_list=array();
                 $arr=$rows[0];
                 foreach ($rows as $row){
                     $this->vacation_id_list[] = $row["id"];
@@ -345,7 +346,7 @@ class VacationDayForm
                 $this->setSumDayToForeachYear($sumDay,$foreachYear);
             }
 
-            $foreachYear++;
+            $foreachYear++;//var_dump($sum);
             return $this->foreachYearAddSum($foreachYear,$sumDay);
         }
     }
@@ -360,6 +361,7 @@ class VacationDayForm
             ->leftJoin("hr_vacation b","a.vacation_id = b.id")
             ->where("b.vaca_type=:vaca_type and a.employee_id=:employee_id and a.status IN (1,2,4) and date_format(a.start_time,'%Y')=:year",
                 array(":employee_id"=>$this->employee_id,":year"=>$foreachYear,":vaca_type"=>$this->year_type))->queryScalar();
+
         $sumDay-=$sum;
     }
 
