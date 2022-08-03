@@ -782,12 +782,13 @@ class LeaveForm extends CFormModel
 
 
 	//獲取綁定員工的列表(解決地區變化問題$staff_id)
-    public function getBindEmployeeList($staff_id=0){
+    public static function getBindEmployeeList($staff_id=0,$city=''){
+        $city = empty($city)?Yii::app()->user->city():$city;
         $city_allow = Yii::app()->user->city_allow();
         $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select("a.employee_id as id,b.name as name")->from("hr_binding a")
             ->leftJoin("hr_employee b","a.employee_id=b.id")
-            ->where("b.city in ($city_allow) or b.id=:id",array(":id"=>$staff_id))->queryAll();
+            ->where("b.city='{$city}' or b.id=:id",array(":id"=>$staff_id))->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -911,6 +912,22 @@ class LeaveForm extends CFormModel
             return true;
         }
         if(!in_array($this->status,array(0,3))){
+            return true;
+        }
+        return false;
+    }
+
+    //驗證賬號是否綁定員工
+    public function validateEmployee(){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("a.employee_id,b.name,b.city")
+            ->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where('a.user_id=:user_id',
+                array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            $this->employee_id = $rows["employee_id"];
+            $this->city = $rows["city"];
             return true;
         }
         return false;

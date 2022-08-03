@@ -123,6 +123,11 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         <p class="form-control-static">中央技术支援：如果是中央支援组的技术员，请选择服务</p>
                     </div>
                 </div>
+                <div class="form-group">
+                    <div class="col-sm-12 col-sm-offset-2 text-danger">
+                        <p class="form-control-static">职位类别为“服务”时参加人事系统的“襟章登记”及影响日报表系统的“月报表数据”，但一定不参加会计系统的“ID销售计算”</p>
+                    </div>
+                </div>
             <?php endif; ?>
             <?php if ($model->type==1): ?>
                 <div class="form-group">
