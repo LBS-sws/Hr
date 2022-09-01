@@ -23,6 +23,7 @@ class VacationDayForm
     protected $end_time;
 
     protected $year_type = "E";//年假
+    protected $monthLong=0;//新加坡病假間隔最大月份
 
     protected $error_bool = false;
 
@@ -76,10 +77,12 @@ class VacationDayForm
             $this->useDay = 0;
             if($this->vaca_type == $this->year_type&&$this->city != $rows["city"]){
                 $this->city = $rows["city"];
-                $this->setYearLeaveType();
                 $this->setVacationType();
             }else{
                 $this->city = $rows["city"];
+            }
+            if(in_array($this->vaca_type,array("E","L"))){
+                $this->setYearLeaveType();//病假和年假需要獲取系統設置的開發者配置
             }
         }else{
             $this->error_bool = true;
@@ -168,7 +171,7 @@ class VacationDayForm
                 }
                 $this->diffMonth = $diffMonth;
 
-                if($this->yearLeaveType == 0){
+                if ($this->yearLeaveType == 0){
                     //大陸版的一年：員工月份為起點
                     if(date("m-d",$time)>=date("m-d",$entry_time)){
                         $this->start_time = $year.date("/m/d",$entry_time);
@@ -201,11 +204,27 @@ class VacationDayForm
         return $this->vacation_sum;
     }
 
+    //新加坡病假计算逻辑修改
+    private function setXinJiaPoStartTime(){
+        if($this->yearLeaveType == 1&&$this->vaca_type="L"){
+            $year = date("Y",strtotime($this->employee_list["entry_time"]." + {$this->monthLong} month"));
+            $startYear=date("Y",strtotime($this->start_time));
+            if($year==$startYear){ //當員工入職+病假的最大分割=請假的年份時，需要計算上一年的請假
+                $this->start_time = ($startYear-1)."/01/01";
+                $this->end_time = $startYear."/12/31";
+            }else{
+                $this->start_time = $startYear."/01/01";
+                $this->end_time = $startYear."/12/31";
+            }
+        }
+    }
+
     //計算已申請多少假期
     private function foreachVacationUse($lcd=''){
         if(!$this->employee_list){
             return false;
         }
+        $this->setXinJiaPoStartTime();//新加坡病假计算逻辑修改
         if(empty($lcd)){
             $statusSql = " and status IN (1,2,4)";
         }else{
@@ -394,10 +413,12 @@ class VacationDayForm
     }
 
     private function addRulesNum($row){
+        $this->monthLong=0;
         if($row['log_bool'] == 1){//有假期規則
             $this->remain_bool = true;
             $max_log = json_decode($row['max_log'],true);
             foreach ($max_log as $list){
+                $this->monthLong=is_numeric($list["monthLong"])?intval($list["monthLong"]):$this->monthLong;
                 if ($this->diffMonth<$list["monthLong"]){
                     if($this->vacation_sum<$list["dayNum"]){
                         $this->vacation_sum=$list["dayNum"];
