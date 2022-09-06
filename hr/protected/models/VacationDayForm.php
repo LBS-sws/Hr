@@ -98,17 +98,26 @@ class VacationDayForm
         $this->vacation_id_list = array();
         if ($this->vaca_type == $this->year_type){ //特別處理年假
             $suffix = Yii::app()->params['envSuffix'];
-            $row = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
-                ->where("vaca_type=:vaca_type and (city=:city OR only='default') ",
-                    array(":vaca_type"=>$this->year_type,":city"=>$this->city))->queryRow();
-            if($row){
-                $this->vaca_type = $row["vaca_type"];
-                $this->vacation_id = $row["id"];
-                $this->vacation_list = $row;
-                if($row['ass_bool'] == 1){ //有關聯假期規則
-                    $this->vacation_id_list = explode(",",$row['ass_id']);
+            $rows = Yii::app()->db->createCommand()->select("*")->from("hr$suffix.hr_vacation")
+                ->where("vaca_type=:vaca_type",array(":vaca_type"=>$this->year_type))
+                ->queryAll();//查找所有的年假屬性
+            if($rows){
+                $arr=$rows[0];
+                foreach ($rows as $row){
+                    $this->vacation_id_list[] = $row["id"];
+                    if($row['ass_bool'] == 1){ //有關聯假期規則
+                        $assList = explode(",",$row['ass_id']);
+                        foreach ($assList as $item){
+                            $this->vacation_id_list[] = $item;
+                        }
+                    }
+                    if($row["id"]==$this->vacation_id){
+                        $arr=$row;
+                    }
                 }
-                $this->vacation_id_list[] = $row["id"];
+                $this->vaca_type = $this->year_type;
+                $this->vacation_id = $arr["id"];
+                $this->vacation_list = $arr;
             }else{
                 $this->error_bool = true;
             }
@@ -197,7 +206,7 @@ class VacationDayForm
 
     //新加坡病假计算逻辑修改
     private function setXinJiaPoStartTime(){
-        if($this->yearLeaveType == 1&&$this->vaca_type="L"){
+        if($this->yearLeaveType == 1&&$this->vaca_type=="L"){
             $year = date("Y",strtotime($this->employee_list["entry_time"]." + {$this->monthLong} month"));
             $startYear=date("Y",strtotime($this->start_time));
             if($year==$startYear){ //當員工入職+病假的最大分割=請假的年份時，需要計算上一年的請假
@@ -370,6 +379,7 @@ class VacationDayForm
             ->leftJoin("hr_vacation b","a.vacation_id = b.id")
             ->where("b.vaca_type=:vaca_type and a.employee_id=:employee_id and a.status IN (1,2,4) and date_format(a.start_time,'%Y')=:year",
                 array(":employee_id"=>$this->employee_id,":year"=>$foreachYear,":vaca_type"=>$this->year_type))->queryScalar();
+
         $sumDay-=$sum;
     }
 
