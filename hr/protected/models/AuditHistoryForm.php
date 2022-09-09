@@ -497,6 +497,24 @@ class AuditHistoryForm extends CFormModel
 
         //員工姓名變更後需要修改其它數據表
         $this->resetOtherTable($staff,$staffNew);
+
+        //員工離職後需要隨機修改登錄賬號的密碼
+        $this->updateUserPassword($staffNew);
+    }
+
+    //員工離職後需要隨機修改登錄賬號的密碼
+    private function updateUserPassword($staffNew){
+        if($staffNew["staff_status"]==-1){//員工離職
+            $password = date("YmdHis")."_".$this->employee_id;
+            $suffix = Yii::app()->params['envSuffix'];
+            $row = Yii::app()->db->createCommand()->select("user_id")->from("hr_binding")
+                ->where('employee_id=:id', array(':id'=>$this->employee_id))->queryRow();
+            if($row){//如果該員工綁定了登錄賬戶
+                Yii::app()->db->createCommand()->update("security$suffix.sec_user",array(
+                    "password"=>$password
+                ),"username=:username",array(":username"=>$row["user_id"]));
+            }
+        }
     }
 
     //強制刷新員工姓名(歷史id)
