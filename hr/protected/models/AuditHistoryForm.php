@@ -330,7 +330,7 @@ class AuditHistoryForm extends CFormModel
                 $this->group_type = $row['group_type'];
                 $this->effect_time = $row['effect_time'];
                 $this->wechat = $row['wechat'];
-                $this->recommend_user = $row['recommend_user'];
+                $this->recommend_user = key_exists("recommend_user",$row)?$row['recommend_user']:"";
                 $this->urgency_card = $row['urgency_card'];
 				break;
 			}
