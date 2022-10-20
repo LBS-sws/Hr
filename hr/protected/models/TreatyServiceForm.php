@@ -96,7 +96,7 @@ class TreatyServiceForm extends CFormModel
             ->from("hr_treaty_info a")
             ->where("a.treaty_id=:id",array(":id"=>$this->id))
             ->queryScalar();
-        $this->treaty_num = empty($count)?"":$count-1;
+        $this->treaty_num = empty($count)?0:$count-1;
 	    //起始时间
         $minRow = Yii::app()->db->createCommand()->select("a.id,a.start_date,a.month_num,a.end_date")
             ->from("hr_treaty_info a")
