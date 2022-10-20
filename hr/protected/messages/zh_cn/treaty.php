@@ -1,0 +1,36 @@
+<?php
+return array(
+	'add treaty'=>'新增项目',
+	'Add Contract'=>'新增项目合约',
+	'contract code'=>'合约编号',
+	'treaty code'=>'项目编号',
+	'treaty name'=>'项目名称',
+	'city'=>'城市',
+	'month num'=>'合约月份',
+	'treaty num'=>'续约次数',
+	'apply date'=>'合约起始时间',
+	'start date'=>'合约开始时间',
+	'end date'=>'合约结束日期',
+	'treaty state'=>'合约状态',
+
+	'treaty unused'=>'未使用',
+	'treaty service'=>'合约进行中',
+    'treaty end'=>'合约已过期',
+	'treaty stop'=>'合约已停用',
+
+	'treaty history'=>'合约记录',
+	'email hint'=>'是否邮件提醒',
+	'email date'=>'邮件通知时间',
+	'yes'=>'是',
+	'no'=>'否',
+	'remark'=>'备注',
+	'not email'=>'不发送邮件',
+	'black'=>'退回项目',
+	'stop'=>'停止项目',
+	'Are you sure to stop?'=>'项目停止后无法修改，你确定需要停止吗？',
+	'Are you sure to black?'=>'你确定需要退回项目吗？',
+	'Record Stop'=>'项目停止成功',
+	'Record Black'=>'项目退回成功',
+	'Treaty Email Title'=>'目前有保险类/合同类/其他类合同事宜即将到期，请及时处理',
+);
+?>

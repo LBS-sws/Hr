@@ -66,7 +66,21 @@ class TimerCommand extends CConsoleCommand {
         $this->probationEndHint();//试用期即将结束的邮件提醒14天、7天、当天
         $this->dailyInAndOutHint();//入职、离职总览电邮
         $this->resetBossListScore();//老总年度考核的總分重新計算
+
+        $this->resetTreaty();//合约提醒功能（需要每天刷新合约的状态）
         echo "end\r\n";
+    }
+
+    //合约提醒功能（需要每天刷新合约的状态）
+    private function resetTreaty(){
+        $rows = Yii::app()->db->createCommand()->select("id")->from("hr_treaty")
+            ->where('state_type!=3')->queryAll();
+        if($rows){
+            $treatyModel = new TreatyServiceForm();
+            foreach ($rows as $row){
+                $treatyModel->retrieveData($row["id"]);
+            }
+        }
     }
 
     //員工退休年齡

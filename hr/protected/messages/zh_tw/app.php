@@ -206,6 +206,9 @@ return array(
     'Pin Table'=>'襟章發放統計表',
     'Pin Report'=>'襟章明細報表',
     'Boss Audit Plan Report'=>'老總年度考核進度報表',
+    'Treaty Hint'=>'合約提醒',
+    'Treaty Service'=>'使用中的項目',
+    'Treaty Stop'=>'已停止的項目',
 //沈超添加結束
 );
 ?>

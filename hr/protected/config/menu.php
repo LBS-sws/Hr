@@ -148,10 +148,26 @@ return array(
             'Common forms download'=>array(
                 'access'=>'ZD04',//YB07
                 'url'=>'/downForm/index',
-            )
+            ),
 		),
 	),
-    //員工模塊
+    //合约提醒
+	'Treaty Hint'=>array(
+        'access'=>'TH',
+        'icon'=>'fa-archive',
+        'items'=>array(
+            //進行中的合約
+            'Treaty Service'=>array(
+                'access'=>'TH01',//
+                'url'=>'/treatyService/index',
+            ),
+            //已停止的合約
+            'Treaty Stop'=>array(
+                'access'=>'TH02',//
+                'url'=>'/treatyStop/index',
+            ),
+        )
+    ),
 	'Employee'=>array(
 		'access'=>'ZE',
 		'icon'=>'fa-smile-o',
