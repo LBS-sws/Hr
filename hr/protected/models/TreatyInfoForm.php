@@ -14,7 +14,7 @@ class TreatyInfoForm extends CFormModel
     public $month_num;
 	public $end_date;
 	public $remark;
-	public $email_hint;
+	public $email_hint=1;//默认发送邮件
 	public $email_date;
 	public $email_id;
 
