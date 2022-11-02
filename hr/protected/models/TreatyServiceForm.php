@@ -80,12 +80,39 @@ class TreatyServiceForm extends CFormModel
 			$this->end_date = empty($row["end_date"])?"":CGeneral::toDate($row["end_date"]);
 			$this->state_type = $row['state_type'];
             $this->resetTreatyStatus();
+            $this->changeTreatyEmail();
             return true;
 		}else{
 		    return false;
         }
 	}
 
+    //合約的郵件收件人需要根據權限隨時變化
+	protected function changeTreatyEmail(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.email_id,b.to_addr")
+            ->from("hr_treaty_info a")
+            ->leftJoin("swoper$suffix.swo_email_queue b","b.id=a.email_id")
+            ->where("a.treaty_id=:id and b.status='P'",array(":id"=>$this->id))
+            ->order("a.start_date asc")->queryAll();
+        if($rows){
+            $emailModel = new Email();
+            $emailModel->addEmailToPrefixAndCity("TH01",$this->city);
+            $emailModel->addEmailToCity($this->city);
+            $to_addr = $emailModel->getToAddr();
+            $to_addr = empty($to_addr)?json_encode(array("it@lbsgroup.com.hk")):json_encode($to_addr);
+            foreach ($rows as $row){
+                if($to_addr!=$row["to_addr"]){
+                    Yii::app()->db->createCommand()->update("swoper$suffix.swo_email_queue", array(
+                        'to_addr'=>$to_addr,
+                        'lcd'=>date('Y-m-d H:i:s'),
+                    ), 'id=:id', array(':id'=>$row["email_id"]));
+                }
+            }
+            unset($emailModel);
+        }
+    }
 	protected function resetTreatyStatus(){
         $this->apply_date=null;
         $this->start_date=null;
