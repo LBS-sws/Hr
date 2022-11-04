@@ -28,7 +28,7 @@ class DeptController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','new','save','delete'),
+                'actions'=>array('edit','new','save','delete','copy'),
                 'expression'=>array('DeptController','allowReadWrite'),
             ),
             array('allow',
@@ -84,6 +84,20 @@ class DeptController extends Controller
         $model = new DeptForm('new');
         $model->type = $type;
         $this->render('form',array('model'=>$model,));
+    }
+
+
+    public function actionCopy($index=0)
+    {
+        $model = new DeptForm('new');
+        if (!$model->retrieveData($index)) {
+            throw new CHttpException(404,'The requested page does not exist.');
+        } else {
+            $this->function_id = $model->type==0 ? 'ZC01' : 'ZC02';
+            Yii::app()->session['active_func'] = $this->function_id;
+            $model->id=null;
+            $this->render('form',array('model'=>$model,));
+        }
     }
 
     public function actionEdit($index)

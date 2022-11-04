@@ -37,6 +37,9 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
             <?php echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
                 'submit'=>Yii::app()->createUrl('dept/new',array("type"=>$model->type))));
             ?>
+            <?php echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Copy'), array(
+                'submit'=>Yii::app()->createUrl('dept/copy',array("index"=>$model->id))));
+            ?>
         <?php endif ?>
 
         <?php if ($model->scenario!='view'): ?>
