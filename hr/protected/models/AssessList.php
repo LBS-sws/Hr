@@ -284,7 +284,7 @@ class AssessList extends CListPageModel
             $message.= "<p>员工名字：".$row["employee_name"]."</p>";
             $message.= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
             $message.= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
-            $message.="<table width='1690px' border='1'><thead><tr>";
+            $message.="<table width='1690px' border='1' data-code='{$row['employee_code']}'><thead><tr>";
             $message.='<th width="110px">评估日期</th>';
             $message.='<th width="80px">评估人</th>';
             $message.='<th width="80px">工种</th>';
