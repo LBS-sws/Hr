@@ -252,6 +252,8 @@ class AssessList extends CListPageModel
                     $message.=$this->getMessageForOne($staff_id,$id);
                 }
             }
+            var_dump($message);
+            die();
             $connection->createCommand()->insert("swoper$suffix.swo_email_queue", array(
                 'request_dt'=>date('Y-m-d H:i:s'),
                 'from_addr'=>$from_addr,
