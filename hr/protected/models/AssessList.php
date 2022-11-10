@@ -310,22 +310,22 @@ class AssessList extends CListPageModel
                 }else{
                     $message .= "<td>工种：无</td>";
                 }
-                $message.= "<td>".$row["overall_effect"]."</td>";
-                $message.= "<td>".$row["service_effect"]."</td>";
-                $message.= "<td>".$row["service_process"]."</td>";
-                $message.= "<td>".$row["carefully"]."</td>";
-                $message.= "<td>".$row["judge"]."</td>";
-                $message.= "<td>".$row["deal"]."</td>";
-                $message.= "<td>".$row["connects"]."</td>";
-                $message.= "<td>".$row["obey"]."</td>";
-                $message.= "<td>".$row["leadership"]."</td>";
-                $message.= "<td>".$row["characters"]."</td>";
-                $message.= "<td>".$row["assess"]."</td>";
+                $message.= "<td>".htmlentities($row["overall_effect"])."</td>";
+                $message.= "<td>".htmlentities($row["service_effect"])."</td>";
+                $message.= "<td>".htmlentities($row["service_process"])."</td>";
+                $message.= "<td>".htmlentities($row["carefully"])."</td>";
+                $message.= "<td>".htmlentities($row["judge"])."</td>";
+                $message.= "<td>".htmlentities($row["deal"])."</td>";
+                $message.= "<td>".htmlentities($row["connects"])."</td>";
+                $message.= "<td>".htmlentities($row["obey"])."</td>";
+                $message.= "<td>".htmlentities($row["leadership"])."</td>";
+                $message.= "<td>".htmlentities($row["characters"])."</td>";
+                $message.= "<td>".htmlentities($row["assess"])."</td>";
                 $message.="</tr>";
             }
             $message.="</tbody></table>";
-            $message .="<p>&nbsp;</p>";
-            $message .="<p>------------------------------------------</p>";
+            $message .="<p>&nbsp;&nbsp;</p>";
+            $message .="<p data-id='p'>------------------------------------------</p>";
             $message .="<p>&nbsp;</p>";
         }
         return $message;
@@ -344,17 +344,17 @@ class AssessList extends CListPageModel
             }else{
                 $message .= "<p>工种：</p>";
             }
-            $message .= "<p>整体效果：".$row["overall_effect"]."</p>";
-            $message .= "<p>服务效果：".$row["service_effect"]."</p>";
-            $message .= "<p>服务流程：".$row["service_process"]."</p>";
-            $message .= "<p>细心度：".$row["carefully"]."</p>";
-            $message .= "<p>判断力：".$row["judge"]."</p>";
-            $message .= "<p>处理能力：".$row["deal"]."</p>";
-            $message .= "<p>沟通能力：".$row["connects"]."</p>";
-            $message .= "<p>服从度：".$row["obey"]."</p>";
-            $message .= "<p>领导力：".$row["leadership"]."</p>";
-            $message .= "<p>性格：".$row["characters"]."</p>";
-            $message .= "<p>评估：".$row["assess"]."</p>";
+            $message .= "<p>整体效果：".htmlentities($row["overall_effect"])."</p>";
+            $message .= "<p>服务效果：".htmlentities($row["service_effect"])."</p>";
+            $message .= "<p>服务流程：".htmlentities($row["service_process"])."</p>";
+            $message .= "<p>细心度：".htmlentities($row["carefully"])."</p>";
+            $message .= "<p>判断力：".htmlentities($row["judge"])."</p>";
+            $message .= "<p>处理能力：".htmlentities($row["deal"])."</p>";
+            $message .= "<p>沟通能力：".htmlentities($row["connects"])."</p>";
+            $message .= "<p>服从度：".htmlentities($row["obey"])."</p>";
+            $message .= "<p>领导力：".htmlentities($row["leadership"])."</p>";
+            $message .= "<p>性格：".htmlentities($row["characters"])."</p>";
+            $message .= "<p>评估：".htmlentities($row["assess"])."</p>";
             $message .= "<p>评估人：".$this->getDisNameToUsername($row["lcu"])."</p>";
             $message .="<p>&nbsp;</p>";
             $message .="<p>------------------------------------------</p>";
