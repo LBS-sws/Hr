@@ -252,8 +252,6 @@ class AssessList extends CListPageModel
                     $message.=$this->getMessageForOne($staff_id,$id);
                 }
             }
-            var_dump($message);
-            die();
             $connection->createCommand()->insert("swoper$suffix.swo_email_queue", array(
                 'request_dt'=>date('Y-m-d H:i:s'),
                 'from_addr'=>$from_addr,
@@ -282,6 +280,7 @@ class AssessList extends CListPageModel
             ->where("a.employee_id='{$staff_id}' and (a.email_bool=1 or a.id='$id')")->order("a.lcd desc")->limit(5)->queryAll();
         if($rows){
             $row = $rows[0];
+            $message.= "<div>";
             $message.= "<p>员工编号：".$row["employee_code"]."</p>";
             $message.= "<p>员工名字：".$row["employee_name"]."</p>";
             $message.= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
@@ -326,9 +325,12 @@ class AssessList extends CListPageModel
                 $message.="</tr>";
             }
             $message.="</tbody></table>";
+            $message.="</div>";
+            $message.="<div>";
             $message .="<p>&nbsp;&nbsp;</p>";
             $message .="<p data-id='p'>------------------------------------------</p>";
             $message .="<p>&nbsp;</p>";
+            $message.="</div>";
         }
         return $message;
     }
