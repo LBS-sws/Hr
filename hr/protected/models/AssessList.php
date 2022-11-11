@@ -280,20 +280,10 @@ class AssessList extends CListPageModel
             ->where("a.employee_id='{$staff_id}' and (a.email_bool=1 or a.id='$id')")->order("a.lcd desc")->limit(5)->queryAll();
         if($rows){
             $row = $rows[0];
-            $message.= "<table border='0' cellpadding='0' cellspacing='0'><tbody>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
-            $message.= "<p style='margin: 0px;'>员工编号：".$row["employee_code"]."</p>";
-            $message.="</td></tr>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
-            $message.= "<p style='margin: 0px;'>员工名字：".$row["employee_name"]."</p>";
-            $message.="</td></tr>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
-            $message.= "<p style='margin: 0px;'>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
-            $message.="</td></tr>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
-            $message.= "<p style='margin: 0px;'>职位：".DeptForm::getDeptToId($row["position"])."</p>";
-            $message.="</td></tr>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message.= "<p>员工编号：".$row["employee_code"]."</p>";
+            $message.= "<p>员工名字：".$row["employee_name"]."</p>";
+            $message.= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
+            $message.= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
             $message.="<table width='1690px' border='1' data-code='{$row['employee_code']}'><thead><tr>";
             $message.='<th width="110px">评估日期</th>';
             $message.='<th width="80px">评估人</th>';
@@ -310,7 +300,7 @@ class AssessList extends CListPageModel
             $message.='<th width="200px">性格</th>';
             $message.='<th width="500px">评估</th>';
             $message.="</tr></thead>";
-            $message.="<tbody>";
+            $message.="<tbody data-code='{$row["employee_code"]}'>";
             foreach ($rows as $row){
                 $message.="<tr>";
                 $message.="<td>".date("Y-m-d",strtotime($row["lcd"]))."</td>";
@@ -334,17 +324,13 @@ class AssessList extends CListPageModel
                 $message.="</tr>";
             }
             $message.="</tbody></table>";
-            $message.="</td></tr>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
-            $message .="<p style='margin: 0px;'>&nbsp;&nbsp;</p>";
-            $message.="</td></tr>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
-            $message .="<p style='margin: 0px;'>------------------------------------------</p>";
-            $message.="</td></tr>";
-            $message.="<tr><td style='padding-bottom: 10px;'>";
-            $message .="<p style='margin: 0px;'>&nbsp;</p>";
-            $message.="</td></tr>";
-            $message.= "</tbody></table>";
+            if(substr($message,-16)!="</tbody></table>"){//不知道為啥，上面一行代碼不生效
+                $message.="<tr style='display: none;'><td>&nbsp;</td></tr>";
+                $message.="</tbody></table>";
+            }
+            $message.="<p>&nbsp;&nbsp;</p>";
+            $message.="<p data-code='{$row["employee_code"]}'>------------------------------------------</p>";
+            $message.="<p>&nbsp;</p>";
         }
         return $message;
     }
