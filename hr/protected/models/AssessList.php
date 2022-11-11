@@ -280,11 +280,20 @@ class AssessList extends CListPageModel
             ->where("a.employee_id='{$staff_id}' and (a.email_bool=1 or a.id='$id')")->order("a.lcd desc")->limit(5)->queryAll();
         if($rows){
             $row = $rows[0];
-            $message.= "<div>";
-            $message.= "<p>员工编号：".$row["employee_code"]."</p>";
-            $message.= "<p>员工名字：".$row["employee_name"]."</p>";
-            $message.= "<p>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
-            $message.= "<p>职位：".DeptForm::getDeptToId($row["position"])."</p>";
+            $message.= "<table border='0' cellpadding='0' cellspacing='0'><tbody>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message.= "<p style='margin: 0px;'>员工编号：".$row["employee_code"]."</p>";
+            $message.="</td></tr>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message.= "<p style='margin: 0px;'>员工名字：".$row["employee_name"]."</p>";
+            $message.="</td></tr>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message.= "<p style='margin: 0px;'>员工城市：".CGeneral::getCityName($row["s_city"])."</p>";
+            $message.="</td></tr>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message.= "<p style='margin: 0px;'>职位：".DeptForm::getDeptToId($row["position"])."</p>";
+            $message.="</td></tr>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
             $message.="<table width='1690px' border='1' data-code='{$row['employee_code']}'><thead><tr>";
             $message.='<th width="110px">评估日期</th>';
             $message.='<th width="80px">评估人</th>';
@@ -325,12 +334,17 @@ class AssessList extends CListPageModel
                 $message.="</tr>";
             }
             $message.="</tbody></table>";
-            $message.="</div>";
-            $message.="<div>";
-            $message .="<p>&nbsp;&nbsp;</p>";
-            $message .="<p data-id='p'>------------------------------------------</p>";
-            $message .="<p>&nbsp;</p>";
-            $message.="</div>";
+            $message.="</td></tr>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message .="<p style='margin: 0px;'>&nbsp;&nbsp;</p>";
+            $message.="</td></tr>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message .="<p style='margin: 0px;'>------------------------------------------</p>";
+            $message.="</td></tr>";
+            $message.="<tr><td style='padding-bottom: 10px;'>";
+            $message .="<p style='margin: 0px;'>&nbsp;</p>";
+            $message.="</td></tr>";
+            $message.= "</tbody></table>";
         }
         return $message;
     }
