@@ -302,32 +302,31 @@ class AssessList extends CListPageModel
             $message.="</tr></thead>";
             $message.="<tbody data-code='{$row["employee_code"]}'>";
             foreach ($rows as $row){
-                $message.="<tr>";
+                $message.="<tr data-id='{$row['id']}'>";
                 $message.="<td>".date("Y-m-d",strtotime($row["lcd"]))."</td>";
                 $message.= "<td>".$row["disp_name"]."</td>";
                 if(array_key_exists($row["staff_type"],$staffTypeList)){
-                    $message.="<td>".$staffTypeList[$row["staff_type"]]."</td>";
+                    $message.="<td>".$staffTypeList[$row["staff_type"]]."&nbsp;</td>";
                 }else{
                     $message .= "<td>工种：无</td>";
                 }
-                $message.= "<td>".htmlentities($row["overall_effect"])."</td>";
-                $message.= "<td>".htmlentities($row["service_effect"])."</td>";
-                $message.= "<td>".htmlentities($row["service_process"])."</td>";
-                $message.= "<td>".htmlentities($row["carefully"])."</td>";
-                $message.= "<td>".htmlentities($row["judge"])."</td>";
-                $message.= "<td>".htmlentities($row["deal"])."</td>";
-                $message.= "<td>".htmlentities($row["connects"])."</td>";
-                $message.= "<td>".htmlentities($row["obey"])."</td>";
-                $message.= "<td>".htmlentities($row["leadership"])."</td>";
-                $message.= "<td>".htmlentities($row["characters"])."</td>";
-                $message.= "<td>".htmlentities($row["assess"])."</td>";
+                $message.= "<td>".htmlentities($row["overall_effect"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["service_effect"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["service_process"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["carefully"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["judge"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["deal"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["connects"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["obey"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["leadership"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["characters"])."&nbsp;</td>";
+                $message.= "<td>".htmlentities($row["assess"])."&nbsp;</td>";
                 $message.="</tr>";
             }
+            $message.="<tr style='display: none;'><td>&nbsp;</td></tr>";
             $message.="</tbody></table>";
-            if(substr($message,-16)!="</tbody></table>"){//不知道為啥，上面一行代碼不生效
-                $message.="<tr style='display: none;'><td>&nbsp;</td></tr>";
-                $message.="</tbody></table>";
-            }
+            //不知道為啥，table不能正常結束，所以添加一個隱藏的table
+            $message.="<table style='display: none;'><tbody><tr><td></td></tr></tbody></table>";
             $message.="<p>&nbsp;&nbsp;</p>";
             $message.="<p data-code='{$row["employee_code"]}'>------------------------------------------</p>";
             $message.="<p>&nbsp;</p>";
