@@ -2,6 +2,7 @@
 
 class Email {
 
+    //强制刷新本文件
     protected $to_addr=array();//收信人郵箱
     protected $subject;//郵件主題
     protected $description;//郵件副題
@@ -74,7 +75,7 @@ class Email {
         $suffix = Yii::app()->params['envSuffix'];
         $rs = Yii::app()->db->createCommand()->select("b.email")->from("security$suffix.sec_city a")
             ->leftJoin("security$suffix.sec_user b","a.incharge=b.username")
-            ->where("a.code = 'CN'")
+            ->where("a.code = 'CN' and b.status='A'")
             ->queryRow();
         if($rs){
             return $rs["email"];
@@ -88,7 +89,7 @@ class Email {
         $suffix = Yii::app()->params['envSuffix'];
         $rs = Yii::app()->db->createCommand()->select("b.email")->from("security$suffix.sec_city a")
             ->leftJoin("security$suffix.sec_user b","a.incharge=b.username")
-            ->where("a.code in ('CN','HD','HN','HXHB')")
+            ->where("a.code in ('CN','HD','HN','HXHB') and b.status='A'")
             ->queryAll();
         if($rs){
             return array_column($rs,'email');
@@ -365,7 +366,7 @@ class Email {
     public function addEmailToLcu($lcu){
         $suffix = Yii::app()->params['envSuffix'];
         $email = Yii::app()->db->createCommand()->select("email, username")->from("security$suffix.sec_user")
-            ->where("username=:username and email !=''",array(":username"=>$lcu))
+            ->where("username=:username and email !='' and status='A'",array(":username"=>$lcu))
             ->queryRow();
         if($email){
             if(!in_array($email["email"],$this->to_addr)){
@@ -382,7 +383,7 @@ class Email {
         $suffix = Yii::app()->params['envSuffix'];
         $email = Yii::app()->db->createCommand()->select("b.email, b.username")->from("hr$suffix.hr_binding a")
             ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
-            ->where("a.employee_id=:employee_id and b.email !=''",array(":employee_id"=>$staffId))
+            ->where("a.employee_id=:employee_id and b.email !='' and b.status='A'",array(":employee_id"=>$staffId))
             ->queryRow();
         if($email){
             if(!in_array($email["email"],$this->to_addr)){

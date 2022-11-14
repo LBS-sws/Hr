@@ -2,6 +2,7 @@
 
 class SupportAuditForm extends CFormModel
 {
+    //强制刷新本文件
 	public $id;
 	public $support_code;
 	public $apply_date;
