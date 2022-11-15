@@ -61,8 +61,10 @@ class AuditWorkList extends CListPageModel
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
 				where a.status in (1,3) AND a.z_index =$only 
 			";
-        $sql1.=" and a.employee_id !='$staff_id' ";
-        $sql2.=" and a.employee_id !='$staff_id' ";
+        if($only!=4){ //“你”权限可以审核自己
+            $sql1.=" and a.employee_id !='$staff_id' ";
+            $sql2.=" and a.employee_id !='$staff_id' ";
+        }
         switch ($only){
             case 1: //部門審核
                 $sql1.=" AND b.department = '$department' ";
