@@ -58,13 +58,17 @@ class TreatyServiceForm extends CFormModel
         }
     }
 
-	public function retrieveData($index)
+	public function retrieveData($index,$bool=true)
 	{
         $suffix = Yii::app()->params['envSuffix'];
-        $city_allow = Yii::app()->user->city_allow();
+        $sqlCity = "";
+        if($bool){ //由於定時刷新不需要城市，所以需要判斷
+            $city_allow = Yii::app()->user->city_allow();
+            $sqlCity=" and a.city in ({$city_allow})";
+        }
         $sql = "select a.* 
 				from hr_treaty a
-				where a.state_type!=3 and a.city in ({$city_allow}) and a.id='$index'
+				where a.state_type!=3 {$sqlCity} and a.id='$index'
 			";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {

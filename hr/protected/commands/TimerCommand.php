@@ -78,7 +78,7 @@ class TimerCommand extends CConsoleCommand {
         if($rows){
             $treatyModel = new TreatyServiceForm();
             foreach ($rows as $row){
-                $treatyModel->retrieveData($row["id"]);
+                $treatyModel->retrieveData($row["id"],false);
             }
         }
     }
@@ -214,7 +214,9 @@ class TimerCommand extends CConsoleCommand {
     private function sendEmail(){
         $systemId = Yii::app()->params['systemId'];
         $email = new Email("人事系統待處理事項","","人事系統待處理事項");
-        $userlist = $email->getEmailUserList($this->city_list);
+        $userlist = $email->getEmailUserList($this->city_list,"kittyzhou");
+        $joeEmail = $email->getJoeEmail();
+        $kittyEmail = $email->getKittyEmail();
         if($userlist){
             foreach ($userlist as $user){
                 if($this->city != $user["city"]){
@@ -229,11 +231,19 @@ class TimerCommand extends CConsoleCommand {
                     $bool = array_intersect($this->city_list,$send["city_list"]);
                     if(key_exists("joeEmail",$send)){//驗證是否額外給繞生發郵件
                         if($send["joeEmail"]){
-                            $joeEmail = $email->getJoeEmail();
                             if($user["email"]==$joeEmail){//用戶是繞生
                                 $bool=1;//繞生不需要城市驗證
                                 $maxBool = true;
                                 $city_list = $send["city_list"];//繞生收到所有城市的郵件
+                            }
+                        }
+                    }
+                    if(key_exists("kittyEmail",$send)){//驗證是否額外給kitty發郵件
+                        if($send["kittyEmail"]){
+                            if($user["email"]==$kittyEmail){//用戶是kitty
+                                $bool=1;//kitty不需要城市驗證
+                                $maxBool = true;
+                                $city_list = $send["city_list"];//kitty收到所有城市的郵件
                             }
                         }
                     }
@@ -494,6 +504,7 @@ class TimerCommand extends CConsoleCommand {
             $arr["city_allow"] = true;
             $arr["incharge"] = 1;
             $arr["joeEmail"] = true;//僅限繞生收到郵件
+            $arr["kittyEmail"] = true;//僅限kitty收到郵件
             if(count($arr)>6){
                 $this->send_list[] = $arr;
             }

@@ -290,7 +290,7 @@ class BossApplyForm extends CFormModel
         return $arr;
     }
 
-    public function getBossRewardType($city){
+    public static function getBossRewardType($city){
         $row = Yii::app()->db->createCommand()->select("set_value")->from("hr_setting")
             ->where('set_name="bossRewardType" and set_city=:city',array(":city"=>$city))->queryScalar();
         return $row;
@@ -314,7 +314,7 @@ class BossApplyForm extends CFormModel
                 "class"=>"BossReviewB"
             )
         );
-        $row = $this->getBossRewardType($model->city);
+        $row = self::getBossRewardType($model->city);
         $ratio_a = $model->ratio_a*0.01;
         $ratio_b = $model->ratio_b*0.01;
         $model->ratio_c = 100-($model->ratio_a+$model->ratio_b);
