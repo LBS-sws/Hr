@@ -84,6 +84,11 @@ class Email {
         }
     }
 
+    //獲取Kitty郵件
+    public function getKittyEmail(){
+        return "kittyzhou@lbsgroup.com.cn";
+    }
+
     //獲取重要地區總監的郵件
     public function getJoeEmailAndMore(){
         $suffix = Yii::app()->params['envSuffix'];
@@ -187,23 +192,33 @@ class Email {
     }
 
     //
-    public function getEmailUserList($city_allow){
+    public function getEmailUserList($city_allow,$usernameEx=""){
         if(!empty($city_allow)){
             $city_allow = implode("','",$city_allow);
             $sql = "a.city in ('CN','$city_allow')";
+            if(!empty($usernameEx)){//額外的lcu
+                $sql = " (a.city in ('CN','$city_allow') or a.username='{$usernameEx}')";
+            }
         }else{
             return false;
         }
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
-        $rs = Yii::app()->db->createCommand()->select("a.username,a.city,a.email,(CASE WHEN a.username IN (SELECT incharge FROM security$suffix.sec_city) THEN 1 ELSE 0 END) AS incharge,c.a_read_write")
+        $rows = Yii::app()->db->createCommand()->select("a.username,a.city,a.email,(CASE WHEN a.username IN (SELECT incharge FROM security$suffix.sec_city) THEN 1 ELSE 0 END) AS incharge,c.a_read_write")
             ->from("security$suffix.sec_user a")
             ->leftJoin("security$suffix.sec_city b","a.city = b.code")
             ->leftJoin("security$suffix.sec_user_access c","a.username = c.username")
             ->where("a.status = 'A' AND a.email != '' AND c.system_id = '$systemId' AND $sql")
             ->order("a.city desc")
             ->queryAll();
-        return $rs;
+        if($rows){
+            $list = array();
+            foreach ($rows as $row){
+                $list[$row["username"]] = $row;
+            }
+            return $list;
+        }
+        return false;
     }
 
     //添加收信人(只有地區總監收到）
