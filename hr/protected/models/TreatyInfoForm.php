@@ -37,7 +37,7 @@ class TreatyInfoForm extends CFormModel
             'end_date'=>Yii::t('treaty','end date'),
             'email_hint'=>Yii::t('treaty','email hint'),
             'remark'=>Yii::t('treaty','remark'),
-            'contract_code'=>Yii::t('treaty','contract code'),
+            'contract_code'=>Yii::t('treaty','history code'),
         );
 	}
 
@@ -208,7 +208,7 @@ class TreatyInfoForm extends CFormModel
 
     protected function getEmailHtml(){
 	    $html = "<p>".Yii::t("treaty","treaty name").":".$this->treaty_name."</p>";
-	    $html.= "<p>".Yii::t("treaty","contract code").":".$this->contract_code."</p>";
+	    $html.= "<p>".Yii::t("treaty","history code").":".$this->contract_code."</p>";
 	    $html.= "<p>".Yii::t("treaty","start date").":".$this->start_date."</p>";
 	    $html.= "<p>".Yii::t("treaty","month num").":".$this->month_num."</p>";
 	    $html.= "<p>".Yii::t("treaty","end date").":".$this->end_date."</p>";

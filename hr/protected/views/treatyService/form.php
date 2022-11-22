@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - TreatyService Form';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('app','Treaty Hint'); ?></strong>
+		<strong><?php echo Yii::t('treaty','Treaty Hint'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -50,7 +50,7 @@ $this->pageTitle=Yii::app()->name . ' - TreatyService Form';
             <div class="btn-group pull-right" role="group">
             <?php
             if ($model->scenario!='view') {
-                echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('treaty','Add Contract'), array(
+                echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('treaty','Add History'), array(
                     'submit'=>Yii::app()->createUrl('treatyInfo/new',array("treaty_id"=>$model->id)),'class'=>'pull-right'));
             }
             ?>

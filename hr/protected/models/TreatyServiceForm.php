@@ -163,7 +163,7 @@ class TreatyServiceForm extends CFormModel
             ->where("treaty_id=:id",array(":id"=>$treaty_id))->order("start_date asc")->queryAll();
         $html = "<table class='table table-hover table-striped table-bordered'>";
         $html.="<thead><tr>";
-        $html.="<th width='13%'>".Yii::t("treaty","contract code")."</th>";
+        $html.="<th width='13%'>".Yii::t("treaty","history code")."</th>";
         $html.="<th width='15%'>".Yii::t("treaty","start date")."</th>";
         $html.="<th width='15%'>".Yii::t("treaty","end date")."</th>";
         $html.="<th width='15%'>".Yii::t("treaty","email date")."</th>";

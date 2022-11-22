@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - TreatyStop';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('app','Treaty Hint'); ?></strong>
+		<strong><?php echo Yii::t('treaty','Treaty Hint'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
