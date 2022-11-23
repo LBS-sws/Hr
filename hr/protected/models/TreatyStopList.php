@@ -19,6 +19,7 @@ class TreatyStopList extends CListPageModel
 			'start_date'=>Yii::t('treaty','start date'),
 			'end_date'=>Yii::t('treaty','end date'),
 			'state_type'=>Yii::t('treaty','treaty state'),
+            'lcu'=>Yii::t('treaty','treaty lcu'),
 		);
 	}
 	
@@ -26,15 +27,21 @@ class TreatyStopList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
+        $uid = Yii::app()->user->id;
+        if(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
+            $whereSql = " and a.city in ({$city_allow}) ";
+        }else{
+            $whereSql = " and a.lcu='{$uid}' ";
+        }
 		$sql1 = "select a.*,b.name as city_name 
 				from hr_treaty a
 				LEFT JOIN security{$suffix}.sec_city b on a.city=b.code
-				where a.state_type=3 and a.city in ({$city_allow})
+				where a.state_type=3 {$whereSql}
 			";
 		$sql2 = "select count(a.id)
 				from hr_treaty a
 				LEFT JOIN security{$suffix}.sec_city b on a.city=b.code
-				where a.state_type=3 and a.city in ({$city_allow})
+				where a.state_type=3 {$whereSql}
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -49,6 +56,9 @@ class TreatyStopList extends CListPageModel
 				case 'city':
 					$clause .= General::getSqlConditionClause('b.name',$svalue);
 					break;
+                case 'lcu':
+                    $clause .= General::getSqlConditionClause('a.lcu',$svalue);
+                    break;
 			}
 		}
 		
@@ -75,6 +85,7 @@ class TreatyStopList extends CListPageModel
                     'treaty_code'=>$record['treaty_code'],
                     'treaty_name'=>$record['treaty_name'],
                     'city'=>$record['city_name'],
+                    'lcu'=>$record['lcu'],
                     'treaty_num'=>empty($record['treaty_num'])?"":$record['treaty_num'],
                     'apply_date'=>empty($record['apply_date'])?"":CGeneral::toDate($record['apply_date']),
                     'start_date'=>empty($record['start_date'])?"":CGeneral::toDate($record['start_date']),

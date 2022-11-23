@@ -40,4 +40,11 @@
 			;
 		?>
 	</th>
+    <?php if (Yii::app()->user->validFunction('ZR21')): ?>
+        <th>
+            <?php echo TbHtml::link($this->getLabelName('lcu').$this->drawOrderArrow('a.lcu'),'#',$this->createOrderLink('treatyService-list','a.lcu'))
+            ;
+            ?>
+        </th>
+    <?php endif ?>
 </tr>

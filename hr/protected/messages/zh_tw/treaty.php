@@ -36,5 +36,9 @@ return array(
     'Record Stop'=>'項目停止成功',
     'Record Black'=>'項目退回成功',
     'Treaty Email Title'=>'目前有保險類/合同類/其他類合同事宜即將到期，請及時處理',
+    'treaty lcu'=>'項目跟進賬號',
+    'treaty shift'=>'轉移跟進賬號',
+    'treaty shift(ago) '=>'跟進賬號（前）',
+    'treaty shift(now)'=>'跟進賬號（後）',
 );
 ?>

@@ -8,4 +8,7 @@
     <td><?php echo $this->record['start_date']; ?></td>
     <td><?php echo $this->record['end_date']; ?></td>
     <td><?php echo $this->record['state_type']; ?></td>
+    <?php if (Yii::app()->user->validFunction('ZR21')): ?>
+        <td><?php echo $this->record['lcu']; ?></td>
+    <?php endif ?>
 </tr>

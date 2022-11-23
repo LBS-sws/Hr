@@ -24,7 +24,7 @@ class TreatyServiceController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('new','edit','delete','save','stop'),
+				'actions'=>array('new','edit','delete','save','stop','shift'),
 				'expression'=>array('TreatyServiceController','allowReadWrite'),
 			),
 			array('allow', 
@@ -93,7 +93,7 @@ class TreatyServiceController extends Controller
 	{
 		$model = new TreatyServiceForm('edit');
 		if (!$model->retrieveData($index)) {
-			throw new CHttpException(404,'The requested page does not exist.');
+            $this->redirect(Yii::app()->createUrl('treatyService/index'));
 		} else {
 			$this->render('form',array('model'=>$model,));
 		}
@@ -121,11 +121,27 @@ class TreatyServiceController extends Controller
 		$model = new TreatyServiceForm('stop');
 		if (isset($_POST['TreatyServiceForm'])) {
 			$model->attributes = $_POST['TreatyServiceForm'];
-            $model->stopData();
-            Dialog::message(Yii::t('dialog','Information'), Yii::t('treaty','Record Stop'));
-            $update = Yii::app()->user->validRWFunction('TH02')?"edit":"view";
-            $this->redirect(Yii::app()->createUrl('treatyStop/'.$update,array("index"=>$model->id)));
+			if($model->retrieveData($model->id)){
+                $model->stopData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('treaty','Record Stop'));
+                $update = Yii::app()->user->validRWFunction('TH02')?"edit":"view";
+                $this->redirect(Yii::app()->createUrl('treatyStop/'.$update,array("index"=>$model->id)));
+            }
 		}
+	}
+
+	public function actionShift()
+	{
+        $model = new TreatyServiceForm('shift');
+        if (isset($_POST['TreatyServiceForm'])) {
+            $model->attributes = $_POST['TreatyServiceForm'];
+            $treaty_lcu = key_exists("treaty_lcu",$_POST)?$_POST["treaty_lcu"]:"";
+            if($model->retrieveData($model->id)&&!empty($treaty_lcu)){
+                $model->shiftData($treaty_lcu);
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                $this->redirect(Yii::app()->createUrl('treatyService/edit',array('index'=>$model->id)));
+            }
+        }
 	}
 	
 	public static function allowReadWrite() {

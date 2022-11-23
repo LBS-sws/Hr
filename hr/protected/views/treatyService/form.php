@@ -89,6 +89,13 @@ $this->pageTitle=Yii::app()->name . ' - TreatyService Form';
                         array('readonly'=>(true)));
                     ?>
                 </div>
+                <?php echo $form->labelEx($model,'lcu',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-3">
+                    <?php
+                    echo TbHtml::textField("lcu",$model->lcu,
+                        array('readonly'=>(true),'append'=>TbHtml::button(Yii::t('treaty','treaty shift'),array('data-toggle'=>'modal','data-target'=>'#treatyDialog'))));
+                    ?>
+                </div>
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'apply_date',array('class'=>"col-lg-2 control-label")); ?>
@@ -147,13 +154,18 @@ $this->pageTitle=Yii::app()->name . ' - TreatyService Form';
 </section>
 
 <?php $this->renderPartial('//site/removedialog'); ?>
+<?php $this->renderPartial('shiftdialog',array("model"=>$model)); ?>
 <?php $this->renderPartial('_stop'); ?>
 
 <?php
 $link = Yii::app()->createUrl('treatyService/stop');
+$linkShift = Yii::app()->createUrl('treatyService/shift');
 $js="
     $('#btnStopData').click(function(){
         jQuery.yii.submitForm(this,'$link',{});
+    });
+    $('#btnTreatyData').click(function(){
+        jQuery.yii.submitForm(this,'$linkShift',{});
     });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);

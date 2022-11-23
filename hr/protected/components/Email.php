@@ -236,11 +236,25 @@ class Email {
     }
 
     //添加收信人(根據權限）
-    public function addEmailToPrefixAndCity($str,$city,$notEmail=array()){
+    public function addEmailToPrefixAndCity($str,$city,$notEmail=array(),$readyType=2){
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
         //$city = Yii::app()->user->city();
         $cityList = $this->getAllCityToMinCity($city);
+        switch ($readyType){
+            case 1://唯读
+                $readStr="a_read_only";
+                break;
+            case 2://读写
+                $readStr="a_read_write";
+                break;
+            case 3://其它
+                $readStr="a_control";
+                break;
+            default:
+                $readStr="a_read_write";
+
+        }
         if(count($cityList)>1){
             $cityList = "'".implode("','",$cityList)."'";
             $sql = " and b.city in ($cityList) ";
@@ -248,14 +262,14 @@ class Email {
             $sql = " and b.city = '$city' ";
         }
         if(!is_array($str)){
-            $likeSql = " and a.a_read_write like '%$str%'";
+            $likeSql = " and a.{$readStr} like '%$str%'";
         }else{
             $likeSql =" and (";
             foreach ($str as $key =>$item){
                 if($key != 0){
                     $likeSql.=" or ";
                 }
-                $likeSql .= "a.a_read_write like '%$item%'";
+                $likeSql .= "a.{$readStr} like '%$item%'";
             }
             $likeSql .=")";
         }

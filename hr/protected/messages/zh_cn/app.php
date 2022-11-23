@@ -209,6 +209,7 @@ return array(
     'Treaty Hint'=>'提醒小助手',
     'Treaty Service'=>'使用中的项目',
     'Treaty Stop'=>'已停止的项目',
+    'Show all treaty hint'=>'显示所有提醒小助手',
     //沈超添加结束
 );
 ?>

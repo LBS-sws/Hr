@@ -79,10 +79,12 @@ class TreatyStopController extends Controller
 		$model = new TreatyStopForm('stop');
 		if (isset($_POST['TreatyStopForm'])) {
 			$model->attributes = $_POST['TreatyStopForm'];
-            $model->blackData();
-            Dialog::message(Yii::t('dialog','Information'), Yii::t('treaty','Record Black'));
-            $update = Yii::app()->user->validRWFunction('TH01')?"edit":"view";
-            $this->redirect(Yii::app()->createUrl('treatyService/'.$update,array("index"=>$model->id)));
+			if($model->retrieveData($model->id)){
+                $model->blackData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('treaty','Record Black'));
+                $update = Yii::app()->user->validRWFunction('TH01')?"edit":"view";
+                $this->redirect(Yii::app()->createUrl('treatyService/'.$update,array("index"=>$model->id)));
+            }
 		}
 	}
 	

@@ -17,6 +17,7 @@ class TreatyInfoForm extends CFormModel
 	public $email_hint=1;//默认发送邮件
 	public $email_date;
 	public $email_id;
+	public $lcu;
 
 	/**
 	 * Declares customized attribute labels.
@@ -38,6 +39,7 @@ class TreatyInfoForm extends CFormModel
             'email_hint'=>Yii::t('treaty','email hint'),
             'remark'=>Yii::t('treaty','remark'),
             'contract_code'=>Yii::t('treaty','history code'),
+            'lcu'=>Yii::t('treaty','treaty lcu'),
         );
 	}
 
@@ -58,16 +60,23 @@ class TreatyInfoForm extends CFormModel
 	    if($this->getScenario()!="new"){
             $id = $this->$attribute;
             $city_allow = Yii::app()->user->city_allow();
-            $row = Yii::app()->db->createCommand()->select("a.*,b.city,b.treaty_name")
+            $uid = Yii::app()->user->id;
+            if(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
+                $sqlCity = " and b.city in ({$city_allow}) ";
+            }else{
+                $sqlCity = " and b.lcu='{$uid}' ";
+            }
+            $row = Yii::app()->db->createCommand()->select("a.*,b.city,b.treaty_name,b.lcu as treaty_lcu")
                 ->from("hr_treaty_info a")
                 ->leftJoin("hr_treaty b","a.treaty_id=b.id")
-                ->where("b.city in ({$city_allow}) and a.id=:id",array(":id"=>$id))->queryRow();
+                ->where("a.id=:id {$sqlCity}",array(":id"=>$id))->queryRow();
             if($row){
                 $this->contract_code=$row["contract_code"];
                 $this->treaty_id=$row["treaty_id"];
                 $this->treaty_name = $row['treaty_name'];
                 $this->city=$row["city"];
                 $this->email_id=$row["email_id"];
+                $this->lcu = $row['treaty_lcu'];
             }else{
                 $this->addError($attribute, "数据异常，请刷新重试");
                 return false;
@@ -90,11 +99,18 @@ class TreatyInfoForm extends CFormModel
 	{
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
+        $uid = Yii::app()->user->id;
+        if(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
+            $sqlCity = " and city in ({$city_allow}) ";
+        }else{
+            $sqlCity = " and lcu='{$uid}' ";
+        }
         $row = Yii::app()->db->createCommand()->select("*")
             ->from("hr_treaty")
-            ->where("city in ({$city_allow}) and id=:id",array(":id"=>$treaty_id))->queryRow();
+            ->where("id=:id {$sqlCity}",array(":id"=>$treaty_id))->queryRow();
 		if ($row!==false) {
 		    //id,treaty_code,treaty_name,month_num,treaty_num,city,apply_date,start_date,end_date,state_type
+			$this->lcu = $row['lcu'];
 			$this->treaty_id = $row['id'];
 			$this->treaty_code = $row['treaty_code'];
 			$this->treaty_name = $row['treaty_name'];
@@ -118,13 +134,20 @@ class TreatyInfoForm extends CFormModel
 	{
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("a.*,b.treaty_code,b.treaty_name,b.city")
+        $uid = Yii::app()->user->id;
+        if(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
+            $sqlCity = " and b.city in ({$city_allow}) ";
+        }else{
+            $sqlCity = " and b.lcu='{$uid}' ";
+        }
+        $row = Yii::app()->db->createCommand()->select("a.*,b.treaty_code,b.treaty_name,b.lcu as b.treaty_lcu,b.city")
             ->from("hr_treaty_info a")
             ->leftJoin("hr_treaty b","a.treaty_id=b.id")
-            ->where("b.city in ({$city_allow}) and a.id=:id",array(":id"=>$index))->queryRow();
+            ->where("a.id=:id {$sqlCity}",array(":id"=>$index))->queryRow();
 		if ($row!==false) {
 		    //id,treaty_code,treaty_name,month_num,treaty_num,city,apply_date,start_date,end_date,state_type
 			$this->id = $row['id'];
+			$this->lcu = $row['treaty_lcu'];
 			$this->treaty_id = $row['treaty_id'];
 			$this->treaty_code = $row['treaty_code'];
 			$this->treaty_name = $row['treaty_name'];
@@ -176,7 +199,9 @@ class TreatyInfoForm extends CFormModel
             $message = $this->getEmailHtml();
             $emailTitle = Yii::t("treaty","Treaty Email Title");
             $emailModel = new Email();
-            $emailModel->addEmailToPrefixAndCity("TH01",$this->city);
+            //$emailModel->addEmailToPrefixAndCity("TH01",$this->city);
+            $emailModel->addEmailToPrefixAndCity("ZR21",$this->city,array(),3);//所有权限的人收到邮件
+            $emailModel->addEmailToLcu($this->lcu);//项目负责人收到邮件
             $emailModel->addEmailToCity($this->city);
             $to_addr = $emailModel->getToAddr();
             $to_addr = empty($to_addr)?json_encode(array("it@lbsgroup.com.hk")):json_encode($to_addr);

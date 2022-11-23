@@ -36,5 +36,9 @@ return array(
 	'Record Stop'=>'项目停止成功',
 	'Record Black'=>'项目退回成功',
 	'Treaty Email Title'=>'目前有保险类/合同类/其他类合同事宜即将到期，请及时处理',
+	'treaty lcu'=>'项目跟进账号',
+	'treaty shift'=>'转移跟进账号',
+	'treaty shift(ago) '=>'跟进账号（前）',
+	'treaty shift(now)'=>'跟进账号（后）',
 );
 ?>

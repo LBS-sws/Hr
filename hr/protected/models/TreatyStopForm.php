@@ -14,6 +14,7 @@ class TreatyStopForm extends CFormModel
 	public $start_date;
 	public $end_date;
 	public $state_type;
+	public $lcu;
 
 	/**
 	 * Declares customized attribute labels.
@@ -33,6 +34,7 @@ class TreatyStopForm extends CFormModel
             'start_date'=>Yii::t('treaty','start date'),
             'end_date'=>Yii::t('treaty','end date'),
             'state_type'=>Yii::t('treaty','treaty state'),
+            'lcu'=>Yii::t('treaty','treaty lcu'),
         );
 	}
 
@@ -51,9 +53,15 @@ class TreatyStopForm extends CFormModel
 	{
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
+        $uid = Yii::app()->user->id;
+        if(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
+            $whereSql = " and a.city in ({$city_allow}) ";
+        }else{
+            $whereSql = " and a.lcu='{$uid}' ";
+        }
         $sql = "select a.* 
 				from hr_treaty a
-				where a.state_type=3 and a.city in ({$city_allow}) and a.id='$index'
+				where a.state_type=3 {$whereSql} and a.id='$index'
 			";
 		$row = Yii::app()->db->createCommand($sql)->queryRow();
 		if ($row!==false) {
@@ -68,6 +76,7 @@ class TreatyStopForm extends CFormModel
 			$this->start_date = empty($row["start_date"])?"":CGeneral::toDate($row["start_date"]);
 			$this->end_date = empty($row["end_date"])?"":CGeneral::toDate($row["end_date"]);
 			$this->state_type = $row['state_type'];
+			$this->lcu = $row['lcu'];
             return true;
 		}else{
 		    return false;

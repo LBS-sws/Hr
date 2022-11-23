@@ -14,6 +14,7 @@ class TreatyServiceForm extends CFormModel
 	public $start_date;
 	public $end_date;
 	public $state_type;
+	public $lcu;
 
 	/**
 	 * Declares customized attribute labels.
@@ -33,6 +34,7 @@ class TreatyServiceForm extends CFormModel
             'start_date'=>Yii::t('treaty','start date'),
             'end_date'=>Yii::t('treaty','end date'),
             'state_type'=>Yii::t('treaty','treaty state'),
+            'lcu'=>Yii::t('treaty','treaty lcu'),
         );
 	}
 
@@ -64,7 +66,12 @@ class TreatyServiceForm extends CFormModel
         $sqlCity = "";
         if($bool){ //由於定時刷新不需要城市，所以需要判斷
             $city_allow = Yii::app()->user->city_allow();
-            $sqlCity=" and a.city in ({$city_allow})";
+            $uid = Yii::app()->user->id;
+            if(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
+                $sqlCity = " and a.city in ({$city_allow}) ";
+            }else{
+                $sqlCity = " and a.lcu='{$uid}' ";
+            }
         }
         $sql = "select a.* 
 				from hr_treaty a
@@ -83,6 +90,7 @@ class TreatyServiceForm extends CFormModel
 			$this->start_date = empty($row["start_date"])?"":CGeneral::toDate($row["start_date"]);
 			$this->end_date = empty($row["end_date"])?"":CGeneral::toDate($row["end_date"]);
 			$this->state_type = $row['state_type'];
+            $this->lcu = $row['lcu'];
             $this->resetTreatyStatus();
             $this->changeTreatyEmail();
             return true;
@@ -102,8 +110,10 @@ class TreatyServiceForm extends CFormModel
             ->order("a.start_date asc")->queryAll();
         if($rows){
             $emailModel = new Email();
-            $emailModel->addEmailToPrefixAndCity("TH01",$this->city);
+            $emailModel->addEmailToPrefixAndCity("ZR21",$this->city,array(),3);//所有权限的人收到邮件
+            $emailModel->addEmailToLcu($this->lcu);//项目负责人收到邮件
             $emailModel->addEmailToCity($this->city);
+            //$emailModel->addEmailToPrefixAndCity("TH01",$this->city);
             $to_addr = $emailModel->getToAddr();
             $to_addr = empty($to_addr)?json_encode(array("it@lbsgroup.com.hk")):json_encode($to_addr);
             foreach ($rows as $row){
@@ -158,6 +168,23 @@ class TreatyServiceForm extends CFormModel
         ), "id=:id", array(':id'=>$this->id));
     }
 
+    public static function getTreatyAllUser($city){
+	    $arr = array(""=>"");
+        $suffix = Yii::app()->params['envSuffix'];
+        $systemId = Yii::app()->params['systemId'];
+        $rows = Yii::app()->db->createCommand()->select("b.email, b.username")
+            ->from("security$suffix.sec_user_access a")
+            ->leftJoin("security$suffix.sec_user b","a.username=b.username")
+            ->where("a.system_id='$systemId' and b.city='{$city}' and a.a_read_write like '%TH01%' and b.status='A'")
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["username"]] = $row["username"];
+            }
+        }
+        return $arr;
+    }
+
 	public static function getHistoryTable($treaty_id,$ready=true){
         $rows = Yii::app()->db->createCommand()->select("*")->from("hr_treaty_info")
             ->where("treaty_id=:id",array(":id"=>$treaty_id))->order("start_date asc")->queryAll();
@@ -205,6 +232,15 @@ class TreatyServiceForm extends CFormModel
             'state_type'=>3,
             'luu'=>$uid
         ), "id=:id and state_type=2", array(':id'=>$this->id));
+	}
+
+	public function shiftData($treaty_lcu){
+        $uid = Yii::app()->user->id;
+        Yii::app()->db->createCommand()->update("hr_treaty", array(
+            'lcu'=>$treaty_lcu,
+            'luu'=>$uid
+        ), "id=:id", array(':id'=>$this->id));
+        $this->retrieveData($this->id,false);//刷新邮件收件人
 	}
 
 
