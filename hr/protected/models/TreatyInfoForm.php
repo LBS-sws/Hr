@@ -140,7 +140,7 @@ class TreatyInfoForm extends CFormModel
         }else{
             $sqlCity = " and b.lcu='{$uid}' ";
         }
-        $row = Yii::app()->db->createCommand()->select("a.*,b.treaty_code,b.treaty_name,b.lcu as b.treaty_lcu,b.city")
+        $row = Yii::app()->db->createCommand()->select("a.*,b.treaty_code,b.treaty_name,b.lcu as treaty_lcu,b.city")
             ->from("hr_treaty_info a")
             ->leftJoin("hr_treaty b","a.treaty_id=b.id")
             ->where("a.id=:id {$sqlCity}",array(":id"=>$index))->queryRow();
