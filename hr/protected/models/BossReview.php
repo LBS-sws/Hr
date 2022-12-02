@@ -804,11 +804,13 @@ class BossReview
     public function valueSalesOne($year,$city){
         $suffix = Yii::app()->params['envSuffix'];
         $sum = 0;
-        $rows = Yii::app()->db->createCommand()->select("d.user_id,a.entry_time")->from("hr_binding d")
+        $whereSql = "IFNULL(TIMESTAMPDIFF(MONTH,a.leave_time,a.entry_time),3)>=2";//入职大于两个月(离职时间-入职时间>2)
+        $rows = Yii::app()->db->createCommand()->select("d.user_id,a.entry_time")
+            ->from("hr_binding d")
             ->leftJoin("hr_employee a","d.employee_id=a.id")
             ->leftJoin("hr_dept b","a.position=b.id")
             ->leftJoin("security$suffix.sec_user f","f.username=d.user_id")
-            ->where("CONVERT(a.entry_time, SIGNED)=:year AND b.manager_type=1 AND f.city=:city",
+            ->where("(a.staff_status=0 or (a.staff_status=-1 and {$whereSql})) and CONVERT(a.entry_time, SIGNED)=:year AND b.manager_type=1 AND f.city=:city",
                 array(":year"=>$year,":city"=>$city)
             )->queryAll();
         if($rows){
