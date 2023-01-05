@@ -29,7 +29,7 @@ class ReviewAllotController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','draft','save','undo','back','fileupload','fileRemove','fileRemove'),
+                'actions'=>array('new','edit','draft','save','undo','back','fileupload','fileRemove','fileRemove','bulkAllot'),
                 'expression'=>array('ReviewAllotController','allowReadWrite'),
             ),
             array('allow',
@@ -122,6 +122,23 @@ class ReviewAllotController extends Controller
                 $this->render('form',array('model'=>$model,));
             }
         }
+    }
+
+    //批量分配
+    public function actionBulkAllot()
+    {
+        $model = new ReviewAllotForm;
+        if(isset($_POST['ReviewAllotList']['attr'])){
+            $year = isset($_POST['ReviewAllotList']['year'])?$_POST['ReviewAllotList']['year']:2022;
+            $month = isset($_POST['ReviewAllotList']['month'])?$_POST['ReviewAllotList']['month']:1;
+            $idList = $_POST['ReviewAllotList']['attr'];
+            $model->bulkAllot($idList,$year,$month);
+            $this->redirect(Yii::app()->createUrl('reviewAllot/index'));
+        }else{
+            Dialog::message(Yii::t('dialog','Warning'), Yii::t('dialog','No Record Found'));
+            $this->redirect(Yii::app()->createUrl('reviewAllot/index'));
+        }
+
     }
 
     //退回單個考核

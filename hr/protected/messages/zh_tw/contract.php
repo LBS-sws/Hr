@@ -732,5 +732,6 @@ return array(
     'display'=>'是否顯示',
     'show'=>'顯示',
     'none'=>'隱藏',
+    'bulk allot'=>'批量分配',
     );
 ?>

@@ -16,6 +16,18 @@ $this->pageTitle=Yii::app()->name . ' - reviewAllot';
 </section>
 
 <section class="content">
+    <div class="box">
+        <div class="box-body">
+            <div class="btn-group pull-right" role="group">
+                <?php
+                echo TbHtml::button('<span class="fa fa-edit"></span> '.Yii::t('contract','bulk allot'), array(
+                    'id'=>'btnExportData',
+                    'submit'=>Yii::app()->createUrl('reviewAllot/bulkAllot'),
+                ));
+                ?>
+            </div>
+        </div>
+    </div>
     <?php
     $search = array(
         'code',
@@ -56,6 +68,17 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+$js = "
+$('.che').on('click', function(e){
+e.stopPropagation();
+});
+
+$('body').on('click','#all',function() {
+	var val = $(this).prop('checked');
+	$('input[type=checkbox][name*=\"ReviewAllotList[attr][]\"]').prop('checked',val);
+});
+";
+Yii::app()->clientScript->registerScript('selectAll',$js,CClientScript::POS_READY);
 $js = "
     $('.submit_year,.submit_year_type').on('change',function(){
         $('form:first').submit();

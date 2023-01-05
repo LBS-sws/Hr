@@ -739,5 +739,6 @@ return array(
     'display'=>'是否显示',
     'show'=>'显示',
     'none'=>'隐藏',
+    'bulk allot'=>'批量分配',
 );
 ?>

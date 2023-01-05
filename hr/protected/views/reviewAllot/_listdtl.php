@@ -1,5 +1,11 @@
 <tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('RE01', 'reviewAllot/edit', 'reviewAllot/view', array('index'=>$this->record['id'],'year'=>$this->record['year'],'year_type'=>$this->model->year_type));?>'>
 
+    <td class="che">
+        <?php if (in_array($this->record['status_type'],array(0,4))): ?>
+            <input value="<?php echo $this->record['id']; ?>"  type="checkbox" name="ReviewAllotList[attr][]" >
+        <?php endif; ?>
+    </td>
+
     <td><?php echo $this->drawEditButton('RE01', 'reviewAllot/edit',  'reviewAllot/view', array('index'=>$this->record['id'],'year'=>$this->record['year'],'year_type'=>$this->model->year_type)); ?></td>
 
     <td><?php echo $this->record['code']; ?></td>

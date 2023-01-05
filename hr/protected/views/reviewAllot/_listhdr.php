@@ -1,4 +1,5 @@
 <tr>
+    <th>  <input name="Fruit"  type="checkbox"  id="all"></th>
     <th></th>
     <th>
         <?php echo TbHtml::link($this->getLabelName('code').$this->drawOrderArrow('a.code'),'#',$this->createOrderLink('reviewAllot-list','a.code'))

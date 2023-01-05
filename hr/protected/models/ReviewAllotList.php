@@ -182,6 +182,7 @@ class ReviewAllotList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+					'status_type'=>$record['status_type'],
 					'year'=>empty($record['year'])?$this->year:$record['year'],
 					'year_type'=>$this->getYearTypeList($record['year_type'],$this->year),
 					'code'=>$record['code'],

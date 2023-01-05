@@ -402,6 +402,85 @@ class ReviewAllotForm extends CFormModel
         }
 	}
 
+	public function bulkData($index,$year,$year_type) {
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+        //,b.status_type,b.year,b.year_type,b.id as review_id
+        $dateTime = ReviewAllotList::getReviewDateTime($year,$year_type);
+		$row = Yii::app()->db->createCommand()
+            ->select("a.id,a.name,a.code,a.phone,a.city,a.entry_time,c.name as company_name,d.name as dept_name,d.review_type")
+            ->from("hr_employee a")
+            ->leftJoin("hr_company c","a.company_id = c.id")
+            ->leftJoin("hr_dept d","a.position = d.id")
+            ->where("a.id=:id and a.city in ($city_allow) AND replace(entry_time,'-', '/')<='$dateTime'",array(":id"=>$index))->queryRow();
+		if ($row) {
+            $this->review_type = $row['review_type'];
+            $this->year = $year;
+            $this->year_type = $year_type;
+            $this->employee_id = $row['id'];
+            $this->name = $row['name'];
+            $this->city = $row["city"];
+            $this->entry_time = $row['entry_time'];
+            $this->company_name = $row['company_name'];
+            $this->dept_name = $row['dept_name'];
+            $this->code = $row['code'];
+            $this->phone = $row['phone'];
+            $review = Yii::app()->db->createCommand()->select("*")->from("hr_review")
+                ->where("employee_id=:id and year = :year and year_type = :year_type",
+                    array(
+                        ":id"=>$row["id"],
+                        ":year"=>$year,
+                        ":year_type"=>$year_type,
+                    )
+                )->queryRow();
+            if($review){
+                $this->change_num = $review['change_num'];
+                if($review['status_type'] != 4){
+                    $this->review_type = $review['review_type'];
+                }
+                $this->status_type = $review['status_type'];
+                //$this->status_type = ReviewAllotList::getReviewStatuts($review['status_type'])["status"];
+                $this->review_id = $review['id'];
+                $this->id = $review['id'];
+                $this->tem_str = $review['tem_str'];
+                $this->tem_str = $review['tem_str'];
+                $this->id_s_list = $review['id_s_list'];
+                $this->id_list = json_decode($review['id_list'],true);
+                $this->tem_s_ist = json_decode($review['tem_s_ist'],true);
+            }
+            $this->count_num = $this->review_type == 3?30:100;
+            $this->getEmployeeTemplate();
+
+            $arr = explode(",",$this->tem_str);
+            foreach ($arr as $item){
+                $this->tem_list[$item]="on";
+            }
+            return true;
+		}else{
+		    return false;
+        }
+	}
+
+	public function bulkAllot($idList,$year,$month){
+        if(is_array($idList)){
+            foreach ($idList as $id){
+                $model = new ReviewAllotForm();
+                if($model->bulkData($id,$year,$month)){
+                    $model->status_type = 1;
+                    if ($model->validate()) {
+                        $model->saveData();
+                    } else {
+                        $model->status_type = 0;
+                        $message = CHtml::errorSummary($model)."<br/>员工名字:".$model->employee_name;
+                        Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                        return false;
+                    }
+                }
+                unset($model);
+            }
+        }
+    }
+
 	public function getSetCodeToKey($key){
 	    $arr = array("甲","乙","丙","丁","戊","己","庚","辛","壬","癸","子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥");
 	    if(key_exists($key,$arr)){
