@@ -198,5 +198,6 @@ return array(
     //2020-07-15
     'personnel lcu'=>'人事經理',
     'personnel lcd'=>'人事經理審核時間',
+    'compensatory leave'=>'加班調休',
 );
 ?>

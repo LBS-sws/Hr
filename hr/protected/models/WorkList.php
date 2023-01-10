@@ -154,7 +154,7 @@ class WorkList extends CListPageModel
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
 		
-		$costNumList = $this->getWorkTypeList();
+		$costNumList = self::getWorkTypeList();
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
@@ -205,14 +205,20 @@ class WorkList extends CListPageModel
     }
 
 	//加班類型列表
-    public function getWorkTypeList(){
-	    return array(Yii::t("fete","Working days"),Yii::t("fete","Weekend off"),Yii::t("fete","Statutory leave day"),Yii::t("fete","Regular overtime"));
+    public static function getWorkTypeList(){
+	    return array(
+	        0=>Yii::t("fete","Working days"),
+            1=>Yii::t("fete","Weekend off"),
+            2=>Yii::t("fete","Statutory leave day"),
+            3=>Yii::t("fete","Regular overtime"),
+            4=>Yii::t("fete","compensatory leave"),
+        );
     }
 
 	//加班類型列表
     protected function searchWorkTypeSql($str){
         $sql = "";
-        $list = $this->getWorkTypeList();
+        $list = self::getWorkTypeList();
         foreach ($list as $key=>$item){
             if (strpos($item,$str)!==false){
                 $sql.=",".$key;

@@ -617,7 +617,7 @@ class WorkForm extends CFormModel
         }
         $html="";
         $html.='<div class="input-group"><div class="input-group-addon"><i class="fa fa-calendar"></i></div>';
-        $html.=TbHtml::textField($name1,$value1,$arr1);
+        $html.=TbHtml::textField($name1,$value1,array_merge(array("autocomplete"=>"off"),$arr1));
         $html.='<div class="input-group-btn" style="width: 100px;">';
         $html.=TbHtml::dropDownList($name2,$value2,WorkList::getHoursList(),$arr2);
         $html.='</div></div>';
@@ -625,7 +625,8 @@ class WorkForm extends CFormModel
     }
 	//
 	public function getWorkTimeHtmlToType($modelStr,$work_type,$index,$only=false){
-	    if(empty($modelStr)||!in_array($work_type,array(0,1,2,3))){
+        $workTypeList = WorkList::getWorkTypeList();
+	    if(empty($modelStr)||!key_exists($work_type,$workTypeList)){
 	        return array("status"=>0);
         }
         $this->retrieveData($index);

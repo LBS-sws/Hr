@@ -202,5 +202,6 @@ return array(
     //2020-07-15
     'personnel lcu'=>'人事经理',
     'personnel lcd'=>'人事经理审核时间',
+    'compensatory leave'=>'加班调休',
 );
 ?>
