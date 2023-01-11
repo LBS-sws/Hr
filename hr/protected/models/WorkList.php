@@ -173,7 +173,7 @@ class WorkList extends CListPageModel
 					'end_time'=>$record['end_time'],
                     'lcd'=>CGeneral::toDateTime($record['lcd']),
 					'log_time'=>$record['log_time'].$dayStr,
-					'work_type'=>$costNumList[$record['work_type']],
+					'work_type'=>$costNumList[$record['work_type']].LeaveList::getCodeForWorkLeave($record['id'],"work"),
 					'status'=>$colorList["status"],
                     'city'=>CGeneral::getCityName($record["s_city"]),
 					'style'=>$colorList["style"],

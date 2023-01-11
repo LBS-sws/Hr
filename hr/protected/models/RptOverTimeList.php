@@ -6,7 +6,8 @@ class RptOverTimeList extends CReport {
 			'employee_code'=>array('label'=>Yii::t('contract','Employee Code'),'width'=>22,'align'=>'L'),
 			'employee_name'=>array('label'=>Yii::t('contract','Employee Name'),'width'=>30,'align'=>'L'),
 			'work_type'=>array('label'=>Yii::t('fete','Work Type'),'width'=>25,'align'=>'C'),
-			'start_time'=>array('label'=>Yii::t('contract','Start Time'),'width'=>20,'align'=>'L'),
+            'leave_code'=>array('label'=>Yii::t('fete','Leave Code'),'width'=>15,'align'=>'L'),
+            'start_time'=>array('label'=>Yii::t('contract','Start Time'),'width'=>20,'align'=>'L'),
 			'end_time'=>array('label'=>Yii::t('contract','End Time'),'width'=>20,'align'=>'L'),
 			'log_time'=>array('label'=>Yii::t('fete','Log Date'),'width'=>15,'align'=>'L'),
 			'lcd'=>array('label'=>Yii::t('fete','apply for time'),'width'=>15,'align'=>'L'),
@@ -69,6 +70,7 @@ class RptOverTimeList extends CReport {
 				$temp['work_address'] = $row['work_address'];
 				$temp['work_cause'] = $row['work_cause'];
 				$temp['work_code'] = $row['work_code'];
+				$temp['leave_code'] = LeaveList::getCodeForWorkLeave($row["id"],"work",false);
 				$temp['employee_code'] = $row['employee_code'];
 				$temp['employee_name'] = $row['employee_name'];
 				$temp['work_type'] = $costNumList[$row['work_type']];

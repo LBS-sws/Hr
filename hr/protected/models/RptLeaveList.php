@@ -6,7 +6,8 @@ class RptLeaveList extends CReport {
 			'employee_code'=>array('label'=>Yii::t('contract','Employee Code'),'width'=>22,'align'=>'L'),
 			'employee_name'=>array('label'=>Yii::t('contract','Employee Name'),'width'=>30,'align'=>'L'),
 			'vacation_id'=>array('label'=>Yii::t('fete','Leave Type'),'width'=>25,'align'=>'C'),
-			'start_time'=>array('label'=>Yii::t('contract','Start Time'),'width'=>20,'align'=>'L'),
+            'work_code'=>array('label'=>Yii::t('fete','Work Code'),'width'=>15,'align'=>'L'),
+            'start_time'=>array('label'=>Yii::t('contract','Start Time'),'width'=>20,'align'=>'L'),
 			'end_time'=>array('label'=>Yii::t('contract','End Time'),'width'=>20,'align'=>'L'),
 			'log_time'=>array('label'=>Yii::t('fete','Log Date'),'width'=>15,'align'=>'L'),
             'lcd'=>array('label'=>Yii::t('fete','apply for time'),'width'=>15,'align'=>'L'),
@@ -62,6 +63,7 @@ class RptLeaveList extends CReport {
 				$temp = array();
 				$temp['leave_cause'] = $row['leave_cause'];
 				$temp['leave_code'] = $row['leave_code'];
+                $temp['work_code'] = LeaveList::getCodeForWorkLeave($row["id"],"leave",false);
 				$temp['employee_code'] = $row['employee_code'];
 				$temp['employee_name'] = $row['employee_name'];
                 $temp['vacation_id'] = VacationForm::getVacationNameToId($row['vacation_id']);

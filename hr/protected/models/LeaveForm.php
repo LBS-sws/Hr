@@ -174,8 +174,16 @@ class LeaveForm extends CFormModel
                     $this->addError($attribute,$message);
                 }
             }
+            if($this->vacation_list["vaca_type"]=="A"&&$this->audit) { //请假类型为调休
+                $work_id = key_exists("work_id",$_POST)?$_POST["work_id"]:0;
+                if(empty($work_id)){
+                    $message = "加班单不能为空";
+                    $this->addError($attribute,$message);
+                }
+            }
         }
     }
+
 	//驗證時間週期
     public function validateLogTime($attribute, $params){
         if(!empty($this->log_time)){
@@ -622,7 +630,7 @@ class LeaveForm extends CFormModel
         //请假类型为：调休
         if(key_exists("vaca_type",$vacationList)&&$vacationList["vaca_type"]=="A"){
             $html.= "<div class=\"form-group\">";
-            $html.= TbHtml::label("选择加班单","",array("class"=>"col-lg-2 control-label"));
+            $html.= TbHtml::label("选择加班单".'<span class="required">*</span>',"",array("class"=>"col-lg-2 control-label"));
             $html.= "<div class=\"col-lg-7\">";
             $html.= self::workSelectHtml($employee_id,$work_id,$ready);
             $html.= "</div>";
