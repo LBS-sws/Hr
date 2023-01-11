@@ -641,7 +641,7 @@ class WorkForm extends CFormModel
         }
         $this->retrieveData($index);
         $html = "";
-	    if($work_type==3){
+	    if($work_type==3||$work_type==4){
             $html.="<div class='form-group'><div class='col-lg-8 col-lg-offset-2'><table class='table table-bordered table-striped'><thead><tr>";
             $html.="<th>".Yii::t('contract','Start Time')."</th>";
             $html.="<th>".Yii::t('contract','End Time')."</th>";
