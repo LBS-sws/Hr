@@ -219,6 +219,8 @@ $('#leave_type,.s_time,#employee_id').on('change',function(){
     }else{
         ajaxBool = true;
     }
+    var work_id = $('#workDiv').data('id');
+    work_id = $('#work_id').length>0?$('#work_id').val():work_id;
     var startTime='';
     $('.s_time').each(function(){
         if(startTime == ''||startTime<$(this).val()){
@@ -228,7 +230,12 @@ $('#leave_type,.s_time,#employee_id').on('change',function(){
     $.ajax({
         type: 'post',
         url: '".Yii::app()->createUrl('leave/ajaxYearDay')."',
-        data: {'index':$('#employee_id').val(),'time':startTime,'leave_type':$('#leave_type').val()},
+        data: {
+            'index':$('#employee_id').val(),
+            'time':startTime,
+            'leave_type':$('#leave_type').val(),
+            'work_id':work_id
+        },
         dataType: 'json',
         success: function(data){
             ajaxBool = true;
@@ -236,6 +243,7 @@ $('#leave_type,.s_time,#employee_id').on('change',function(){
                 var remark = data.remark;
                 var html = data.html;
                 var entry_time = data.entry_time;
+                var workHtml = data.work_html;
                 var parentDiv = $('#leave_type').parents('div.form-group:first');
                 if(parentDiv.find('div.yearDay').length > 0){
                     parentDiv.find('div.yearDay').html(html);
@@ -243,6 +251,7 @@ $('#leave_type,.s_time,#employee_id').on('change',function(){
                     parentDiv.append('<div class=\"col-sm-7 yearDay\">'+html+'</div>');
                 }
                 $('#vacation_remark').val(remark);
+                $('#workDiv').html(workHtml);
                 if(entry_time!=''){//修改年假最大日期
                     $('#end_time').datepicker('setEndDate',entry_time);
                     if($('#end_time').val()!=''&&Date.parse($('#end_time').val())>Date.parse(entry_time)){

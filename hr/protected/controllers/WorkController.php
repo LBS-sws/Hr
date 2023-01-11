@@ -190,7 +190,9 @@ class WorkController extends Controller
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Cancel Done'));
                 $this->redirect(Yii::app()->createUrl('work/index'));
             }else{
-                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                //Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','This record is already in use'));
                 $this->redirect(Yii::app()->createUrl('work/edit',array('index'=>$model->id)));
             }
         }

@@ -53,6 +53,17 @@
         ?>
     </div>
 </div>
+<?php
+$work_id = LeaveForm::getWorkIDForLeaveID($model->id);
+?>
+<div id="workDiv" data-id="<?php echo $work_id;?>">
+    <?php
+    $vacationModel = new VacationForm();
+    $vacationModel->retrieveData($model->vacation_id);
+    $vacation_list = array("vaca_type"=>$vacationModel->vaca_type);
+    echo LeaveForm::getWorkSelectDiv($vacation_list,$model->employee_id,$work_id,true);
+    ?>
+</div>
 <div class="form-group">
     <?php echo TbHtml::label(Yii::t("contract","Apply Time").'<span class="required">*</span>',"",array('class'=>"col-lg-2 control-label"));?>
     <div class="col-lg-7">

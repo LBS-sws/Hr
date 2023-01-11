@@ -464,6 +464,7 @@ class MyPDFTwo {
         $this->_PDF->writeHTMLCell(150, 8, 51,81, $html, 0, 1, false, true, 'L', true);
         //加班時間隨動
         switch ($arr["work_type"]){
+            case 4: //调休
             case 3: //常規加班
                 $arrAddTime = $arr["addTime"];
                 array_unshift($arrAddTime,array("start_time"=>$arr["start_time"],"end_time"=>$arr["end_time"]));
@@ -475,7 +476,7 @@ class MyPDFTwo {
                     $timeHtml .= date("Y.m.d H:i",strtotime($row["start_time"]))."&nbsp;&nbsp;-&nbsp;&nbsp;".date("Y.m.d H:i",strtotime($row["end_time"]));
                     if($key%2 == 0){
                         $timeHtml .="<br>";
-                    }else{
+                    }elseif($key!=count($arrAddTime)){
                         $timeHtml .="&nbsp;&nbsp;、&nbsp;&nbsp;";
                     }
                 }

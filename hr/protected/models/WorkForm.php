@@ -98,10 +98,20 @@ class WorkForm extends CFormModel
             array('log_time','required','on'=>array("new","edit","audit")),
             array('end_time','validateTime','on'=>array("new","edit","audit")),
             array('addTime','validateLogTime','on'=>array("new","edit","audit")),
+            array('id','validateCancel','on'=>array("cancel")),
             array('log_time','numerical', 'min'=>0.5,'allowEmpty'=>true,'integerOnly'=>false,'on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
+    public function validateCancel($attribute, $params){
+        $row = Yii::app()->db->createCommand()->select("b.leave_code")->from("hr_work_leave a")
+            ->leftJoin("hr_employee_leave b","a.leave_id=b.id")
+            ->where("work_id=:work_id", array(':work_id'=>$this->id))->queryRow();
+        if($row){
+            $message = "该加班单已调休无法取消，请先取消请假单：".$row["leave_code"];
+            $this->addError($attribute,$message);
+        }
+    }
     public function validateLogTime($attribute, $params){
 	    if(!empty($this->log_time)){
 	        if(in_array($this->work_type,array(1,0))){

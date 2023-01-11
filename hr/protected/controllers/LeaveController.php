@@ -317,10 +317,12 @@ class LeaveController extends Controller
             $index = $_POST["index"];
             $time = $_POST["time"];
             $leave_type = $_POST["leave_type"];
+            $work_id = key_exists("work_id",$_POST)?$_POST["work_id"]:0;
             $model = new VacationDayForm($index,$leave_type,$time);
             $useDay = $model->getVacationSum();
-            $remark = $model->vacation_list;
-            $remark = key_exists("remark",$remark)?$remark["remark"]:"";
+            $vacationList = $model->vacation_list;
+            $remark = key_exists("remark",$vacationList)?$vacationList["remark"]:"";
+            $workHtml = LeaveForm::getWorkSelectDiv($vacationList,$index,$work_id);
             if($model->remain_bool){
                 $entry_time = $model->getEndTime();
                 $html = "<p class='form-control-static text-success'>".Yii::t("contract","remaining days")."：".$useDay."</p>";
@@ -328,7 +330,7 @@ class LeaveController extends Controller
                 $entry_time = date("Y/m/d",strtotime(date("Y/m/d")."+2 year"));
                 $html = "";
             }
-            echo CJSON::encode(array("status"=>1,"html"=>$html,"remark"=>$remark,"entry_time"=>$entry_time));
+            echo CJSON::encode(array("status"=>1,"work_html"=>$workHtml,"html"=>$html,"remark"=>$remark,"entry_time"=>$entry_time));
         }else{
             $this->redirect(Yii::app()->createUrl(''));
         }
