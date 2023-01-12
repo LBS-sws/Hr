@@ -174,13 +174,13 @@ class LeaveForm extends CFormModel
                     $this->addError($attribute,$message);
                 }
             }
-            if($this->vacation_list["vaca_type"]=="A"&&$this->audit) { //请假类型为调休
+            /*if($this->vacation_list["vaca_type"]=="A"&&$this->audit) { //请假类型为调休
                 $work_id = key_exists("work_id",$_POST)?$_POST["work_id"]:0;
                 if(empty($work_id)){
                     $message = "加班单不能为空";
                     $this->addError($attribute,$message);
                 }
-            }
+            }*/
         }
     }
 
