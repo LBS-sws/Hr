@@ -630,7 +630,8 @@ class LeaveForm extends CFormModel
         //请假类型为：调休
         if(key_exists("vaca_type",$vacationList)&&$vacationList["vaca_type"]=="A"){
             $html.= "<div class=\"form-group\">";
-            $html.= TbHtml::label("选择加班单".'<span class="required">*</span>',"",array("class"=>"col-lg-2 control-label"));
+            //.'<span class="required">*</span>'
+            $html.= TbHtml::label("选择加班单","",array("class"=>"col-lg-2 control-label"));
             $html.= "<div class=\"col-lg-7\">";
             $html.= self::workSelectHtml($employee_id,$work_id,$ready);
             $html.= "</div>";
