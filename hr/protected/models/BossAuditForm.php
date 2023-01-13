@@ -42,17 +42,36 @@ class BossAuditForm extends CFormModel
 	{
 		return array(
 			array('id,employee_id,json_text,audit_year,reject_remark','safe'),
-            array('id','validateID','on'=>array("audit","reject","finish")),
-            array('json_text','validateJson','on'=>array("audit","finish")),
+            array('id','validateID','on'=>array("audit","reject","finish","save")),
+            array('employee_id','validateStaff','on'=>array("audit","finish","save")),
+            array('json_text','validateJson','on'=>array("audit","finish","save")),
             array('reject_remark','required','on'=>array("reject")),
 		);
 	}
+
+    public function validateStaff($attribute, $params){
+        $uid = Yii::app()->user->id;
+        $rows = Yii::app()->db->createCommand()->select("a.employee_id,b.code,b.name,b.city")->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where('a.user_id=:user_id',
+                array(':user_id'=>$uid))->queryRow();
+        if ($rows){
+            $this->employee_id = $rows["employee_id"];
+            $this->code = $rows["code"];
+            $this->name = $rows["name"];
+            $this->city = Yii::app()->user->city();
+            $this->lcu = $uid;
+        }else{
+            $message = "員工不存在，請於管理員聯繫";
+            $this->addError($attribute,$message);
+        }
+    }
 
     public function validateID($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.city in ($city_allow) and a.status_type in (1,5) and boss_type=:boss_type",
+            ->where("a.id=:id and b.city in ($city_allow) and a.status_type in (0,1,5) and boss_type=:boss_type",
                 array(':id'=>$this->id,':boss_type'=>$this->boss_type)
             )->queryRow();
         if (!$row){
@@ -60,7 +79,6 @@ class BossAuditForm extends CFormModel
             $this->addError($attribute,$message);
             return false;
         }else{
-            $this->json_text = json_decode($row["json_text"],true);
             $this->employee_id = $row['employee_id'];
             $this->code = $row['employee_code'];
             $this->ratio_a = $row["ratio_a"];
@@ -72,12 +90,14 @@ class BossAuditForm extends CFormModel
             $this->status_type = $row['status_type'];
             $this->audit_year = $row['audit_year'];
             $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
+            $this->json_text = $this->status_type==5?json_decode($row["json_text"],true):$this->json_text;
+
         }
     }
 
     public function validateJson($attribute, $params){
         if(!empty($this->json_text)){
-            $bool = $this->status_type==1;
+            $bool = in_array($this->status_type,array(0,1));
             //A類驗證
             $bossReviewA = new BossReviewA($this);
             if(!empty($this->json_listX)){
@@ -192,6 +212,17 @@ class BossAuditForm extends CFormModel
 							json_text = :json_text, 
 							luu = :luu
 						where id = :id AND status_type = 1
+						";
+                break;
+            case 'save':
+                $sql = "update hr_boss_audit set
+							results_a = :results_a, 
+							results_b = :results_b, 
+							results_c = :results_c, 
+							results_sum = :results_sum, 
+							json_text = :json_text, 
+							luu = :luu
+						where id = :id AND status_type = 0
 						";
                 break;
             case 'reject':
@@ -331,6 +362,11 @@ class BossAuditForm extends CFormModel
         }
         Yii::app()->db->createCommand()->update('hr_boss_audit', array(
             'boss_type'=>$this->boss_type,
+            'results_a'=>$this->results_a,
+            'results_b'=>$this->results_b,
+            'results_c'=>$this->results_c,
+            'results_sum'=>$this->results_sum,
+            'json_text'=>json_encode($this->json_text),
             'lcu'=>"test",
         ), 'id=:id', array(':id'=>$this->id));
         Yii::app()->db->createCommand()->insert('hr_boss_flow',array(
@@ -344,6 +380,6 @@ class BossAuditForm extends CFormModel
 
 	//判斷輸入框能否修改
 	public function getInputBool(){
-        return true;
+        return $this->status_type==5||!in_array($this->getScenario(),array("audit","finish","edit","save"));
     }
 }

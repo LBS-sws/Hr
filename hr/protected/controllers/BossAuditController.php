@@ -46,7 +46,7 @@ class BossAuditController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','reject','audit','finish'),
+                'actions'=>array('edit','reject','audit','finish','save'),
                 'expression'=>array('BossAuditController','allowReadWrite'),
             ),
             array('allow',
@@ -138,6 +138,24 @@ class BossAuditController extends Controller
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type)));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id,'type'=>$this->boss_type)));
+            }
+        }
+    }
+
+    public function actionSave()
+    {
+        if (isset($_POST['BossAuditForm'])) {
+            $model = new BossAuditForm('save');
+            $model->attributes = $_POST['BossAuditForm'];
+            $model->boss_type = $this->boss_type;
+            if ($model->validate()) {
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                $this->redirect(Yii::app()->createUrl('bossAudit/edit',array('index'=>$model->id,'type'=>$this->boss_type)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);

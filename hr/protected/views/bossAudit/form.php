@@ -30,6 +30,11 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 				'submit'=>Yii::app()->createUrl('bossAudit/index',array('type'=>$this->boss_type))));
 		?>
         <?php if ($model->scenario!='view'): ?>
+            <?php if ($model->status_type == 0&&$model->boss_type==$bossType): ?>
+                <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('Misc','Save'), array(
+                    'submit'=>Yii::app()->createUrl('bossAudit/save',array('type'=>$this->boss_type))));
+                ?>
+            <?php endif ?>
             <?php if ($model->status_type == 1&&$model->boss_type==$bossType): ?>
                 <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                     'submit'=>Yii::app()->createUrl('bossAudit/audit',array('type'=>$this->boss_type))));
