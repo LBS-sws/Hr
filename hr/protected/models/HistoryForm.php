@@ -224,7 +224,7 @@ class HistoryForm extends CFormModel
 			array('test_type','validateTestType'),
             array('year_day','required'),
             array('year_day', 'validateYearDay'),
-            array('employee_id', 'validateSign'),
+            //array('employee_id', 'validateSign'),//2023/01/16不需要此驗證
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
