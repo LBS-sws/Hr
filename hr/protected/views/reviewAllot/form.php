@@ -126,6 +126,7 @@ $this->renderPartial('//site/fileupload',$fileUpload);
 Script::genFileUpload($model,$form->id,'REVIEW');
 
 $js = "
+    $(\"select[name^='ReviewAllotForm[tem_list]']\").attr('readonly','readonly').addClass('readonly');
     var rowHtml = $('#readyOne').html();
     $('#readyOne').remove();
     $('#addManager').on('click',function(){
