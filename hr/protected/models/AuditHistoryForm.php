@@ -330,13 +330,23 @@ class AuditHistoryForm extends CFormModel
                 $this->group_type = $row['group_type'];
                 $this->effect_time = $row['effect_time'];
                 $this->wechat = $row['wechat'];
-                $this->recommend_user = key_exists("recommend_user",$row)?$row['recommend_user']:"";
+                $this->recommend_user = key_exists("recommend_user",$row)?self::getEmployeeNameToId($row['recommend_user']):"";
                 $this->urgency_card = $row['urgency_card'];
 				break;
 			}
 		}
 		return true;
 	}
+
+    //根據id獲取員信息
+    public static function getEmployeeNameToId($id){
+        $row = Yii::app()->db->createCommand()->select("name,code")->from("hr_employee")
+            ->where('id=:id', array(':id'=>$id))->queryRow();
+        if($row){
+            return $row["name"]."({$row["code"]})";
+        }
+        return $id;
+    }
 
 	public function saveData()
 	{

@@ -474,10 +474,10 @@ class HistoryForm extends CFormModel
                 $this->code_old = $row['code_old'];
                 $this->group_type = $row['group_type'];
                 $this->wechat = $row['wechat'];
-                $this->recommend_user = $row['recommend_user'];
                 $this->urgency_card = $row['urgency_card'];
                 $this->operation=key_exists("operation",$row)?$row["operation"]:"";
                 $this->change_city = empty($row['change_city'])?$row['city']:$row['change_city'];
+                $this->recommend_user = key_exists("recommend_user",$row)?AuditHistoryForm::getEmployeeNameToId($row['recommend_user']):"";
                 if($this->staff_status == 1 || $this->staff_status == 3){
                     $this->scenario = $row['operation'];
                 }
