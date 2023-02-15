@@ -16,6 +16,9 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
 <style>
     .table-responsive th{white-space: nowrap;}
     .table-responsive>table{table-layout:fixed}
+    #moveCofWindow{position: absolute;top: 0px;left: 0px;width: 300px;box-shadow: -4px 3px 5px rgba(0,0,0,0.1);background: #fff;z-index: 999}
+    #moveCofWindow>.arrow-left{position: absolute;top: 50%;left: -5px;margin-top:-3px;border-right: 6px solid #fff;border-top: 6px solid transparent;border-bottom: 6px solid transparent;width: 0px;height: 0px;}
+    #moveCofWindow>table{margin: 0px;}
 </style>
 <section class="content-header">
 	<h1>
@@ -140,9 +143,87 @@ $this->renderPartial('//site/removedialog');
 $this->renderPartial('//site/bossflow',array('model'=>$model));
 $this->renderPartial('//site/ject',array('model'=>$model,'form'=>$form,'rejectName'=>"reject_remark",'submit'=>Yii::app()->createUrl('bossAudit/reject',array('type'=>$this->boss_type))));
 ?>
+<script>
+    function changeCofWindow() {
+        $(".changeCofWindow").mouseout(function () {
+            $("#moveCofWindow").remove();
+        });
+        $(".changeCofWindow").mouseover(function () {
+            $("#moveCofWindow").remove();
+            var dataName = $(this).data("name");
+            var kpiData = $(this).data("kpi");
+            var kpiType = $(this).data("size");
+            var html="<div id='moveCofWindow'>";
+            html+="<span class='arrow-left'></span><table class='table table-bordered table-hover'><thead><tr>";
+            var num=0,left,top;
+            var oldCof = $(this).val();
+            var nowCof = $(this).parents('tr:first').find('input[name$="[cofNow]"]').eq(0).val();
+            var nameArr =["one_eight","two_one","two_two","two_three","two_five","one_nine","two_eight","two_service"];
+            var ratio_value = "<?php echo Yii::t('contract','ratio value');?>";
+            html+="<th width='75%' class='text-center'>"+ratio_value+"</th><th class='text-center'>";
+            html+="<?php echo Yii::t('contract','one_5');?>";
+            html+="</th></tr></thead><tbody>";
+            kpiData = kpiData.split(",");
+            $.each(kpiData,function (i,val) {
+                var list = val.split(":");
+                var str = "",className="";
+                if(nameArr.indexOf(dataName)<0){
+                    list[0]+="%";
+                }
+                if(kpiType == 1){//從大到小排序
+                    var nextList = kpiData.length-1==i?val:kpiData[i+1];
+                    nextList = nextList.split(":");
+                    if(nameArr.indexOf(dataName)<0){
+                        nextList[0]+="%";
+                    }
+                    if(i==0){//第一行
+                        str =ratio_value+">="+list[0];
+                    }else if(i == kpiData.length-1){//最後一行
+                        str =ratio_value+"<"+num;
+                    }else{//中間循環
+                        str =list[0]+"<= "+ratio_value+" <"+num;
+                    }
+                }else{
+                    if(i==0){//第一行
+                        str = ratio_value+"<="+list[0];
+                    }else if(i == kpiData.length-1){//最後一行
+                        str =ratio_value+">"+num;
+                    }else{//中間循環
+                        str =num+"< "+ratio_value+" <="+list[0];
+                    }
+                }
+                if(list[1] == oldCof){
+                    className = "success";
+                }
+                if(list[1] == nowCof){
+                    className = "warning";
+                }
+                html+="<tr class='"+className+"'><td class='text-center'>"+str+"</td><td class='text-center'>"+list[1]+"</td></tr>";
+                num = list[0];
+            });
+            html+="</tbody></table></div>";
+            html = $(html);
+            $("body").append(html);
+            left = $(this).offset().left+$(this).outerWidth()+5;
+            top = $(this).offset().top+($(this).outerHeight()-html.outerHeight())/2;
+            var maxTop = $("body").outerHeight();
+            var delTop=0;
+            if(top+html.outerHeight()>maxTop){
+                delTop = top+html.outerHeight()-maxTop;
+            }
+            top -=delTop;
+            $("#moveCofWindow>.arrow-left").css({"margin-top":delTop+"px"})
+            html.css({
+                "left":left+"px",
+                "top":top+"px"
+            });
+        });
+    }
+</script>
 <?php
 $js = "
     $('.bossHintTitle').popover();
+    changeCofWindow();
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

@@ -178,11 +178,11 @@ $this->renderPartial('//site/removedialog');
                         nextList[0]+="%";
                     }
                     if(i==0){//第一行
-                        str =ratio_value+"<"+nextList[0];
-                    }else if(i == kpiData.length-1){//最後一行
                         str =ratio_value+">="+list[0];
+                    }else if(i == kpiData.length-1){//最後一行
+                        str =ratio_value+"<"+num;
                     }else{//中間循環
-                        str =list[0]+"<= "+ratio_value+" <"+nextList[0];
+                        str =list[0]+"<= "+ratio_value+" <"+num;
                     }
                 }else{
                     if(i==0){//第一行

@@ -256,10 +256,10 @@ class BossReviewA extends BossReview
     public function getLadderDiffer($type,$str,$list=array()){
         if(in_array($type,array("one_one","one_two","one_three","one_four","one_five"))){
             $cofNow = $this->cofModel->getClassCof($this->json_text[$type]["one_7"],$this->countPrice,$type);
-            $value = $this->cofModel->getClassLadder($this->json_text[$type]["one_5"],$cofNow,$type);
+            $value = $this->cofModel->getClassLadder($this->json_text[$type]["one_5"],$cofNow,$type,$this->countPrice);
         }else{
             $cofNow = $this->cofModel->getClassCof($this->json_text[$type]["one_6"],$this->countPrice,$type);
-            $value = $this->cofModel->getClassLadder($this->json_text[$type]["one_5"],$cofNow,$type);
+            $value = $this->cofModel->getClassLadder($this->json_text[$type]["one_5"],$cofNow,$type,$this->countPrice);
         }
         $name1 = $this->className."[json_text][".$type."]"."[".$str."]";
         $name2 = $this->className."[json_text][".$type."]"."[cofNow]";

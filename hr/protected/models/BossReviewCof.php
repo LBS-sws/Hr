@@ -78,8 +78,8 @@ class BossReviewCof
     public function getKPIListStr(){
         $str = "";
         if(is_array($this->kpi_list)){
-            $kpiList = $this->sortList($this->kpi_list);
-            foreach ($kpiList as $list){
+            //$kpiList = $this->sortList($this->kpi_list);
+            foreach ($this->kpi_list as $list){
                 $str.=empty($str)?"":",";
                 $str.=floatval($list["min_num"]).":".floatval($list["kpi_value"]);
             }
