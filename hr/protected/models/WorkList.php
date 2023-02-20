@@ -79,7 +79,7 @@ class WorkList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
         $manager = AuditConfigForm::getManager($employee_id);
-		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city ,docman$suffix.countdoc('WORKEM',a.id) as workemdoc
+		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
               LEFT JOIN hr_dept d ON b.position = d.id 
                 where a.id!=0 
@@ -165,7 +165,8 @@ class WorkList extends CListPageModel
                 $dayStr =Yii::t("contract","Hour");
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'workemdoc'=>$record['workemdoc'],
+					//'workemdoc'=>$record['workemdoc'],
+                    'workemdoc'=>LeaveList::docmanSearch("WORKEM",$record["id"],$record["lud"],$record['status'])?1:0,
 					'work_code'=>$record['work_code'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],

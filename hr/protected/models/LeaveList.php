@@ -54,7 +54,7 @@ class LeaveList extends CListPageModel
         $employee_id = $this->employee_id;
         $manager = AuditConfigForm::getManager($employee_id);
         //,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
-		$sql1 = "select  a.*,f.name as vacation_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city ,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
+		$sql1 = "select  a.*,f.name as vacation_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
               from hr_employee_leave a 
               LEFT JOIN hr_vacation f ON a.vacation_id = f.id 
               LEFT JOIN hr_employee b ON a.employee_id = b.id 
@@ -140,7 +140,7 @@ class LeaveList extends CListPageModel
 			    $colorList = $this->statusToColor($record['status']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'leavedoc'=>$record['leavedoc'],
+					'leavedoc'=>LeaveList::docmanSearch("LEAVE",$record["id"],$record["lud"],$record['status'])?1:0,
 					'leave_code'=>$record['leave_code'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],
@@ -244,6 +244,26 @@ class LeaveList extends CListPageModel
             return " and a.status in (".implode(",",$arr).")";
         }else{
             return "";
+        }
+    }
+
+
+
+    //請假、加班附件變更查詢
+    public static function docmanSearch($docType,$id,$date,$status=1){
+        if($status==4){
+            $date = date("Y/m/d H:i:s",strtotime($date));
+            $suffix = Yii::app()->params['envSuffix'];
+            $rows = Yii::app()->db->createCommand()->select("b.lcd")->from("docman$suffix.dm_master a")
+                ->leftJoin("docman$suffix.dm_file b","b.mast_id = a.id")
+                ->where("a.doc_type_code='$docType' and a.doc_id = '$id' and date_format(b.lcd,'%Y/%m/%d %H:%i:%s') > '$date'")->queryRow();
+            if($rows){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
         }
     }
 }
