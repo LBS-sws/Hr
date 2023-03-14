@@ -47,6 +47,9 @@
 			;
 		?>
 	</th>
-	<th width="1%">
+	<th>
+        <?php echo TbHtml::link($this->getLabelName('workemdoc').$this->drawOrderArrow('workemdoc'),'#',$this->createOrderLink('work-list','workemdoc'))
+        ;
+        ?>
 	</th>
 </tr>

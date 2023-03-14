@@ -24,6 +24,7 @@ class WorkList extends CListPageModel
 			'city'=>Yii::t('contract','City'),
 			'city_name'=>Yii::t('contract','City'),
             'lcd'=>Yii::t('fete','apply for time'),
+            'workemdoc'=>Yii::t('contract','Attachment'),
 		);
 	}
 
@@ -79,9 +80,15 @@ class WorkList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
         $manager = AuditConfigForm::getManager($employee_id);
-		$sql1 = "select a.*,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
+        $masSql = Yii::app()->db->createCommand()->select("ew.id,max(df.lud) as file_lud")
+            ->from("docman$suffix.dm_master dm")
+            ->leftJoin("docman$suffix.dm_file df","df.mast_id = dm.id")
+            ->leftJoin("hr_employee_work ew","dm.doc_id = ew.id")
+            ->where("dm.doc_type_code='WORKEM' and ew.status=4 and ew.city in($city_allow)")->group("ew.id")->getText();
+		$sql1 = "select a.*,(case when a.lud<=ifnull(f.file_lud,0) THEN 1 ELSE 0 end) as workemdoc,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
               LEFT JOIN hr_dept d ON b.position = d.id 
+              LEFT JOIN ($masSql) f ON f.id = a.id 
                 where a.id!=0 
 			";
 		$sql2 = "select count(a.id)
@@ -166,7 +173,9 @@ class WorkList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					//'workemdoc'=>$record['workemdoc'],
-                    'workemdoc'=>LeaveList::docmanSearch("WORKEM",$record["id"],$record["lud"],$record['status'])?1:0,
+                    //'workemdoc'=>LeaveList::docmanSearch("WORKEM",$record["id"],$record["lud"],$record['status'])?1:0,
+                    //'workemdoc'=>$record["lud"]<=$record["file_lud"],
+                    'workemdoc'=>$record["workemdoc"],
 					'work_code'=>$record['work_code'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],

@@ -24,6 +24,7 @@ class LeaveList extends CListPageModel
             'city'=>Yii::t('contract','City'),
             'city_name'=>Yii::t('contract','City'),
             'lcd'=>Yii::t('fete','apply for time'),
+            'leavedoc'=>Yii::t('contract','Attachment'),
 		);
 	}
 
@@ -54,11 +55,17 @@ class LeaveList extends CListPageModel
         $employee_id = $this->employee_id;
         $manager = AuditConfigForm::getManager($employee_id);
         //,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
-		$sql1 = "select  a.*,f.name as vacation_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
+        $masSql = Yii::app()->db->createCommand()->select("ew.id,max(df.lud) as file_lud")
+            ->from("docman$suffix.dm_master dm")
+            ->leftJoin("docman$suffix.dm_file df","df.mast_id = dm.id")
+            ->leftJoin("hr_employee_leave ew","dm.doc_id = ew.id")
+            ->where("dm.doc_type_code='LEAVE' and ew.status=4 and ew.city in($city_allow)")->group("ew.id")->getText();
+		$sql1 = "select  a.*,(case when a.lud<=ifnull(ms.file_lud,0) THEN 1 ELSE 0 end) as leavedoc,f.name as vacation_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
               from hr_employee_leave a 
               LEFT JOIN hr_vacation f ON a.vacation_id = f.id 
               LEFT JOIN hr_employee b ON a.employee_id = b.id 
               LEFT JOIN hr_dept d ON b.position = d.id 
+              LEFT JOIN ($masSql) ms ON ms.id = a.id 
               where a.id!=0 ";
 		$sql2 = "select count(a.id)
 				from hr_employee_leave a 
@@ -140,7 +147,8 @@ class LeaveList extends CListPageModel
 			    $colorList = $this->statusToColor($record['status']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
-					'leavedoc'=>LeaveList::docmanSearch("LEAVE",$record["id"],$record["lud"],$record['status'])?1:0,
+					//'leavedoc'=>LeaveList::docmanSearch("LEAVE",$record["id"],$record["lud"],$record['status'])?1:0,
+					'leavedoc'=>$record['leavedoc'],
 					'leave_code'=>$record['leave_code'],
 					'employee_name'=>$record['employee_name'],
 					'employee_code'=>$record['employee_code'],

@@ -47,6 +47,9 @@
 			;
 		?>
 	</th>
-    <th width="1%">
+    <th>
+        <?php echo TbHtml::link($this->getLabelName('leavedoc').$this->drawOrderArrow('leavedoc'),'#',$this->createOrderLink('leave-list','leavedoc'))
+        ;
+        ?>
     </th>
 </tr>
