@@ -151,6 +151,9 @@ class WorkList extends CListPageModel
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
+            if($this->orderField=="workemdoc"){
+                $order .= ",a.status desc ";
+            }
 		}else{
             $order .= " order by a.id desc ";
         }
