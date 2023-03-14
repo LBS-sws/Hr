@@ -84,7 +84,8 @@ class WorkList extends CListPageModel
             ->from("docman$suffix.dm_master dm")
             ->leftJoin("docman$suffix.dm_file df","df.mast_id = dm.id")
             ->leftJoin("hr_employee_work ew","dm.doc_id = ew.id")
-            ->where("dm.doc_type_code='WORKEM' and ew.status=4 and ew.city in($city_allow)")->group("ew.id")->getText();
+            ->leftJoin("hr_employee he","ew.employee_id = he.id")
+            ->where("dm.doc_type_code='WORKEM' and ew.status=4 and he.city in($city_allow)")->group("ew.id")->getText();
 		$sql1 = "select a.*,(case when a.lud<=ifnull(f.file_lud,0) THEN 1 ELSE 0 end) as workemdoc,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
                 from hr_employee_work a LEFT JOIN hr_employee b ON a.employee_id = b.id
               LEFT JOIN hr_dept d ON b.position = d.id 

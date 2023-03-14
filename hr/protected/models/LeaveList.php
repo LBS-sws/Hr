@@ -59,7 +59,8 @@ class LeaveList extends CListPageModel
             ->from("docman$suffix.dm_master dm")
             ->leftJoin("docman$suffix.dm_file df","df.mast_id = dm.id")
             ->leftJoin("hr_employee_leave ew","dm.doc_id = ew.id")
-            ->where("dm.doc_type_code='LEAVE' and ew.status=4 and ew.city in($city_allow)")->group("ew.id")->getText();
+            ->leftJoin("hr_employee he","ew.employee_id = he.id")
+            ->where("dm.doc_type_code='LEAVE' and ew.status=4 and he.city in($city_allow)")->group("ew.id")->getText();
 		$sql1 = "select  a.*,(case when a.lud<=ifnull(ms.file_lud,0) THEN 1 ELSE 0 end) as leavedoc,f.name as vacation_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
               from hr_employee_leave a 
               LEFT JOIN hr_vacation f ON a.vacation_id = f.id 
