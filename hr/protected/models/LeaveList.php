@@ -132,7 +132,7 @@ class LeaveList extends CListPageModel
 			$order .= " order by ".$this->orderField." ";
 			if ($this->orderType=='D') $order .= "desc ";
             if($this->orderField=="leavedoc"){
-                $order .= ",a.status desc ";
+                $order .= ",(case when a.status=4 then 10 else a.status end) desc ";
             }
 		}else{
             $order .= " order by a.id desc ";
