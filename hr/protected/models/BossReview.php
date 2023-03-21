@@ -368,7 +368,7 @@ class BossReview
         return $html;
     }
 
-    //提取月报表数据
+    //提取月报表数据（日報表系統）
     public function value($city,$year,$data_field){
         $sqlExpr = "";
         if(!empty($this->search_month)&&$this->audit_year==$year){
@@ -379,6 +379,23 @@ class BossReview
         $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
             ->from("swoper$suffix.swo_monthly_dtl a")
             ->leftJoin("swoper$suffix.swo_monthly_hdr b","b.id = a.hdr_id")
+            ->where("b.city = :city $sqlExpr AND b.year_no = :year AND a.data_field=:field",
+                array(":city"=>$city,":year"=>$year,":field"=>$data_field)
+            )->queryScalar();
+        return empty($sum)||$sum==null?0:$sum;
+    }
+
+    //提取月报表数据（營運系統）
+    public function valueForOpr($city,$year,$data_field){
+        $sqlExpr = "";
+        if(!empty($this->search_month)&&$this->audit_year==$year){
+            $sqlExpr=" and b.month_no<=$this->search_month ";
+        }
+        //$data_field 100055：空气净化机租赁
+        $suffix = Yii::app()->params['envSuffix'];
+        $sum = Yii::app()->db->createCommand()->select("SUM(convert(a.data_value,decimal(18,2)))")
+            ->from("operation$suffix.opr_monthly_dtl a")
+            ->leftJoin("operation$suffix.opr_monthly_hdr b","b.id = a.hdr_id")
             ->where("b.city = :city $sqlExpr AND b.year_no = :year AND a.data_field=:field",
                 array(":city"=>$city,":year"=>$year,":field"=>$data_field)
             )->queryScalar();
@@ -805,25 +822,41 @@ class BossReview
         $suffix = Yii::app()->params['envSuffix'];
         $sum = 0;
         $whereSql = "IFNULL(TIMESTAMPDIFF(MONTH,a.entry_time,a.leave_time),3)>=2";//入职大于两个月(离职时间-入职时间>2)
-        $rows = Yii::app()->db->createCommand()->select("d.user_id,a.entry_time")
+        $rows = Yii::app()->db->createCommand()->select("d.user_id,a.entry_time,a.id,a.lud,a.position")
             ->from("hr_binding d")
             ->leftJoin("hr_employee a","d.employee_id=a.id")
             ->leftJoin("hr_dept b","a.position=b.id")
             ->leftJoin("security$suffix.sec_user f","f.username=d.user_id")
-            ->where("(a.staff_status=0 or (a.staff_status=-1 and {$whereSql})) and CONVERT(a.entry_time, SIGNED)=:year AND b.manager_type=1 AND f.city=:city",
-                array(":year"=>$year,":city"=>$city)
+            ->where("(a.staff_status=0 or (a.staff_status=-1 and {$whereSql})) AND b.manager_type=1 AND f.city=:city",
+                array(":city"=>$city)
             )->queryAll();
         if($rows){
-            $count = count($rows);
+            $count = 0;
             foreach ($rows as $row){
-                /*  查询月份不影响销售5步曲分数*/
-                $datetime = date("Y/m/d",strtotime($row["entry_time"]." + 2 month"));
-                $bool = Yii::app()->db->createCommand()->select("username")->from("sales$suffix.sal_fivestep")
-                    ->where("step in ('1','2','3') and username=:username and date_format(rec_dt,'%Y/%m/%d') <=:datetime",
-                        array(":username"=>$row["user_id"],":datetime"=>$datetime)
-                    )->queryRow();
-                if($bool){
-                    $sum++;
+                $entry_time = $row["entry_time"];
+                $historyRow = Yii::app()->db->createCommand()->select("a.effect_time,a.lcd,a.operation")->from("hr_employee_operate a")
+                    ->leftJoin("hr_dept b","a.position=b.id")
+                    ->where("a.employee_id=:id and b.manager_type!=1 and a.lcd<=:lud",
+                        array(":id"=>$row["id"],":lud"=>$row["lud"])
+                    )->order("lcd desc")->queryRow();
+                if($historyRow){//如果職位從非銷售轉成了銷售，入職時間需要改成職位變更時間
+                    if($historyRow["operation"]=="update"){//變更
+                        $entry_time = date("Y/m/d",strtotime($historyRow["lcd"]));
+                    }else{
+                        $entry_time = date("Y/m/d",strtotime($historyRow["effect_time"]));
+                    }
+                }
+                if(intval($entry_time)==$year){ //入職或者變更等於老總年度考核的時間
+                    $count++;
+                    /*  查询月份不影响销售5步曲分数*/
+                    $datetime = date("Y/m/d",strtotime($entry_time." + 2 month"));
+                    $bool = Yii::app()->db->createCommand()->select("username")->from("sales$suffix.sal_fivestep")
+                        ->where("step in ('1','2','3') and username=:username and date_format(rec_dt,'%Y/%m/%d') <=:datetime",
+                            array(":username"=>$row["user_id"],":datetime"=>$datetime)
+                        )->queryRow();
+                    if($bool){
+                        $sum++;
+                    }
                 }
             }
             $sum = empty($count)?0:($sum/$count)*100;
