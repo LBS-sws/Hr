@@ -821,6 +821,7 @@ class BossReview
     public function valueSalesOne($year,$city){
         $suffix = Yii::app()->params['envSuffix'];
         $sum = 0;
+        $count = 0;
         $whereSql = "IFNULL(TIMESTAMPDIFF(MONTH,a.entry_time,a.leave_time),3)>=2";//入职大于两个月(离职时间-入职时间>2)
         $rows = Yii::app()->db->createCommand()->select("d.user_id,a.entry_time,a.id,a.lud,a.position")
             ->from("hr_binding d")
@@ -831,7 +832,6 @@ class BossReview
                 array(":city"=>$city)
             )->queryAll();
         if($rows){
-            $count = 0;
             foreach ($rows as $row){
                 $entry_time = $row["entry_time"];
                 $historyRow = Yii::app()->db->createCommand()->select("a.effect_time,a.lcd,a.operation")->from("hr_employee_operate a")
@@ -859,8 +859,8 @@ class BossReview
                     }
                 }
             }
-            $sum = empty($count)?0:($sum/$count)*100;
         }
+        $sum = empty($count)?100:($sum/$count)*100;
         return floatval(sprintf("%.2f",$sum));
     }
 
