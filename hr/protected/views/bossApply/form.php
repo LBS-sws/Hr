@@ -122,9 +122,13 @@ $this->renderPartial('//site/removedialog');
             return false;
         }
         var sum = 0;
+	var ratio_a = "<?php echo $model->ratio_a?>";
+	var ratio_b = "<?php echo $model->ratio_b?>";
         var sum_a = 0;
         var sum_b = 0;
         var sum_c = (isNaN($("#three_sum").val())||$("#three_sum").val()=='')?0:parseFloat($("#three_sum").val());
+	ratio_a = parseFloat(ratio_a)*0.01;
+	ratio_b = parseFloat(ratio_b)*0.01;
         $('#table_id_BossReviewA').find('input[name$="[one_12]"]').each(function () {
             sum_a+=$(this).val()==''?0:parseFloat($(this).val());
         });
@@ -132,13 +136,13 @@ $this->renderPartial('//site/removedialog');
             sum_b+=$(this).val()==''?0:parseFloat($(this).val());
         });
         if($("#bossRewardType").data("num")==1){
-            sum = sum_a*0.5+sum_b*0.5;
+            sum = sum_a*ratio_a+sum_b*ratio_b;
             sum_a = sum_a.toFixed(2);
             sum_b = sum_b.toFixed(2);
             sum = sum.toFixed(2);
             $("#sum_label").text(sum_a+"*<?php echo $model->ratio_a?>% + "+sum_b+"*<?php echo $model->ratio_b?>% = "+sum+"%");
         }else{
-            sum = sum_a*0.5+sum_b*0.35+sum_c;
+            sum = sum_a*ratio_a+sum_b*ratio_b+sum_c;
             sum_a = sum_a.toFixed(2);
             sum_b = sum_b.toFixed(2);
             sum = sum.toFixed(2);
