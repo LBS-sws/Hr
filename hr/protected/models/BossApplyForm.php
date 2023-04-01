@@ -341,6 +341,7 @@ class BossApplyForm extends CFormModel
     public function getTabList($model,$searchBool=false){
         $list = $this->getContractTabList($model);
         $tabs = array();
+        $updateBool = false;
 
         foreach ($list as $key=>$item){
             $className = $item["class"];
@@ -355,12 +356,37 @@ class BossApplyForm extends CFormModel
             }
             //後續修改，A項、B項的內容可以自由設定（結束）
             $html = $bossReviewModel->getTableHtml();
+            //由于数据误差，所以需要实时修改
+            if(!empty($model->id)&&$className=="BossReviewA"&&$bossReviewModel->scoreSum!=$model->results_a){
+                $model->results_a = $bossReviewModel->scoreSum;
+                $updateBool = true;
+            }
+            if(!empty($model->id)&&$className=="BossReviewB"&&$bossReviewModel->scoreSum!=$model->results_b){
+                $model->results_b = $bossReviewModel->scoreSum;
+                $updateBool = true;
+            }
             $tabs[] = array(
                 'id'=>"table_id_".$className,
                 'label'=>$item["name"],
                 'content'=>$html,
                 'active'=>$key == 0?true:false,
             );
+        }
+        if($updateBool&&!$searchBool){
+            $bossRewardType = BossApplyForm::getBossRewardType($model->city);
+            $ratio_a = $model->ratio_a*0.01;
+            $ratio_b = $model->ratio_b*0.01;
+            if($bossRewardType == 1){
+                $model->results_sum = $model->results_a*$ratio_a+$model->results_b*$ratio_b;
+            }else{
+                $model->results_sum = $model->results_a*$ratio_a+$model->results_b*$ratio_b+$model->results_c;
+            }
+
+            Yii::app()->db->createCommand()->update('hr_boss_audit', array(
+                'results_a'=>$model->results_a,
+                'results_b'=>$model->results_b,
+                'results_sum'=>$model->results_sum,
+            ), 'id=:id', array(':id'=>$model->id));
         }
         return $tabs;
     }
