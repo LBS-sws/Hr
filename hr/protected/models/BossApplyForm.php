@@ -338,7 +338,7 @@ class BossApplyForm extends CFormModel
         return $list;
     }
 
-    public function getTabList($model,$searchBool=false){
+    public function getTabList(&$model,$searchBool=false){
         $list = $this->getContractTabList($model);
         $tabs = array();
         $updateBool = false;
