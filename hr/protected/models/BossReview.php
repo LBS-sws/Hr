@@ -847,7 +847,7 @@ class BossReview
                     }
                 }
                 if(intval($entry_time)==$year){ //入職或者變更等於老總年度考核的時間
-                    echo "<div class='hide' data-sales='sales-user' data-year='{$year}'>user_id:{$row["user_id"]},employee_id:{$row["id"]}</div>";
+                    //echo "<div class='hide' data-sales='sales-user' data-year='{$year}'>user_id:{$row["user_id"]},employee_id:{$row["id"]}</div>";
                     $count++;
                     /*  查询月份不影响销售5步曲分数*/
                     $datetime = date("Y/m/d",strtotime($entry_time." + 2 month"));
