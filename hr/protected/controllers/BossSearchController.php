@@ -112,6 +112,7 @@ class BossSearchController extends Controller
                     'results_a'=>$model->results_a,
                     'results_b'=>$model->results_b,
                     'results_sum'=>$model->results_sum,
+                    'json_text'=>json_encode($model->json_text),
                 ), 'id=:id', array(':id'=>$row['id']));
             }
         }
