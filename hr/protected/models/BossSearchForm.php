@@ -90,6 +90,9 @@ class BossSearchForm extends CFormModel
             $this->results_a = $row['results_a'];
             $this->results_b = $row['results_b'];
             $this->results_c = $row['results_c'];
+            $this->ratio_a = $row['ratio_a'];
+            $this->ratio_b = $row['ratio_b'];
+            $this->ratio_c = $row['ratio_c'];
             $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
 		}
 		return true;
