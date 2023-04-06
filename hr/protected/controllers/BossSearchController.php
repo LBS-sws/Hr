@@ -33,7 +33,7 @@ class BossSearchController extends Controller
                 'expression'=>array('BossSearchController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view'),
+                'actions'=>array('index','view','resetSearch'),
                 'expression'=>array('BossSearchController','allowReadOnly'),
             ),
             array('allow',
@@ -56,6 +56,66 @@ class BossSearchController extends Controller
 
     public static function allowBack() {
         return Yii::app()->user->validFunction('ZR16');
+    }
+
+    public function actionResetSearch($year=2022){
+        $year = is_numeric($year)?intval($year):2022;
+        echo "Year:{$year}<br/>";
+        $rows = Yii::app()->db->createCommand()->select("a.id,a.json_listX,a.ratio_a,a.ratio_b,a.ratio_c,a.id,a.results_a,a.results_b,a.results_c,a.status_type,a.city,a.audit_year,a.employee_id,a.lcu,a.json_text,b.code as employee_code,b.name as employee_name")
+            ->from("hr_boss_audit a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.status_type =2 and a.audit_year={$year}")->queryAll();
+        if($rows){
+            $model = new BossSearchForm();
+            foreach ($rows as $row){
+                echo "audit_id:{$row["id"]} city:{$row["city"]}  employee_id:{$row["employee_id"]} employee_name:{$row["employee_name"]}<br/>";
+                $model->json_text = json_decode($row['json_text'],true);
+                $model->lcu = $row['lcu'];
+                $model->employee_id = $row['employee_id'];
+                $model->audit_year = $row['audit_year'];
+                $model->city = $row['city'];
+                $model->ratio_a = $row['ratio_a'];
+                $model->ratio_b = $row['ratio_b'];
+                $model->ratio_c = $row['ratio_c'];
+                $model->status_type = $row['status_type'];
+                $model->results_c = floatval($row["results_c"]);
+                //A類驗證
+                $bossReviewA = new BossReviewA($model);
+                if(!empty($row["json_listX"])){
+                    $bossReviewA->resetListX(json_decode($row["json_listX"],true));
+                }
+                $bossReviewA->validateJson($model);
+                $model->json_text = $bossReviewA->json_text;
+                $model->results_a = $bossReviewA->scoreSum;
+                //B類驗證
+                $bossReviewB = new BossReviewB($model);
+                if(!empty($row["json_listX"])){
+                    $bossReviewB->resetListX(json_decode($row["json_listX"],true));
+                }
+                $bossReviewB->validateJson($model);
+                $model->json_text = $bossReviewB->json_text;
+                $model->results_b = $bossReviewB->scoreSum;
+                if($model->results_a == floatval($row["results_a"])&&$model->results_b == floatval($row["results_b"])){
+                    continue;//數據沒有變動，不需要更新
+                }
+
+                $bossRewardType = BossApplyForm::getBossRewardType($row['city']);
+                $ratio_a = $model->ratio_a*0.01;
+                $ratio_b = $model->ratio_b*0.01;
+                if($bossRewardType == 1){
+                    $model->results_sum = $model->results_a*$ratio_a+$model->results_b*$ratio_b;
+                }else{
+                    $model->results_sum = $model->results_a*$ratio_a+$model->results_b*$ratio_b+$model->results_c;
+                }
+
+                Yii::app()->db->createCommand()->update('hr_boss_audit', array(
+                    'results_a'=>$model->results_a,
+                    'results_b'=>$model->results_b,
+                    'results_sum'=>$model->results_sum,
+                ), 'id=:id', array(':id'=>$row['id']));
+            }
+        }
+        Yii::app()->end();
     }
 
     public function actionIndex($pageNum=0){

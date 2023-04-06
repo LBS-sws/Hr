@@ -43,7 +43,7 @@ class BossAuditForm extends CFormModel
 		return array(
 			array('id,employee_id,json_text,audit_year,reject_remark','safe'),
             array('id','validateID','on'=>array("audit","reject","finish","save")),
-            array('employee_id','validateStaff','on'=>array("audit","finish","save")),
+            //array('employee_id','validateStaff','on'=>array("audit","finish","save")),
             array('json_text','validateJson','on'=>array("audit","finish","save")),
             array('reject_remark','required','on'=>array("reject")),
 		);
