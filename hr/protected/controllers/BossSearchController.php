@@ -95,9 +95,6 @@ class BossSearchController extends Controller
                 $bossReviewB->validateJson($model);
                 $model->json_text = $bossReviewB->json_text;
                 $model->results_b = $bossReviewB->scoreSum;
-                if($model->results_a == floatval($row["results_a"])&&$model->results_b == floatval($row["results_b"])){
-                    continue;//數據沒有變動，不需要更新
-                }
 
                 $bossRewardType = BossApplyForm::getBossRewardType($row['city']);
                 $ratio_a = $model->ratio_a*0.01;
