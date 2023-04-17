@@ -39,9 +39,9 @@ class DownBossExcel{
 
     public function setBossExcelBody($downData){
         $list = array(
-            array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","endStr"=>"N"),
-            array("name"=>"（B） 其他细节部分","class"=>"BossReviewB","endStr"=>"K"),
-            array("name"=>"（C） 自选项目部分","class"=>"BossReviewC","endStr"=>"D")
+            array("name"=>"（A） 目标订立部分","class"=>"BossReviewA","endStr"=>"N","width"=>"20","height"=>"25"),
+            array("name"=>"（B） 其他细节部分","class"=>"BossReviewB","endStr"=>"K","width"=>"20","height"=>"25"),
+            array("name"=>"（C） 自选项目部分","class"=>"BossReviewC","endStr"=>"D","width"=>"54","height"=>"146")
         );
         $this->current_row = 0;
         $sheetIndex = 0;
@@ -54,20 +54,21 @@ class DownBossExcel{
             $this->insertPublicHeader($sheetRow["name"],$sheetIndex);
             $body = key_exists($sheetRow["class"],$downData)?$downData[$sheetRow["class"]]:array();
 
-            $this->insertBody($body,$sheetRow["endStr"]);
+            $this->insertBody($body,$sheetRow);
         }
     }
 
-    private function insertBody($sheet,$endStr="D"){
+    private function insertBody($sheet,$sheetRow){
         if(!empty($sheet)){
             $startRow = $this->current_row+1;
             foreach ($sheet as $key =>$list){
                 $this->current_row++;
-                $this->objPHPExcel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight(25);
+                $height = $key=="count"?25:$sheetRow["height"];
+                $this->objPHPExcel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight($height);
                 $j=0;
                 foreach ($list as $item){
                     if($key=="title"){
-                        $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($j)->setWidth(20);
+                        $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($j)->setWidth($sheetRow["width"]);
                         $this->objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($j, $this->current_row,$item);
 
                         $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($j,$this->current_row)->getFont()->setBold(true);
@@ -78,8 +79,14 @@ class DownBossExcel{
                         }
                         $this->objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($j, $this->current_row,$item);
                         $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($j,$this->current_row)->getFont()->setBold(true);
+                        $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($j,$this->current_row)->getAlignment()
+                            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
                     }else{
                         $this->objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($j, $this->current_row,$item);
+                        if($sheetRow["class"]!="BossReviewC"){
+                            $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($j,$this->current_row)->getAlignment()
+                                ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                        }
                     }
                     $j++;
                 }
@@ -91,7 +98,7 @@ class DownBossExcel{
                         'style' => \PHPExcel_Style_Border::BORDER_THIN
                     )
                 ) );
-            $this->objPHPExcel->getActiveSheet()->getStyle("A{$startRow}:{$endStr}{$endRow}")->applyFromArray($style_array);
+            $this->objPHPExcel->getActiveSheet()->getStyle("A{$startRow}:{$sheetRow["endStr"]}{$endRow}")->applyFromArray($style_array);
         }
     }
 
@@ -137,7 +144,8 @@ class DownBossExcel{
 
     protected function setReportFormat() {
         $this->objPHPExcel->getDefaultStyle()->getAlignment()
-            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+            ->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT)
+            ->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
         $this->objPHPExcel->getDefaultStyle()->getFont()
             ->setSize(10);
         $this->objPHPExcel->getDefaultStyle()->getAlignment()
