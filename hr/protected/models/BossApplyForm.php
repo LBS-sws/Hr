@@ -191,13 +191,17 @@ class BossApplyForm extends CFormModel
         return $html;
     }
 
-	public function retrieveData($index) {
+	public function retrieveData($index,$bool=true) {
+        $sql = "1!=1";
+        if(!$bool){
+            $sql = "1=1";
+        }
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $row = Yii::app()->db->createCommand()->select("a.*,b.code as employee_code,b.name as employee_name")
             ->from("hr_boss_audit a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and b.id=:employee_id",array(":id"=>$index,":employee_id"=>$this->employee_id))->queryRow();
+            ->where("a.id=:id and ($sql or b.id=:employee_id) ",array(":id"=>$index,":employee_id"=>$this->employee_id))->queryRow();
 		if ($row) {
             $this->id = $row['id'];
             $this->employee_id = $row['employee_id'];
@@ -218,8 +222,10 @@ class BossApplyForm extends CFormModel
             $this->ratio_b = $row['ratio_b'];
             $this->ratio_c = $row['ratio_c'];
             $this->json_listX = empty($row['json_listX'])?array():json_decode($row['json_listX'],true);
-		}
-		return true;
+            return true;
+		}else{
+		    return false;
+        }
 	}
 
 	public function getAjaxPlanYear($data){
@@ -597,5 +603,16 @@ class BossApplyForm extends CFormModel
         }else{
             return false;
         }
+    }
+
+    public function downExcel($downData){
+        $cityName = General::getCityName($this->city);
+        $excel = new DownBossExcel();
+        $excel->SetYear($this->audit_year);
+        $excel->SetUserName($this->name."({$this->code})");
+        $excel->SetCityName($cityName);
+        $excel->init();
+        $excel->setBossExcelBody($downData);
+        $excel->outExcel("bossAudit");
     }
 }

@@ -45,6 +45,11 @@ $this->pageTitle=Yii::app()->name . ' - Boss Apply Form';
         <?php endif; ?>
 	</div>
             <div class="btn-group pull-right" role="group">
+                <?php if ($model->scenario!='new'){
+                    // 下载
+                    echo TbHtml::button('<span class="fa fa-cloud-download"></span> '.Yii::t('dialog','Download'), array(
+                    'submit'=>Yii::app()->createUrl('bossApply/downExcel',array("index"=>$model->id))));
+                } ?>
                 <?php if ($model->scenario=='edit'&&in_array($model->status_type,array(0,3,4))): ?>
                     <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                             'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)

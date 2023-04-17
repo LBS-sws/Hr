@@ -146,7 +146,12 @@ class BossReviewC
         $html.="<th width='28%'>".Yii::t("contract","three_one")."</th>";
         $html.="<th width='28%'>".Yii::t("contract","three_two")."</th>";
         $html.="<th width='28%'>".Yii::t("contract","three_three")."</th>";
-        $html.="<th width='16%'>".Yii::t("contract","three_four")."</th>";
+        $html.="<th width='16%'>".Yii::t("contract","three_four");
+        $html.="<input type='hidden' name='down[BossReviewC][title][]' value='".Yii::t("contract","three_one")."'>";
+        $html.="<input type='hidden' name='down[BossReviewC][title][]' value='".Yii::t("contract","three_two")."'>";
+        $html.="<input type='hidden' name='down[BossReviewC][title][]' value='".Yii::t("contract","three_three")."'>";
+        $html.="<input type='hidden' name='down[BossReviewC][title][]' value='".Yii::t("contract","three_four")."'>";
+        $html.="</th>";
         if(!$this->ready){
             $html.="<th width='1%'>".Yii::t("contract","Operation")."</th>";
         }
@@ -169,6 +174,8 @@ class BossReviewC
         $html.="<span class='input-group-addon'>%</span></div></td>";
         $html.="<td><div class='input-group'>";
         $html.=TbHtml::numberField($this->className."[json_text][three][sum]",$this->json_text["three"]["sum"],array('readonly'=>true,'id'=>"three_sum"));
+        $html.="<input type='hidden' name='down[BossReviewC][count][]' value='{$this->json_text["three"]["count"]}%'>";
+        $html.="<input type='hidden' name='down[BossReviewC][count][]' value='{$this->json_text["three"]["sum"]}%'>";
         $html.="<span class='input-group-addon'>%</span></div></td>";
         if(!$this->ready){
             $html.="<td>".TbHtml::button(Yii::t("misc","Add"),array("class"=>"btn btn-primary","id"=>"addRow"))."</td>";
@@ -206,7 +213,14 @@ class BossReviewC
         }else{
             $html.=TbHtml::numberField($name."[three_four]",$list["three_four"],array('readonly'=>$ready,'class'=>'changeThreeFour'));
         }
-        $html.="<span class='input-group-addon'>%</span></div></td>";
+        $html.="<span class='input-group-addon'>%</span></div>";
+        if($name != ":inputName:"){
+            $html.="<input type='hidden' name='down[BossReviewC][$num][]' value='{$list["three_one"]} '>";
+            $html.="<input type='hidden' name='down[BossReviewC][$num][]' value='{$list["three_two"]} '>";
+            $html.="<input type='hidden' name='down[BossReviewC][$num][]' value='{$list["three_three"]} '>";
+            $html.="<input type='hidden' name='down[BossReviewC][$num][]' value='{$list["three_four"]}%'>";
+        }
+        $html.="</td>";
 
         if(!$this->ready){
             $html.="<td>".TbHtml::button(Yii::t("misc","Delete"),array("class"=>"btn btn-default deleteRow"))."</td>";

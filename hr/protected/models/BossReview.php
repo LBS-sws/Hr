@@ -94,15 +94,20 @@ class BossReview
 
     //主內容橫向
     public function getTableHtml(){
+        $className = get_class($this);
         $width="170px";
         $html="<p>&nbsp;</p><div class='form-group'><div class='col-lg-12'><div class='table-responsive'><table class='table table-bordered table-hover'>";
         $html.="<thead><tr>";
-        $html.="<th width='$width'>".Yii::t("contract","matters")."</th>";
+        $html.="<th width='$width'>";
+        $html.=Yii::t("contract","matters");
+        $html.="<input type='hidden' name='down[{$className}][title][]' value='".Yii::t("contract","matters")."'>";
+        $html.="</th>";
         foreach ($this->listY as $key => $listY){
+            $downTitle = "<input type='hidden' name='down[{$className}][title][]' value='{$listY["name"]}'>";
             if(key_exists("width",$listY)){
-                $html.="<th width='".$listY["width"]."'>".$listY["name"]."</th>";
+                $html.="<th width='".$listY["width"]."'>".$downTitle.$listY["name"]."</th>";
             }else{
-                $html.="<th width='170px'>".$listY["name"]."</th>";
+                $html.="<th width='170px'>".$downTitle.$listY["name"]."</th>";
             }
         }
         $html.="</tr></thead><tbody>";
@@ -111,8 +116,11 @@ class BossReview
         foreach ($this->listX as $listX){
             $content = Yii::t("bossHint",$listX["value"]);
             $html.="<tr>";
-            $html.="<td><a class='bossHintTitle' role='button' tabindex='0' data-toggle='popover' data-trigger='focus' title='$title' data-html='true' data-content='$content'><b>".Yii::t("contract",$listX["value"])."</b></a></td>";
+            $html.="<td>";
+            $html.="<input type='hidden' name='down[{$className}][{$listX['value']}][]' value='".Yii::t("contract",$listX["value"])."'>";
+            $html.="<a class='bossHintTitle' role='button' tabindex='0' data-toggle='popover' data-trigger='focus' title='$title' data-html='true' data-content='$content'><b>".Yii::t("contract",$listX["value"])."</b></a></td>";
             foreach ($this->listY as $key => $listY){
+                $downText = "";//文檔下載需要顯示的內容
                 if($this->searchBool){
                     $searchText = !isset($this->json_text[$listX["value"]][$listY["value"]])?0:$this->json_text[$listX["value"]][$listY["value"]];
                     if(isset($listY["static_str"])&&$searchText!=="\\"){
@@ -120,7 +128,10 @@ class BossReview
                     }elseif(isset($listY["pro_str"])&&isset($listX["pro_str"])&&$listX["pro_str"]==$listY["pro_str"]){
                         $searchText.=$listY["pro_str"];
                     }
-                    $html.="<td>".$searchText."</td>";
+                    $html.="<td>";
+                    $html.=$searchText;
+                    $html.="<input type='hidden' name='down[{$className}][{$listX['value']}][]' value='{$searchText} '>";
+                    $html.="</td>";
                     continue;
                 }
 
@@ -135,7 +146,9 @@ class BossReview
                         }else{
                             $html.=$value['name'];
                         }
+                        $downText = $value['value'];
                     }else{
+                        $downText = $value;
                         $html.="<input type='hidden' name='$name' value='$value'><span>$value</span>";
                     }
                 }elseif(key_exists("text",$listY)){
@@ -152,6 +165,7 @@ class BossReview
                     }
                 }
 
+                $html.="<input type='hidden' name='down[{$className}][{$listX['value']}][]' value='{$downText} '>";
                 $html.="</td>";
             }
             $html.="</tr>";

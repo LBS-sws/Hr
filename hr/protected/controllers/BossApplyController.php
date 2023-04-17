@@ -40,6 +40,10 @@ class BossApplyController extends Controller
                 'actions'=>array('fileupload','fileRemove'),
                 'expression'=>array('BossApplyController','allowFileWrite'),
             ),
+            array('allow',
+                'actions'=>array('downExcel'),
+                'expression'=>array('BossApplyController','allowDownExcel'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
@@ -56,6 +60,28 @@ class BossApplyController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('BA01');
+    }
+
+    public static function allowDownExcel() {
+        return Yii::app()->user->validFunction('BA01')||
+            Yii::app()->user->validFunction('BA02')||
+            Yii::app()->user->validFunction('BA03')||
+            Yii::app()->user->validFunction('BA05')||
+            Yii::app()->user->validFunction('BA06');
+    }
+
+    public static function actionDownExcel($index="") {
+        $model = new BossApplyForm('new');
+        if(!empty($index)&&key_exists("down",$_POST)){
+            $downData = $_POST["down"];
+            if (!$model->retrieveData($index,false)) {
+                throw new CHttpException(404,'The requested page does not exist.');
+            } else {
+                $model->downExcel($downData);
+            }
+        }else{
+            throw new CHttpException(500,"数据异常");
+        }
     }
 
     public function actionIndex($pageNum=0){
