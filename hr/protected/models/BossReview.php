@@ -164,7 +164,11 @@ class BossReview
                         $html.="<input type='text' name='$name' value='' class='form-control'>";
                     }
                 }
-
+                if(isset($listY["static_str"])&&$downText!=="\\"){
+                    $downText.=$listY["static_str"];
+                }elseif(isset($listY["pro_str"])&&isset($listX["pro_str"])&&$listX["pro_str"]==$listY["pro_str"]){
+                    $downText.=$listY["pro_str"];
+                }
                 $html.="<input type='hidden' name='down[{$className}][{$listX['value']}][]' value='{$downText} '>";
                 $html.="</td>";
             }
