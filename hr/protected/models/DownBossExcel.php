@@ -63,12 +63,13 @@ class DownBossExcel{
             $startRow = $this->current_row+1;
             foreach ($sheet as $key =>$list){
                 $this->current_row++;
-                $height = $key=="count"?25:$sheetRow["height"];
+                $height = $key=="count"||$key=="title"?25:$sheetRow["height"];
                 $this->objPHPExcel->getActiveSheet()->getRowDimension($this->current_row)->setRowHeight($height);
                 $j=0;
-                foreach ($list as $item){
+                foreach ($list as $numKey=>$item){
+                    $width = $sheetRow["class"]=="BossReviewC"&&$numKey==count($list)-1?10:$sheetRow["width"];
                     if($key=="title"){
-                        $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($j)->setWidth($sheetRow["width"]);
+                        $this->objPHPExcel->getActiveSheet()->getColumnDimensionByColumn($j)->setWidth($width);
                         $this->objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($j, $this->current_row,$item);
 
                         $this->objPHPExcel->getActiveSheet()->getStyleByColumnAndRow($j,$this->current_row)->getFont()->setBold(true);
