@@ -122,6 +122,16 @@ return array(
                 'access'=>'ZP02',
                 'url'=>'/auditLeave/index?only=5',
             ),
+            //招聘登記
+            'recruit apply'=>array(
+                'access'=>'ZP03',
+                'url'=>'/recruitApply/index',
+            ),
+            //招聘進度匯總
+            'recruit summary'=>array(
+                'access'=>'ZP04',
+                'url'=>'/recruitSummary/index',
+            ),
         )
     ),
     //合同模塊

@@ -249,7 +249,7 @@ class DeptForm extends CFormModel
     }
 
     //獲取職位列表
-	public function getDeptListToCity($dept_id,$city=''){
+	public static function getDeptListToCity($dept_id,$city=''){
 	    $sql = "";
 	    if(!empty($dept_id)&&is_numeric($dept_id)){
 	        $sql = " or id='$dept_id'";
@@ -269,7 +269,7 @@ class DeptForm extends CFormModel
     }
 
     //是否是銷售部門  0：不是  1：是銷售部
-	public function getSalesTypeToId($dept_id){
+	public static function getSalesTypeToId($dept_id){
         $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
             ->where("id=:id",array(":id"=>$dept_id))->queryRow();
         if ($rows){
