@@ -211,6 +211,8 @@ return array(
     'Treaty Service'=>'使用中的项目',
     'Treaty Stop'=>'已停止的项目',
     'Show all treaty hint'=>'显示所有提醒小助手',
+    'recruit apply'=>'招聘登记',
+    'recruit summary'=>'招聘进度汇总',
     //沈超添加结束
 );
 ?>
