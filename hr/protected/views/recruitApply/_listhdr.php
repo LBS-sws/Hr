@@ -11,6 +11,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('leader_name').$this->drawOrderArrow('g.name'),'#',$this->createOrderLink('recruitApply-list','g.name'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('dept_name').$this->drawOrderArrow('f.name'),'#',$this->createOrderLink('recruitApply-list','f.name'))
 			;
 		?>

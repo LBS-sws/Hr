@@ -12,6 +12,7 @@ class RecruitApplyList extends CListPageModel
 		return array(
 			'year'=>Yii::t('recruit','year'),
 			'city'=>Yii::t('recruit','city'),
+			'leader_name'=>Yii::t('recruit','leader name'),
 			'dept_name'=>Yii::t('recruit','dept name'),
 			'recruit_num'=>Yii::t('recruit','recruit num'),
 			'now_num'=>Yii::t('recruit','now num'),
@@ -26,15 +27,18 @@ class RecruitApplyList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-		$sql1 = "select a.*,b.name as city_name,f.name as dept_name 
+		$sql1 = "select a.*,b.name as city_name,f.name as dept_name,g.name as leader_name 
 				from hr_recruit a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code 
 				LEFT JOIN hr_dept f ON a.dept_id=f.id 
+				LEFT JOIN hr_dept g ON f.dept_id=g.id 
 				where a.city='{$city}' 
 			";
 		$sql2 = "select count(a.id)
 				from hr_recruit a 
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code 
+				LEFT JOIN hr_dept f ON a.dept_id=f.id 
+				LEFT JOIN hr_dept g ON f.dept_id=g.id 
 				where a.city='{$city}' 
 			";
 		$clause = "";
@@ -49,6 +53,9 @@ class RecruitApplyList extends CListPageModel
 					break;
 				case 'dept_name':
 					$clause .= General::getSqlConditionClause('f.name',$svalue);
+					break;
+				case 'leader_name':
+					$clause .= General::getSqlConditionClause('g.name',$svalue);
 					break;
 			}
 		}
@@ -79,6 +86,7 @@ class RecruitApplyList extends CListPageModel
                     'dept_id'=>$record['dept_id'],
                     'recruit_num'=>$record['recruit_num'],
                     'dept_name'=>$record['dept_name'],
+                    'leader_name'=>$record['leader_name'],
                     'now_num'=>$arr['now_num'],
                     'leave_num'=>$arr['leave_num'],
                     'lack_num'=>$arr['lack_num'],

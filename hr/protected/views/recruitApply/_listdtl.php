@@ -2,6 +2,7 @@
 	<td><?php echo $this->drawEditButton('ZP03', 'recruitApply/edit', 'recruitApply/view', array('index'=>$this->record['id'])); ?></td>
 	<td><?php echo $this->record['city']; ?></td>
 	<td><?php echo $this->record['year']; ?></td>
+	<td><?php echo $this->record['leader_name']; ?></td>
 	<td><?php echo $this->record['dept_name']; ?></td>
 	<td><?php echo $this->record['recruit_num']; ?></td>
 	<td><?php echo $this->record['now_num']; ?></td>

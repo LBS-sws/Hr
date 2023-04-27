@@ -44,6 +44,7 @@ $this->pageTitle=Yii::app()->name . ' - RecruitApply';
 							'year',
 							'city',
 							'dept_name',
+							'leader_name',
 						),
 		));
 	?>

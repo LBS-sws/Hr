@@ -112,9 +112,10 @@ class RecruitSummaryList extends CListPageModel
 	protected function getDetailList($record,&$attrList){
 	    $detail = array();
         $rows = Yii::app()->db->createCommand()
-            ->select("a.id,a.dept_id,a.city,a.recruit_num,a.year,b.name as dept_name")
+            ->select("a.id,a.dept_id,a.city,a.recruit_num,a.year,b.name as dept_name,g.name as leader_name")
             ->from("hr_recruit a")
             ->leftJoin("hr_dept b","a.dept_id=b.id")
+            ->leftJoin("hr_dept g","b.dept_id=g.id")
             ->where("a.year=:year and a.city=:city",array(":year"=>$record["year"],":city"=>$record["city"]))
             ->queryAll();
         if($rows){
@@ -126,6 +127,7 @@ class RecruitSummaryList extends CListPageModel
                 $detail[]=array(
                     'recruit_num'=>$row['recruit_num'],
                     'dept_name'=>$row['dept_name'],
+                    'leader_name'=>$row['leader_name'],
                     'now_num'=>$arr['now_num'],
                     'leave_num'=>$arr['leave_num'],
                     'lack_num'=>$arr['lack_num'],

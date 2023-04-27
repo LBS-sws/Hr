@@ -25,7 +25,7 @@ $idX = $this->record['city'];
 if (count($this->record['detail'])>0) {
     foreach ($this->record['detail'] as $row) {
         $line = "<tr class='active detail_$idX' style='display:none;'>";
-        $line.= "<td colspan=3 style='text-align: right;'><strong>{$row['dept_name']}:&nbsp;</strong></td>";
+        $line.= "<td colspan=3 style='text-align: right;'><strong>{$row['leader_name']} - {$row['dept_name']}:&nbsp;</strong></td>";
         $line.= "<td>{$row['recruit_num']}</td>";
         $line.= "<td>{$row['now_num']}</td>";
         $line.= "<td>{$row['leave_num']}</td>";
