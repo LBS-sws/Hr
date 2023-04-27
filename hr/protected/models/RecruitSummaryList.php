@@ -33,15 +33,20 @@ class RecruitSummaryList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        if(Yii::app()->user->validFunction('ZR22')){ //显示所有招聘登记
+            $sqlCity="";//ZR22
+        }else{
+            $sqlCity=" AND city in ({$city_allow})";
+        }
         $this->year = empty($this->year)?date("Y"):$this->year;
 		$sql1 = "select a.year,a.city,a.recruit_sum,b.name as city_name from (
-                  select SUM(recruit_num) as recruit_sum,year,city from hr_recruit WHERE year={$this->year} AND city in ({$city_allow}) GROUP BY year,city
+                  select SUM(recruit_num) as recruit_sum,year,city from hr_recruit WHERE year={$this->year} {$sqlCity} GROUP BY year,city
                 ) a
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code 
 				WHERE a.year>0 
 			";
 		$sql2 = "select count(a.city) from (
-                  select city,year from hr_recruit WHERE year={$this->year} AND city in ({$city_allow}) GROUP BY year,city
+                  select city,year from hr_recruit WHERE year={$this->year} {$sqlCity} GROUP BY year,city
                 ) a
 				LEFT JOIN security{$suffix}.sec_city b ON a.city=b.code 
 				WHERE a.year>0 

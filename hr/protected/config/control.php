@@ -21,5 +21,6 @@ return array(
 	'Back to prize'=>array('access'=>'ZR18',),//退回已完成的錦旗
 	'Back to leave office'=>array('access'=>'ZR19',),//退回已離職員工
 	'Show review rankings'=>array('access'=>'ZR20',),//顯示評核得分排名
-	'Show all treaty'=>array('access'=>'ZR21',),//顯示所有提醒小助手
+	'Show all treaty hint'=>array('access'=>'ZR21',),//顯示所有提醒小助手
+	'Show all recruit'=>array('access'=>'ZR22',),//顯示所有招聘登记
 );

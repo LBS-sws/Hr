@@ -210,6 +210,7 @@ return array(
     'Treaty Service'=>'使用中的項目',
     'Treaty Stop'=>'已停止的項目',
     'Show all treaty hint'=>'顯示所有提醒小助手',
+    'Show all recruit'=>'顯示所有招聘登記',
     'recruit apply'=>'招聘登記',
     'recruit summary'=>'招聘進度匯總',
 //沈超添加結束
