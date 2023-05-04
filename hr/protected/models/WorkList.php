@@ -49,13 +49,14 @@ class WorkList extends CListPageModel
     }
 
 	//獲取當前用戶綁定的員工名字
-    public function getEmployeeName(){
+    public static function getEmployeeName(){
         $uid = Yii::app()->user->id;
-        $rows = Yii::app()->db->createCommand()->select("employee_id,employee_name")->from("hr_binding")
-            ->where('user_id=:user_id',
-                array(':user_id'=>$uid))->queryRow();
+        $rows = Yii::app()->db->createCommand()->select("b.id,b.name")
+            ->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id=b.id")
+            ->where('user_id=:user_id',array(':user_id'=>$uid))->queryRow();
         if ($rows){
-            return $rows["employee_name"];
+            return $rows["name"];
         }else{
             return "";
         }
