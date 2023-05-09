@@ -9,6 +9,8 @@ class ScheduleCommand extends CConsoleCommand {
 	protected $users = array();
 
 	public function actionRptStaffList($whitelist='', $blacklist='') {
+		$skipForMerge = array('KA');
+		
 		$tdate = date("Y/m/d");
 		$this->rptId = 'RptStaffList';
 		$this->rptName = Yii::t('report','Staff List');
@@ -22,6 +24,8 @@ class ScheduleCommand extends CConsoleCommand {
 			} else {
 				$flag = (empty($blacklist) || (strpos($blacklist,$city)===false));
 			}
+			
+			if ($flag && in_array($city, $skipForMerge)) $flag = false;
 			
 			if ($flag) {
 				$this->data = array(

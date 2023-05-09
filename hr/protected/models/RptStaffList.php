@@ -1,5 +1,9 @@
 <?php
 class RptStaffList extends CReport {
+	protected $mergeCities = array(
+			'ZY' => array('KA'),
+		);
+	
 	protected function fields() {
 		return array(
 			'code'=>array('label'=>Yii::t('report','Staff No.'),'width'=>15,'align'=>'L'),
@@ -105,10 +109,11 @@ class RptStaffList extends CReport {
 
 	protected function getExistList($city, $dt) {
 		$rtn = array();
+		$citystr = $this->getCityQueryString($city);
 		
 		$sql = "select a.id 
 				from hr_employee a 
-				where a.city='$city' and (convert(a.leave_time,datetime) >= '$dt' or a.leave_time is null)
+				where a.city in ($citystr) and (convert(a.leave_time,datetime) >= '$dt' or a.leave_time is null)
 				order by a.id
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
@@ -123,12 +128,13 @@ class RptStaffList extends CReport {
 	
 	protected function getTransferOutList($city, $dt) {
 		$rtn = array();
+		$citystr = $this->getCityQueryString($city);
 		
 		$sql = "select a.employee_id, a.id, a.remark, c.start_time, a.lcd   
 				from hr_employee_history a, hr_employee_operate b, hr_employee c 
 				where a.history_id=b.id and a.status='transfer' and a.lcd >= '$dt'
 				and a.employee_id = c.id
-				and b.city='$city' and b.city <> b.change_city 
+				and b.city in ($citystr) and b.city <> b.change_city 
 				and (b.change_city <> '' or b.change_city is not null)
 			";
 		$trfout = Yii::app()->db->createCommand($sql)->queryAll();
@@ -165,12 +171,13 @@ class RptStaffList extends CReport {
 	
 	protected function getTransferInList($city, $dt) {
 		$rtn = array();
+		$citystr = $this->getCityQueryString($city);
 		
 		$sql = "select a.employee_id, a.id, c.start_time 
 				from hr_employee_history a, hr_employee_operate b, hr_employee c 
 				where a.history_id=b.id and a.status='transfer' and a.lcd > '$dt'
 				and a.employee_id = c.id
-				and b.change_city='$city' and b.city <> b.change_city 
+				and b.change_city in ($citystr) and b.city <> b.change_city 
 				and (b.change_city <> '' or b.change_city is not null)
 			";
 		$trfout = Yii::app()->db->createCommand($sql)->queryAll();
@@ -250,6 +257,10 @@ class RptStaffList extends CReport {
 			}
 		}
 		return $rtn;
+	}
+	
+	protected function getCityQueryString($city) {
+		return isset($this->mergeCities[$city]) ? "'$city','".implode("','",$this->mergeCities[$city])."'" : "'$city'";
 	}
 }
 ?>
