@@ -158,6 +158,7 @@ class StaffSummaryList extends CListPageModel
     }
 
     public function getStaffTableDetail(){
+        $city = key_exists("city",$_POST)?$_POST["city"]:"";
         $id = key_exists("id",$_POST)?$_POST["id"]:"";
         $year = key_exists("year",$_POST)?$_POST["year"]:0;
         $yearSql = "((CAST(a.entry_time as SIGNED)<={$year} and a.staff_status not in (-1,1))or(a.staff_status=-1 and CAST(a.leave_time as SIGNED)={$year}))";
@@ -167,7 +168,7 @@ class StaffSummaryList extends CListPageModel
             ->from("hr_employee a")
             ->leftJoin("hr_dept b","a.position=b.id")
             ->leftJoin("hr_dept f","a.department=f.id")
-            ->where("$yearSql and a.department=:department",array(":department"=>$id))
+            ->where("$yearSql and a.city=:city and a.department=:department",array(":department"=>$id,":city"=>$city))
             ->order("a.staff_status asc,b.name")
             ->queryAll();
         $html="";
