@@ -213,6 +213,7 @@ return array(
     'Show all recruit'=>'顯示所有招聘登記',
     'recruit apply'=>'招聘登記',
     'recruit summary'=>'招聘進度匯總',
+    'staff summary'=>'部門人數統計',
 //沈超添加結束
 );
 ?>

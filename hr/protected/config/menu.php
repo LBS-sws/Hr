@@ -132,6 +132,11 @@ return array(
                 'access'=>'ZP04',
                 'url'=>'/recruitSummary/index',
             ),
+            //部门人数统计
+            'staff summary'=>array(
+                'access'=>'ZP05',
+                'url'=>'/staffSummary/index',
+            ),
         )
     ),
     //合同模塊
