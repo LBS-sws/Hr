@@ -163,9 +163,10 @@ class StaffSummaryList extends CListPageModel
         $yearSql = "((CAST(a.entry_time as SIGNED)<={$year} and a.staff_status not in (-1,1))or(a.staff_status=-1 and CAST(a.leave_time as SIGNED)={$year}))";
 
         $rows = Yii::app()->db->createCommand()
-            ->select("a.code,a.name,a.staff_status,a.entry_time,a.leave_time,b.name as dept_name")
+            ->select("a.code,a.name,a.staff_status,a.entry_time,a.leave_time,b.name as dept_name,f.name as leader_name")
             ->from("hr_employee a")
             ->leftJoin("hr_dept b","a.position=b.id")
+            ->leftJoin("hr_dept f","a.department=f.id")
             ->where("$yearSql and a.department=:department",array(":department"=>$id))
             ->order("a.staff_status asc,b.name")
             ->queryAll();
@@ -175,6 +176,7 @@ class StaffSummaryList extends CListPageModel
                 $html.="<tr>";
                 $html.="<td>".$row["code"]."</td>";
                 $html.="<td>".$row["name"]."</td>";
+                $html.="<td>".$row["leader_name"]."</td>";
                 $html.="<td>".$row["dept_name"]."</td>";
                 $html.="<td>".CGeneral::toMyDate($row["entry_time"])."</td>";
                 if($row["staff_status"]==-1){

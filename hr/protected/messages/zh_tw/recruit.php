@@ -11,5 +11,9 @@ return array(
     'leave num'=>'離職人數',
     'lack num'=>'缺崗人數',
     'completion rate'=>'完成度（%）',
+
+    'staff num'=>'員工總數',
+    'job num'=>'在職人數',
+    'leave rate'=>'離職率（%）',
 );
 ?>

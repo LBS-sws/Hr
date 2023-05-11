@@ -62,6 +62,7 @@ $this->pageTitle=Yii::app()->name . ' - StaffSummary';
                     <tr>
                         <th><?php echo Yii::t("contract","Employee Code");?></th>
                         <th><?php echo Yii::t("contract","Employee Name");?></th>
+                        <th><?php echo Yii::t("contract","Department");?></th>
                         <th><?php echo Yii::t("contract","Position");?></th>
                         <th><?php echo Yii::t("contract","Entry Time");?></th>
                         <th><?php echo Yii::t("contract","Leave Time");?></th>
