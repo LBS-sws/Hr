@@ -40,6 +40,9 @@
         echo "<th>";
         echo TbHtml::link($this->getLabelName('manager_leave').$this->drawOrderArrow('manager_leave'),'#',$this->createOrderLink('dept-list','manager_leave'));
         echo "</th>";
+        echo "<th>";
+        echo TbHtml::link($this->getLabelName('level_type').$this->drawOrderArrow('level_type'),'#',$this->createOrderLink('dept-list','level_type'));
+        echo "</th>";
     }
     ?>
 </tr>

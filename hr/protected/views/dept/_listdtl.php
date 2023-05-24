@@ -33,6 +33,9 @@
         echo "<td>";
         echo $this->record['manager_leave'];
         echo "</td>";
+        echo "<td>";
+        echo $this->record['level_type'];
+        echo "</td>";
     }
     ?>
 </tr>

@@ -203,5 +203,13 @@ return array(
     'personnel lcu'=>'人事经理',
     'personnel lcd'=>'人事经理审核时间',
     'compensatory leave'=>'加班调休',
+
+    //2023-05-23
+    'Technician level'=>'技术员级别（包括技术员、中级/高级技术员）',
+    'Technical supervisor'=>'技术主管（技术主管级以上级别）',
+    'Tec level'=>'技术员级别',
+    'Tec supervisor'=>'技术主管',
+    'Other personnel'=>'其它人员',
+    'level type'=>'技术员归类',
 );
 ?>

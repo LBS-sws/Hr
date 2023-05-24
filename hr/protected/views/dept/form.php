@@ -214,6 +214,17 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                         <p class="form-control-static">销售系统专用，具体功能问销售系统负责人</p>
                     </div>
                 </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'level_type',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-4">
+                        <?php echo $form->dropDownList($model, 'level_type',DeptForm::getConditionList(),
+                            array('disabled'=>($model->scenario=='view'),"id"=>'manager_leave')
+                        ); ?>
+                    </div>
+                    <div class="col-sm-6">
+                        <p class="form-control-static">日报表系统 -> 技术员生成分析 的筛选条件</p>
+                    </div>
+                </div>
             <?php endif; ?>
 
 		</div>
