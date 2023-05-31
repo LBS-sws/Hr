@@ -13,6 +13,7 @@ class ListPageWidget extends CWidget
 	public $hasPageBar = true;
 	public $search_add_html = '';
 	public $searchlinkparam = array();
+    public $item_bool = false;
 	
 	public $record;
 	public $recordptr;
@@ -61,7 +62,7 @@ class ListPageWidget extends CWidget
 		$layout .= '</div>';
 		
 		$layout .= '<div class="box-footer clearfix">';
-		if ($this->hasSearchBar) {
+		if ($this->hasSearchBar||$this->item_bool) {
 			$layout .= '<div class="box-tools">'.$this->pageBar().'</div>';
 		}
 		$layout .= '<span class="pull-right">'.Yii::t('misc','Rec').': '.$this->model->totalRow.'&nbsp;&nbsp;<a href="#" id="goTableTop">'.Yii::t('misc','Go Top').'</a>'.'</span>';

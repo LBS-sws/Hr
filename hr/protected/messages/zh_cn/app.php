@@ -215,6 +215,8 @@ return array(
     'recruit apply'=>'招聘登记',
     'recruit summary'=>'招聘进度汇总',
     'staff summary'=>'部门人数统计',
+    'household Search'=>'员工户籍查询',
+    'Show all household Search'=>'显示所有员工户籍查询',
     //沈超添加结束
 );
 ?>

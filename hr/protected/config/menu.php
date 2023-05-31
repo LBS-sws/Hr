@@ -232,6 +232,11 @@ return array(
                 'access'=>'ZE08',
                 'url'=>'/prize/index',
             ),
+            //员工户籍查询
+            'household Search'=>array(
+                'access'=>'ZE10',
+                'url'=>'/houseSearch/index',
+            ),
 		),
 	),
     //審核模塊
