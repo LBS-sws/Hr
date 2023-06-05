@@ -317,7 +317,7 @@ class LeaveController extends Controller
             $index = $_POST["index"];
             $time = $_POST["time"];
             $leave_type = $_POST["leave_type"];
-            $work_id = key_exists("work_id",$_POST)?$_POST["work_id"]:0;
+            $work_id = key_exists("work_id",$_POST)?$_POST["work_id"]:array();
             $model = new VacationDayForm($index,$leave_type,$time);
             $useDay = $model->getVacationSum();
             $vacationList = $model->vacation_list;

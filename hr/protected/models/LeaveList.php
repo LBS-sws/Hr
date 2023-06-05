@@ -174,26 +174,31 @@ class LeaveList extends CListPageModel
 	}
 	//获取请假、加班的对应关联编号
     public static function getCodeForWorkLeave($id,$thisStr="leave",$bool=true){
+        $returnList = array();
         $returnStr = "";
         if($thisStr=="leave"){
-            $row = Yii::app()->db->createCommand()->select("b.work_code")->from("hr_work_leave a")
+            $rows = Yii::app()->db->createCommand()->select("b.work_code")->from("hr_work_leave a")
                 ->leftJoin("hr_employee_work b","a.work_id=b.id")
-                ->where("a.leave_id=:id",array(":id"=>$id))->queryRow();
-            if($row){
-                $returnStr = $row["work_code"];
+                ->where("a.leave_id=:id",array(":id"=>$id))->queryAll();
+            if($rows){
+                foreach ($rows as $row){
+                    $returnList[] = $row["work_code"];
+                }
             }
         }else{
-            $row = Yii::app()->db->createCommand()->select("b.leave_code")->from("hr_work_leave a")
+            $rows = Yii::app()->db->createCommand()->select("b.leave_code")->from("hr_work_leave a")
                 ->leftJoin("hr_employee_leave b","a.leave_id=b.id")
-                ->where("a.work_id=:id",array(":id"=>$id))->queryRow();
-            if($row){
-                $returnStr = $row["leave_code"];
+                ->where("a.work_id=:id",array(":id"=>$id))->queryAll();
+            if($rows){
+                foreach ($rows as $row){
+                    $returnList[] = $row["leave_code"];
+                }
             }
         }
-        if(!empty($returnStr)&&$bool){
-            return "({$returnStr})";
+        if(!empty($returnList)&&$bool){
+            return "(".implode("、",$returnList).")";
         }
-        return $returnStr;
+        return implode("、",$returnList);
     }
 
     //根據狀態獲取顏色

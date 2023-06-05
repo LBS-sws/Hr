@@ -571,19 +571,25 @@ class LeaveForm extends CFormModel
 
     //獲取加班調休列表
     public static function getWorkIDForLeaveID($leave_id){
-        $work_id = Yii::app()->db->createCommand()->select("work_id")->from("hr_work_leave")
+        $work_id=array();
+        $rows = Yii::app()->db->createCommand()->select("work_id")->from("hr_work_leave")
             ->where("leave_id=:leave_id",array(":leave_id"=>$leave_id))
-            ->queryScalar();
-        return $work_id;
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $work_id[]=$row["work_id"];
+            }
+        }
+        return implode(",",$work_id);
     }
 
     //獲取加班調休列表
     public static function getWorkListForEmployeeId($employee_id){
-        $list = array(""=>"");
+        $list = array();
         $rows = Yii::app()->db->createCommand()
             ->select("a.id as work_id,a.work_code,a.start_time,a.log_time,a.status,b.leave_id")
             ->from("hr_employee_work a")
-            ->leftJoin("hr_work_leave b","a.id=b.work_id")
+            ->leftJoin("(select work_id,max(leave_id) as leave_id from hr_work_leave group by work_id) b","a.id=b.work_id")
             ->where("a.employee_id=:employee_id and a.work_type=4 and a.status in (1,2,4)",array(":employee_id"=>$employee_id))
             ->order("a.start_time desc")->queryAll();
         if($rows){
@@ -593,12 +599,13 @@ class LeaveForm extends CFormModel
     }
 
     //獲取加班調休的选择html
-    public static function workSelectHtml($employee_id,$value=0,$ready=false){
-        $value = empty($value)?0:$value;
+    public static function workSelectHtml($employee_id,$value=array(),$ready=false){
+        $value = empty($value)?array():$value;
+        $value = is_array($value)?$value:explode(",",$value);
         if($ready){
-            $html = "<select class=\"form-control disabled\" name=\"work_id\" disabled id='work_id'>";
+            $html = "<select class=\"form-control select2 disabled\" multiple name=\"work_id[]\" disabled id='work_id'>";
         }else{
-            $html = "<select class=\"form-control\" name=\"work_id\" id='work_id'>";
+            $html = "<select class=\"form-control select2\" multiple name=\"work_id[]\" id='work_id'>";
         }
         $list = self::getWorkListForEmployeeId($employee_id);
         foreach ($list as $key=>$row){
@@ -606,18 +613,18 @@ class LeaveForm extends CFormModel
                 $html.="<option value='{$key}'>{$row}</option>";
                 continue;
             }
-            if($row["status"]==4&&(empty($row["leave_id"])||$value==$row["work_id"])){
+            if($row["status"]==4&&(empty($row["leave_id"])||in_array($row["work_id"],$value))){
                 $html.="<option value='{$row['work_id']}'";
             }else{
                 $html.="<option value='{$row['work_id']}' disabled class='disabled' style='background:rgb(210, 214, 222);'";
             }
-            if($value==$row["work_id"]){
+            if(in_array($row["work_id"],$value)){
                 $html.=" selected ";
             }
             $html.=">";
             $html.="加班编号：".$row["work_code"]."，开始时间：".CGeneral::toDate($row["start_time"]);
             $html.="，加班时长：".floatval($row["log_time"])."小时，状态：";
-            $html.=$row["status"]!=4?"审批中":(empty($row["leave_id"])||$value==$row["work_id"]?"可调休":"已调休");
+            $html.=$row["status"]!=4?"审批中":(empty($row["leave_id"])||in_array($row["work_id"],$value)?"可调休":"已调休");
             $html.="</option>";
         }
         $html.= "</select>";
@@ -694,22 +701,23 @@ class LeaveForm extends CFormModel
     //保存调休的加班单
     protected function saveLeaveWork() {
         if($this->vacation_list["vaca_type"]=="A"){ //请假类型为调休
-            $work_id = key_exists("work_id",$_POST)?$_POST["work_id"]:0;
-            if(!empty($work_id)){
-                $row = Yii::app()->db->createCommand()->select("id")->from("hr_work_leave")
-                    ->where("leave_id=:id",array(":id"=>$this->id))->queryRow();
-                if($row){//修改
-                    Yii::app()->db->createCommand()->update('hr_work_leave', array(
-                        'work_id'=>$work_id
-                    ), 'id=:id', array(':id'=>$row["id"]));
-                    return true;
-                }else{//新增
-                    Yii::app()->db->createCommand()->insert('hr_work_leave', array(
-                        'work_id'=>$work_id,
-                        'leave_id'=>$this->id
-                    ));
-                    return true;
+            $work_list = key_exists("work_id",$_POST)?$_POST["work_id"]:array();
+            if(!empty($work_list)){
+                foreach ($work_list as $work_id){
+                    $row = Yii::app()->db->createCommand()->select("id")->from("hr_work_leave")
+                        ->where("leave_id=:id and work_id=:work_id",array(":id"=>$this->id,":work_id"=>$work_id))->queryRow();
+                    if($row){//修改
+                        Yii::app()->db->createCommand()->update('hr_work_leave', array(
+                            'work_id'=>$work_id
+                        ), 'id=:id', array(':id'=>$row["id"]));
+                    }else{//新增
+                        Yii::app()->db->createCommand()->insert('hr_work_leave', array(
+                            'work_id'=>$work_id,
+                            'leave_id'=>$this->id
+                        ));
+                    }
                 }
+                return true;
             }
         }
         Yii::app()->db->createCommand()->delete('hr_work_leave',"leave_id={$this->id}");

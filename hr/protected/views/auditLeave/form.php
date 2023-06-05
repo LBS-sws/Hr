@@ -147,6 +147,29 @@ $this->renderPartial('//site/removedialog');
 ?>
 <?php
 Script::genFileUpload($model,$form->id,'LEAVE');
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = (!$model->getInputBool()) ? 'false' : 'true';
+$js = "
+$('#work_id').select2({
+    tags: false,
+    multiple: true,
+    maximumInputLength: 0,
+    maximumSelectionLength: 10,
+    allowClear: true,
+    disabled: $disabled,
+    language: '$lang',
+    templateSelection: formatState
+});
+function formatState(state) {
+	var rtn = $('<span style=\"color:black\">'+state.text+'</span>');
+	return rtn;
+}
+";
+Yii::app()->clientScript->registerScript('select2Function',$js,CClientScript::POS_READY);
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 $('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});

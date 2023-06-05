@@ -207,10 +207,27 @@ $this->renderPartial('//site/help',array('helpHtml'=>'<img width="100%" class="r
 ?>
 <?php
 Script::genFileUpload($model,$form->id,'LEAVE');
-
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = (!$model->getInputBool()) ? 'false' : 'true';
 $js = "
-
-
+$('#work_id').select2({
+    tags: false,
+    multiple: true,
+    maximumInputLength: 0,
+    maximumSelectionLength: 10,
+    allowClear: true,
+    disabled: $disabled,
+    language: '$lang',
+    templateSelection: formatState
+});
+function formatState(state) {
+	var rtn = $('<span style=\"color:black\">'+state.text+'</span>');
+	return rtn;
+}
 var ajaxBool = true;
 //顯示年假剩餘天數
 $('#leave_type,.s_time,#employee_id').on('change',function(){
@@ -252,6 +269,16 @@ $('#leave_type,.s_time,#employee_id').on('change',function(){
                 }
                 $('#vacation_remark').val(remark);
                 $('#workDiv').html(workHtml);
+                $('#work_id').select2({
+                    tags: false,
+                    multiple: true,
+                    maximumInputLength: 0,
+                    maximumSelectionLength: 10,
+                    allowClear: true,
+                    disabled: $disabled,
+                    language: '$lang',
+                    templateSelection: formatState
+                });
                 if(entry_time!=''){//修改年假最大日期
                     $('#end_time').datepicker('setEndDate',entry_time);
                     if($('#end_time').val()!=''&&Date.parse($('#end_time').val())>Date.parse(entry_time)){
