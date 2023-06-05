@@ -32,7 +32,11 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
     <div class="box"><div class="box-body">
             <div class="btn-group" role="group">
                 <?php
-                $url = Yii::app()->createUrl('history/index');
+                if(isset($back_type)&&!empty($back_type)){
+                    $url = Yii::app()->createUrl('employee/edit',array('index'=>$model->employee_id));
+                }else{
+                    $url = Yii::app()->createUrl('history/index');
+                }
                 echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
                     'submit'=>$url));
                 ?>

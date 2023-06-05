@@ -75,7 +75,7 @@ class HistoryController extends Controller
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
-            $this->render('form',array('model'=>$model,));
+            $this->render('form',array('model'=>$model,'back_type'=>$type));
         }
     }
 
