@@ -34,15 +34,17 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
                     'submit'=>Yii::app()->createUrl('employee/index')));
                 ?>
-                <?php echo TbHtml::button('<span class="fa fa-pencil"></span> '.Yii::t('contract','Update'), array(
-                    'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"update"))));
-                ?>
-                <?php echo TbHtml::button('<span class="fa fa-coffee"></span> '.Yii::t('contract','Staff Changes'), array(
-                    'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"change"))));
-                ?>
-                <?php echo TbHtml::button('<span class="fa fa-user-times"></span> '.Yii::t('contract','Staff Departure'), array(
-                    'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"departure"))));
-                ?>
+                <?php if ($model->scenario!='new'&&Yii::app()->user->validRWFunction('ZE03')): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-pencil"></span> '.Yii::t('contract','Update'), array(
+                        'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"update"))));
+                    ?>
+                    <?php echo TbHtml::button('<span class="fa fa-coffee"></span> '.Yii::t('contract','Staff Changes'), array(
+                        'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"change"))));
+                    ?>
+                    <?php echo TbHtml::button('<span class="fa fa-user-times"></span> '.Yii::t('contract','Staff Departure'), array(
+                        'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"departure"))));
+                    ?>
+                <?php endif; ?>
             </div>
 
             <?php if (!empty($model->staffHasAgreement())): ?>
