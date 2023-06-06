@@ -473,8 +473,10 @@ class DeptForm extends CFormModel
 			$command->bindParam(':review_leave',$this->review_leave,PDO::PARAM_STR);
 		if (strpos($sql,':manager_type')!==false)
 			$command->bindParam(':manager_type',$this->manager_type,PDO::PARAM_STR);
-		if (strpos($sql,':manager_leave')!==false)
-			$command->bindParam(':manager_leave',$this->manager_leave,PDO::PARAM_STR);
+		if (strpos($sql,':manager_leave')!==false){
+            $this->manager_leave = empty($this->manager_leave)?0:$this->manager_leave;
+            $command->bindParam(':manager_leave',$this->manager_leave,PDO::PARAM_STR);
+        }
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);
