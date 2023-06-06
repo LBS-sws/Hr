@@ -348,7 +348,7 @@ class DeptForm extends CFormModel
     //level_type
     public static function getConditionNameForId($id){
         $list = array(
-            ""=>"",
+            0=>"",
             1=>Yii::t("fete","Tec level"),
             2=>Yii::t("fete","Tec supervisor"),
             3=>Yii::t("fete","Other personnel"),
