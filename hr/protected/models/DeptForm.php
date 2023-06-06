@@ -338,7 +338,7 @@ class DeptForm extends CFormModel
     //level_type
     public static function getConditionList(){
         return array(
-            ""=>"",
+            0=>"",
             1=>Yii::t("fete","Technician level"),
             2=>Yii::t("fete","Technical supervisor"),
             3=>Yii::t("fete","Other personnel"),
