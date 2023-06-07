@@ -217,6 +217,7 @@ return array(
     'staff summary'=>'部门人数统计',
     'household Search'=>'员工户籍查询',
     'Show all household Search'=>'显示所有员工户籍查询',
+    'Config office'=>'办事处设置',
     //沈超添加结束
 );
 ?>

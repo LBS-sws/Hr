@@ -742,5 +742,12 @@ return array(
     'bulk allot'=>'批量分配',
 //2023/02/20
     'two_air'=>'空气净化机租赁及销售',
+//2023/06/06
+    'staff office'=>'办事处',
+    'office Name'=>'办事处名称',
+    'office sum'=>'办事处人数',
+    'Office List'=>'办事处列表',
+    'Office Form'=>'办事处表单',
+    'office employee list'=>'办事处员工',
 );
 ?>

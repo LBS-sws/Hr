@@ -216,6 +216,7 @@ return array(
     'staff summary'=>'部門人數統計',
     'household Search'=>'員工戶籍查詢',
     'Show all household Search'=>'顯示所有員工戶籍查詢',
+    'Config office'=>'辦事處設置',
 //沈超添加結束
 );
 ?>
