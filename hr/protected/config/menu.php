@@ -473,6 +473,10 @@ return array(
                 'access'=>'ZC11',
                 'url'=>'/auditLeave/index?only=4',
             ),
+            'Config office'=>array(//办事处配置
+                'access'=>'ZC15',
+                'url'=>'/configOffice/index',
+            ),
             'Config System'=>array(//開發者配置
                 'access'=>'ZC14',
                 'url'=>'/configSystem/index',

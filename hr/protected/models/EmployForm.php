@@ -74,6 +74,7 @@ class EmployForm extends CFormModel
     public $emergency_phone;//紧急联络人手机号
     public $code_old;//員工編號（舊）
     public $group_type;//組別類型
+    public $office_id;//办事处id
 
     public $wechat;//微信賬號
     public $recommend_user;//推荐人
@@ -160,6 +161,7 @@ class EmployForm extends CFormModel
             'wechat'=>Yii::t('contract','wechat'),
             'recommend_user'=>Yii::t('contract','recommend user'),
             'urgency_card'=>Yii::t('contract','urgency card'),
+            'office_id'=>Yii::t('contract','staff office'),
 		);
 	}
 	/**
@@ -170,7 +172,7 @@ class EmployForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, group_type code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+            array('id, group_type,office_id,code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
               education,wechat,recommend_user,urgency_card, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
                test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, user_card_date, emergency_user, emergency_phone',
@@ -449,6 +451,7 @@ class EmployForm extends CFormModel
                 $this->wechat = $row['wechat'];
                 $this->recommend_user = $row['recommend_user'];
                 $this->urgency_card = $row['urgency_card'];
+                $this->office_id = $row['office_id'];
 				break;
 			}
 		}
@@ -523,11 +526,11 @@ class EmployForm extends CFormModel
 				$sql = "insert into hr_employee(
 							name,recommend_user,wechat,urgency_card, sex, attachment, group_type, staff_id, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
 							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,fix_time,user_card_date,emergency_user,emergency_phone,code_old,
-							 email,remark,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
+							 email,office_id,remark,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
 						) values (
 							:name,:recommend_user,:wechat,:urgency_card, :sex, :attachment, :group_type, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
 							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,:date_user_card,:emergency_user,:emergency_phone,:code_old,
-							 :email,:remark,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
+							 :email,:office_id,:remark,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
 						)";
 				break;
 			case 'edit':
@@ -586,6 +589,7 @@ class EmployForm extends CFormModel
 							wechat = :wechat,
 							recommend_user = :recommend_user,
 							urgency_card = :urgency_card,
+							office_id = :office_id,
 							luu = :luu 
 						where id = :id
 						";
@@ -600,6 +604,10 @@ class EmployForm extends CFormModel
 		$command=$connection->createCommand($sql);
 		if (strpos($sql,':id')!==false)
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
+		if (strpos($sql,':office_id')!==false){
+            $this->office_id = empty($this->office_id)?0:$this->office_id;
+            $command->bindParam(':office_id',$this->office_id,PDO::PARAM_INT);
+        }
         if (strpos($sql,':code_old')!==false)
             $command->bindParam(':code_old',$this->code_old,PDO::PARAM_STR);
 		if (strpos($sql,':sex')!==false)

@@ -291,6 +291,14 @@
         ); ?>
     </div>
 </div>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->dropDownListCompare($oldModel,$model, 'office_id',ConfigOfficeForm::getOfficeList($model->city,$model->office_id),
+            array('readonly'=>($readonly))
+        ); ?>
+    </div>
+</div>
 
 <legend><?php echo Yii::t("contract","contract data");?></legend>
 <?php

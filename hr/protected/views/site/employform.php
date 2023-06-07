@@ -291,6 +291,14 @@
         ); ?>
     </div>
 </div>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'office_id',array('class'=>"col-sm-2 control-label")); ?>
+    <div class="col-sm-3">
+        <?php echo $form->dropDownList($model, 'office_id',ConfigOfficeForm::getOfficeList($model->city,$model->office_id),
+            array('readonly'=>($readonly),"id"=>"office_id")
+        ); ?>
+    </div>
+</div>
 
 <legend><?php echo Yii::t("contract","contract data");?></legend>
 <?php
@@ -648,9 +656,14 @@ if (!empty($contractNum)){
                                 $(".group_type").hide();
                             }
                         }else if(type=="change_city"){
-                            $("#department,#position").html("<option value=''></option>");
+                            var officeList = data.office;
+                            $("#department,#position").html("<option selected value=''></option>");
+                            $("#office_id").html("");
                             for(var key in jsonList){
                                 $("#department").append("<option value='"+key+"'>"+jsonList[key]+"</option>");
+                            }
+                            for(var key in officeList){
+                                $("#office_id").append("<option value='"+key+"'>"+officeList[key]+"</option>");
                             }
                             if(data.sales_type == 1){
                                 $(".group_type").show();

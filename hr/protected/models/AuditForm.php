@@ -74,6 +74,7 @@ class AuditForm extends CFormModel
     public $wechat;//微信賬號
     public $recommend_user;//推荐人
     public $urgency_card;//緊急聯繫人身份證
+    public $office_id;//办事处id
     public $no_of_attm = array(
         'employ'=>0
     );
@@ -152,6 +153,7 @@ class AuditForm extends CFormModel
             'wechat'=>Yii::t('contract','wechat'),
             'recommend_user'=>Yii::t('contract','recommend user'),
             'urgency_card'=>Yii::t('contract','urgency card'),
+            'office_id'=>Yii::t('contract','staff office'),
 		);
 	}
 
@@ -163,7 +165,7 @@ class AuditForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, group_type, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+            array('id, group_type,office_id, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,ject_remark,staff_status,
               education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, code_old,
                test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, fix_time',
@@ -287,6 +289,7 @@ class AuditForm extends CFormModel
                 $this->wechat = $row['wechat'];
                 $this->recommend_user = $row['recommend_user'];
                 $this->urgency_card = $row['urgency_card'];
+                $this->office_id = $row['office_id'];
 				break;
 			}
 		}

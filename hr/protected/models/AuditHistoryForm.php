@@ -85,6 +85,7 @@ class AuditHistoryForm extends CFormModel
     public $wechat;//微信賬號
     public $recommend_user;//推荐人
     public $urgency_card;//緊急聯繫人身份證
+    public $office_id;//办事处id
     public $no_of_attm = array(
         'employee'=>0
     );
@@ -175,6 +176,7 @@ class AuditHistoryForm extends CFormModel
             'urgency_card'=>Yii::t('contract','urgency card'),
             'address_code'=>Yii::t('contract','Old Address').Yii::t('contract','postcode'),
             'contact_address_code'=>Yii::t('contract','Contact Address').Yii::t('contract','postcode'),
+            'office_id'=>Yii::t('contract','staff office'),
 		);
 	}
 
@@ -185,7 +187,7 @@ class AuditHistoryForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id,group_type,employee_id,ject_remark,operation,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+            array('id,group_type,office_id,employee_id,ject_remark,operation,update_remark, code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health,staff_status,
              ld_card, sb_card, jj_card,attachment,nation, household, empoyment_code, social_code, fix_time,change_city,effect_time,
               education, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other',
@@ -332,6 +334,7 @@ class AuditHistoryForm extends CFormModel
                 $this->wechat = $row['wechat'];
                 $this->recommend_user = key_exists("recommend_user",$row)?self::getEmployeeNameToId($row['recommend_user']):"";
                 $this->urgency_card = $row['urgency_card'];
+                $this->office_id = $row['office_id'];
 				break;
 			}
 		}

@@ -277,6 +277,7 @@ class EmployController extends Controller
                 $data = $model->getDeptListToCity("",$change_city);
                 unset($data[""]);
                 $json["data"] = $data;
+                $json["office"] = ConfigOfficeForm::getOfficeList($change_city);
                 reset($data);
                 $department = key($data);
                 $json["sales_type"] = $model->getSalesTypeToId($department);
