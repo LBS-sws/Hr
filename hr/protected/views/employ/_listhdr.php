@@ -1,27 +1,32 @@
 <tr>
 	<th></th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('code').$this->drawOrderArrow('code'),'#',$this->createOrderLink('employ-list','code'))
+		<?php echo TbHtml::link($this->getLabelName('code').$this->drawOrderArrow('a.code'),'#',$this->createOrderLink('employ-list','a.code'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('name').$this->drawOrderArrow('name'),'#',$this->createOrderLink('employ-list','name'))
+		<?php echo TbHtml::link($this->getLabelName('name').$this->drawOrderArrow('a.name'),'#',$this->createOrderLink('employ-list','a.name'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('phone').$this->drawOrderArrow('phone'),'#',$this->createOrderLink('employ-list','phone'))
+		<?php echo TbHtml::link($this->getLabelName('office_name').$this->drawOrderArrow('f.name'),'#',$this->createOrderLink('employ-list','f.name'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('position'),'#',$this->createOrderLink('employ-list','position'))
+		<?php echo TbHtml::link($this->getLabelName('phone').$this->drawOrderArrow('a.phone'),'#',$this->createOrderLink('employ-list','a.phone'))
 			;
 		?>
 	</th>
 	<th>
-		<?php echo TbHtml::link($this->getLabelName('entry_time').$this->drawOrderArrow('entry_time'),'#',$this->createOrderLink('employ-list','entry_time'))
+		<?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('a.position'),'#',$this->createOrderLink('employ-list','a.position'))
+			;
+		?>
+	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('entry_time').$this->drawOrderArrow('a.entry_time'),'#',$this->createOrderLink('employ-list','a.entry_time'))
 			;
 		?>
 	</th>

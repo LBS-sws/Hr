@@ -22,6 +22,7 @@ class HistoryList extends CListPageModel
             'city_name'=>Yii::t('contract','City'),
             'operation'=>Yii::t('contract','Operation Status'),
             'entry_time'=>Yii::t('contract','Entry Time'),
+            'office_name'=>Yii::t('contract','staff office'),
         );
     }
 
@@ -30,31 +31,36 @@ class HistoryList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
-        $sql1 = "select * from hr_employee_operate
-                where city IN ($city_allow) AND finish != 1
+        $sql1 = "select a.*,f.name as office_name from hr_employee_operate a
+                LEFT JOIN hr_office f ON f.id=a.office_id
+                where a.city IN ($city_allow) AND a.finish != 1
 			";
-        $sql2 = "select count(id)
-				from hr_employee_operate 
-				where city IN ($city_allow) AND finish != 1
+        $sql2 = "select count(a.id)
+				from hr_employee_operate a
+                LEFT JOIN hr_office f ON f.id=a.office_id
+				where a.city IN ($city_allow) AND a.finish != 1
 			";
         $clause = "";
         if (!empty($this->searchField) && !empty($this->searchValue)) {
             $svalue = str_replace("'","\'",$this->searchValue);
             switch ($this->searchField) {
                 case 'name':
-                    $clause .= General::getSqlConditionClause('name',$svalue);
+                    $clause .= General::getSqlConditionClause('a.name',$svalue);
                     break;
                 case 'code':
-                    $clause .= General::getSqlConditionClause('code',$svalue);
+                    $clause .= General::getSqlConditionClause('a.code',$svalue);
                     break;
                 case 'phone':
-                    $clause .= General::getSqlConditionClause('phone',$svalue);
+                    $clause .= General::getSqlConditionClause('a.phone',$svalue);
+                    break;
+                case 'office_name':
+                    $clause .= General::getSqlConditionClause('f.name',$svalue);
                     break;
                 case 'position':
-                    $clause .= ' and position in '.DeptForm::getDeptSqlLikeName($svalue);
+                    $clause .= ' and a.position in '.DeptForm::getDeptSqlLikeName($svalue);
                     break;
                 case 'city_name':
-                    $clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
                     break;
             }
         }
@@ -64,7 +70,7 @@ class HistoryList extends CListPageModel
             $order .= " order by ".$this->orderField." ";
             if ($this->orderType=='D') $order .= "desc ";
         }else{
-            $order .= " order by id desc ";
+            $order .= " order by a.id desc ";
         }
 
         $sql = $sql2.$clause;
@@ -84,6 +90,7 @@ class HistoryList extends CListPageModel
                     'name'=>$record['name'],
                     'code'=>$record['code'],
                     'operation'=>$record['operation'],
+                    'office_name'=>$record['office_name'],
                     'position'=>DeptForm::getDeptToid($record['position']),
                     'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
                     //'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),
