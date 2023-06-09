@@ -106,7 +106,7 @@ class ConfigOfficeForm extends CFormModel
     //獲取办事处列表
     public static function getOfficeList($city="",$id=0){
         $city = empty($city)?Yii::app()->user->city():$city;
-	    $arr = array(0=>"");
+	    $arr = array(0=>Yii::t("contract","local office"));
         $rs = Yii::app()->db->createCommand()->select("id,name")->from("hr_office")
             ->where("(z_display=1 and city=:city) or id=:id",array(":id"=>$id,":city"=>$city))->queryAll();
         if($rs){

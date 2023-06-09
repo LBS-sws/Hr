@@ -749,5 +749,6 @@ return array(
     'Office List'=>'办事处列表',
     'Office Form'=>'办事处表单',
     'office employee list'=>'办事处员工',
+    'local office'=>'本部',
 );
 ?>

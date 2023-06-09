@@ -143,7 +143,8 @@ class EmployList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
-		$sql1 = "select a.*,f.name as office_name,docman$suffix.countdoc('EMPLOY',a.id) as employdoc from hr_employee a
+		$localOffice = Yii::t("contract","local office");
+		$sql1 = "select a.*,if(f.name=0 or f.name is null,'{$localOffice}',f.name) as office_name,docman$suffix.countdoc('EMPLOY',a.id) as employdoc from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 where a.city='$city' AND a.staff_status != 0 AND a.staff_status != -1
 			";
@@ -172,7 +173,7 @@ class EmployList extends CListPageModel
                     $clause .= ' and a.city in '.WordForm::getCityCodeSqlLikeName($svalue);
 					break;
                 case 'office_name':
-                    $clause .= General::getSqlConditionClause('f.name',$svalue);
+                    $clause .= General::getSqlConditionClause("if(f.name=0 or f.name is null,'{$localOffice}',f.name)",$svalue);
                     break;
 			}
 		}
