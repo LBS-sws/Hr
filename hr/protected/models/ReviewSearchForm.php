@@ -582,7 +582,7 @@ class ReviewSearchForm extends CFormModel
                 if($this->ranking_bool){
                     $reviewLevel = ':RANKINGLEAVE';
                 }else{
-                    $reviewLevel =$this->getReviewLevelToSum($sum);
+                    $reviewLevel =self::getReviewLevelToSum($sum);
                 }
             }
             $html.="<tr><th class='text-right' colspan='$num'>:REVIEWGRADE</th><th>$reviewLevel</th></tr>";
@@ -651,7 +651,7 @@ class ReviewSearchForm extends CFormModel
         return $html;
     }
 
-    public function getReviewLevelToSum($sum){
+    public static function getReviewLevelToSum($sum){
         if(!is_numeric($sum)){
             return '';
         }elseif ($sum<50){
@@ -702,7 +702,7 @@ class ReviewSearchForm extends CFormModel
             }
         }else{
             $str = "评分后级别";
-            $reviewLevel =$this->getReviewLevelToSum($this->review_sum);
+            $reviewLevel =self::getReviewLevelToSum($this->review_sum);
         }
         return array(
             'str'=>$str,

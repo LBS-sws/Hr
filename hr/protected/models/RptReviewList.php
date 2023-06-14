@@ -76,19 +76,19 @@ class RptReviewList extends CReport {
                 $cond_staff = " and a.id in ($cond_staff)";
             } 
 		}
-        $sql = "select a.staff_leader,a.id,a.name,a.position,a.department,a.code,b.name as city_name,a.entry_time,d.name as dept_name,d.review_status,d.review_type ,e.name as ment_name 
+        $sql = "select a.staff_leader,a.staff_status,a.id,a.name,a.position,a.department,a.code,b.name as city_name,a.entry_time,d.name as dept_name,d.review_status,d.review_type ,e.name as ment_name 
                 from hr_employee a 
                 LEFT JOIN security$suffix.sec_city b ON a.city = b.code
                 LEFT JOIN hr_dept d ON a.position = d.id
                 LEFT JOIN hr_dept e ON a.department = e.id
-                where a.city IN ($citylist) AND a.staff_status = 0 $cond_staff AND replace(entry_time,'-', '/')<='$dateTime' 
+                where a.city IN ($citylist) AND a.staff_status in (0,-1) $cond_staff AND replace(entry_time,'-', '/')<='$dateTime' 
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
 				$temp = array();
 				$temp['code'] = $row['code'];
-				$temp['name'] = $row['name'];
+				$temp['name'] = $row['name'].($row["staff_status"]==-1?" (已离职)":"");
 				$temp['city'] = $row['city_name'];
 				$temp['department'] = $row['ment_name'];
 				$temp['position'] = $row['dept_name'];
@@ -151,7 +151,9 @@ class RptReviewList extends CReport {
                         return ReviewSearchForm::getReviewLevelToSum($arr["review_sum"]);
                 }
             }else{
-                $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")->from("hr_review b")
+                //ranking_bool,ranking_review,ranking_sum
+                $reviewRows = Yii::app()->db->createCommand()->select("b.employee_id,b.review_sum,b.status_type")
+                    ->from("hr_review b")
                     ->leftJoin("hr_employee c","c.id = b.employee_id")
                     ->leftJoin("hr_dept e","c.position = e.id")
                     ->where("b.id in ({$arr["ranking_review"]})")
@@ -169,18 +171,18 @@ class RptReviewList extends CReport {
                         array("maxNum"=>round($maxCount*0.1),"list"=>array(),"leave"=>"V"),
                     );
                     $this->leave_list[$arr["ranking_review"]]=array('caseNum'=>1,'list'=>array());
-                    $leave = "待定";
+                    //$leave = "待定";
                     foreach ($reviewRows as $review){
                         if($review['status_type']!=3){
                             $leave = "待定";
                             $this->leave_list[$arr["ranking_review"]]['caseNum']=2;
-                            break;
+                            return $leave;
                         }else{
                             $leave = $this->resetRanking($rankingArr,$review);
                             $this->leave_list[$arr["ranking_review"]]['list'][$review["employee_id"]]=$leave;
                         }
                     }
-                    return $leave;
+                    return $this->leave_list[$arr["ranking_review"]]['list'][$staff["id"]];
                 }
             }
         }else{
