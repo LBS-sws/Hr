@@ -33,7 +33,7 @@ class LeaveController extends Controller
                 'expression'=>array('LeaveController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload','PdfDownload'),
+                'actions'=>array('index','view','testManger','fileDownload','PdfDownload'),
                 'expression'=>array('LeaveController','allowReadOnly'),
             ),
             array('allow',
@@ -336,8 +336,17 @@ class LeaveController extends Controller
         }
     }
 
+    //id:员工id  type：1请假 0：加班
+    public function actionTestManger($id,$type=1){
+        $z_index = AuditConfigForm::getCityAuditToCodeTest($id,$type);
+        var_dump($z_index);
+        Yii::app()->end();
+    }
+
     //
-    public function actionTest($index){
+    public function actionTest($index,$type=0){
+        //type：1请假 0：加班
+        $type = empty($type)?"ZA08":"ZA09";
         $index = is_numeric($index)?$index:0;
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
@@ -346,19 +355,21 @@ class LeaveController extends Controller
             ->leftJoin("hr_employee d","d.id = a.employee_id")
             ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
             ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
-            ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%ZA08%' and d.department='$index'")
+            ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%{$type}%' and d.department='$index'")
             ->queryAll();
         var_dump($workOne);
     }
 
     //
-    public function actionTest2($city){
+    public function actionTest2($city,$type=0){
+        //type：1请假 0：加班
+        $type = empty($type)?"ZE05":"ZE06";
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
         $command = Yii::app()->db->createCommand();
         $workTwo = $command->select("a.username")->from("security$suffix.sec_user a")
             ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
-            ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZE05%' and a.city=:city",
+            ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%{$type}%' and a.city=:city",
                 array(':city'=>$city))->queryAll();
         var_dump($workTwo);
     }

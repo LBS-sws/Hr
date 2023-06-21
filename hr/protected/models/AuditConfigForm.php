@@ -70,7 +70,85 @@ class AuditConfigForm extends CFormModel
         }
     }
 
-	public function getCityAuditToCode($employee_id,$auditType="") {
+	public static function getCityAuditToCodeTest($employee_id,$auditType="") { //調試專用
+        $staffList = Yii::app()->db->createCommand()->select("a.id,a.city,a.department,c.manager as c_manager")->from("hr_employee a")
+            ->leftJoin("hr_dept c","c.id = a.position")
+            ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();
+        var_dump($staffList);
+        echo "<br/>";
+        if($staffList){
+            $personnelBool = Yii::app()->db->createCommand()->select("id")->from("hr_setting")
+                ->where("set_name='personnelType' and set_city=:set_city and set_value=2",
+                    array(':set_city'=>$staffList['city']))->queryRow();
+            if($staffList["city"]!=Yii::app()->user->city()){
+                $plusList = Yii::app()->db->createCommand()->select("a.department,c.manager as c_manager")->from("hr_plus_city a")
+                    ->leftJoin("hr_dept c","c.id = a.position")
+                    ->where("a.employee_id=:id and a.city=:city", array(':id'=>$employee_id,':city'=>Yii::app()->user->city()))->queryRow();
+                if($plusList){
+                    $staffList["c_manager"] = $plusList["c_manager"];
+                    $staffList["department"] = $plusList["department"];
+                }
+            }
+            var_dump($staffList);
+            echo "<br/>";
+            $manager = empty($staffList["c_manager"])?0:intval($staffList["c_manager"]);
+            var_dump("manager1:{$manager}");
+            echo "<br/>";
+            //var_dump($manager);die();
+            if(in_array($manager,array(1,2,3,4))){
+                $manager++;
+                $manager = $manager>=4?4:$manager;
+            }elseif($personnelBool){ //後續因為新加波添加人事審核（部門審核之前）
+                $type = empty($auditType)?"ZP01":"ZP02";
+                $systemId = Yii::app()->params['systemId'];
+                $suffix = Yii::app()->params['envSuffix'];
+                $personnelList = Yii::app()->db->createCommand()->select("a.employee_id")->from("hr_binding a")
+                    ->leftJoin("hr_employee d","d.id = a.employee_id")
+                    ->leftJoin("security$suffix.sec_user b","b.username = a.user_id")
+                    ->leftJoin("security$suffix.sec_user_access c","c.username = a.user_id")
+                    ->where("b.status='A' and b.city=d.city and c.system_id='$systemId' and c.a_read_write like '%$type%' and d.city=:city",
+                        array(":city"=>$staffList['city'])
+                    )->queryAll();
+                if($personnelList){ //存在人事審核的權限
+                    $manager = 5;
+                    foreach ($personnelList as $perList){
+                        if($perList["employee_id"] == $employee_id){//當申請人有人事系統的審核權限時
+                            $manager = 2;
+                            break;
+                        }
+                    }
+                }else{
+                    $manager = 1;
+                }
+            }else{
+                $manager = 1;
+            }
+            var_dump("manager2:{$manager}");
+            echo "<br/>";
+
+            //後續添加
+            $assList = AuditConfigForm::getAccessAndCity($staffList["city"],$staffList["department"],$auditType);
+            for($i = $manager;$i<=count($assList);$i++){
+                if($assList[$i]){
+                    $manager = $i;
+                    break;
+                }
+            }
+
+            var_dump("assList:");
+            echo "<br/>";
+            var_dump($assList);
+            echo "<br/>";
+
+            var_dump("manager3:{$manager}");
+            echo "<br/>";
+            return $manager;
+        }
+
+        return 1;
+	}
+
+	public static function getCityAuditToCode($employee_id,$auditType="") {
         $staffList = Yii::app()->db->createCommand()->select("a.*,c.manager as c_manager")->from("hr_employee a")
             ->leftJoin("hr_dept c","c.id = a.position")
             ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();
@@ -133,7 +211,7 @@ class AuditConfigForm extends CFormModel
         return 1;
 	}
     //判斷審核人是否空缺
-    public function getAccessAndCity($city,$department,$auditType=""){
+    public static function getAccessAndCity($city,$department,$auditType=""){
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
         $command = Yii::app()->db->createCommand();
