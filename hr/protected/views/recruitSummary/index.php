@@ -50,9 +50,9 @@ $this->pageTitle=Yii::app()->name . ' - RecruitSummary';
 ?>
 <?php $this->endWidget(); ?>
 
+<?php $this->renderPartial('//recruitApply/dtlview',array('model'=>$model)); ?>
 <?php
-
-$js = <<<EOF
+$js= <<<EOF
 function showdetail(id) {
 	var icon = $('#btn_'+id).attr('class');
 	if (icon.indexOf('plus') >= 0) {
@@ -65,7 +65,8 @@ function showdetail(id) {
 }
 EOF;
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_HEAD);
-$js = "
+
+$js= "
     $('.submit_year,.submit_year_type').on('change',function(){
         $('form:first').submit();
     });

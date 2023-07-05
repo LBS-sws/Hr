@@ -130,6 +130,7 @@ class RecruitSummaryList extends CListPageModel
                 $attrList["leave_sum"]+=$arr['leave_num'];
                 $attrList["lack_sum"]+=$arr['lack_num'];
                 $detail[]=array(
+                    'id'=>$row['id'],
                     'recruit_num'=>$row['recruit_num'],
                     'dept_name'=>$row['dept_name'],
                     'leader_name'=>$row['leader_name'],

@@ -57,7 +57,9 @@ $this->pageTitle=Yii::app()->name . ' - RecruitApply';
 ?>
 <?php $this->endWidget(); ?>
 
+<?php $this->renderPartial('//recruitApply/dtlview',array('model'=>$model)); ?>
 <?php
-	$js = Script::genTableRowClick();
+
+	$js= Script::genTableRowClick();
 	Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

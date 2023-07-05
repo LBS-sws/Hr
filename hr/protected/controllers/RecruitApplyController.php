@@ -31,11 +31,26 @@ class RecruitApplyController extends Controller
 				'actions'=>array('index','view'),
 				'expression'=>array('RecruitApplyController','allowReadOnly'),
 			),
+			array('allow',
+				'actions'=>array('ajaxDetail'),
+				'expression'=>array('RecruitApplyController','allowAll'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
 		);
 	}
+
+    //详情列表的異步請求
+    public function actionAjaxDetail(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $model = new RecruitApplyList();
+            $arr =$model->ajaxDetailForHtml();
+            echo CJSON::encode(array('status'=>1,'html'=>$arr['html'],'title'=>$arr["title"]));//Yii 的方法将数组处理成json数据
+        }else{
+            $this->redirect(Yii::app()->createUrl('RankingMonth/index'));
+        }
+    }
 
 	public function actionIndex($pageNum=0) 
 	{
@@ -124,5 +139,9 @@ class RecruitApplyController extends Controller
 	
 	public static function allowReadOnly() {
 		return Yii::app()->user->validFunction('ZP03');
+	}
+
+	public static function allowAll() {
+		return Yii::app()->user->validFunction('ZP03')||Yii::app()->user->validFunction('ZP04');
 	}
 }

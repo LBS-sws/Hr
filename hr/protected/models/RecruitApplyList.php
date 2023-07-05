@@ -124,4 +124,52 @@ class RecruitApplyList extends CListPageModel
         $arr["completion_rate"].= "%";
         return $arr;
     }
+
+    //顯示表格內的數據來源
+    public function ajaxDetailForHtml(){
+        $id = key_exists("id",$_GET)?$_GET["id"]:0;
+        $type = key_exists("type",$_GET)?$_GET["type"]:0;
+        $row = Yii::app()->db->createCommand()
+            ->select("a.id,a.dept_id,a.year,a.city,f.name as dept_name")
+            ->from("hr_recruit a")
+            ->leftJoin("hr_dept f","a.dept_id=f.id ")
+            ->where("a.id=:id",array(":id"=>$id))->queryRow();
+        if(!$row){
+            return array('html'=>"<p>数据异常，请刷新重试</p>",'title'=>"");
+        }
+        $title = CGeneral::getCityName($row["city"])." ({$row["year"]}) - ".$row["dept_name"];
+        $html = "<table class='table table-bordered table-striped table-hover'>";
+        $html.="<thead><tr>";
+        $html.="<th>".Yii::t("contract","Employee Code")."</th>";
+        $html.="<th>".Yii::t("contract","Employee Name")."</th>";
+        $html.="<th>".Yii::t("contract","Position")."</th>";
+        $html.="<th>".Yii::t("contract","Entry Time")."</th>";
+        $html.="</tr></thead><tbody>";
+        if($type==-1){//離職
+            $whereSql = " and staff_status=-1";
+            $title.=" (".Yii::t('recruit','leave num').")";
+        }else{
+            $whereSql = "";
+            $title.=" (".Yii::t('recruit','now num').")";
+        }
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.id,a.entry_time,a.code,a.name")
+            ->from("hr_employee a")
+            ->where("position=:position {$whereSql} and entry_time like'{$row['year']}%' and staff_status!=1",array(":position"=>$row["dept_id"]))
+            ->queryAll();
+        if($rows){
+            foreach ($rows as $staff){
+                $html.="<tr>";
+                $html.="<td>".$staff["code"]."</td>";
+                $html.="<td>".$staff["name"]."</td>";
+                $html.="<td>".$row["dept_name"]."</td>";
+                $html.="<td>".$staff["entry_time"]."</td>";
+                $html.="</tr>";
+            }
+        }else{
+            $html.="<tr><td colspan='4'>无</td></tr>";
+        }
+        $html.="</tbody></table>";
+        return array('html'=>$html,'title'=>$title);
+    }
 }
