@@ -39,25 +39,11 @@ class ReviewAllotList extends CListPageModel
         }
         if($this->year_type===3){
             $month = intval(date("m"));
-            if(Yii::app()->params['retire']||!isset(Yii::app()->params['retire'])) {//非台灣版
-                if($this->year == 2020){
-                    $this->year_type = 1;
-                }elseif($month<3){
-                    $this->year--;
-                    $this->year_type = 1;
-                }elseif ($month<9){
-                    $this->year--;
-                    $this->year_type = 2;
-                }else{
-                    $this->year_type = 1;
-                }
+            if($month>=6&&$month<=11){
+                $this->year_type = 1;
             }else{
-                if($month>=6||$month<=11){
-                    $this->year_type = 1;
-                }else{
-                    $this->year = $month!=12?$this->year-1:$this->year;
-                    $this->year_type = 2;
-                }
+                $this->year = $month!=12?$this->year-1:$this->year;
+                $this->year_type = 2;
             }
         }
         parent::__construct();
