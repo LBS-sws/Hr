@@ -238,7 +238,8 @@ class CReport {
 	
 	// Print Line With Structure (Using report_structure to define structure)
 	protected function printLineWithStructure($data) {
-		$col = 0;
+        $col = 0;
+        $ccol = 0;
 		$crow = $this->current_row;
 		foreach ($this->rpt_detail as $item) {
 			if (is_array($item)) {
@@ -258,6 +259,20 @@ class CReport {
 				$col++;
 			}
 		}
+        if($crow-$this->current_row>1){
+            $startNum=0;
+            foreach ($this->rpt_detail as $i=>$item) {
+                if (!is_array($item)) {
+                    $str = $this->excel->getColumn($startNum);
+                    $rang = $str.$this->current_row.":".$str.($crow-1);
+                    //$this->objPHPExcel->mergeCells($this->current_row, $i, $crow-1, $i);
+                    $this->excel->getActiveSheet()->mergeCells($rang);
+                    $startNum++;
+                }else{
+                    $startNum+=count($item);
+                }
+            }
+        }
 		$this->current_row = $crow;
 	}
 	

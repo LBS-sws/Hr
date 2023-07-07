@@ -30,6 +30,11 @@ return array(
                 'access'=>'ZA06',
                 'url'=>'/leave/index',
             ),
+            //出差申请
+            'Application for trip'=>array(
+                'access'=>'ZA10',
+                'url'=>'/trip/index',
+            ),
             //奖金申请
             'Reward Apply'=>array(
                 'access'=>'ZA07',
@@ -280,6 +285,11 @@ return array(
                 'access'=>'ZG05',
                 'url'=>'/auditLeave/index?only=3',
             ),
+            //出差审核
+            'audit for trip'=>array(
+                'access'=>'ZG10',
+                'url'=>'/auditTrip/index',
+            ),
             //奖金审核
             'Reward Audit'=>array(
                 'access'=>'ZG06',
@@ -499,6 +509,10 @@ return array(
 			'Leave record List'=>array(
 				'access'=>'YB03',
                 'url'=>'/report/leavelist',
+			),
+			'report for trip'=>array( //出差報表
+				'access'=>'YB11',
+                'url'=>'/report/triplist',
 			),
 			'Pennants ex List'=>array(
 				'access'=>'YB05',

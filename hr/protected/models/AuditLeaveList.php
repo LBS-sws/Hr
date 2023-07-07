@@ -120,7 +120,7 @@ class AuditLeaveList extends CListPageModel
         $this->attr = array();
         if (count($records) > 0) {
             foreach ($records as $k=>$record) {
-                $colorList = $this->statusToColor($record['status']);
+                $colorList = self::statusToColor($record['status']);
                 $this->attr[] = array(
                     'id'=>$record['id'],
                     'leave_code'=>$record['leave_code'],
@@ -143,7 +143,7 @@ class AuditLeaveList extends CListPageModel
     }
 
     //根據狀態獲取顏色
-    public function statusToColor($status){
+    public static function statusToColor($status){
         switch ($status){
             case 1:
                 return array(

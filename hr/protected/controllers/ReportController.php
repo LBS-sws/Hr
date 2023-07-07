@@ -11,6 +11,7 @@ class ReportController extends Controller
         'estimated'=>'YB08',
         'pinReport'=>'YB09',
         'bossReport'=>'YB10',
+        'triplist'=>'YB11',
     );
 	
 	public function filters()
@@ -145,7 +146,30 @@ class ReportController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
             }
         }
-        $this->render('form_y05',array('model'=>$model));
+        $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/pennantexlist')));
+    }
+
+    public function actionTriplist() {
+		$this->function_id = self::$actions['triplist'];
+		Yii::app()->session['active_func'] = $this->function_id;
+
+        $model = new ReportY05Form;
+        $model->id = "RptTripList";
+        $model->name = Yii::t('app','report for trip');
+        $model->start_dt = date("Y/m/01");
+        $model->end_dt = date("Y/m/t",strtotime("{$model->start_dt} +1 month"));
+        $model->fields = 'start_dt,end_dt,city,staffs,staffs_desc';
+        if (isset($_POST['ReportY05Form'])) {
+            $model->attributes = $_POST['ReportY05Form'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/triplist')));
     }
 
     public function actionPinReport() {

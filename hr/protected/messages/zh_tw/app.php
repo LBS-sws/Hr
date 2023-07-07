@@ -217,6 +217,10 @@ return array(
     'household Search'=>'員工戶籍查詢',
     'Show all household Search'=>'顯示所有員工戶籍查詢',
     'Config office'=>'辦事處設置',
+    'Application for trip'=>'出差申請',
+    'Show all Trip'=>'顯示所有出差記錄',
+    'audit for trip'=>'出差審核',
+    'report for trip'=>'出差報表',
 //沈超添加結束
 );
 ?>

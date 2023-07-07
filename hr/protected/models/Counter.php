@@ -151,6 +151,14 @@ class Counter {
             ->where("a.status_type=2")->queryScalar();
         return $count;
     }
+//出差审核(審核)
+    public static function getTrip() {
+        $city_allow = Yii::app()->user->city_allow();
+        $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_trip a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.status in (1) AND b.city in ($city_allow)")->queryScalar();
+        return $count;
+    }
 //加班审核(審核)
     public static function getWorkFour() {
         $staff_id = Yii::app()->user->id;

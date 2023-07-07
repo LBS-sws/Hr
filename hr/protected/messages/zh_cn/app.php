@@ -218,6 +218,10 @@ return array(
     'household Search'=>'员工户籍查询',
     'Show all household Search'=>'显示所有员工户籍查询',
     'Config office'=>'办事处设置',
+    'Application for trip'=>'出差申请',
+    'Show all Trip'=>'显示所有出差记录',
+    'audit for trip'=>'出差审核',
+    'report for trip'=>'出差报表',
     //沈超添加结束
 );
 ?>

@@ -340,17 +340,17 @@ class LeaveForm extends CFormModel
             foreach ($rows as $row){
                 $records["time_list"][]=array(
                     "start_time"=>$row["start_time"],
-                    "start_time_lg"=>$this->getAMPMList($row["start_time_lg"],true),
+                    "start_time_lg"=>self::getAMPMList($row["start_time_lg"],true),
                     "end_time"=>$row["end_time"],
-                    "end_time_lg"=>$this->getAMPMList($row["end_time_lg"],true)
+                    "end_time_lg"=>self::getAMPMList($row["end_time_lg"],true)
                 );
             }
         }else{
             $records["time_list"][]=array(
                 "start_time"=>$records["start_time"],
-                "start_time_lg"=>$this->getAMPMList($records["start_time_lg"],true),
+                "start_time_lg"=>self::getAMPMList($records["start_time_lg"],true),
                 "end_time"=>$records["end_time"],
-                "end_time_lg"=>$this->getAMPMList($records["end_time_lg"],true)
+                "end_time_lg"=>self::getAMPMList($records["end_time_lg"],true)
             );
         }
     }
@@ -912,7 +912,7 @@ class LeaveForm extends CFormModel
 
 
     //獲取上午下午列表
-    public function getAMPMList($str='',$bool=false){
+    public static function getAMPMList($str='',$bool=false){
         $arr = array(
             "AM"=>Yii::t("fete","AM"),
             "PM"=>Yii::t("fete","PM")

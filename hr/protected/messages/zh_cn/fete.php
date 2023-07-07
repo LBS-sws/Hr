@@ -211,5 +211,17 @@ return array(
     'Tec supervisor'=>'技术主管',
     'Other personnel'=>'其它人员',
     'level type'=>'技术员归类',
+
+    //2023-07-04
+    'trip form'=>'出差表单',
+    'trip list'=>'出差列表',
+    'trip code'=>'出差编号',
+    'trip address'=>'目的地',
+    'trip date'=>'出差时间',
+    'trip cause'=>'出差目的',
+    'trip cost'=>'预估费用',
+    'trip log time'=>'出差总时长',
+    'trip lcu'=>'审核账号',
+    'trip lcd'=>'审核时间',
 );
 ?>

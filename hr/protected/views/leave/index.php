@@ -49,10 +49,10 @@ $this->pageTitle=Yii::app()->name . ' - Leave';
     if (Yii::app()->user->validFunction('ZR04')){
         $search[] = 'city_name';
         $search_add_html .= TbHtml::textField($modelName.'[searchTimeStart]',$model->searchTimeStart,
-            array('size'=>15,'placeholder'=>Yii::t('misc','Start Date'),"class"=>"form-control","id"=>"start_time"));
+            array('size'=>15,'autocomplete'=>'off','placeholder'=>Yii::t('misc','Start Date'),"class"=>"form-control","id"=>"start_time"));
         $search_add_html.="<span>&nbsp;&nbsp;-&nbsp;&nbsp;</span>";
         $search_add_html .= TbHtml::textField($modelName.'[searchTimeEnd]',$model->searchTimeEnd,
-            array('size'=>15,'placeholder'=>Yii::t('misc','End Date'),"class"=>"form-control","id"=>"end_time"));
+            array('size'=>15,'autocomplete'=>'off','placeholder'=>Yii::t('misc','End Date'),"class"=>"form-control","id"=>"end_time"));
     }
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('fete','Ask leave List'),
@@ -75,9 +75,14 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
+$url = Yii::app()->createUrl('leave/index',array("pageNum"=>1));
 $js = "
 $('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
 $('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('#start_time,#end_time').change(function(){
+    jQuery.yii.submitForm(this,'{$url}',{});
+    return false;
+});
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genTableRowClick();

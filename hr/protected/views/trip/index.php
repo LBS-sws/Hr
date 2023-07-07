@@ -1,9 +1,9 @@
 <?php
-$this->pageTitle=Yii::app()->name . ' - Work';
+$this->pageTitle=Yii::app()->name . ' - Trip';
 ?>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
-    'id'=>'work-list',
+    'id'=>'trip-list',
     'enableClientValidation'=>true,
     'clientOptions'=>array('validateOnSubmit'=>true,),
     'layout'=>TbHtml::FORM_LAYOUT_INLINE,
@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - Work';
 
 <section class="content-header">
     <h1>
-        <strong><?php echo Yii::t('app','apply for work overtime'); ?></strong>
+        <strong><?php echo Yii::t('app','Application for trip'); ?></strong>
     </h1>
     <!--
         <ol class="breadcrumb">
@@ -27,38 +27,35 @@ $this->pageTitle=Yii::app()->name . ' - Work';
             <div class="btn-group" role="group">
                 <?php
                 //var_dump(Yii::app()->session['rw_func']);
-                if (Yii::app()->user->validRWFunction('ZA05'))
+                if (Yii::app()->user->validRWFunction('ZA10'))
                     echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
-                        'submit'=>Yii::app()->createUrl('work/new'),
+                        'submit'=>Yii::app()->createUrl('trip/new'),
                     ));
                 ?>
             </div>
         </div></div>
     <?php
     $search = array(
-        'work_code',
-        'work_type',
+        'trip_code',
+        'trip_address',
         'employee_name',
+        'city_name',
     );
-    if(Yii::app()->user->validFunction('ZR03')||!Yii::app()->user->isSingleCity()){
-        $search[] = 'city_name';
-    }
     $search_add_html="";
     $modelName = get_class($model);
-    if (Yii::app()->user->validFunction('ZR03')){
+    if (Yii::app()->user->validFunction('ZA10')){
         $search[] = 'city_name';
         $search_add_html .= TbHtml::textField($modelName.'[searchTimeStart]',$model->searchTimeStart,
-            array('size'=>15,'autocomplete'=>'off','placeholder'=>Yii::t('misc','Start Date'),"class"=>"form-control","id"=>"start_time"));
+            array('size'=>15,'autocomplete'=>'off','placeholder'=>Yii::t('misc','Start Date'),"class"=>"form-control dateSubmit","id"=>"start_time"));
         $search_add_html.="<span>&nbsp;&nbsp;-&nbsp;&nbsp;</span>";
         $search_add_html .= TbHtml::textField($modelName.'[searchTimeEnd]',$model->searchTimeEnd,
-            array('size'=>15,'autocomplete'=>'off','placeholder'=>Yii::t('misc','End Date'),"class"=>"form-control","id"=>"end_time"));
+            array('size'=>15,'autocomplete'=>'off','placeholder'=>Yii::t('misc','End Date'),"class"=>"form-control dateSubmit","id"=>"end_time"));
     }
-
     $this->widget('ext.layout.ListPageWidget', array(
-        'title'=>Yii::t('fete','Overtime work List'),
+        'title'=>Yii::t('fete','trip list'),
         'model'=>$model,
-        'viewhdr'=>'//work/_listhdr',
-        'viewdtl'=>'//work/_listdtl',
+        'viewhdr'=>'//trip/_listhdr',
+        'viewdtl'=>'//trip/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
         'search_add_html'=>$search_add_html,
@@ -75,11 +72,10 @@ echo $form->hiddenField($model,'orderType');
 <?php $this->endWidget(); ?>
 
 <?php
-$url = Yii::app()->createUrl('work/index',array("pageNum"=>1));
+$url = Yii::app()->createUrl('trip/index',array("pageNum"=>1));
 $js = "
-$('#start_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
-$('#end_time').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
-$('#start_time,#end_time').change(function(){
+$('.dateSubmit').datepicker({autoclose: true, format: 'yyyy/mm/dd',language: 'zh_cn'});
+$('.dateSubmit').change(function(){
     jQuery.yii.submitForm(this,'{$url}',{});
     return false;
 });

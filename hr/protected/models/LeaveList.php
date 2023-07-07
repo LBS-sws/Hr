@@ -148,7 +148,7 @@ class LeaveList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-			    $colorList = $this->statusToColor($record['status']);
+			    $colorList = self::statusToColor($record['status']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					//'leavedoc'=>LeaveList::docmanSearch("LEAVE",$record["id"],$record["lud"],$record['status'])?1:0,
@@ -172,6 +172,21 @@ class LeaveList extends CListPageModel
 		$session['leave_01'] = $this->getCriteria();
 		return true;
 	}
+
+    public function getCriteria() {
+        return array(
+            'searchField'=>$this->searchField,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+            'searchTimeStart'=>$this->searchTimeStart,
+            'searchTimeEnd'=>$this->searchTimeEnd,
+        );
+    }
+
 	//获取请假、加班的对应关联编号
     public static function getCodeForWorkLeave($id,$thisStr="leave",$bool=true){
         $returnList = array();
@@ -202,7 +217,7 @@ class LeaveList extends CListPageModel
     }
 
     //根據狀態獲取顏色
-    public function statusToColor($status){
+    public static function statusToColor($status){
         switch ($status){
             // text-danger
             case 0:
