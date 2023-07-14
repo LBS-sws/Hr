@@ -611,8 +611,9 @@ class ReviewAllotForm extends CFormModel
         }
     }
 
-    public function getReviewManagerList($city,$id_s_list=''){
-	    $arr = array();
+    public static function getReviewManagerList($city,$id_s_list=''){
+        $suffix = Yii::app()->params['envSuffix'];
+	    $arr = array(""=>"");
         $cityList = Email::getAllCityToMinCity($city);
         $city_allow = implode("','",$cityList);
         $sql = '';
@@ -621,9 +622,11 @@ class ReviewAllotForm extends CFormModel
         }
         $rows = Yii::app()->db->createCommand()
             ->select("a.id,a.name,a.code")
-            ->from("hr_employee a")
+            ->from("hr_binding g")
+            ->leftJoin("hr_employee a","a.id=g.employee_id")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("((a.city in ('$city_allow') and d.review_leave=1) or d.review_leave = 2 $sql) AND a.staff_status = 0")->queryAll();
+            ->leftJoin("security{$suffix}.sec_user f","g.user_id = f.username")
+            ->where("(((a.city in ('{$city_allow}') or f.city in ('{$city_allow}')) and d.review_leave=1) or d.review_leave = 2 $sql) AND a.staff_status = 0")->queryAll();
         foreach ($rows as $row){
             $arr[$row["id"]] = $row["code"]." - ".$row["name"];
         }
