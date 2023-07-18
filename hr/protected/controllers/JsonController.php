@@ -68,8 +68,6 @@ class JsonController extends Controller
         $data['list'] = $list;
 
         echo json_encode($data);
-//        $book = array(array(name=>'123'),array(name=>'456'));
-//        echo $json = json_encode($book);
 
     }
 }
