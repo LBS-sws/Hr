@@ -25,7 +25,7 @@ class SupportEmailController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','delete','save'),
+                'actions'=>array('new','edit','delete','save','test'),
                 'expression'=>array('SupportEmailController','allowReadWrite'),
             ),
             array('allow',
@@ -44,6 +44,24 @@ class SupportEmailController extends Controller
 
     public static function allowReadOnly() {
         return Yii::app()->user->validFunction('AY05');
+    }
+
+    public function actionTest($id="",$city="",$pre="AY01",$type=1){
+        $emailModel = new Email();
+        switch ($type){
+            case 1:
+                echo "employee_id:{$id}<br/>";
+                $emailModel->addSupportPreEmailToEmployeeId($id);
+                break;
+            case 2:
+                echo "city:{$city}  ,pre:{$pre}<br/>";
+                $emailModel->addEmailToPrefixAndOnlyCity($pre,$city);
+                break;
+        }
+        echo "email:<br/>";
+        var_dump($emailModel->getToAddr());
+        echo "<br/>user:<br/>";
+        var_dump($emailModel->getToUser());
     }
 
     public function actionIndex($pageNum=0){

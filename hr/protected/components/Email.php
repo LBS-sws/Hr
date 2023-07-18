@@ -47,6 +47,10 @@ class Email {
         return $this->to_addr;
     }
 
+    public function getToUser(){
+        return $this->to_user;
+    }
+
     public function resetToAddr(){
         $this->to_addr = array();
 		$this->to_user = array();	//Percy: 2021-04-16
