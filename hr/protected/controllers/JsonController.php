@@ -28,10 +28,12 @@ class JsonController extends Controller
 		}
         if($_GET['ac']=='2')
 		{
-			$list = Yii::app()->db->createCommand('SELECT * FROM hr_employee WHERE 1=1 ORDER BY id ASC ')->queryAll();
-	//        print_r($list);
+			// entry_time入職時間
+			$list = Yii::app()->db->createCommand('SELECT id,name,code,sex,phone,entry_time FROM hr_employee WHERE 1=1 ORDER BY id ASC ')->queryAll();
+			echo "<pre>";
+	        print_r($list[0]);
 			// echo count($list);
-			echo json_encode($list);
+			//echo json_encode($list);
 		}
     }
 	
