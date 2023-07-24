@@ -221,6 +221,8 @@ return array(
     'Show all Trip'=>'顯示所有出差記錄',
     'audit for trip'=>'出差審核',
     'report for trip'=>'出差報表',
+    'trip money set'=>'出差費用配置',
+    'trip result set'=>'出差結果配置',
 //沈超添加結束
 );
 ?>

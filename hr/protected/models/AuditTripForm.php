@@ -45,6 +45,15 @@ class AuditTripForm extends CFormModel
         ),
     );
 
+    public $addMoney=array(
+        array('id'=>0,
+            'trip_id'=>0,
+            'money_set_id'=>'',
+            'trip_money'=>'',
+            'uflag'=>'N',
+        ),
+    );
+
     public $no_of_attm = array(
         'trip'=>0
     );
@@ -90,6 +99,11 @@ class AuditTripForm extends CFormModel
             'wage'=>Yii::t('contract','Contract Pay'),
             'lcd'=>Yii::t('fete','apply for time'),
             'state'=>Yii::t('contract','Status'),
+            'result_id'=>Yii::t('fete','trip result'),
+            'result_text'=>Yii::t('fete','trip result text'),
+            'money_set_id'=>Yii::t('fete','project name'),
+            'trip_money'=>Yii::t('fete','trip amount'),
+            'addMoney'=>Yii::t('fete','trip money'),
         );
 	}
 
@@ -166,6 +180,21 @@ class AuditTripForm extends CFormModel
                 $this->addTime[] = $temp;
             }
         }
+
+        $sql = "select * from hr_employee_trip_money where trip_id=$index";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        if (count($rows) > 0) {
+            $this->addMoney = array();
+            foreach ($rows as $row) {
+                $temp = array();
+                $temp['id'] = $row['id'];
+                $temp['trip_id'] = $row['trip_id'];
+                $temp['money_set_id'] = $row['money_set_id'];
+                $temp['trip_money'] = floatval($row['trip_money']);
+                $temp['uflag'] = 'N';
+                $this->addMoney[] = $temp;
+            }
+        }
 		return true;
 	}
 
@@ -189,7 +218,7 @@ class AuditTripForm extends CFormModel
         switch ($this->scenario) {
             case 'audit':
                 $sql = "update hr_employee_trip set
-							status = 4, 
+							status = 2, 
 							head_lcu = :head_lcu, 
 							head_lcd = :head_lcd, 
 							luu = :luu

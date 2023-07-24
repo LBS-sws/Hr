@@ -215,9 +215,18 @@ return array(
     'trip address'=>'目的地',
     'trip date'=>'出差時間',
     'trip cause'=>'出差目的',
-    'trip cost'=>'預估費用',
+    'trip cost'=>'預估总費用',
     'trip log time'=>'出差總時長',
     'trip lcu'=>'審核賬號',
     'trip lcd'=>'審核時間',
+
+    'trip money'=>'計劃費用計劃',
+    'trip money type'=>'項目名稱',
+    'trip amount'=>'預估費用',
+    'trip result'=>'出差結果',
+    'trip result text'=>'出差結果說明',
+    'index'=>'層級',
+    'project name'=>'項目名稱',
+    'audited, pending result'=>'已審核，等待出差結果',
 );
 ?>

@@ -102,6 +102,21 @@ $this->pageTitle=Yii::app()->name . ' - auditTrip Info';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'addMoney',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-8">
+                    <?php $this->widget('ext.layout.TableView2Widget', array(
+                        'model'=>$model,
+                        'tableClass'=>'table-bordered addMoney',
+                        'attribute'=>'addMoney',
+                        'viewhdr'=>'//auditTrip/_moneyFormhdr',
+                        'viewdtl'=>'//auditTrip/_moneyFormdtl',
+                        'gridsize'=>'24',
+                        'height'=>'200',
+                    ));
+                    ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'trip_cost',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->numberField($model, 'trip_cost',

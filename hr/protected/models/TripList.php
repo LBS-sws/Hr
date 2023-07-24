@@ -103,7 +103,7 @@ class TripList extends CListPageModel
 		$this->attr = array();
 		if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-                $colorList = LeaveList::statusToColor($record['status']);
+                $colorList = self::statusToColor($record['status']);
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'trip_code'=>$record['trip_code'],
@@ -126,6 +126,47 @@ class TripList extends CListPageModel
 		$session['trip_01'] = $this->getCriteria();
 		return true;
 	}
+
+    //根據狀態獲取顏色
+    public static function statusToColor($status){
+        switch ($status){
+            // text-danger
+            case 0:
+                return array(
+                    "status"=>Yii::t("contract","Draft"),
+                    "style"=>""
+                );
+            case 1:
+                return array(
+                    "status"=>Yii::t("contract","Sent, pending approval"),//已發送，等待審核
+                    "style"=>" text-primary"
+                );
+            case 2:
+                return array(
+                    "status"=>Yii::t("fete","audited, pending result"),//已审核，等待出差结果
+                    "style"=>" text-yellow"
+                );
+            case 3:
+                return array(
+                    "status"=>Yii::t("contract","Rejected"),//拒絕
+                    "style"=>" text-danger"
+                );
+            case 4:
+                return array(
+                    "status"=>Yii::t("contract","finish support"),//完成
+                    "style"=>" text-green"
+                );
+            case 5:
+                return array(
+                    "status"=>Yii::t("contract","cancel"),//取消
+                    "style"=>" text-aqua"
+                );
+        }
+        return array(
+            "status"=>"",
+            "style"=>""
+        );
+    }
 
     public function getCriteria() {
         return array(

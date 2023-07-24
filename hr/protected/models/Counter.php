@@ -152,11 +152,23 @@ class Counter {
         return $count;
     }
 //出差审核(審核)
-    public static function getTrip() {
+    public static function getTripAudit() {
         $city_allow = Yii::app()->user->city_allow();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_trip a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
             ->where("a.status in (1) AND b.city in ($city_allow)")->queryScalar();
+        return $count;
+    }
+//出差申请（出差结果)
+    public static function getTripApply() {
+        $count=0;
+        $row = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")
+            ->where('user_id=:user_id',array(':user_id'=>Yii::app()->user->id))->queryRow();
+        if($row){
+            $count = Yii::app()->db->createCommand()->select("count(a.id)")
+                ->from("hr_employee_trip a")
+                ->where("a.status=2 and a.employee_id=".$row["employee_id"])->queryScalar();
+        }
         return $count;
     }
 //加班审核(審核)

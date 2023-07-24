@@ -24,7 +24,7 @@ class TripController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','delete','save','audit','fileupload','fileRemove'),
+                'actions'=>array('new','edit','delete','save','audit','result','fileupload','fileRemove'),
                 'expression'=>array('TripController','allowReadWrite'),
             ),
             array('allow',
@@ -61,6 +61,23 @@ class TripController extends Controller
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Cancel Done'));
                 $this->redirect(Yii::app()->createUrl('trip/index'));
+            }else{
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('trip/edit',array('index'=>$model->id)));
+            }
+        }
+    }
+
+    //出差結果
+    public function actionResult(){
+        $model = new TripForm('result');
+        if (isset($_POST['TripForm'])) {
+            $model->attributes = $_POST['TripForm'];
+            if($model->validateResult()){
+                $model->saveResult();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
+                $this->redirect(Yii::app()->createUrl('trip/edit',array('index'=>$model->id)));
             }else{
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);

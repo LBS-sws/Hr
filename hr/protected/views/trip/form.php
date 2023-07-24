@@ -58,6 +58,12 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
                 );
                 ?>
             <?php endif; ?>
+            <?php if ($model->status == 2): ?>
+                <?php echo TbHtml::button('<span class="fa fa-laptop"></span> '.Yii::t('fete','trip result'), array(
+                        'name'=>'btnResult','data-toggle'=>'modal','data-target'=>'#resultDialog',)
+                );
+                ?>
+            <?php endif; ?>
         <?php endif; ?>
 
 	</div>
@@ -79,7 +85,28 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'status'); ?>
             <?php echo CHtml::hiddenField('dtltemplate'); ?>
+            <?php echo CHtml::hiddenField('dtltemplateTwo'); ?>
 
+
+            <?php if ($model->status==4||($model->status==5&&!empty($model->result_id))): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'result_id',array('class'=>"col-lg-2 control-label")); ?>
+                    <div class="col-lg-6">
+                        <?php echo $form->dropDownList($model, 'result_id',TripResultSetForm::getTripResultSetList($model->result_id),
+                            array('readonly'=>(true))
+                        ); ?>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'result_text',array('class'=>"col-lg-2 control-label")); ?>
+                    <div class="col-lg-6">
+                        <?php echo $form->textArea($model, 'result_text',
+                            array('readonly'=>(true),"rows"=>4)
+                        ); ?>
+                    </div>
+                </div>
+                <legend>&nbsp;</legend>
+            <?php endif; ?>
 
             <?php if ($model->status==3): ?>
                 <div class="form-group has-error">
@@ -90,6 +117,7 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
                         ); ?>
                     </div>
                 </div>
+                <legend>&nbsp;</legend>
             <?php endif; ?>
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
@@ -104,6 +132,7 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
                 <div class="col-lg-8">
                     <?php $this->widget('ext.layout.TableView2Widget', array(
                         'model'=>$model,
+                        'tableClass'=>'table-bordered addTime',
                         'attribute'=>'addTime',
                         'viewhdr'=>'//trip/_formhdr',
                         'viewdtl'=>'//trip/_formdtl',
@@ -122,10 +151,25 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
                 </div>
             </div>
             <div class="form-group">
+                <?php echo $form->labelEx($model,'addMoney',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-8">
+                    <?php $this->widget('ext.layout.TableView2Widget', array(
+                        'model'=>$model,
+                        'tableClass'=>'table-bordered addMoney',
+                        'attribute'=>'addMoney',
+                        'viewhdr'=>'//trip/_moneyFormhdr',
+                        'viewdtl'=>'//trip/_moneyFormdtl',
+                        'gridsize'=>'24',
+                        'height'=>'200',
+                    ));
+                    ?>
+                </div>
+            </div>
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'trip_cost',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-lg-3">
                     <?php echo $form->numberField($model, 'trip_cost',
-                        array('readonly'=>($model->ready()))
+                        array('readonly'=>(true),'id'=>'trip_cost')
                     ); ?>
                 </div>
             </div>
@@ -168,6 +212,11 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
 //$model->getInputBool()
 ?>
 <?php
+if ($model->status == 2){
+    $this->renderPartial('//trip/resultDialog',array('form'=>$form,'model'=>$model));
+}
+?>
+<?php
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
@@ -177,15 +226,27 @@ $js = "
 $('table').on('change','[id^=\"TripForm\"]',function() {
 	var n=$(this).attr('id').split('_');
 	$('#TripForm_'+n[1]+'_'+n[2]+'_uflag').val('Y');
+	changeTripCost();
 });
+function changeTripCost(){
+    var money =0;
+    var sumMoney =0;
+    $('.addMoney>tbody>tr').not('.removeTr').each(function(){
+        money = $(this).find('input.trip_money').val();
+        money = money==''?0:parseFloat(money);
+        sumMoney+=money;
+    });
+    $('#trip_cost').val(sumMoney);
+}
 ";
 Yii::app()->clientScript->registerScript('setFlag',$js,CClientScript::POS_READY);
 
 if ($model->scenario!='view') {
     $js = "
-$('table').on('click','#btnDelRow', function() {
+$('table').on('click','.btnDelRow', function() {
 	$(this).closest('tr').find('[id*=\"_uflag\"]').val('D');
-	$(this).closest('tr').hide();
+	$(this).closest('tr').addClass('removeTr').hide();
+	changeTripCost();
 });
 	";
     Yii::app()->clientScript->registerScript('removeRow',$js,CClientScript::POS_READY);
@@ -193,18 +254,28 @@ $('table').on('click','#btnDelRow', function() {
     $dateLang = Yii::app()->language;
     $js = "
 $(document).ready(function(){
-	var ct = $('#tblDetail tr').eq(1).html();
-	$('#dtltemplate').attr('value',ct);
-	$('#tblDetail').addClass('table-bordered');
+    $('.tblDetail').each(function(){
+        var ct = $(this).find('tr').eq(1).html();
+        if($(this).hasClass('addTime')){
+            $('#dtltemplate').attr('value',ct);
+        }else{
+            $('#dtltemplateTwo').attr('value',ct);
+        }
+    });
 });
 
-$('#btnAddRow').on('click',function() {
-	var r = $('#tblDetail tr').length;
+$('.btnAddRow').on('click',function() {
+	var tableTop = $(this).parents('.tblDetail').eq(0);
+	var r = tableTop.find('tr').length;
 	if (r>0) {
 		var nid = '';
-		var ct = $('#dtltemplate').val();
-		$('#tblDetail tbody:last').append('<tr>'+ct+'</tr>');
-		$('#tblDetail tr').eq(-1).find('[id*=\"TripForm_\"]').each(function(index) {
+        if(tableTop.hasClass('addTime')){
+		    var ct = $('#dtltemplate').val();
+        }else{
+		    var ct = $('#dtltemplateTwo').val();
+        }
+		tableTop.find('tbody:last').append('<tr>'+ct+'</tr>');
+		tableTop.find('tr').eq(-1).find('[id*=\"TripForm_\"]').each(function(index) {
 			var id = $(this).attr('id');
 			var name = $(this).attr('name');
 
@@ -218,6 +289,8 @@ $('#btnAddRow').on('click',function() {
 			if (id.indexOf('_trip_id') != -1) $(this).attr('value','0');
 			if (id.indexOf('_start_time_lg') != -1) $(this).val('AM');
 			if (id.indexOf('_end_time_lg') != -1) $(this).val('PM');
+			if (id.indexOf('_money_set_id') != -1) $(this).val('');
+			if (id.indexOf('_trip_money') != -1) $(this).val('');
 			if (name.indexOf('[start_time]') != -1) {
 				$(this).attr('value','');
 				$(this).datepicker({autoclose: true, format: 'yyyy/mm/dd',language: '{$dateLang}'});

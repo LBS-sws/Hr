@@ -2,6 +2,7 @@
 class RptTripList extends CReport {
     protected function fields() {
         return array(
+            'status'=>array('label'=>Yii::t('contract','Status'),'width'=>25,'align'=>'L'),
             'lcd'=>array('label'=>Yii::t('fete','apply for time'),'width'=>25,'align'=>'L'),
             'trip_code'=>array('label'=>Yii::t('fete','trip code'),'width'=>15,'align'=>'L'),
             'employee_code'=>array('label'=>Yii::t('contract','Employee Code'),'width'=>22,'align'=>'L'),
@@ -12,12 +13,15 @@ class RptTripList extends CReport {
             'trip_address'=>array('label'=>Yii::t('fete','trip address'),'width'=>15,'align'=>'L'),
             'trip_cost'=>array('label'=>Yii::t('fete','trip cost'),'width'=>15,'align'=>'R'),
             'trip_cause'=>array('label'=>Yii::t('fete','trip cause'),'width'=>30,'align'=>'L'),
+            'result_id'=>array('label'=>Yii::t('fete','trip result'),'width'=>30,'align'=>'L'),
+            'result_text'=>array('label'=>Yii::t('fete','trip result text'),'width'=>30,'align'=>'L'),
             'start_time_info'=>array('label'=>Yii::t('contract','Start Time'),'width'=>20,'align'=>'L'),
             'end_time_info'=>array('label'=>Yii::t('contract','End Time'),'width'=>20,'align'=>'L'),
         );
     }
     public function report_structure() {
         return array(
+            'status',
             'lcd',
             'trip_code',
             'employee_code',
@@ -28,6 +32,8 @@ class RptTripList extends CReport {
             'trip_address',
             'trip_cost',
             'trip_cause',
+            'result_id',
+            'result_text',
             array(
                 'start_time_info',
                 'end_time_info',
@@ -70,18 +76,22 @@ class RptTripList extends CReport {
                 $cond_staff = " and a.employee_id in ($cond_staff)";
             }
         }
-        $sql = "select a.*,f.name as city_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city 
+        $sql = "select a.*,f.name as city_name,b.name AS employee_name,b.code AS employee_code,b.city AS s_city,
+                g.pro_name,g.pro_num
                 from hr_employee_trip a 
                 LEFT JOIN hr_employee b ON a.employee_id = b.id
+                LEFT JOIN hr_trip_result_set g ON a.result_id = g.id
                 LEFT JOIN security{$suffix}.sec_city f ON b.city=f.code
-                where b.city in($citylist) and a.status=4 and a.start_time >= '$start_dt' and a.start_time <= '$end_dt' 
+                where b.city in($citylist) and a.status in (2,4,5) and a.start_time >= '$start_dt' and a.start_time <= '$end_dt' 
                 $cond_staff
-				order by b.lcd desc, a.id
+				order by a.employee_id,a.lcd desc
 			";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
+                $status = self::getStatusDesc($row);
                 $temp = array();
+                $temp['status'] = $status;
                 $temp['trip_address'] = $row['trip_address'];
                 $temp['trip_cost'] = $row['trip_cost'];
                 $temp['trip_cause'] = $row['trip_cause'];
@@ -90,6 +100,8 @@ class RptTripList extends CReport {
                 $temp['employee_name'] = $row['employee_name'];
                 $temp['lcd'] = $row['lcd'];
                 $temp['city_name'] = $row['city_name'];
+                $temp['result_id'] = empty($row['result_id'])?"":"（{$row['pro_num']}%）{$row['pro_name']}";
+                $temp['result_text'] = $row['result_text'];
                 $temp['start_time'] = CGeneral::toDate($row['start_time']);
                 $temp['end_time'] = CGeneral::toDate($row['end_time']);
                 $detail=array();
@@ -112,6 +124,22 @@ class RptTripList extends CReport {
             }
         }
         return true;
+    }
+
+    private function getStatusDesc($row){
+        $status=$row["status"];
+        switch ($row["status"]){
+            case 2:
+                $status = "已审核，等待出差结果";
+                break;
+            case 4:
+                $status = "已完成";
+                break;
+            case 5:
+                $status = "已取消";
+                break;
+        }
+        return $status;
     }
 
     public function getReportName() {

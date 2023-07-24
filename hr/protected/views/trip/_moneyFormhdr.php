@@ -1,9 +1,9 @@
 <tr>
 	<th width="50%">
-		<?php echo TbHtml::label($this->getLabelName('start_time'), false); ?>
+		<?php echo TbHtml::label($this->getLabelName('money_set_id'), false); ?>
 	</th>
 	<th width="50%">
-		<?php echo TbHtml::label($this->getLabelName('end_time'), false); ?>
+		<?php echo TbHtml::label($this->getLabelName('trip_money'), false); ?>
 	</th>
 	<th>
 		<?php echo !$this->model->ready() ?

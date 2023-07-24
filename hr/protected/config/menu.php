@@ -483,6 +483,14 @@ return array(
                 'access'=>'ZC11',
                 'url'=>'/auditLeave/index?only=4',
             ),
+            'trip money set'=>array(//出差费用配置
+                'access'=>'ZC16',
+                'url'=>'/tripMoneySet/index',
+            ),
+            'trip result set'=>array(//出差結果配置
+                'access'=>'ZC17',
+                'url'=>'/tripResultSet/index',
+            ),
             'Config office'=>array(//办事处配置
                 'access'=>'ZC15',
                 'url'=>'/configOffice/index',

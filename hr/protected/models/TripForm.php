@@ -31,6 +31,8 @@ class TripForm extends CFormModel
     public $you_lcu;
     public $you_lcd;
     public $reject_cause;
+    public $result_id;
+    public $result_text;
     public $lcd;
     public $audit = false;//是否需要審核
 
@@ -41,6 +43,15 @@ class TripForm extends CFormModel
             'start_time_lg'=>'AM',
             'end_time'=>'',
             'end_time_lg'=>'PM',
+            'uflag'=>'N',
+        ),
+    );
+
+    public $addMoney=array(
+        array('id'=>0,
+            'trip_id'=>0,
+            'money_set_id'=>'',
+            'trip_money'=>'',
             'uflag'=>'N',
         ),
     );
@@ -90,6 +101,11 @@ class TripForm extends CFormModel
             'wage'=>Yii::t('contract','Contract Pay'),
             'lcd'=>Yii::t('fete','apply for time'),
             'state'=>Yii::t('contract','Status'),
+            'result_id'=>Yii::t('fete','trip result'),
+            'result_text'=>Yii::t('fete','trip result text'),
+            'money_set_id'=>Yii::t('fete','project name'),
+            'trip_money'=>Yii::t('fete','trip amount'),
+            'addMoney'=>Yii::t('fete','trip money'),
         );
 	}
 
@@ -99,15 +115,27 @@ class TripForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,addTime,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
+            array('id,result_id,result_text,addMoney,addTime,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
             array('id','validateRejectCause','on'=>array("cancel")),
             //array('employee_id','validateUser','on'=>array("new","edit","audit")),
             array('employee_id,trip_cost,trip_address','required','on'=>array("new","edit","audit")),
             array('employee_id','validateStaff'),
             array('addTime','validateEndTime','on'=>array("new","edit","audit")),
+            array('addMoney','validateMoney','on'=>array("new","edit","audit")),
+            array('id','validateCount','on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);
 	}
+
+    public function validateCount($attribute, $params){
+        $row = Yii::app()->db->createCommand()->select("trip_code")
+            ->from("hr_employee_trip")
+            ->where("employee_id=:id and status=2",array(":id"=>$this->employee_id))->queryRow();
+        if($row){
+            $message = "您有出差单未填写出差结果，无法继续申请出差。({$row['trip_code']})";
+            $this->addError($attribute,$message);
+        }
+    }
 
     public function validateStaff($attribute, $params){
         if($this->getScenario()=="new"){
@@ -143,8 +171,6 @@ class TripForm extends CFormModel
             }
         }
     }
-
-
 
     //請假時間段的驗證
     public function validateEndTime($attribute, $params){
@@ -215,6 +241,18 @@ class TripForm extends CFormModel
             }
         }
     }
+
+    //請假時間段的驗證
+    public function validateMoney($attribute, $params){
+        $this->trip_cost = 0;
+        foreach ($this->addMoney as $row) {
+            if(!empty($row['money_set_id'])){
+                $money = empty($row['trip_money'])?0:floatval($row['trip_money']);
+                $this->trip_cost +=$money;
+            }
+        }
+    }
+
     //判斷兩個時間段是否有交集
     private function timeThatReturnBool($list,$forList){
         $list["start_time"] = date("Y-m-d",strtotime($list["start_time"]));
@@ -279,6 +317,8 @@ class TripForm extends CFormModel
                 $this->audit_remark = $row['audit_remark'];
                 $this->reject_cause = $row['reject_cause'];
                 $this->no_of_attm['trip'] = $row['tripdoc'];
+                $this->result_id=$row['result_id'];
+                $this->result_text=$row['result_text'];
                 break;
 			}
 		}
@@ -299,12 +339,56 @@ class TripForm extends CFormModel
                 $this->addTime[] = $temp;
             }
         }
+
+        $sql = "select * from hr_employee_trip_money where trip_id=$index";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        if (count($rows) > 0) {
+            $this->addMoney = array();
+            foreach ($rows as $row) {
+                $temp = array();
+                $temp['id'] = $row['id'];
+                $temp['trip_id'] = $row['trip_id'];
+                $temp['money_set_id'] = $row['money_set_id'];
+                $temp['trip_money'] = floatval($row['trip_money']);
+                $temp['uflag'] = 'N';
+                $this->addMoney[] = $temp;
+            }
+        }
 		return true;
 	}
 
     //刪除驗證
     public function deleteValidate(){
         return true;
+    }
+
+    //出差结果驗證
+    public function validateResult(){
+        $row = Yii::app()->db->createCommand()->select("id")
+            ->from("hr_employee_trip")
+            ->where("id=:id and status=2",array(":id"=>$this->id))->queryRow();
+        if(!$row){
+            $message = "数据异常，请刷新重试";
+            $this->addError("result_id",$message);
+            return false;
+        }
+        if(empty($this->result_id)){
+            $message = "出差结果不能为空";
+            $this->addError("result_id",$message);
+            return false;
+        }
+        return true;
+    }
+
+    //出差结果保存
+    public function saveResult(){
+        $uid = Yii::app()->user->id;
+        Yii::app()->db->createCommand()->update('hr_employee_trip', array(
+            'status'=>4,
+            'luu'=>$uid,
+            'result_id'=>$this->result_id,
+            'result_text'=>$this->result_text
+        ), 'id=:id', array(':id'=>$this->id));
     }
 
 	public function saveData()
@@ -314,6 +398,7 @@ class TripForm extends CFormModel
 		try {
 			$this->saveGoods($connection);
             $this->saveDtl($connection);
+            $this->saveDtlMoney($connection);
             $this->updateDocman($connection,'TRIP');
 			$transaction->commit();
 		}
@@ -401,6 +486,73 @@ class TripForm extends CFormModel
                 if (strpos($sql,':start_time')!==false) {
                     $dead = General::toMyDate($row['start_time']);
                     $command->bindParam(':start_time',$dead,PDO::PARAM_STR);
+                }
+                $command->execute();
+            }
+        }
+        return true;
+    }
+
+    protected function saveDtlMoney(&$connection)
+    {
+        $city = Yii::app()->user->city();
+        $uid = Yii::app()->user->id;
+
+        foreach ($this->addMoney as $row) {
+            if(empty($row['money_set_id'])){
+                continue;
+            }
+            $sql = '';
+            switch ($this->scenario) {
+                case 'delete':
+                    $sql = "delete from hr_employee_trip_money where trip_id = :trip_id";
+                    break;
+                case 'new':
+                    if ($row['uflag']=='Y') {
+                        $sql = "insert into hr_employee_trip_money(
+									trip_id, money_set_id, trip_money
+								) values (
+									:trip_id, :money_set_id, :trip_money
+								)";
+                    }
+                    break;
+                case 'edit':
+                    switch ($row['uflag']) {
+                        case 'D':
+                            $sql = "delete from hr_employee_trip_money where id = :id";
+                            break;
+                        case 'Y':
+                            $sql = ($row['id']==0)
+                                ?
+                                "insert into hr_employee_trip_money(
+									    trip_id, money_set_id, trip_money
+									) values (
+									    :trip_id, :money_set_id, :trip_money
+									)
+									"
+                                :
+                                "update hr_employee_trip_money set
+										money_set_id=:money_set_id,
+										trip_money = :trip_money
+									where id = :id 
+									";
+                            break;
+                    }
+                    break;
+            }
+
+            if ($sql != '') {
+                $command=$connection->createCommand($sql);
+                if (strpos($sql,':id')!==false)
+                    $command->bindParam(':id',$row['id'],PDO::PARAM_INT);
+                if (strpos($sql,':trip_id')!==false)
+                    $command->bindParam(':trip_id',$this->id,PDO::PARAM_INT);
+                if (strpos($sql,':money_set_id')!==false) {
+                    $command->bindParam(':money_set_id',$row['money_set_id'],PDO::PARAM_INT);
+                }
+                if (strpos($sql,':trip_money')!==false) {
+                    $row['trip_money'] = empty($row['trip_money'])?0:$row['trip_money'];
+                    $command->bindParam(':trip_money',$row['trip_money'],PDO::PARAM_INT);
                 }
                 $command->execute();
             }

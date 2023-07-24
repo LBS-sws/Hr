@@ -28,7 +28,7 @@
 	<td>
 		<?php 
 			echo !$this->model->ready()
-				? TbHtml::Button('-',array('id'=>'btnDelRow','title'=>Yii::t('misc','Delete'),'size'=>TbHtml::BUTTON_SIZE_SMALL))
+				? TbHtml::Button('-',array('id'=>'btnDelRow','class'=>'btnDelRow','title'=>Yii::t('misc','Delete'),'size'=>TbHtml::BUTTON_SIZE_SMALL))
 				: '&nbsp;';
 		?>
 		<?php echo CHtml::hiddenField($this->getFieldName('uflag'),$this->record['uflag']); ?>

@@ -217,11 +217,20 @@ return array(
     'trip list'=>'出差列表',
     'trip code'=>'出差编号',
     'trip address'=>'目的地',
-    'trip date'=>'出差时间',
+    'trip date'=>'计划出差时间',
     'trip cause'=>'出差目的',
-    'trip cost'=>'预估费用',
+    'trip cost'=>'预估总费用',
     'trip log time'=>'出差总时长',
     'trip lcu'=>'审核账号',
     'trip lcd'=>'审核时间',
+
+    'trip money'=>'计划费用计划',
+    'trip money type'=>'项目名称',
+    'trip amount'=>'预估费用',
+    'trip result'=>'出差结果',
+    'trip result text'=>'出差结果说明',
+    'index'=>'层级',
+    'project name'=>'项目名称',
+    'audited, pending result'=>'已审核，等待出差结果',
 );
 ?>

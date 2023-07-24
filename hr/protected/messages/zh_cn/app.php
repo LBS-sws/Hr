@@ -222,6 +222,8 @@ return array(
     'Show all Trip'=>'显示所有出差记录',
     'audit for trip'=>'出差审核',
     'report for trip'=>'出差报表',
+    'trip money set'=>'出差费用配置',
+    'trip result set'=>'出差结果配置',
     //沈超添加结束
 );
 ?>
