@@ -7,6 +7,7 @@ class TableView2Widget extends CWidget
 	public $viewhdr;
 	public $viewdtl;
 	public $height='100';
+	public $tableClass='';
 	public $codelist = array();
 	
 	protected $record;
@@ -15,7 +16,7 @@ class TableView2Widget extends CWidget
 	public function run()
 	{
 		$field=$this->attribute;
-		$layout = "<table id='tblDetail' class='table table-hover'><thead>";
+		$layout = "<table id='tblDetail' class='tblDetail table table-hover {$this->tableClass}'><thead>";
 		$layout .= $this->render($this->viewhdr, null, true);
 		$layout .= "</thead>";
 		$layout .= "<tbody>";
