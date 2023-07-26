@@ -569,10 +569,10 @@ class TripForm extends CFormModel
             case 'new':
                 $sql = "insert into hr_employee_trip(
 							employee_id,trip_cause,trip_address,start_time, start_time_lg, end_time, end_time_lg,log_time,trip_cost,z_index, city, lcu,
-							status
+							status,result_id
 						) values (
 							:employee_id,:trip_cause,:trip_address,:start_time, :start_time_lg, :end_time, :end_time_lg,:log_time,:trip_cost,4, :city, :lcu,
-							:status
+							:status,0
 						)";
                 break;
             case 'edit':
