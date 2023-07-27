@@ -95,8 +95,16 @@ $this->pageTitle=Yii::app()->name . ' - auditTrip Info';
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'trip_address',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-lg-3">
+                <div class="col-lg-5">
                     <?php echo $form->textField($model, 'trip_address',
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-lg-5">
+                    <?php echo $form->textField($model, 'area_lcu',
                         array('readonly'=>(true))
                     ); ?>
                 </div>

@@ -224,7 +224,7 @@ return array(
     'trip lcu'=>'审核账号',
     'trip lcd'=>'审核时间',
 
-    'trip money'=>'计划费用计划',
+    'trip money'=>'出差费用计划',
     'trip money type'=>'项目名称',
     'trip amount'=>'预估费用',
     'trip result'=>'出差结果',
@@ -232,5 +232,6 @@ return array(
     'index'=>'层级',
     'project name'=>'项目名称',
     'audited, pending result'=>'已审核，等待出差结果',
+    'company name'=>'公司名称',
 );
 ?>

@@ -88,7 +88,7 @@ class AuditTripForm extends CFormModel
             'pers_lcd'=>Yii::t('fete','personnel lcd'),
             'user_lcu'=>Yii::t('fete','user lcu'),
             'user_lcd'=>Yii::t('fete','user lcd'),
-            'area_lcu'=>Yii::t('fete','area lcu'),
+            'area_lcu'=>Yii::t('fete','company name'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','trip lcu'),
             'head_lcd'=>Yii::t('fete','trip lcd'),
@@ -113,7 +113,7 @@ class AuditTripForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,addTime,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
+            array('id,addTime,area_lcu,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
             array('employee_id,trip_cost,trip_address','required','on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
 		);

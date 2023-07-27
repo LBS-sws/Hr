@@ -1,5 +1,7 @@
 <?php
-$content = "<div class=\"form-group\">";
+$content="";
+/*
+$content.= "<div class=\"form-group\">";
 $content.=$form->labelEx($model,'result_id',array('class'=>"col-lg-3 control-label"));
 $content.= "<div class=\"col-lg-7\">";
 $content.=$form->dropDownList($model, 'result_id',TripResultSetForm::getTripResultSetList(),
@@ -7,6 +9,7 @@ $content.=$form->dropDownList($model, 'result_id',TripResultSetForm::getTripResu
 );
 $content.="</div>";
 $content.="</div>";
+*/
 $content.= "<div class=\"form-group\">";
 $content.=$form->labelEx($model,'result_text',array('class'=>"col-lg-3 control-label"));
 $content.= "<div class=\"col-lg-7\">";

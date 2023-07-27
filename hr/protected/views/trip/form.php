@@ -89,14 +89,7 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
 
 
             <?php if ($model->status==4||($model->status==5&&!empty($model->result_id))): ?>
-                <div class="form-group">
-                    <?php echo $form->labelEx($model,'result_id',array('class'=>"col-lg-2 control-label")); ?>
-                    <div class="col-lg-6">
-                        <?php echo $form->dropDownList($model, 'result_id',TripResultSetForm::getTripResultSetList($model->result_id),
-                            array('readonly'=>(true))
-                        ); ?>
-                    </div>
-                </div>
+
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'result_text',array('class'=>"col-lg-2 control-label")); ?>
                     <div class="col-lg-6">
@@ -144,8 +137,16 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
             </div>
             <div class="form-group">
                 <?php echo $form->labelEx($model,'trip_address',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-lg-3">
+                <div class="col-lg-5">
                     <?php echo $form->textField($model, 'trip_address',
+                        array('readonly'=>($model->ready()))
+                    ); ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-lg-5">
+                    <?php echo $form->textField($model, 'area_lcu',
                         array('readonly'=>($model->ready()))
                     ); ?>
                 </div>

@@ -128,7 +128,13 @@ class TripController extends Controller
     {
         $model = new TripForm('new');
         if(TripList::validateEmployee($model)){
-            $this->render('form',array('model'=>$model,));
+            if($model->validateCount("id","id")){
+                $this->render('form',array('model'=>$model,));
+            }else{
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('trip/index'));
+            }
         }else{
             throw new CHttpException(404,'该账号未绑定员工，请与管理员联系');
         }

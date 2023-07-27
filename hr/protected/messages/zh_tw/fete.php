@@ -220,7 +220,7 @@ return array(
     'trip lcu'=>'審核賬號',
     'trip lcd'=>'審核時間',
 
-    'trip money'=>'計劃費用計劃',
+    'trip money'=>'出差費用計劃',
     'trip money type'=>'項目名稱',
     'trip amount'=>'預估費用',
     'trip result'=>'出差結果',
@@ -228,5 +228,6 @@ return array(
     'index'=>'層級',
     'project name'=>'項目名稱',
     'audited, pending result'=>'已審核，等待出差結果',
+    'company name'=>'公司名稱',
 );
 ?>

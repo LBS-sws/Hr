@@ -24,7 +24,7 @@ class TripForm extends CFormModel
     public $pers_lcd;
     public $user_lcu;
     public $user_lcd;
-    public $area_lcu;
+    public $area_lcu;//公司名称
     public $area_lcd;
     public $head_lcu;
     public $head_lcd;
@@ -90,7 +90,7 @@ class TripForm extends CFormModel
             'pers_lcd'=>Yii::t('fete','personnel lcd'),
             'user_lcu'=>Yii::t('fete','user lcu'),
             'user_lcd'=>Yii::t('fete','user lcd'),
-            'area_lcu'=>Yii::t('fete','area lcu'),
+            'area_lcu'=>Yii::t('fete','company name'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','trip lcu'),
             'head_lcd'=>Yii::t('fete','trip lcd'),
@@ -115,7 +115,7 @@ class TripForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,result_id,result_text,addMoney,addTime,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
+            array('id,result_id,area_lcu,result_text,addMoney,addTime,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
             array('id','validateRejectCause','on'=>array("cancel")),
             //array('employee_id','validateUser','on'=>array("new","edit","audit")),
             array('employee_id,trip_cost,trip_address','required','on'=>array("new","edit","audit")),
@@ -134,7 +134,9 @@ class TripForm extends CFormModel
         if($row){
             $message = "您有出差单未填写出差结果，无法继续申请出差。({$row['trip_code']})";
             $this->addError($attribute,$message);
+            return false;
         }
+        return true;
     }
 
     public function validateStaff($attribute, $params){
@@ -372,8 +374,8 @@ class TripForm extends CFormModel
             $this->addError("result_id",$message);
             return false;
         }
-        if(empty($this->result_id)){
-            $message = "出差结果不能为空";
+        if(empty($this->result_text)){
+            $message = "出差结果说明不能为空";
             $this->addError("result_id",$message);
             return false;
         }
@@ -386,7 +388,7 @@ class TripForm extends CFormModel
         Yii::app()->db->createCommand()->update('hr_employee_trip', array(
             'status'=>4,
             'luu'=>$uid,
-            'result_id'=>$this->result_id,
+            'result_id'=>0,
             'result_text'=>$this->result_text
         ), 'id=:id', array(':id'=>$this->id));
     }
@@ -568,15 +570,16 @@ class TripForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_employee_trip(
-							employee_id,trip_cause,trip_address,start_time, start_time_lg, end_time, end_time_lg,log_time,trip_cost,z_index, city, lcu,
+							employee_id,area_lcu,trip_cause,trip_address,start_time, start_time_lg, end_time, end_time_lg,log_time,trip_cost,z_index, city, lcu,
 							status,result_id
 						) values (
-							:employee_id,:trip_cause,:trip_address,:start_time, :start_time_lg, :end_time, :end_time_lg,:log_time,:trip_cost,4, :city, :lcu,
+							:employee_id,:area_lcu,:trip_cause,:trip_address,:start_time, :start_time_lg, :end_time, :end_time_lg,:log_time,:trip_cost,4, :city, :lcu,
 							:status,0
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_employee_trip set
+							area_lcu = :area_lcu, 
 							trip_cause = :trip_cause, 
 							trip_cost = :trip_cost, 
 							trip_address = :trip_address, 
@@ -612,6 +615,8 @@ class TripForm extends CFormModel
             $command->bindParam(':employee_id',$this->employee_id,PDO::PARAM_STR);
         if (strpos($sql,':trip_cause')!==false)
             $command->bindParam(':trip_cause',$this->trip_cause,PDO::PARAM_STR);
+        if (strpos($sql,':area_lcu')!==false)
+            $command->bindParam(':area_lcu',$this->area_lcu,PDO::PARAM_STR);
         if (strpos($sql,':trip_cost')!==false)
             $command->bindParam(':trip_cost',$this->trip_cost,PDO::PARAM_STR);
         if (strpos($sql,':trip_address')!==false)
