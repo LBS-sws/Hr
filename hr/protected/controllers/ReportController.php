@@ -192,7 +192,7 @@ class ReportController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
             }
         }
-        $this->render('form_y05',array('model'=>$model));
+        $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/pinReport')));
     }
 
     public function actionPennantculist() {
