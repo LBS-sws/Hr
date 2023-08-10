@@ -25,16 +25,29 @@ class JsonController extends Controller
 			$data['list'] = $list;
 	
 			echo json_encode($data);
+			exit;
 		}
         if($_GET['ac']=='2')
 		{
-			// entry_time入職時間
-			$list = Yii::app()->db->createCommand('SELECT id,name,code,sex,phone,entry_time FROM hr_employee WHERE 1=1 ORDER BY id ASC ')->queryAll();
-			echo "<pre>";
-	        print_r($list[0]);
-			// echo count($list);
-			//echo json_encode($list);
+			// entry_time入 職時間
+			// staff_status 員工狀態：0（已經入職）
+			// position	职位
+			$list = Yii::app()->db->createCommand('SELECT id, name, code, sex, city, phone, entry_time, staff_status, position FROM hr_employee WHERE 1=1 ORDER BY id ASC ')->queryAll();
+			
+			//echo count($list);
+			echo json_encode($list);
+			exit;
 		}
+        if($_GET['ac']=='3'){
+            echo "<pre>";
+            $from =  'security'.Yii::app()->params['envSuffix'].'.sec_user_access';
+            $rows = Yii::app()->db->createCommand()->select("*")->from($from)->where(array('like', 'username', "Grace"))->queryAll();
+            print_r($rows);
+
+            $fromuser =  'security'.Yii::app()->params['envSuffix'].'.sec_user';
+            $row = Yii::app()->db->createCommand()->select("*")->from($fromuser)->where(array('like', 'username', "Grace"))->queryAll();
+            print_r($row);
+        }
     }
 	
 }
