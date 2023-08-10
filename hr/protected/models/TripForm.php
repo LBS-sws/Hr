@@ -153,7 +153,6 @@ class TripForm extends CFormModel
             $this->employee_name = $row["name"];
             $this->city = $row["city"];
             if(!Yii::app()->user->validFunction('ZR24')&&$uid!=$row["user_id"]){
-
                 $message = "权限不足，无法修改";
                 $this->addError($attribute,$message);
             }
@@ -366,10 +365,24 @@ class TripForm extends CFormModel
 
     //出差结果驗證
     public function validateResult(){
-        $row = Yii::app()->db->createCommand()->select("id")
-            ->from("hr_employee_trip")
-            ->where("id=:id and status=2",array(":id"=>$this->id))->queryRow();
-        if(!$row){
+        $row = Yii::app()->db->createCommand()
+            ->select("a.*,b.wage,b.city as s_city,b.staff_type,b.code as employee_code,b.name as employee_name")
+            ->from("hr_employee_trip a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.id=:id and status=2",array(":id"=>$this->id))->queryRow();
+        if($row){
+            $this->id = $row['id'];
+            $this->trip_code = $row['trip_code'];
+            $this->employee_id = $row['employee_id'];
+            $this->employee_code = $row['employee_code'];
+            $this->employee_name = $row['employee_name'];
+            $this->city = $row['s_city'];
+            $this->trip_address = $row['trip_address'];
+            $this->start_time = date("Y/m/d",strtotime($row['start_time']));
+            $this->end_time = date("Y/m/d",strtotime($row['end_time']));
+            $this->start_time_lg = $row['start_time_lg'];
+            $this->end_time_lg = $row['end_time_lg'];
+        }else{
             $message = "数据异常，请刷新重试";
             $this->addError("result_id",$message);
             return false;
@@ -391,6 +404,43 @@ class TripForm extends CFormModel
             'result_id'=>0,
             'result_text'=>$this->result_text
         ), 'id=:id', array(':id'=>$this->id));
+
+        $this->sendEmail("result");//發送郵件
+    }
+
+    //發送郵件
+    private function sendEmail($status){
+        switch ($status){
+            case "result":
+                $subject = "出差申请已填写结果 - ".$this->employee_name;
+                $link = Yii::app()->createAbsoluteUrl("trip/view",array("index"=>$this->id));
+                $message = "<p><a target='_blank' href='{$link}'>出差编号:".$this->trip_code."</a></p>";
+                $message.= "<p>员工编号:".$this->employee_code."</p>";
+                $message.= "<p>员工姓名:".$this->employee_name."</p>";
+                $message.= "<p>员工城市:".CGeneral::getCityName($this->city)."</p>";
+                $message.= "<p>目的地:".$this->trip_address."</p>";
+                $message.= "<p>计划出差时间开始时间:".$this->start_time."</p>";
+                $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
+                $message.= "<p>出差结果:".$this->result_text."</p>";
+                $emailModel = new Email($subject,$message,$subject);
+                $emailModel->addEmailToPrefixAndCity("ZG10",$this->city);
+                $emailModel->sent();
+                return;
+            case "audit":
+                $subject = "出差申请审核 - ".$this->employee_name;
+                $link = Yii::app()->createAbsoluteUrl("auditTrip/edit",array("index"=>$this->id));
+                $message = "<p><a target='_blank' href='{$link}'>出差编号:".$this->trip_code."</a></p>";
+                $message.= "<p>员工编号:".$this->employee_code."</p>";
+                $message.= "<p>员工姓名:".$this->employee_name."</p>";
+                $message.= "<p>员工城市:".CGeneral::getCityName($this->city)."</p>";
+                $message.= "<p>目的地:".$this->trip_address."</p>";
+                $message.= "<p>计划出差时间开始时间:".$this->start_time."</p>";
+                $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
+                $emailModel = new Email($subject,$message,$subject);
+                $emailModel->addEmailToPrefixAndCity("ZG10",$this->city);
+                $emailModel->sent();
+                return;
+        }
     }
 
 	public function saveData()
@@ -649,6 +699,10 @@ class TripForm extends CFormModel
             Yii::app()->db->createCommand()->update('hr_employee_trip', array(
                 'trip_code'=>"TR".$this->lenStr($this->id)
             ), 'id=:id', array(':id'=>$this->id));
+        }
+
+        if($this->status==1){//要求審核
+            $this->sendEmail("audit");
         }
 		return true;
 	}

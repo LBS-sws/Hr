@@ -116,9 +116,33 @@ class AuditTripForm extends CFormModel
             array('id,addTime,area_lcu,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
             array('employee_id,trip_cost,trip_address','required','on'=>array("new","edit","audit")),
             array('files, removeFileId, docMasterId','safe'),
+            array('employee_id','validateID'),
 		);
 	}
 
+    public function validateID($attribute, $params){
+        $row = Yii::app()->db->createCommand()
+            ->select("a.*,b.wage,b.city as s_city,b.staff_type,b.code as employee_code,b.name as employee_name")
+            ->from("hr_employee_trip a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.id=:id and a.status=1",array(":id"=>$this->id))->queryRow();
+        if($row){
+            $this->id = $row['id'];
+            $this->trip_code = $row['trip_code'];
+            $this->employee_id = $row['employee_id'];
+            $this->employee_code = $row['employee_code'];
+            $this->employee_name = $row['employee_name'];
+            $this->city = $row['s_city'];
+            $this->trip_address = $row['trip_address'];
+            $this->start_time = date("Y/m/d",strtotime($row['start_time']));
+            $this->end_time = date("Y/m/d",strtotime($row['end_time']));
+            $this->start_time_lg = $row['start_time_lg'];
+            $this->end_time_lg = $row['end_time_lg'];
+        }else{
+            $message = "数据异常，请刷新重试";
+            $this->addError($attribute,$message);
+        }
+    }
 
 	public function retrieveData($index) {
         $city_allow = Yii::app()->user->city_allow();
@@ -258,6 +282,43 @@ class AuditTripForm extends CFormModel
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();
+
+        $this->sendEmail($this->getScenario());
 		return true;
 	}
+
+    //發送郵件
+    private function sendEmail($status){
+        switch ($status){
+            case "audit":
+                $subject = "出差申请已批准 - ".$this->trip_code;
+                $link = Yii::app()->createAbsoluteUrl("trip/edit",array("index"=>$this->id));
+                $message = "<p><a target='_blank' href='{$link}'>出差编号:".$this->trip_code."</a></p>";
+                $message.= "<p>员工编号:".$this->employee_code."</p>";
+                $message.= "<p>员工姓名:".$this->employee_name."</p>";
+                $message.= "<p>员工城市:".CGeneral::getCityName($this->city)."</p>";
+                $message.= "<p>目的地:".$this->trip_address."</p>";
+                $message.= "<p>计划出差时间开始时间:".$this->start_time."</p>";
+                $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
+                $emailModel = new Email($subject,$message,$subject);
+                $emailModel->addEmailToStaffId($this->employee_id);
+                $emailModel->sent();
+                return;
+            case "reject":
+                $subject = "出差申请已拒绝 - ".$this->trip_code;
+                $link = Yii::app()->createAbsoluteUrl("trip/edit",array("index"=>$this->id));
+                $message = "<p><a target='_blank' href='{$link}'>出差编号:".$this->trip_code."</a></p>";
+                $message.= "<p>员工编号:".$this->employee_code."</p>";
+                $message.= "<p>员工姓名:".$this->employee_name."</p>";
+                $message.= "<p>员工城市:".CGeneral::getCityName($this->city)."</p>";
+                $message.= "<p>目的地:".$this->trip_address."</p>";
+                $message.= "<p>计划出差时间开始时间:".$this->start_time."</p>";
+                $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
+                $message.= "<p>拒绝原因:".$this->reject_cause."</p>";
+                $emailModel = new Email($subject,$message,$subject);
+                $emailModel->addEmailToStaffId($this->employee_id);
+                $emailModel->sent();
+                return;
+        }
+    }
 }
