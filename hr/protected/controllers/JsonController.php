@@ -56,7 +56,7 @@ class JsonController extends Controller
 			$rows = Yii::app()->db->createCommand($sql)->queryAll();
 			print_r($rows);
 			echo "<pre/>";
-			$sql1 = 'SELECT * FROM `hr_docx` order by id desc';
+			$sql1 = 'SELECT * FROM `hr_attachment` order by id desc';
 			
 			$rows1 = Yii::app()->db->createCommand($sql1)->queryAll();
 			print_r($rows1);
