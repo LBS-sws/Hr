@@ -48,6 +48,16 @@ class JsonController extends Controller
             $row = Yii::app()->db->createCommand()->select("*")->from($fromuser)->where(array('like', 'username', "Grace"))->queryAll();
             print_r($row);
         }
+		if($_GET['ac']=='company'){
+			$key = $_GET['key'];
+			$id = $_GET['id'];
+			$sql = 'SELECT * FROM `hr_company` WHERE id=55';
+			
+			//echo $sql;exit;
+			$rows = Yii::app()->db->createCommand($sql)->queryAll();
+			print_r($rows);
+			
+		}
     }
 	
 }
