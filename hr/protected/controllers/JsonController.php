@@ -50,16 +50,7 @@ class JsonController extends Controller
         }
 		if($_GET['ac']=='company'){
 			
-			$sql = 'SELECT * FROM `hr_company` WHERE id=55';
 			
-			//echo $sql;exit;
-			$rows = Yii::app()->db->createCommand($sql)->queryAll();
-			print_r($rows);
-			echo "<pre/>";
-			$sql1 = 'SELECT * FROM `hr_attachment` order by id desc';
-			
-			$rows1 = Yii::app()->db->createCommand($sql1)->queryAll();
-			print_r($rows1);
 			
 		}
     }
