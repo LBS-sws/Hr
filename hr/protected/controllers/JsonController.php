@@ -50,7 +50,7 @@ class JsonController extends Controller
         }
 		if($_GET['ac']=='company'){
 			
-			
+			//
 			
 		}
     }
