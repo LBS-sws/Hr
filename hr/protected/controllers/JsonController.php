@@ -50,8 +50,17 @@ class JsonController extends Controller
         }
 		if($_GET['ac']=='company'){
 			echo "<pre>";
+			$from =  'docmandev'.Yii::app()->params['envSuffix'].'.dm_doc_type';
+            $rows = Yii::app()->db->createCommand()->select("*")->from($from)->queryAll();
+            print_r($rows);
 			
+			$from1 =  'docmandev'.Yii::app()->params['envSuffix'].'.dm_file';
+            $rows1 = Yii::app()->db->createCommand()->select("*")->from($from1)->queryAll();
+            print_r($rows1);
 			
+			$from2 =  'docmandev'.Yii::app()->params['envSuffix'].'.dm_master';
+            $rows2 = Yii::app()->db->createCommand()->select("*")->from($from2)->queryAll();
+            print_r($rows2);
 		}
     }
 	
