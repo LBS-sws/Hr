@@ -59,10 +59,11 @@ class QueueController extends Controller
 				default: $ext = '.tmp'; $ctype = 'multipart/form-data';
 			}
 			
-			$sql = "select param_value from hr_queue_param where queue_id=:qid and param_field='RPT_ID'";
+			$sql = "select param_value from hr_queue_param where queue_id=:qid and param_field='RPT_NAME'";
 			$qparam = QueueParam::model()->findBySql($sql, array(':qid'=>$index));
-			$fname = ($qparam!==null) ? strtolower($qparam->param_value) : 'temp';
+			$fname = ($qparam!==null) ? $qparam->param_value : 'temp';
 
+            $fname= iconv('utf-8','gbk//ignore',$fname);
 			$filename = $fname.$ext;
 			header("Content-type:".$ctype); //for pdf or excel file
 			//header('Content-Type:text/plain; charset=ISO-8859-15');
