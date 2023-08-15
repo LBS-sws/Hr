@@ -743,5 +743,7 @@ return array(
     'Office Form'=>'辦事處表單',
     'office employee list'=>'辦事處員工',
     'local office'=>'本部',
+    'Affiliated company'=>'所屬公司',
+    'Leave Date'=>'離職日期',
     );
 ?>

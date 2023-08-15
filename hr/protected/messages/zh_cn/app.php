@@ -224,6 +224,8 @@ return array(
     'report for trip'=>'出差报表',
     'trip money set'=>'出差费用配置',
     'trip result set'=>'出差结果配置',
+    'report for duty'=>'在职员工报表',
+    'report for departure'=>'离职员工报表',
     //沈超添加结束
 );
 ?>

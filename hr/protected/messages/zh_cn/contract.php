@@ -750,5 +750,7 @@ return array(
     'Office Form'=>'办事处表单',
     'office employee list'=>'办事处员工',
     'local office'=>'本部',
+    'Affiliated company'=>'所属公司',
+    'Leave Date'=>'离职日期',
 );
 ?>

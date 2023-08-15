@@ -51,51 +51,63 @@ $this->pageTitle=Yii::app()->name . ' - Report';
                 <?php echo $form->hiddenField($model, 'city'); ?>
             <?php endif ?>
 
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'start_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
+            <?php if ($model->showField('start_dt')): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'start_dt',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'start_dt',
+                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                            ?>
                         </div>
-                        <?php echo $form->textField($model, 'start_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                    </div>
+                </div>
+            <?php else: ?>
+                <?php echo $form->hiddenField($model, 'start_dt'); ?>
+            <?php endif ?>
+
+            <?php if ($model->showField('end_dt')): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'end_dt',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <div class="input-group date">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'end_dt',
+                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            <?php else: ?>
+                <?php echo $form->hiddenField($model, 'end_dt'); ?>
+            <?php endif ?>
+
+            <?php if ($model->showField('staffs')): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'staffs',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-6">
+                        <?php
+                        echo $form->textArea($model, 'staffs_desc',
+                            array('rows'=>4,'cols'=>80,'maxlength'=>1000,'readonly'=>true,)
+                        );
+                        ?>
+                    </div>
+                    <div class="col-sm-2">
+                        <?php
+                        echo TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('report','Staffs'),
+                            array('name'=>'btnStaff','id'=>'btnStaff',)
+                        );
                         ?>
                     </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'end_dt',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-3">
-                    <div class="input-group date">
-                        <div class="input-group-addon">
-                            <i class="fa fa-calendar"></i>
-                        </div>
-                        <?php echo $form->textField($model, 'end_dt',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
-                        ?>
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <?php echo $form->labelEx($model,'staffs',array('class'=>"col-sm-2 control-label")); ?>
-                <div class="col-sm-6">
-                    <?php
-                    echo $form->textArea($model, 'staffs_desc',
-                        array('rows'=>4,'cols'=>80,'maxlength'=>1000,'readonly'=>true,)
-                    );
-                    ?>
-                </div>
-                <div class="col-sm-2">
-                    <?php
-                    echo TbHtml::button('<span class="fa fa-search"></span> '.Yii::t('report','Staffs'),
-                        array('name'=>'btnStaff','id'=>'btnStaff',)
-                    );
-                    ?>
-                </div>
-            </div>
+            <?php else: ?>
+                <?php echo $form->hiddenField($model, 'staffs'); ?>
+            <?php endif ?>
         </div>
     </div>
 </section>
@@ -103,17 +115,20 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 <?php $this->renderPartial('//site/lookup'); ?>
 
 <?php
-$js = Script::genLookupSearchEx();
-Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
+if ($model->showField('staffs')){
+    $js = Script::genLookupSearchEx();
+    Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnStaff', 'staff', 'staffs', 'staffs_desc',
-    array(),
-    true
-);
-Yii::app()->clientScript->registerScript('lookupStaffs',$js,CClientScript::POS_READY);
+    $js = Script::genLookupButtonEx('btnStaff', 'staff', 'staffs', 'staffs_desc',
+        array(),
+        true
+    );
+    Yii::app()->clientScript->registerScript('lookupStaffs',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupSelect();
-Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
+    $js = Script::genLookupSelect();
+    Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
+
+}
 
 $js = Script::genDatePicker(array(
     'ReportY05Form_start_dt',

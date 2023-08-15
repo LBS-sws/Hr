@@ -12,6 +12,8 @@ class ReportController extends Controller
         'pinReport'=>'YB09',
         'bossReport'=>'YB10',
         'triplist'=>'YB11',
+        'staffDuty'=>'YB12',
+        'staffDeparture'=>'YB13',
     );
 	
 	public function filters()
@@ -170,6 +172,52 @@ class ReportController extends Controller
             }
         }
         $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/triplist')));
+    }
+
+    public function actionStaffDeparture() {
+		$this->function_id = self::$actions['staffDeparture'];
+		Yii::app()->session['active_func'] = $this->function_id;
+
+        $model = new ReportY05Form;
+        $model->id = "RptStaffDeparture";
+        $model->name = Yii::t('app','report for departure');
+        $model->start_dt = date("Y/m/01");
+        $model->end_dt = date("Y/m/t");
+        $model->fields = 'start_dt,end_dt,city';
+        if (isset($_POST['ReportY05Form'])) {
+            $model->attributes = $_POST['ReportY05Form'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffDeparture')));
+    }
+
+    public function actionStaffDuty() {
+		$this->function_id = self::$actions['staffDuty'];
+		Yii::app()->session['active_func'] = $this->function_id;
+
+        $model = new ReportY05Form;
+        $model->id = "RptStaffDuty";
+        $model->name = Yii::t('app','report for duty');
+        $model->start_dt = date("Y/m/01");
+        $model->end_dt = date("Y/m/d");
+        $model->fields = 'end_dt,city';
+        if (isset($_POST['ReportY05Form'])) {
+            $model->attributes = $_POST['ReportY05Form'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffDuty')));
     }
 
     public function actionPinReport() {

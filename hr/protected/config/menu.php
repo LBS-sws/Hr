@@ -522,6 +522,14 @@ return array(
 				'access'=>'YB11',
                 'url'=>'/report/triplist',
 			),
+			'report for duty'=>array( //在職人員報表
+				'access'=>'YB12',
+                'url'=>'/report/staffDuty',
+			),
+			'report for departure'=>array( //離職人員報表
+				'access'=>'YB13',
+                'url'=>'/report/staffDeparture',
+			),
 			'Pennants ex List'=>array(
 				'access'=>'YB05',
                 'url'=>'/report/pennantexlist',
