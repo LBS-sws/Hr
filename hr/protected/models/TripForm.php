@@ -696,8 +696,9 @@ class TripForm extends CFormModel
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
+            $this->trip_code = $this->lenStr();
             Yii::app()->db->createCommand()->update('hr_employee_trip', array(
-                'trip_code'=>"TR".$this->lenStr($this->id)
+                'trip_code'=>$this->trip_code
             ), 'id=:id', array(':id'=>$this->id));
         }
 
@@ -707,14 +708,16 @@ class TripForm extends CFormModel
 		return true;
 	}
 
-    private function lenStr($id){
-        $code = strval($id);
-        $str = "";
-        for($i = 0;$i < 5-strlen($code);$i++){
-            $str.="0";
+    private function lenStr(){
+        $year = date("Y");
+        $row = Yii::app()->db->createCommand()->select("trip_code")
+            ->from("hr_employee_trip")
+            ->where("trip_code like '{$year}%'")->order("trip_code desc")->queryRow();
+        if($row){
+            $str = intval($row["trip_code"])+1;
+        }else{
+            $str = $year*100000+1;
         }
-        $str .= $code;
-        $this->trip_code = $str;
         return $str;
     }
 
