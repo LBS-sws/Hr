@@ -745,5 +745,6 @@ return array(
     'local office'=>'本部',
     'Affiliated company'=>'所屬公司',
     'Leave Date'=>'離職日期',
+    'Deadline date'=>'截止日期',
     );
 ?>
