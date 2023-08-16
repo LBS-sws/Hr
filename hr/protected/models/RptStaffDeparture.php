@@ -50,7 +50,7 @@ class RptStaffDeparture extends CReport {
                 $temp = array();
                 $temp['employee_code'] = $row['code'];
                 $temp['employee_name'] = $row['name'];
-                $temp['user_card'] = $row['user_card'];
+                $temp['user_card'] = " ".$row['user_card'];
                 $temp['city_name'] = $row['city_name'];
                 $temp['company_name'] = $row['company_name'];
                 $temp['position_name'] = $row['position_name'];

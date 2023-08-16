@@ -24,8 +24,8 @@ class RptStaffDuty extends CReport {
     public function retrieveData() {
         $start_dt = $this->criteria['START_DT'];
         $end_dt = $this->criteria['END_DT'];
-        $start_dt = date("Y-m-d",strtotime($start_dt));
-        $end_dt = date("Y-m-d",strtotime($end_dt));
+        $start_dt = date("Y/m/d",strtotime($start_dt));
+        $end_dt = date("Y/m/d",strtotime($end_dt));
         $city = $this->criteria['CITY'];
 
         $citymodel = new City();
@@ -49,7 +49,7 @@ class RptStaffDuty extends CReport {
                 $temp = array();
                 $temp['employee_code'] = $row['code'];
                 $temp['employee_name'] = $row['name'];
-                $temp['user_card'] = $row['user_card'];
+                $temp['user_card'] = " ".$row['user_card'];
                 $temp['city_name'] = $row['city_name'];
                 $temp['company_name'] = $row['company_name'];
                 $temp['position_name'] = $row['position_name'];
