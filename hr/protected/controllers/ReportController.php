@@ -194,7 +194,7 @@ class ReportController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
             }
         }
-        $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffDeparture')));
+        $this->render('form_staff',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffDeparture')));
     }
 
     public function actionStaffDuty() {
@@ -217,7 +217,7 @@ class ReportController extends Controller
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
             }
         }
-        $this->render('form_y05',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffDuty')));
+        $this->render('form_staff',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffDuty')));
     }
 
     public function actionPinReport() {
