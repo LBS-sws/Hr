@@ -91,8 +91,8 @@ class RecruitSummaryList extends CListPageModel
                 );
                 $detail = $this->getDetailList($record,$attrList);
                 $attrList['detail']=$detail;
-                $attrList['sum_rate']=round(($attrList["now_sum"]-$attrList["leave_sum"])/$attrList["recruit_sum"],2)*100;
-                $attrList['sum_rate'].="%";
+                $attrList['sum_rate']=empty($attrList["recruit_sum"])?"error":round(($attrList["now_sum"]-$attrList["leave_sum"])/$attrList["recruit_sum"],2)*100;
+                $attrList['sum_rate'].=empty($attrList["recruit_sum"])?"":"%";
                 $this->attr[] = $attrList;
 			}
 		}
