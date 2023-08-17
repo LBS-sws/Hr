@@ -42,7 +42,8 @@ class RecruitApplyForm extends CFormModel
 		return array(
             array('id,year,dept_id,leader_id,city','safe'),
             array('year,dept_id,leader_id,recruit_num','required'),
-            array('year,dept_id,leader_id,recruit_num','numerical','allowEmpty'=>false,'integerOnly'=>true),
+            array('year,dept_id,leader_id','numerical','allowEmpty'=>false,'integerOnly'=>true),
+            array('recruit_num','numerical','min'=>1,'allowEmpty'=>false,'integerOnly'=>true),
             array('id','validateDept'),
         );
 	}
