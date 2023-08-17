@@ -52,7 +52,7 @@ class CompanyController extends Controller
     public function actionTest(){
 
 // 调用方法并传递静态资源路径
-        $resourcePath = '/data/docman/upload/sal/uat/57/0/4731ca7a290485a311e4e05f8d55ff3f.jpg';
+        $resourcePath = '/docman/upload/sal/uat/57/0/4731ca7a290485a311e4e05f8d55ff3f.jpg';
         $resourceContent = $this->readStaticResource($resourcePath);
 
 // 处理文件内容，例如输出到控制台
@@ -61,7 +61,7 @@ class CompanyController extends Controller
 
     public function readStaticResource($resourcePath) {
         // 读取静态资源文件内容
-        $content = file_get_contents($resourcePath);
+        $content = @file_get_contents($resourcePath);
         // 返回文件内容
         return $content;
     }
