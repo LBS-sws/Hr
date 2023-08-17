@@ -29,11 +29,11 @@ class CompanyController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','save','delete','fileupload','fileRemove'),
+                'actions'=>array('new','edit','save','delete','fileupload','fileRemove','test'),
                 'expression'=>array('CompanyController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload'),
+                'actions'=>array('index','view','fileDownload','test'),
                 'expression'=>array('CompanyController','allowReadOnly'),
             ),
             array('deny',  // deny all users
@@ -49,6 +49,25 @@ class CompanyController extends Controller
         return Yii::app()->user->validFunction('ZA02');
     }
 
+    public function actionTest()
+    {
+        // 调用方法并传递静态资源路径
+        $resourcePath = '/docman/upload/sal/uat/57/0/4731ca7a290485a311e4e05f8d55ff3f.jpg';
+        $resourceContent = $this->readStaticResource($resourcePath);
+
+        // 输出图片内容
+        header('Content-Type: image/jpeg');
+        echo $resourceContent;
+    }
+
+    public function readStaticResource($resourcePath)
+    {
+        // 读取静态资源文件内容
+        $content = @file_get_contents($resourcePath);
+
+        // 返回文件内容
+        return $content;
+    }
     public function actionIndex($pageNum=0){
         $model = new CompanyList;
         if (isset($_POST['CompanyList'])) {
