@@ -120,8 +120,8 @@ class RecruitApplyList extends CListPageModel
             }
         }
         $arr["lack_num"] = $record["recruit_num"] - ($arr["now_num"]-$arr["leave_num"]);
-        $arr["completion_rate"] = empty($attrList["recruit_sum"])?"error":round(($arr["now_num"]-$arr["leave_num"])/$record["recruit_num"],2)*100;
-        $arr["completion_rate"].= empty($attrList["recruit_sum"])?"":"%";
+        $arr["completion_rate"] = empty($record["recruit_num"])?"error":round(($arr["now_num"]-$arr["leave_num"])/$record["recruit_num"],2)*100;
+        $arr["completion_rate"].= empty($record["recruit_num"])?"":"%";
         return $arr;
     }
 
