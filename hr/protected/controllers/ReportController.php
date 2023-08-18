@@ -14,6 +14,7 @@ class ReportController extends Controller
         'triplist'=>'YB11',
         'staffDuty'=>'YB12',
         'staffDeparture'=>'YB13',
+        'testStaff'=>'YB13',//测试员工名册
     );
 	
 	public function filters()
@@ -40,10 +41,18 @@ class ReportController extends Controller
 		);
 	}
 
+	public function actionTestStaff($city="CD",$date='2023-07-05') {
+	    $model = new StaffRpt();
+	    $model->actionRptStaffList($city,$date);
+	    echo "city:{$city}";
+	    echo "date:{$date}";
+	    echo "success!";
+	}
+
 	public function actionSalessummary() {
 		$this->function_id = self::$actions['salessummary'];
 		Yii::app()->session['active_func'] = $this->function_id;
-		
+
 		$model = new ReportY01Form;
 		if (isset($_POST['ReportY01Form'])) {
 			$model->attributes = $_POST['ReportY01Form'];
