@@ -652,6 +652,14 @@ class TripForm extends CFormModel
 						";
                 //$sql = "delete from hr_employee_leave where id = :id";
                 break;
+            case 'reply':
+                $sql = "update hr_employee_trip set
+							status = 0, 
+							luu = :luu
+						where id = :id
+						";
+                //$sql = "delete from hr_employee_leave where id = :id";
+                break;
         }
 		if (empty($sql)) return false;
 

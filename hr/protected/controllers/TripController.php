@@ -35,6 +35,10 @@ class TripController extends Controller
                 'actions'=>array('cancel'),
                 'expression'=>array('TripController','allowCancelled'),
             ),
+            array('allow',
+                'actions'=>array('reply'),
+                'expression'=>array('TripController','allowReply'),
+            ),
             array('deny',  // deny all users
                 'users'=>array('*'),
             ),
@@ -50,6 +54,27 @@ class TripController extends Controller
 
     public static function allowCancelled() {
         return Yii::app()->user->validFunction('ZR05');
+    }
+
+    public static function allowReply() {
+        return Yii::app()->user->validFunction('ZG10');
+    }
+
+    //退回
+    public function actionReply(){
+        $model = new TripForm('reply');
+        if (isset($_POST['TripForm'])) {
+            $model->attributes = $_POST['TripForm'];
+            if($model->validate()){
+                $model->saveData();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','finish to send back'));
+                $this->redirect(Yii::app()->createUrl('trip/index'));
+            }else{
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+                $this->redirect(Yii::app()->createUrl('trip/edit',array('index'=>$model->id)));
+            }
+        }
     }
 
     //取消

@@ -52,12 +52,6 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
                 );
                 ?>
             <?php endif; ?>
-            <?php if (Yii::app()->user->validFunction('ZR05')&&$model->status == 4): ?>
-                <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','cancel'), array(
-                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#jectdialog',)
-                );
-                ?>
-            <?php endif; ?>
             <?php if ($model->status == 2): ?>
                 <?php echo TbHtml::button('<span class="fa fa-laptop"></span> '.Yii::t('fete','trip result'), array(
                         'name'=>'btnResult','data-toggle'=>'modal','data-target'=>'#resultDialog',)
@@ -68,6 +62,17 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
 
 	</div>
             <div class="btn-group pull-right" role="group">
+                <?php if (Yii::app()->user->validFunction('ZG10')&&in_array($model->status,array(2,4,5,6))): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-mail-reply"></span> '.Yii::t('contract','send back'), array(
+                        'submit'=>Yii::app()->createUrl('trip/reply')));
+                    ?>
+                <?php endif; ?>
+                <?php if (Yii::app()->user->validFunction('ZR05')&&$model->status == 4): ?>
+                    <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','cancel'), array(
+                            'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#jectdialog',)
+                    );
+                    ?>
+                <?php endif; ?>
                 <?php
                 $counter = ($model->no_of_attm['trip'] > 0) ? ' <span id="doctrip" class="label label-info">'.$model->no_of_attm['trip'].'</span>' : ' <span id="doctrip"></span>';
                 echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
