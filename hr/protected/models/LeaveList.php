@@ -78,7 +78,7 @@ class LeaveList extends CListPageModel
             $sql1.=" and d.manager <= ".$manager["manager"];
             $sql2.=" and d.manager <= ".$manager["manager"];
         }
-        if(Yii::app()->user->validFunction('ZR04')||in_array($manager["manager"],array(2,3,4))){
+        if(Yii::app()->user->validFunction('ZR04')){
             $sql1.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
             $sql2.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or a.lcu='$lcuId') ";
         }elseif($manager["manager"] == 1){
