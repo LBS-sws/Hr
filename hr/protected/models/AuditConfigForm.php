@@ -210,8 +210,31 @@ class AuditConfigForm extends CFormModel
 
         return 1;
 	}
+
+    //查找管轄某城市的所有城市（根據小城市查找大城市）
+    public static function getAllCityToMinCity($minCity){
+        if(empty($minCity)){
+            return array();
+        }
+        $cityList = array($minCity);
+        $suffix = Yii::app()->params['envSuffix'];
+        $command = Yii::app()->db->createCommand();
+        $rows = $command->select("region")->from("security$suffix.sec_city")
+            ->where("code=:code",array(":code"=>$minCity))->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $foreachList = self::getAllCityToMinCity($row["region"]);
+                $cityList = array_merge($foreachList,$cityList);
+            }
+        }
+
+        return $cityList;
+    }
+
     //判斷審核人是否空缺
     public static function getAccessAndCity($city,$department,$auditType=""){
+        $city_allow = self::getAllCityToMinCity($city);
+        $city_allow = implode("','",$city_allow);
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
         $command = Yii::app()->db->createCommand();
@@ -233,13 +256,25 @@ class AuditConfigForm extends CFormModel
             if($workTwo){
                 $workTwo = array_column($workTwo, 'username');
             }
+            $command->reset();
+            $workThree = $command->select("a.username")->from("security$suffix.sec_user a")
+                ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
+                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZG04%' and a.city in ('{$city_allow}')")
+                ->queryAll();
+            if($workThree){
+                $workThree = array_column($workThree, 'username');
+            }
             $boolOne=true;
             $boolTwo=true;
+            $boolThree=true;
             if((!$workOne)||($workOne==$workTwo)){
                 $boolOne = false;
             }
-            if(!$workTwo){
+            if(!$workTwo||($workTwo==$workThree)){
                 $boolTwo = false;
+            }
+            if(!$workThree){
+                $boolThree = false;
             }
         }else{ //請假
             $leaveOne = $command->select("a.user_id")->from("hr_binding a")
@@ -258,20 +293,32 @@ class AuditConfigForm extends CFormModel
             if($leaveTwo){
                 $leaveTwo = array_column($leaveTwo, 'username');
             }
+            $command->reset();
+            $leaveThree = $command->select("a.username")->from("security$suffix.sec_user a")
+                ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
+                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZG05%' and a.city in ('{$city_allow}')")
+                ->queryAll();
+            if($leaveThree){
+                $leaveThree = array_column($leaveThree, 'username');
+            }
             $boolOne=true;
             $boolTwo=true;
+            $boolThree=true;
             if((!$leaveOne)||($leaveOne==$leaveTwo)){
                 $boolOne = false;
             }
-            if(!$leaveTwo){
+            if(!$leaveTwo||($leaveTwo==$leaveThree)){
                 $boolTwo = false;
+            }
+            if(!$leaveThree){
+                $boolThree = false;
             }
         }
 
         return array(
             1=>$boolOne,
             2=>$boolTwo,
-            3=>true,
+            3=>$boolThree,
             4=>true,
         );
     }
