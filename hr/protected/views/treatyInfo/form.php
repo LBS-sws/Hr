@@ -171,13 +171,17 @@ $js ="
         var day = parseInt(dateArr[2],10);
         monthNum = parseInt(monthNum,10);
         month+=monthNum;
-        if(monthNum>0&&month>12){
-            month-=12;
-            year++;
-        }
-        if(monthNum<0&&month<=0){
-            month+=12;
-            year--;
+        if(month>12||month<-12){
+            var yearAddNum = Math.floor(month/12);
+            month = month%12;
+            if(month>0){
+                year+=yearAddNum;
+            }else if(month<0){
+                year-=yearAddNum;
+            }else{
+                year+=(yearAddNum-1);
+                month=12;
+            }
         }
         month=month<10?'0'+month:month;
         day=day<10?'0'+day:day;
