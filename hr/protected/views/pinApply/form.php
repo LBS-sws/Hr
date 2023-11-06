@@ -13,6 +13,7 @@ $this->pageTitle=Yii::app()->name . ' - pinApply';
 <style>
     input[readonly]{pointer-events: none;}
     select[readonly]{pointer-events: none;}
+    .select2-container .select2-selection--single{ height: 34px;}
 </style>
 <section class="content-header">
 	<h1>
@@ -130,8 +131,19 @@ $this->pageTitle=Yii::app()->name . ' - pinApply';
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
-
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = ($model->scenario=='view') ? 'true' : 'false';
 $js = "
+$('#employee_id').select2({
+	multiple: false,
+	maximumInputLength: 10,
+	language: '$lang',
+	disabled: $disabled
+});
     $('#employee_id').change(function(){
         var entry = $('#employee_id option:selected').data('entry');
         var dept = $('#employee_id option:selected').data('dept');
