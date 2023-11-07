@@ -1,6 +1,6 @@
 <?php
 
-class AuditLeaveForm extends CFormModel
+class AppointLeaveForm extends CFormModel
 {
     public $id;
     public $leave_code;
@@ -90,76 +90,46 @@ class AuditLeaveForm extends CFormModel
             array('id,leave_code,employee_id,vacation_id,status,leave_cause,start_time,start_time_lg,city,end_time,,end_time_lg,log_time,only,audit_remark,
             staff_type,employee_name,lcd','safe'),
             array('reject_cause','required',"on"=>"reject"),
+            array('id','validateID'),
         );
     }
-    //驗證請假類型
-    public function validateLeaveType($attribute, $params){
-        $id = $this->vacation_id;
-        $rows = Yii::app()->db->createCommand()->select("*")
-            ->from("hr_vacation")->where("id='$id'")->queryRow();
-        if($rows){
-            $this->vacation_list = $rows;
-            if($rows["log_bool"]  == 1){
-                if(floatval($this->log_time) > floatval($rows["max_log"])){
-                    $message = Yii::t('fete','Log Date')."不能大于".$rows["max_log"]."天";
+
+    public function validateID($attribute, $params){
+        $row = Yii::app()->db->createCommand()->select("a.*")
+            ->from("hr_employee_leave a")
+            ->where("id=:id",array(":id"=>$this->id))->queryRow();
+        if($row){
+            $this->employee_id = $row["employee_id"];
+            $this->z_index = $row["z_index"];
+            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            if(!$this->appointList){
+                $message = "该员工没有指定审核人，数据异常";
+                $this->addError($attribute,$message);
+            }elseif (!key_exists($this->z_index,$this->appointList)){
+                $message = "加班单异常，请与管理员联系。ID:{$this->id}，z_index:{$this->z_index}，employee_id:{$this->employee_id}";
+                $this->addError($attribute,$message);
+            }else{
+                $uid = Yii::app()->user->id;
+                $auditUser = $this->appointList[$this->z_index];
+                if($auditUser!=$uid){
+                    $message = "审核人异常,审核人应该是：".$auditUser;
                     $this->addError($attribute,$message);
                 }
             }
         }else{
-            $message = Yii::t('fete','Leave Type').Yii::t('contract',' not exist');
+            $message = "加班单不存在，数据异常";
             $this->addError($attribute,$message);
         }
     }
-    //驗證時間週期
-    public function validateLogTime($attribute, $params){
-        if(!empty($this->log_time)){
-            if(!is_numeric($this->log_time)){
-                $message = Yii::t('fete','Log Date')."必須为数字";
-                $this->addError($attribute,$message);
-            }else{
-                if (strpos($this->log_time,'.')!==false){
-                    //含有小數
-                    $float = end(explode(".",$this->log_time));
-                    $float = intval($float);
-                    if($float !== 5 && $float !== 0){
-                        $message = Yii::t('fete','Log Date')."的小数必须为0.5";
-                        $this->addError($attribute,$message);
-                    }
-                }
-            }
-        }
-    }
-
 
     public function retrieveData($index) {
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
-        $only = $this->only;
-        $staffList = BindingForm::getEmployeeListToUsername();
-        if(!empty($staffList)){
-            $staff_id = $staffList["id"];
-            $department = $staffList["department"];//部門
-        }else{
-            $staff_id = 0;
-            $department = 0;
-        }
-        $sql = " a.status in (1,3) AND a.z_index =$only and a.id=:id";
-        switch ($only){
-            case 1: //部門審核
-                $sql.=" AND b.department = '$department' ";
-                break;
-            case 2: //主管
-                $sql.=" AND b.city = '$city' ";
-                break;
-            case 3: //總監
-                $sql.=" AND b.city in ($city_allow) ";
-                break;
-        }
         $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.name as employee_name,b.city as s_city,docman$suffix.countdoc('LEAVE',a.id) as leavedoc")
             ->from("hr_employee_leave a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where($sql,array(":id"=>$index))->queryAll();
+            ->where("a.status in (1,3) and a.id=:id",array(":id"=>$index))->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $this->id = $row['id'];
@@ -217,60 +187,25 @@ class AuditLeaveForm extends CFormModel
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
         $sql = '';
-        $only = intval($this->only);
-        $staffList = BindingForm::getEmployeeListToEmployeeId($this->employee_id);
-        if(!empty($staffList)){
-            $manager= $staffList["c_manager"];
-        }
-        $auditSql = "";//申請人如果是經理、主管會直接完成申請
-        switch ($only){
-            case 1: //部門
-                $clause="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
-/*                if(!empty($staffList)){
-                    $leaveTwo = Yii::app()->db->createCommand()->select("a.username")->from("security$suffix.sec_user a")
-                        ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
-                        ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZE06%' and a.city=:city",
-                            array(':city'=>$staffList["city"]))->queryRow();
-                    if(!$leaveTwo){ //判斷主管是否存在
-                        $only++;
-                    }
-                }*/
-                break;
-            case 2: //主管
-                $clause="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                $auditSql = "status = 4,";
-                break;
-            case 3: //總監
-                $clause="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
-                $auditSql = "status = 4,";
-                break;
-            case 4: //你
-                $clause="you_lcu = :you_lcu, you_lcd = :you_lcd, ";
-                $auditSql = "status = 4,";
-                break;
-            case 5: //人事審核
-                $clause="pers_lcu = :pers_lcu, pers_lcd = :pers_lcd, ";
-                $assList = AuditConfigForm::getAccessAndCity($staffList["city"],$staffList["department"],1);
-                $only = 0;
-                foreach ($assList as $key=>$keyBool){
-                    if($keyBool){
-                        $only = $key-1;
-                        break;
-                    }
-                }
-                break;
-            default:
-                throw new CHttpException(404,'數據異常');
-                return false;
-        }
+        $only = $this->z_index;
+        $userLcdList = array(
+            10=>"pers_lcd",
+            11=>"user_lcd",
+            12=>"area_lcd",
+            13=>"head_lcd",
+            14=>"you_lcd",
+        );
+        $auditSql="";
+        $clause=$userLcdList[$only]." = :".$userLcdList[$only].",";
         switch ($this->scenario) {
             case 'audit':
                 $sql = "update hr_employee_leave set
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
-                if($only!=4){
-                    $only++;
+                $only++;
+                if(!key_exists($only,$this->appointList)){
+                    $auditSql = "status = 4,";
                 }
                 $sql.=$clause.$auditSql."luu = :luu
 						where id = :id";
@@ -362,28 +297,21 @@ class AuditLeaveForm extends CFormModel
         $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
         $message.="<p>请假时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."天)</p>";
         if($this->scenario == "audit"){
-            if ($this->z_index == 2){
-                $description="请假单二次审核 - ".$row["name"];
-                $subject="请假单二次审核 - ".$row["name"];
-                $email->addEmailToPrefixAndOnlyCity("ZE06",$row["city"]);
+            if (key_exists($this->z_index,$this->appointList)){
+                $key = $this->z_index-10;
+                $description="请假单{$key}次审核 - ".$row["name"];
+                $subject="请假单{$key}次审核 - ".$row["name"];
+                $email->addEmailToLcu($this->appointList[$this->z_index]);
             }else{
                 $description="请假单审核通过 - ".$row["name"];
                 $subject="请假单审核通过 - ".$row["name"];
                 $email->addEmailToStaffId($row["id"]);
             }
-/*總監說郵件太多，不想看郵件取消掉了
-            if ($this->z_index == 3){ //普通員工的請假需要給總監發送郵件
-                $subjectOne = "员工请假通过通知 - ".$row["name"];
-                $emailOne = new Email($subjectOne,$message,$subjectOne);
-                $emailOne->addEmailToPrefixAndCity("ZG05",$row["city"]);
-                $emailOne->sent();
-            }*/
         }else{
             $description="请假单被拒絕 - ".$row["name"];
             $subject="请假单被拒絕 - ".$row["name"];
             $message.="<p>拒絕原因：".$this->reject_cause."</p>";
             $email->addEmailToStaffId($row["id"]);
-            //$email->addEmailToPrefixAndCity("ZG05",$row["city"]);//總監說郵件太多，不想看郵件取消掉了
         }
         $email->setDescription($description);
         $email->setMessage($message);
@@ -419,11 +347,6 @@ class AuditLeaveForm extends CFormModel
     //判斷輸入框能否修改
     public function getInputBool(){
         return true;
-/*        if($this->only == 4&&$this->getScenario()!='view'){
-            return false;
-        }else{
-            return true;
-        }*/
     }
     //獲取假期的倍率
     public function getMuplite(){

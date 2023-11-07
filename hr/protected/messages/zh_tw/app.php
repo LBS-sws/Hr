@@ -227,6 +227,9 @@ return array(
     'trip result set'=>'出差結果配置',
     'report for duty'=>'在職員工報表',
     'report for departure'=>'離職員工報表',
+    'appoint set'=>'加班、請假指定審核人',
+    'appoint for leave'=>'審核指定請假',
+    'appoint for work'=>'審核指定加班',
 //沈超添加結束
 );
 ?>

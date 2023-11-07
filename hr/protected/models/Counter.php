@@ -275,6 +275,38 @@ class Counter {
         }
         return $count;
     }
+//指定请假审核(審核)
+    public static function getAppointLeave() {
+        $count = 0;
+	    if(Yii::app()->user->validRWFunction('ZG11')){
+            $uid = Yii::app()->user->id;
+            $auditSql = "";
+            foreach (AppointSetForm::getZIndexForUser() as $key=>$item){
+                $auditSql.= empty($auditSql)?"":" or ";
+                $auditSql.= "(a.z_index='{$key}' and a.{$item}='$uid')";
+            }
+            $count = Yii::app()->db->createCommand()->select("count(a.id)")
+                ->from("hr_employee_leave a")
+                ->where(" a.status in (1,3) and ({$auditSql})")->queryScalar();
+        }
+        return $count;
+    }
+//指定加班审核(審核)
+    public static function getAppointWork() {
+        $count = 0;
+	    if(Yii::app()->user->validRWFunction('ZG12')){
+            $uid = Yii::app()->user->id;
+            $auditSql = "";
+            foreach (AppointSetForm::getZIndexForUser() as $key=>$item){
+                $auditSql.= empty($auditSql)?"":" or ";
+                $auditSql.= "(a.z_index='{$key}' and a.{$item}='$uid')";
+            }
+            $count = Yii::app()->db->createCommand()->select("count(a.id)")
+                ->from("hr_employee_work a")
+                ->where(" a.status in (1,3) and ({$auditSql})")->queryScalar();
+        }
+        return $count;
+    }
 }
 
 ?>

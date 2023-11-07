@@ -481,7 +481,7 @@ class EmployeeForm extends CFormModel
         return false;
     }
     //根據id獲取員信息
-    public function getEmployeeOneToId($id){
+    public static function getEmployeeOneToId($id){
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
             ->where('id=:id', array(':id'=>$id))->queryAll();

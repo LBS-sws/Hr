@@ -14,6 +14,8 @@ return array(
     array('code'=>'ZG08','function'=>'Counter::getSignAudit','color'=>'bg-maroon'),//簽署合同(審核)
     array('code'=>'ZG04','function'=>'Counter::getWorkFour','color'=>'bg-purple'),//加班审核(審核)
     array('code'=>'ZG05','function'=>'Counter::getLeaveFour','color'=>'bg-gray'),//请假审核(審核)
+    array('code'=>'ZG11','function'=>'Counter::getAppointLeave','color'=>'bg-maroon'),//指定请假审核(審核)
+    array('code'=>'ZG12','function'=>'Counter::getAppointWork','color'=>'bg-purple'),//指定加班审核(審核)
     array('code'=>'ZG10','function'=>'Counter::getTripAudit','color'=>'bg-yellow'),//出差审核(審核)
     array('code'=>'ZA10','function'=>'Counter::getTripApply','color'=>'bg-yellow'),//出差申请（出差结果)
     array('code'=>'ZG06','function'=>'Counter::getRewardAudit','color'=>'bg-purple'),//奖金审核(審核)

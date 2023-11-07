@@ -109,7 +109,7 @@ class BindingForm extends CFormModel
         return $arr;
     }
 
-    public function getEmployeeIdToUsername($username=""){
+    public static function getEmployeeIdToUsername($username=""){
 	    if(empty($username)){
             $username = Yii::app()->user->id;
         }
@@ -121,7 +121,7 @@ class BindingForm extends CFormModel
 	    return 0;
     }
 
-    public function getEmployeeListToUsername($username=""){
+    public static function getEmployeeListToUsername($username=""){
 	    if(empty($username)){
             $username = Yii::app()->user->id;
         }
@@ -144,7 +144,7 @@ class BindingForm extends CFormModel
 	    return array();
     }
 
-    public function getEmployeeListToEmployeeId($employee_id){
+    public static function getEmployeeListToEmployeeId($employee_id){
         $rows = Yii::app()->db->createCommand()->select("a.*,c.manager as c_manager")->from("hr_employee a")
             ->leftJoin("hr_dept c","c.id = a.position")
             ->where("a.id=:id", array(':id'=>$employee_id))->queryRow();

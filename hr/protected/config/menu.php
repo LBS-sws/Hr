@@ -285,6 +285,16 @@ return array(
                 'access'=>'ZG05',
                 'url'=>'/auditLeave/index?only=3',
             ),
+            //请假指定审核
+            'appoint for leave'=>array(
+                'access'=>'ZG11',
+                'url'=>'/appointLeave/index',
+            ),
+            //加班指定审核
+            'appoint for work'=>array(
+                'access'=>'ZG12',
+                'url'=>'/appointWork/index',
+            ),
             //出差审核
             'audit for trip'=>array(
                 'access'=>'ZG10',
@@ -490,6 +500,10 @@ return array(
             'trip result set'=>array(//出差結果配置
                 'access'=>'ZC17',
                 'url'=>'/tripResultSet/index',
+            ),
+            'appoint set'=>array(//加班、请假指定审核人
+                'access'=>'ZC18',
+                'url'=>'/appointSet/index',
             ),
             'Config office'=>array(//办事处配置
                 'access'=>'ZC15',

@@ -200,7 +200,7 @@ class WorkList extends CListPageModel
 		return true;
 	}
 
-	public function resetWorkDate(&$record){
+	public static function resetWorkDate(&$record){
         if($record["work_type"] == 3){
             $start[] = $record['start_time'];
             $end[] = $record['end_time'];

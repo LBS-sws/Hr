@@ -51,6 +51,8 @@ class WorkForm extends CFormModel
 
     protected $timeList=array();
 
+    protected $appointList=false;
+
 	public function attributeLabels()
 	{
 		return array(
@@ -455,8 +457,13 @@ class WorkForm extends CFormModel
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false){
-            $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id);
-            $this->z_index = $z_index;
+            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            if($this->appointList){ //指定审核人
+                $this->z_index = 10;
+            }else{
+                $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id);
+                $this->z_index = $z_index;
+            }
             $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
         }
 
@@ -478,10 +485,30 @@ class WorkForm extends CFormModel
         }
 
         $this->addWorkDateInfo();
+        //保存指定审核人
+        $this->saveAppointUser();
         //發送郵件
         $this->sendEmail();
 		return true;
 	}
+
+    //保存指定审核人资料
+    private function saveAppointUser(){
+        if($this->appointList){
+            $userStr = array(
+                10=>"pers_lcu",
+                11=>"user_lcu",
+                12=>"area_lcu",
+                13=>"head_lcu",
+                14=>"you_lcu",
+            );
+            $arr=array();
+            foreach ($this->appointList as $key=>$auditUser){
+                $arr[$userStr[$key]] = $auditUser;
+            }
+            Yii::app()->db->createCommand()->update('hr_employee_work', $arr, 'id=:id', array(':id'=>$this->id));
+        }
+    }
 
 	//添加額外時間段
 	private function addWorkDateInfo(){
@@ -504,6 +531,7 @@ class WorkForm extends CFormModel
                 3=>"ZG04",
                 4=>"ZC10",
                 5=>"ZP01",
+                10=>"ZG12",//指定审核人
             );
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
@@ -530,6 +558,9 @@ class WorkForm extends CFormModel
                     break;
                 case 5:
                     $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
+                    break;
+                case 10://指定审核人
+                    $email->addEmailToLcu($this->appointList[$this->z_index]);
                     break;
                 default:
                     $email->addEmailToPrefixAndCity($assType,$row["city"]);

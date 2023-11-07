@@ -1,6 +1,6 @@
 <?php
 
-class AuditWorkForm extends CFormModel
+class AppointWorkForm extends CFormModel
 {
     public $id;
     public $work_code;
@@ -33,7 +33,7 @@ class AuditWorkForm extends CFormModel
     public $lcd;
     public $cost_num;//節假日的工資倍率
     public $wage;//合約工資
-    public $only = 1;//1:部門審核、2：主管、3：總監、4：你
+
     public $bool_cost = 1;//是否支付加班費用  1：支付  0：不支付
 
 
@@ -92,45 +92,35 @@ class AuditWorkForm extends CFormModel
 
             array('reject_cause','required',"on"=>"reject"),
             array('files, removeFileId, docMasterId','safe'),
+            array('id','validateID'),
         );
     }
 
-    public function validateTime($attribute, $params){
-        if(!empty($this->end_time)&&!empty($this->start_time)){
-            $date2 = strtotime($this->start_time);
-            $date1 = strtotime($this->end_time);
-            if($date2>$date1){
-                $message = Yii::t('fete','Start time cannot be greater than end time');
+    public function validateID($attribute, $params){
+        $row = Yii::app()->db->createCommand()->select("a.*")
+            ->from("hr_employee_work a")
+            ->where("id=:id",array(":id"=>$this->id))->queryRow();
+        if($row){
+            $this->employee_id = $row["employee_id"];
+            $this->z_index = $row["z_index"];
+            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            if(!$this->appointList){
+                $message = "该员工没有指定审核人，数据异常";
+                $this->addError($attribute,$message);
+            }elseif (!key_exists($this->z_index,$this->appointList)){
+                $message = "加班单异常，请与管理员联系。ID:{$this->id}，z_index:{$this->z_index}";
                 $this->addError($attribute,$message);
             }else{
-                if($this->log_time <= 0){
-                    $message = Yii::t('fete','Start time cannot be greater than end time');
+                $uid = Yii::app()->user->id;
+                $auditUser = $this->appointList[$this->z_index];
+                if($auditUser!=$uid){
+                    $message = "审核人异常,审核人应该是：".$auditUser;
                     $this->addError($attribute,$message);
                 }
             }
-        }
-    }
-
-
-    public function validateWorkType($attribute, $params){
-        $city = Yii::app()->user->city();
-        if($this->work_type == 2){
-            $rows = Yii::app()->db->createCommand()->select("cost_num")->from("hr_fete")
-                ->where("start_time<=:start_time and end_time >=:end_time and (city='$city' or only='default')", array(':start_time'=>$this->start_time,':end_time'=>$this->end_time))->queryRow();
-            if($rows){
-                $this->cost_num = $rows["cost_num"];
-            }else{
-                $message = Yii::t('fete','This time period is not a legal holiday, please contact the administrator');
-                $this->addError($attribute,$message);
-            }
-        }else if($this->work_type == 1){
-            $week = date("w",strtotime($this->start_time));
-            if($week == 6 || $week == 0){
-                //是週末
-            }else{
-                $message = Yii::t('fete','This time period is not a weekend');
-                $this->addError($attribute,$message);
-            }
+        }else{
+            $message = "加班单不存在，数据异常";
+            $this->addError($attribute,$message);
         }
     }
 
@@ -138,40 +128,17 @@ class AuditWorkForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $city = Yii::app()->user->city();
         $suffix = Yii::app()->params['envSuffix'];
-        $only = $this->only;
-        $staffList = BindingForm::getEmployeeListToUsername();
-        if(!empty($staffList)){
-            $staff_id = $staffList["id"];
-            $department = $staffList["department"];//部門
-        }else{
-            $staff_id = 0;
-            $department = 0;
-        }
-        $sql = " a.status in (1,3) AND a.z_index =$only and a.id=:id";
-        switch ($only){
-            case 1: //部門審核
-                $sql.=" AND b.department = '$department' ";
-                break;
-            case 2: //主管
-                $sql.=" AND b.city = '$city' ";
-                break;
-            case 5: //人事
-                $sql.=" AND b.city = '$city' ";
-                break;
-            case 3: //總監
-                $sql.=" AND b.city in ($city_allow) ";
-                break;
-        }
+
         $rows = Yii::app()->db->createCommand()->select("a.*,b.wage,b.staff_type,b.city AS s_city,b.name as employee_name,docman$suffix.countdoc('WORKEM',a.id) as workemdoc")
             ->from("hr_employee_work a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where($sql,array(":id"=>$index))->queryAll();
+            ->where("a.status in (1,3) and a.id=:id",array(":id"=>$index))->queryAll();
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->work_code = $row['work_code'];
-                $this->employee_name = $row['employee_id'];
-                $this->employee_id = $row['employee_name'];
+                $this->employee_name = $row['employee_name'];
+                $this->employee_id = $row['employee_id'];
                 $this->wage = $row['wage'];
                 $this->work_type = $row['work_type'];
                 $this->work_cause = $row['work_cause'];
@@ -205,18 +172,6 @@ class AuditWorkForm extends CFormModel
         return true;
     }
 
-    //驗證員工是不是經理級別的審核流程
-    public function validateManagerToEmployeeId($employeeId = ""){
-        $rows = Yii::app()->db->createCommand()->select("b.manager")->from("hr_employee a")
-            ->leftJoin("hr_dept b","b.id = a.position")->where("a.id=$employeeId")->queryRow();
-        if($rows){
-            if(!empty($rows["manager"])){
-                return true;
-            }
-        }
-        return false;
-    }
-
     public function saveData()
     {
         $connection = Yii::app()->db;
@@ -232,63 +187,26 @@ class AuditWorkForm extends CFormModel
     }
 
     protected function saveGoods(&$connection) {
-        $systemId = Yii::app()->params['systemId'];
-        $suffix = Yii::app()->params['envSuffix'];
         $sql = '';
-        $only = intval($this->only);
-        $staffList = BindingForm::getEmployeeListToEmployeeId($this->employee_name);
-        if(!empty($staffList)){
-            $manager= $staffList["c_manager"];
-        }
-        $auditSql = "";//申請人如果是經理、主管會直接完成申請
-        switch ($only){
-            case 1: //部門
-                $clause="user_lcu = :user_lcu, user_lcd = :user_lcd, ";
-/*                if(!empty($staffList)){
-                    $workTwo = Yii::app()->db->createCommand()->select("a.username")->from("security$suffix.sec_user a")
-                        ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
-                        ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZE05%' and a.city=:city",
-                            array(':city'=>$staffList["city"]))->queryRow();
-                    if(!$workTwo){ //判斷主管是否存在
-                        $only++;
-                    }
-                }*/
-                break;
-            case 2: //主管
-                $clause="area_lcu = :area_lcu, area_lcd = :area_lcd, ";
-                $auditSql = "status = 4,";
-                break;
-            case 3: //總監
-                $clause="head_lcu = :head_lcu, head_lcd = :head_lcd, ";
-                $auditSql = "status = 4,";
-                break;
-            case 4: //你
-                $clause="you_lcu = :you_lcu, you_lcd = :you_lcd, ";
-                $auditSql = "status = 4,";
-                break;
-            case 5: //你
-                $clause="pers_lcu = :pers_lcu, pers_lcd = :pers_lcd, ";
-                $assList = AuditConfigForm::getAccessAndCity($staffList["city"],$staffList["department"]);
-                $only = 0;
-                foreach ($assList as $key=>$keyBool){
-                    if($keyBool){
-                        $only = $key-1;
-                        break;
-                    }
-                }
-                break;
-            default:
-                throw new CHttpException(404,'數據異常');
-                return false;
-        }
+        $only = $this->z_index;
+        $userLcdList = array(
+            10=>"pers_lcd",
+            11=>"user_lcd",
+            12=>"area_lcd",
+            13=>"head_lcd",
+            14=>"you_lcd",
+        );
+        $auditSql="";
+        $clause=$userLcdList[$only]." = :".$userLcdList[$only].",";
         switch ($this->scenario) {
             case 'audit':
                 $sql = "update hr_employee_work set
 							z_index = :z_index,
 							audit_remark = :audit_remark,
 							 ";
-                if($only!=4){
-                    $only++;
+                $only++;
+                if(!key_exists($only,$this->appointList)){
+                    $auditSql = "status = 4,";
                 }
                 $sql.=$clause.$auditSql."luu = :luu
 						where id = :id";
@@ -371,35 +289,28 @@ class AuditWorkForm extends CFormModel
         $dayStr ="小时";
         $email = new Email();
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
-            ->where('id=:id', array(':id'=>$this->employee_name))->queryRow();
+            ->where('id=:id', array(':id'=>$this->employee_id))->queryRow();
         $message="<p>加班编号：".$this->work_code."</p>";
         $message.="<p>员工编号：".$row["code"]."</p>";
         $message.="<p>员工姓名：".$row["name"]."</p>";
         $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
         $message.="<p>加班时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."$dayStr)</p>";
         if($this->scenario == "audit"){
-            if ($this->z_index == 2){
-                $description="加班二次审核 - ".$row["name"];
-                $subject="加班二次审核 - ".$row["name"];
-                $email->addEmailToPrefixAndOnlyCity("ZE05",$row["city"]);
+            if (key_exists($this->z_index,$this->appointList)){
+                $key = $this->z_index-10;
+                $description="加班{$key}次审核 - ".$row["name"];
+                $subject="加班{$key}次审核 - ".$row["name"];
+                $email->addEmailToLcu($this->appointList[$this->z_index]);
             }else{
                 $description="加班审核通过 - ".$row["name"];
                 $subject="加班审核通过 - ".$row["name"];
                 $email->addEmailToStaffId($row["id"]);
             }
-/*          總監說郵件太多，不想看郵件取消掉了
-            if ($this->z_index == 3){ //普通員工的請假需要給總監發送郵件
-                $subjectOne = "员工加班通过通知 - ".$row["name"];
-                $emailOne = new Email($subjectOne,$message,$subjectOne);
-                $emailOne->addEmailToPrefixAndCity("ZG04",$row["city"]);
-                $emailOne->sent();
-            }*/
         }else{
             $description="加班被拒絕 - ".$row["name"];
             $subject="加班被拒絕 - ".$row["name"];
             $message.="<p>拒絕原因：".$this->reject_cause."</p>";
             $email->addEmailToStaffId($row["id"]);
-            //$email->addEmailToPrefixAndCity("ZG04",$row["city"]); 總監說郵件太多，不想看郵件取消掉了
         }
         $email->setDescription($description);
         $email->setMessage($message);
@@ -407,41 +318,9 @@ class AuditWorkForm extends CFormModel
         $email->sent();
     }
 
-    //計算員工的加班費用
-    public function resetWorkCost(){
-        if($this->bool_cost == 0){ //不支付加班工資
-            $wage = 0;
-        }else{
-            $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
-            $wage = floatval($employeeList["wage"]);
-        }
-        switch ($this->work_type){
-            case 2:
-                if($this->cost_num == 1){
-                    $this->cost_num = 3;
-                }else{
-                    $this->cost_num = 2;
-                }
-                $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*intval($this->cost_num);
-                break;
-            case 1:
-                $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*2;
-                break;
-            default:
-                $this->work_cost = ($wage/(21.75*8))*floatval($this->log_time)*1.5;
-        }
-        $this->start_time .=" ".$this->hours;
-        $this->end_time .=" ".$this->hours_end;
-    }
-
     //判斷輸入框能否修改
     public function getInputBool(){
         return true;
-/*        if($this->only == 2&&$this->getScenario()!='view'){
-            return false;
-        }else{
-            return true;
-        }*/
     }
 
     //支付不支付列表

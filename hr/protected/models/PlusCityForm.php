@@ -74,7 +74,7 @@ class PlusCityForm extends CFormModel
     }
 
     //
-	public function getPlusEmployeeList(){;
+	public static function getPlusEmployeeList(){;
         $city_allow = Yii::app()->user->city_allow();
         $plusRows = Yii::app()->db->createCommand()->select("a.employee_id")->from("hr_plus_city a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")

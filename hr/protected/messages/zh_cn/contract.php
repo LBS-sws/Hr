@@ -753,5 +753,16 @@ return array(
     'Affiliated company'=>'所属公司',
     'Leave Date'=>'离职日期',
     'Deadline date'=>'截止日期',
+//2023/11/03
+    'appoint list'=>'指定列表',
+    'appoint form'=>'指定表单',
+    'username'=>'账号',
+    'appoint code'=>'指定编号',
+    'appoint user'=>'被指定账号',
+    'appoint audit'=>'指定审核人',
+    'audit user'=>'审核人',
+    'audit user date'=>'审核人审核时间',
+    'z_index'=>'层级',
+    'employee name'=>'员工名称',
 );
 ?>

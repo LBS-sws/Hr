@@ -50,6 +50,8 @@ class LeaveForm extends CFormModel
         'leave'=>0
     );
 
+    protected $appointList=false;
+
 	public function attributeLabels()
 	{
 	    if(in_array($this->status,array(4,5))){
@@ -475,7 +477,7 @@ class LeaveForm extends CFormModel
 	}
 
 //1:部門審核、2：主管、3：總監、4：你
-	public function translationState($str){
+	public static function translationState($str){
         switch ($str){
             case 1:
                 return "部門審核（數據輸入 → 審核）";
@@ -487,8 +489,10 @@ class LeaveForm extends CFormModel
                 return "最高審核（系統設置 → 審核）";
             case 5:
                 return "人事審核（人事 → 審核）";
+            case 10:
+                return "指定審核（審核）";
             default:
-                return $str;
+                return "指定審核（審核）".$str;
         }
     }
 
@@ -815,8 +819,13 @@ class LeaveForm extends CFormModel
         if (strpos($sql,':reject_cause')!==false)
             $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false){
-            $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id,1);
-            $this->z_index = $z_index;
+            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            if($this->appointList){ //指定审核人
+                $this->z_index = 10;
+            }else{
+                $z_index = AuditConfigForm::getCityAuditToCode($this->employee_id,1);
+                $this->z_index = $z_index;
+            }
             $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
         }
 
@@ -837,6 +846,8 @@ class LeaveForm extends CFormModel
             ), 'id=:id', array(':id'=>$this->id));
         }
 
+        //保存指定审核人
+        $this->saveAppointUser();
         //發送郵件
         $this->sendEmail();
 
@@ -852,6 +863,24 @@ class LeaveForm extends CFormModel
 		return true;
 	}
 
+	//保存指定审核人资料
+	private function saveAppointUser(){
+        if($this->appointList){
+            $userStr = array(
+                10=>"pers_lcu",
+                11=>"user_lcu",
+                12=>"area_lcu",
+                13=>"head_lcu",
+                14=>"you_lcu",
+            );
+            $arr=array();
+            foreach ($this->appointList as $key=>$auditUser){
+                $arr[$userStr[$key]] = $auditUser;
+            }
+            Yii::app()->db->createCommand()->update('hr_employee_leave', $arr, 'id=:id', array(':id'=>$this->id));
+        }
+    }
+
 	protected function sendEmail(){
         if($this->audit){
             $assList=array(
@@ -860,6 +889,7 @@ class LeaveForm extends CFormModel
                 3=>"ZG05",
                 4=>"ZC11",
                 5=>"ZP02",
+                10=>"ZG11",//指定审核人
             );
             $email = new Email();
             $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee")
@@ -885,6 +915,9 @@ class LeaveForm extends CFormModel
                     break;
                 case 5:
                     $email->addEmailToPrefixAndOnlyCity($assType,$row["city"]);
+                    break;
+                case 10://指定审核人
+                    $email->addEmailToLcu($this->appointList[$this->z_index]);
                     break;
                 default:
                     $email->addEmailToPrefixAndCity($assType,$row["city"]);
