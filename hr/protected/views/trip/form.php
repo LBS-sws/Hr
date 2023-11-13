@@ -89,6 +89,7 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
 			<?php echo $form->hiddenField($model, 'employee_id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'status'); ?>
+			<?php echo $form->hiddenField($model, 'z_index'); ?>
             <?php echo CHtml::hiddenField('dtltemplate'); ?>
             <?php echo CHtml::hiddenField('dtltemplateTwo'); ?>
 
@@ -149,9 +150,9 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
                 </div>
             </div>
             <div class="form-group">
-                <?php echo $form->labelEx($model,'area_lcu',array('class'=>"col-sm-2 control-label")); ?>
+                <?php echo $form->labelEx($model,'company_name',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-lg-5">
-                    <?php echo $form->textField($model, 'area_lcu',
+                    <?php echo $form->textField($model, 'company_name',
                         array('readonly'=>($model->ready()))
                     ); ?>
                 </div>
@@ -188,22 +189,12 @@ $this->pageTitle=Yii::app()->name . ' - Trip Form';
                 </div>
             </div>
 
-            <?php if (in_array($model->status,array(3,4))): ?>
-                <div class="form-group">
-                    <?php echo $form->labelEx($model,'head_lcu',array('class'=>"col-lg-2 control-label")); ?>
-                    <div class="col-lg-2">
-                        <?php echo $form->textField($model, 'head_lcu',
-                            array('readonly'=>(true),"rows"=>4)
-                        ); ?>
-                    </div>
-                    <?php echo $form->labelEx($model,'head_lcd',array('class'=>"col-lg-2 control-label")); ?>
-                    <div class="col-lg-2">
-                        <?php echo $form->textField($model, 'head_lcd',
-                            array('readonly'=>(true),"rows"=>4)
-                        ); ?>
-                    </div>
-                </div>
-            <?php endif; ?>
+            <?php
+            $this->renderPartial('//trip/auditInfo',array(
+                'model'=>$model,
+                'form'=>$form,
+            ));
+            ?>
 		</div>
 	</div>
 </section>

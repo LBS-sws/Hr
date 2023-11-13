@@ -1,6 +1,6 @@
 <?php
 
-class AuditTripList extends CListPageModel
+class AppointTripList extends CListPageModel
 {
 	public function attributeLabels()
 	{
@@ -25,17 +25,24 @@ class AuditTripList extends CListPageModel
 		$city = Yii::app()->user->city();
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
+        $uid = Yii::app()->user->id;
+        $auditSql = "";
+        foreach (AppointSetForm::getZIndexForUser() as $key=>$item){
+            $auditSql.= empty($auditSql)?"":" or ";
+            $auditSql.= "(a.z_index='{$key}' and a.{$item}='$uid')";
+        }
+
 		$sql1 = "select a.*,f.name as city_name,b.code,b.name
 				from hr_employee_trip a
                 LEFT JOIN hr_employee b ON a.employee_id=b.id
                 LEFT JOIN security{$suffix}.sec_city f ON b.city=f.code
-				where b.city IN ($city_allow) and a.z_index=4 AND a.status in (1,3) 
+				where a.status in (1,3) and ({$auditSql})
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee_trip a
                 LEFT JOIN hr_employee b ON a.employee_id=b.id
                 LEFT JOIN security{$suffix}.sec_city f ON b.city=f.code
-				where b.city IN ($city_allow) and a.z_index=4 AND a.status in (1,3) 
+				where a.status in (1,3) and ({$auditSql})
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -91,7 +98,7 @@ class AuditTripList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['auditTrip_ya01'] = $this->getCriteria();
+		$session['appointTrip_ya01'] = $this->getCriteria();
 		return true;
 	}
 

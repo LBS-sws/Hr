@@ -12,6 +12,7 @@ class TripForm extends CFormModel
     public $trip_cause;
     public $trip_cost;
     public $trip_address;
+    public $company_name;//公司名称
     public $start_time;
     public $start_time_lg;
     public $end_time;
@@ -24,7 +25,7 @@ class TripForm extends CFormModel
     public $pers_lcd;
     public $user_lcu;
     public $user_lcd;
-    public $area_lcu;//公司名称
+    public $area_lcu;
     public $area_lcd;
     public $head_lcu;
     public $head_lcd;
@@ -68,6 +69,8 @@ class TripForm extends CFormModel
         'trip'=>0
     );
 
+    protected $appointList=false;
+
 	public function attributeLabels()
 	{
         if(in_array($this->status,array(4,5))){
@@ -84,13 +87,14 @@ class TripForm extends CFormModel
             'trip_cause'=>Yii::t('fete','trip cause'),
             'trip_cost'=>Yii::t('fete','trip cost'),
             'trip_address'=>Yii::t('fete','trip address'),
+            'company_name'=>Yii::t('fete','company name'),
             'log_time'=>Yii::t('fete','Log Date'),
             'status'=>Yii::t('contract','Status'),
             'pers_lcu'=>Yii::t('fete','personnel lcu'),
             'pers_lcd'=>Yii::t('fete','personnel lcd'),
             'user_lcu'=>Yii::t('fete','user lcu'),
             'user_lcd'=>Yii::t('fete','user lcd'),
-            'area_lcu'=>Yii::t('fete','company name'),
+            'area_lcu'=>Yii::t('fete','area lcu'),
             'area_lcd'=>Yii::t('fete','area lcd'),
             'head_lcu'=>Yii::t('fete','trip lcu'),
             'head_lcd'=>Yii::t('fete','trip lcd'),
@@ -115,7 +119,7 @@ class TripForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('id,result_id,area_lcu,result_text,addMoney,addTime,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
+            array('id,z_index,result_id,company_name,result_text,addMoney,addTime,trip_code,trip_cost,trip_address,employee_id,employee_code,employee_name,city,status,trip_cause,start_time,end_time,start_time_lg,end_time_lg,log_time,lcd,reject_cause','safe'),
             array('id','validateRejectCause','on'=>array("cancel")),
             //array('employee_id','validateUser','on'=>array("new","edit","audit")),
             array('employee_id,trip_cost,trip_address','required','on'=>array("new","edit","audit")),
@@ -295,6 +299,7 @@ class TripForm extends CFormModel
                 $this->employee_name = $row['employee_name'];
                 $this->trip_cause = $row['trip_cause'];
                 $this->trip_address = $row['trip_address'];
+                $this->company_name = $row['company_name'];
                 $this->trip_cost = floatval($row['trip_cost']);
                 $this->start_time = date("Y/m/d",strtotime($row['start_time']));
                 $this->end_time = date("Y/m/d",strtotime($row['end_time']));
@@ -423,7 +428,13 @@ class TripForm extends CFormModel
                 $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
                 $message.= "<p>出差结果:".$this->result_text."</p>";
                 $emailModel = new Email($subject,$message,$subject);
-                $emailModel->addEmailToPrefixAndCity("ZG10",$this->city);
+                if($this->appointList){//指定审核人
+                    foreach ($this->appointList as $auditUser){
+                        $emailModel->addEmailToLcu($auditUser);
+                    }
+                }else{
+                    $emailModel->addEmailToPrefixAndCity("ZG10",$this->city);
+                }
                 $emailModel->sent();
                 return;
             case "audit":
@@ -437,7 +448,11 @@ class TripForm extends CFormModel
                 $message.= "<p>计划出差时间开始时间:".$this->start_time."</p>";
                 $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
                 $emailModel = new Email($subject,$message,$subject);
-                $emailModel->addEmailToPrefixAndCity("ZG10",$this->city);
+                if($this->appointList){//指定审核人
+                    $emailModel->addEmailToLcu($this->appointList[$this->z_index]);
+                }else{
+                    $emailModel->addEmailToPrefixAndCity("ZG10",$this->city);
+                }
                 $emailModel->sent();
                 return;
         }
@@ -620,16 +635,16 @@ class TripForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_employee_trip(
-							employee_id,area_lcu,trip_cause,trip_address,start_time, start_time_lg, end_time, end_time_lg,log_time,trip_cost,z_index, city, lcu,
+							employee_id,company_name,trip_cause,trip_address,start_time, start_time_lg, end_time, end_time_lg,log_time,trip_cost,z_index, city, lcu,
 							status,result_id
 						) values (
-							:employee_id,:area_lcu,:trip_cause,:trip_address,:start_time, :start_time_lg, :end_time, :end_time_lg,:log_time,:trip_cost,4, :city, :lcu,
+							:employee_id,:company_name,:trip_cause,:trip_address,:start_time, :start_time_lg, :end_time, :end_time_lg,:log_time,:trip_cost,:z_index, :city, :lcu,
 							:status,0
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_employee_trip set
-							area_lcu = :area_lcu, 
+							company_name = :company_name, 
 							trip_cause = :trip_cause, 
 							trip_cost = :trip_cost, 
 							trip_address = :trip_address, 
@@ -638,8 +653,14 @@ class TripForm extends CFormModel
 							start_time = :start_time, 
 							end_time = :end_time, 
 							log_time = :log_time, 
+							z_index = :z_index, 
 							status = :status, 
 							reject_cause = '', 
+							pers_lcd = NULL, 
+							user_lcd = NULL, 
+							area_lcd = NULL, 
+							head_lcd = NULL, 
+							you_lcd = NULL, 
 							luu = :luu
 						where id = :id
 						";
@@ -673,8 +694,8 @@ class TripForm extends CFormModel
             $command->bindParam(':employee_id',$this->employee_id,PDO::PARAM_STR);
         if (strpos($sql,':trip_cause')!==false)
             $command->bindParam(':trip_cause',$this->trip_cause,PDO::PARAM_STR);
-        if (strpos($sql,':area_lcu')!==false)
-            $command->bindParam(':area_lcu',$this->area_lcu,PDO::PARAM_STR);
+        if (strpos($sql,':company_name')!==false)
+            $command->bindParam(':company_name',$this->company_name,PDO::PARAM_STR);
         if (strpos($sql,':trip_cost')!==false)
             $command->bindParam(':trip_cost',$this->trip_cost,PDO::PARAM_STR);
         if (strpos($sql,':trip_address')!==false)
@@ -691,6 +712,15 @@ class TripForm extends CFormModel
             $command->bindParam(':log_time',$this->log_time,PDO::PARAM_STR);
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
+        if (strpos($sql,':z_index')!==false){
+            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            if($this->appointList){ //指定审核人
+                $this->z_index = 10;
+            }else{
+                $this->z_index = 4;
+            }
+            $command->bindParam(':z_index',$this->z_index,PDO::PARAM_STR);
+        }
         if (strpos($sql,':reject_cause')!==false)
             $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
 
@@ -711,10 +741,30 @@ class TripForm extends CFormModel
         }
 
         if($this->status==1){//要求審核
+            //保存指定审核人
+            $this->saveAppointUser();
             $this->sendEmail("audit");
         }
 		return true;
 	}
+
+    //保存指定审核人资料
+    private function saveAppointUser(){
+        if($this->appointList){
+            $userStr = array(
+                10=>"pers_lcu",
+                11=>"user_lcu",
+                12=>"area_lcu",
+                13=>"head_lcu",
+                14=>"you_lcu",
+            );
+            $arr=array();
+            foreach ($this->appointList as $key=>$auditUser){
+                $arr[$userStr[$key]] = $auditUser;
+            }
+            Yii::app()->db->createCommand()->update('hr_employee_trip', $arr, 'id=:id', array(':id'=>$this->id));
+        }
+    }
 
     private function lenStr(){
         $year = date("Y");

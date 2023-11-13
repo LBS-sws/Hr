@@ -230,6 +230,7 @@ return array(
     'appoint set'=>'加班、請假指定審核人',
     'appoint for leave'=>'審核指定請假',
     'appoint for work'=>'審核指定加班',
+    'appoint for trip'=>'審核指定出差',
 //沈超添加結束
 );
 ?>

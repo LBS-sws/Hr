@@ -1,6 +1,6 @@
 <?php
 
-class AuditTripForm extends CFormModel
+class AppointTripForm extends CFormModel
 {
     public $id;
     public $trip_code;
@@ -129,7 +129,7 @@ class AuditTripForm extends CFormModel
             ->select("a.*,b.wage,b.city as s_city,b.staff_type,b.code as employee_code,b.name as employee_name")
             ->from("hr_employee_trip a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and a.z_index=4 and a.status=1",array(":id"=>$this->id))->queryRow();
+            ->where("a.id=:id and a.status=1",array(":id"=>$this->id))->queryRow();
         if($row){
             $this->id = $row['id'];
             $this->trip_code = $row['trip_code'];
@@ -142,6 +142,22 @@ class AuditTripForm extends CFormModel
             $this->end_time = date("Y/m/d",strtotime($row['end_time']));
             $this->start_time_lg = $row['start_time_lg'];
             $this->end_time_lg = $row['end_time_lg'];
+            $this->z_index = $row["z_index"];
+            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            if(!$this->appointList){
+                $message = "该员工没有指定审核人，数据异常";
+                $this->addError($attribute,$message);
+            }elseif (!key_exists($this->z_index,$this->appointList)){
+                $message = "出差单异常，请与管理员联系。ID:{$this->id}，z_index:{$this->z_index}，employee_id:{$this->employee_id}";
+                $this->addError($attribute,$message);
+            }else{
+                $uid = Yii::app()->user->id;
+                $auditUser = $this->appointList[$this->z_index];
+                if($auditUser!=$uid){
+                    $message = "审核人异常,审核人应该是：".$auditUser;
+                    $this->addError($attribute,$message);
+                }
+            }
         }else{
             $message = "数据异常，请刷新重试";
             $this->addError($attribute,$message);
@@ -155,7 +171,7 @@ class AuditTripForm extends CFormModel
             ->select("a.*,b.wage,b.city as s_city,b.staff_type,b.code as employee_code,b.name as employee_name,docman$suffix.countdoc('TRIP',a.id) as tripdoc")
             ->from("hr_employee_trip a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and a.z_index=4 and b.city in ({$city_allow})",array(":id"=>$index))->queryAll();
+            ->where("a.id=:id",array(":id"=>$index))->queryAll();
 		if (count($rows) > 0) {
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
@@ -244,25 +260,35 @@ class AuditTripForm extends CFormModel
     /*  id;employee_id;employee_code;employee_name;reward_id;reward_name;reward_money;reward_goods;remark;city;*/
 	protected function saveGoods(&$connection) {
 		$sql = '';
+        $only = $this->z_index;
+        $userLcdList = array(
+            10=>"pers_lcd",
+            11=>"user_lcd",
+            12=>"area_lcd",
+            13=>"head_lcd",
+            14=>"you_lcd",
+        );
+        $auditSql="";
+        $clause=$userLcdList[$only]." = :".$userLcdList[$only].",";
         switch ($this->scenario) {
             case 'audit':
                 $sql = "update hr_employee_trip set
-							status = 2, 
-							head_lcu = :head_lcu, 
-							head_lcd = :head_lcd, 
-							luu = :luu
-						where id = :id
+							z_index = :z_index,
 						";
+                $only++;
+                if(!key_exists($only,$this->appointList)){
+                    $auditSql = "status = 2,";
+                }
+                $sql.=$clause.$auditSql."luu = :luu
+						where id = :id";
                 break;
             case 'reject':
                 $sql = "update hr_employee_trip set
 							status = 3, 
 							reject_cause = :reject_cause, 
-							head_lcu = :head_lcu, 
-							head_lcd = :head_lcd, 
-							luu = :luu
-						where id = :id
 						";
+                $sql.=$clause."luu = :luu
+						where id = :id";
                 break;
         }
 		if (empty($sql)) return false;
@@ -275,15 +301,32 @@ class AuditTripForm extends CFormModel
             $command->bindParam(':id',$this->id,PDO::PARAM_INT);
         if (strpos($sql,':reject_cause')!==false)
             $command->bindParam(':reject_cause',$this->reject_cause,PDO::PARAM_STR);
+        if (strpos($sql,':z_index')!==false){
+            $command->bindParam(':z_index',$only,PDO::PARAM_STR);
+            $this->z_index = $only;
+        }
 
-        if (strpos($sql,':status')!==false)
-            $command->bindParam(':status',$this->status,PDO::PARAM_INT);
+        $auditDate = date("Y/m/d H:i:s");
+        if (strpos($sql,':pers_lcu')!==false)
+            $command->bindParam(':pers_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':pers_lcd')!==false)
+            $command->bindParam(':pers_lcd',$auditDate,PDO::PARAM_STR);
+        if (strpos($sql,':user_lcu')!==false)
+            $command->bindParam(':user_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':user_lcd')!==false)
+            $command->bindParam(':user_lcd',$auditDate,PDO::PARAM_STR);
+        if (strpos($sql,':area_lcu')!==false)
+            $command->bindParam(':area_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':area_lcd')!==false)
+            $command->bindParam(':area_lcd',$auditDate,PDO::PARAM_STR);
         if (strpos($sql,':head_lcu')!==false)
             $command->bindParam(':head_lcu',$uid,PDO::PARAM_STR);
-        if (strpos($sql,':head_lcd')!==false){
-            $head_lcd = date("Y/m/d H:i:s");
-            $command->bindParam(':head_lcd',$head_lcd,PDO::PARAM_STR);
-        }
+        if (strpos($sql,':head_lcd')!==false)
+            $command->bindParam(':head_lcd',$auditDate,PDO::PARAM_STR);
+        if (strpos($sql,':you_lcu')!==false)
+            $command->bindParam(':you_lcu',$uid,PDO::PARAM_STR);
+        if (strpos($sql,':you_lcd')!==false)
+            $command->bindParam(':you_lcd',$auditDate,PDO::PARAM_STR);
         if (strpos($sql,':luu')!==false)
             $command->bindParam(':luu',$uid,PDO::PARAM_STR);
         $command->execute();

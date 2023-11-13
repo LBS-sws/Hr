@@ -295,6 +295,11 @@ return array(
                 'access'=>'ZG12',
                 'url'=>'/appointWork/index',
             ),
+            //出差指定审核
+            'appoint for trip'=>array(
+                'access'=>'ZG13',
+                'url'=>'/appointTrip/index',
+            ),
             //出差审核
             'audit for trip'=>array(
                 'access'=>'ZG10',

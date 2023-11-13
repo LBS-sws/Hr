@@ -3,6 +3,7 @@
 return array(
     array('code'=>'ZA08','function'=>'Counter::getWorkOne','color'=>'bg-green'),//加班审核(部門)
     array('code'=>'ZA09','function'=>'Counter::getLeaveOne','color'=>'bg-yellow'),//请假审核(部門)
+    array('code'=>'ZA10','function'=>'Counter::getTripApply','color'=>'bg-yellow'),//出差申请（出差结果)
     array('code'=>'ZP01','function'=>'Counter::getWorkTwo','color'=>'bg-light-blue'),//加班审核(人事)
     array('code'=>'ZP02','function'=>'Counter::getLeaveTwo','color'=>'bg-maroon'),//请假审核(人事)
     array('code'=>'ZE01','function'=>'Counter::getStaffInsert','color'=>'bg-light-blue'),//员工录入(社保信息)
@@ -16,8 +17,8 @@ return array(
     array('code'=>'ZG05','function'=>'Counter::getLeaveFour','color'=>'bg-gray'),//请假审核(審核)
     array('code'=>'ZG11','function'=>'Counter::getAppointLeave','color'=>'bg-maroon'),//指定请假审核(審核)
     array('code'=>'ZG12','function'=>'Counter::getAppointWork','color'=>'bg-purple'),//指定加班审核(審核)
+    array('code'=>'ZG13','function'=>'Counter::getAppointTrip','color'=>'bg-green'),//指定出差审核(審核)
     array('code'=>'ZG10','function'=>'Counter::getTripAudit','color'=>'bg-yellow'),//出差审核(審核)
-    array('code'=>'ZA10','function'=>'Counter::getTripApply','color'=>'bg-yellow'),//出差申请（出差结果)
     array('code'=>'ZG06','function'=>'Counter::getRewardAudit','color'=>'bg-purple'),//奖金审核(審核)
     array('code'=>'ZG07','function'=>'Counter::getPrizeAudit','color'=>'bg-gray'),//锦旗审核(審核)
     array('code'=>'RE02','function'=>'Counter::getReviewHandle','color'=>'bg-purple'),//優化人才評估(考核)

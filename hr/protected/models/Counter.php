@@ -151,12 +151,28 @@ class Counter {
             ->where("a.status_type=2")->queryScalar();
         return $count;
     }
+//指定出差审核(審核)
+    public static function getAppointTrip() {
+        $count = 0;
+        if(Yii::app()->user->validRWFunction('ZG13')){
+            $uid = Yii::app()->user->id;
+            $auditSql = "";
+            foreach (AppointSetForm::getZIndexForUser() as $key=>$item){
+                $auditSql.= empty($auditSql)?"":" or ";
+                $auditSql.= "(a.z_index='{$key}' and a.{$item}='$uid')";
+            }
+            $count = Yii::app()->db->createCommand()->select("count(a.id)")
+                ->from("hr_employee_trip a")
+                ->where(" a.status in (1) and ({$auditSql})")->queryScalar();
+        }
+        return $count;
+    }
 //出差审核(審核)
     public static function getTripAudit() {
         $city_allow = Yii::app()->user->city_allow();
         $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_trip a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.status in (1) AND b.city in ($city_allow)")->queryScalar();
+            ->where("a.status in (1) AND a.z_index=4 AND b.city in ($city_allow)")->queryScalar();
         return $count;
     }
 //出差申请（出差结果)

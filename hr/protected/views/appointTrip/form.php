@@ -1,11 +1,11 @@
 <?php
 if (empty($model->id)&&$model->scenario == "edit"){
-    $this->redirect(Yii::app()->createUrl('auditTrip/index'));
+    $this->redirect(Yii::app()->createUrl('appointTrip/index'));
 }
-$this->pageTitle=Yii::app()->name . ' - auditTrip Info';
+$this->pageTitle=Yii::app()->name . ' - appointTrip Info';
 ?>
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'auditTrip-form',
+'id'=>'appointTrip-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -16,7 +16,7 @@ $this->pageTitle=Yii::app()->name . ' - auditTrip Info';
 </style>
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('app','audit for trip'); ?></strong>
+		<strong><?php echo Yii::t('app','appoint for trip'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -31,11 +31,11 @@ $this->pageTitle=Yii::app()->name . ' - auditTrip Info';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('auditTrip/index')));
+				'submit'=>Yii::app()->createUrl('appointTrip/index')));
 		?>
         <?php if ($model->scenario!='view' && $model->status == 1): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
-                'submit'=>Yii::app()->createUrl('auditTrip/audit')));
+                'submit'=>Yii::app()->createUrl('appointTrip/audit')));
             ?>
             <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','Rejected'), array(
                 'name'=>'btn88','id'=>'btn88','data-toggle'=>'modal','data-target'=>'#jectdialog'));
@@ -85,8 +85,8 @@ $this->pageTitle=Yii::app()->name . ' - auditTrip Info';
                     <?php $this->widget('ext.layout.TableView2Widget', array(
                         'model'=>$model,
                         'attribute'=>'addTime',
-                        'viewhdr'=>'//auditTrip/_formhdr',
-                        'viewdtl'=>'//auditTrip/_formdtl',
+                        'viewhdr'=>'//appointTrip/_formhdr',
+                        'viewdtl'=>'//appointTrip/_formdtl',
                         'gridsize'=>'24',
                         'height'=>'200',
                     ));
@@ -116,8 +116,8 @@ $this->pageTitle=Yii::app()->name . ' - auditTrip Info';
                         'model'=>$model,
                         'tableClass'=>'table-bordered addMoney',
                         'attribute'=>'addMoney',
-                        'viewhdr'=>'//auditTrip/_moneyFormhdr',
-                        'viewdtl'=>'//auditTrip/_moneyFormdtl',
+                        'viewhdr'=>'//appointTrip/_moneyFormhdr',
+                        'viewdtl'=>'//appointTrip/_moneyFormdtl',
                         'gridsize'=>'24',
                         'height'=>'200',
                     ));
@@ -140,6 +140,13 @@ $this->pageTitle=Yii::app()->name . ' - auditTrip Info';
                     ); ?>
                 </div>
             </div>
+
+            <?php
+            $this->renderPartial('//trip/auditInfo',array(
+                'model'=>$model,
+                'form'=>$form,
+            ));
+            ?>
 		</div>
 	</div>
 </section>
@@ -156,7 +163,7 @@ $this->renderPartial('//site/ject',array(
     'form'=>$form,
     'model'=>$model,
     'rejectName'=>"reject_cause",
-    'submit'=>Yii::app()->createUrl('auditTrip/reject',array("only"=>0)),
+    'submit'=>Yii::app()->createUrl('appointTrip/reject',array("only"=>0)),
 ));
 ?>
 
