@@ -307,6 +307,27 @@ class Counter {
         }
         return $count;
     }
+
+//加班审核(系统设置)
+    public static function getWorkFive() {
+        $staff_id = Yii::app()->user->id;
+        $city_allow = Yii::app()->user->city_allow();
+        $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_work a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =4 AND b.city in ($city_allow)")->queryScalar();
+        return $count;
+    }
+//请假审核(系统设置)
+    public static function getLeaveFive() {
+        $staff_id = Yii::app()->user->id;
+        $city_allow = Yii::app()->user->city_allow();
+        $count = Yii::app()->db->createCommand()->select("count(a.id)")->from("hr_employee_leave a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("hr_binding hb","hb.employee_id = b.id")
+            ->where("hb.user_id != '$staff_id' and a.status in (1) AND a.z_index =4 AND b.city in ($city_allow)")->queryScalar();
+        return $count;
+    }
 }
 
 ?>

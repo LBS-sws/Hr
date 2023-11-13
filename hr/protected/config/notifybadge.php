@@ -28,6 +28,8 @@ return array(
     array('code'=>'AY01','function'=>'Counter::getSupportApply','color'=>'bg-green'),//考核審批(中央支援需給員工評分)
     array('code'=>'AY02','function'=>'Counter::getSupportAudit','color'=>'bg-gray'),//審核中央技术支持(中央技术支持)
     array('code'=>'HL02','function'=>'Counter::getLetterAudit','color'=>'bg-green'),//审核心意信(意见反馈)
+    array('code'=>'ZC10','function'=>'Counter::getWorkFive','color'=>'bg-purple'),//加班审核(系统设置)
+    array('code'=>'ZC11','function'=>'Counter::getLeaveFive','color'=>'bg-gray'),//请假审核(系统设置)
 );
 
 ?>
