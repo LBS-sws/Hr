@@ -27,7 +27,7 @@ class AppointTripList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
         $auditSql = "";
-        foreach (AppointSetForm::getZIndexForUser() as $key=>$item){
+        foreach (AppointTripSetForm::getZIndexForUser() as $key=>$item){
             $auditSql.= empty($auditSql)?"":" or ";
             $auditSql.= "(a.z_index='{$key}' and a.{$item}='$uid')";
         }

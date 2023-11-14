@@ -2,7 +2,7 @@
 $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
 ?>
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'appointSet-form',
+'id'=>'appointTripSet-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true,),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
@@ -20,15 +20,15 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
 		<?php 
 			if ($model->scenario!='new' && $model->scenario!='view') {
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Another'), array(
-					'submit'=>Yii::app()->createUrl('appointSet/new')));
+					'submit'=>Yii::app()->createUrl('appointTripSet/new')));
 			}
 		?>
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('appointSet/index'))); 
+				'submit'=>Yii::app()->createUrl('appointTripSet/index'))); 
 		?>
 <?php if ($model->scenario!='view'): ?>
 			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-				'submit'=>Yii::app()->createUrl('appointSet/save'))); 
+				'submit'=>Yii::app()->createUrl('appointTripSet/save'))); 
 			?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
@@ -38,14 +38,6 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
 	?>
 <?php endif ?>
 	</div>
-            <?php if ($model->scenario=='edit'): ?>
-            <div class="btn-group pull-right" role="group">
-                <?php echo TbHtml::button('<span class="fa fa-copy"></span> '.Yii::t('contract','copy trip set'), array(
-                        'submit'=>Yii::app()->createUrl('appointSet/copyTripSet'))
-                );
-                ?>
-            <?php endif ?>
-            </div>
 	</div></div>
 
 	<div class="box box-info">
@@ -86,8 +78,8 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
                         $this->widget('ext.layout.TableView2Widget', array(
                             'model'=>$model,
                             'attribute'=>'detail',
-                            'viewhdr'=>'//appointSet/_formhdr',
-                            'viewdtl'=>'//appointSet/_formdtl',
+                            'viewhdr'=>'//appointTripSet/_formhdr',
+                            'viewdtl'=>'//appointTripSet/_formdtl',
                         ));
                         ?>
                     </div>
@@ -96,7 +88,7 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
             <div class="col-lg-12">
                 <p class="text-danger">1、层级的数值越高，审核顺序越靠后</p>
                 <p class="text-danger">2、最多添加五个审核人</p>
-                <p class="text-danger">3、审核人必须拥有 “审核指定请假” 且 “审核指定加班” 这两个权限</p>
+                <p class="text-danger">3、审核人必须拥有 “审核指定出差” 这个权限</p>
             </div>
         </div>
 	</div>
@@ -107,9 +99,9 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
 
 <?php
 $js = "
-$('table').on('change','[id^=\"AppointSetForm\"]',function() {
+$('table').on('change','[id^=\"AppointTripSetForm\"]',function() {
 	var n=$(this).attr('id').split('_');
-	$('#AppointSetForm_'+n[1]+'_'+n[2]+'_uflag').val('Y');
+	$('#AppointTripSetForm_'+n[1]+'_'+n[2]+'_uflag').val('Y');
 });
 ";
 Yii::app()->clientScript->registerScript('setFlag',$js,CClientScript::POS_READY);
@@ -135,7 +127,7 @@ $('#btnAddRow').on('click',function() {
 		var nid = '';
 		var ct = $('#dtltemplate').val();
 		$('#tblDetail tbody:last').append('<tr>'+ct+'</tr>');
-		$('#tblDetail tr').eq(-1).find('[id*=\"AppointSetForm_\"]').each(function(index) {
+		$('#tblDetail tr').eq(-1).find('[id*=\"AppointTripSetForm_\"]').each(function(index) {
 			var id = $(this).attr('id');
 			var name = $(this).attr('name');
 
@@ -169,7 +161,7 @@ Yii::app()->clientScript->registerScript('lookupEmployee',$js,CClientScript::POS
 $js = Script::genLookupSelect();
 Yii::app()->clientScript->registerScript('lookupSelect',$js,CClientScript::POS_READY);
 
-$js = Script::genDeleteData(Yii::app()->createUrl('appointSet/delete'));
+$js = Script::genDeleteData(Yii::app()->createUrl('appointTripSet/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();

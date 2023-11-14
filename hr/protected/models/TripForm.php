@@ -428,7 +428,7 @@ class TripForm extends CFormModel
                 $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
                 $message.= "<p>出差结果:".$this->result_text."</p>";
                 $emailModel = new Email($subject,$message,$subject);
-                if($this->appointList){//指定审核人
+                if(is_array($this->appointList)){//指定审核人
                     foreach ($this->appointList as $auditUser){
                         $emailModel->addEmailToLcu($auditUser);
                     }
@@ -713,7 +713,7 @@ class TripForm extends CFormModel
         if (strpos($sql,':status')!==false)
             $command->bindParam(':status',$this->status,PDO::PARAM_STR);
         if (strpos($sql,':z_index')!==false){
-            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            $this->appointList = AppointTripSetForm::getAppointTripSet($this->employee_id);
             if($this->appointList){ //指定审核人
                 $this->z_index = 10;
             }else{

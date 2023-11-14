@@ -764,5 +764,7 @@ return array(
     'audit user date'=>'审核人审核时间',
     'z_index'=>'层级',
     'employee name'=>'员工名称',
+
+    'copy trip set'=>'复制到出差配置',
 );
 ?>

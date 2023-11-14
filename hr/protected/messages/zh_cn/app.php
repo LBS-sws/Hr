@@ -228,6 +228,7 @@ return array(
     'report for duty'=>'在职员工报表',
     'report for departure'=>'离职员工报表',
     'appoint set'=>'加班、请假指定审核人',
+    'appoint trip set'=>'出差指定审核人',
     'appoint for leave'=>'审核指定请假',
     'appoint for work'=>'审核指定加班',
     'appoint for trip'=>'审核指定出差',

@@ -1,8 +1,8 @@
 <?php
 
-class AppointSetController extends Controller 
+class AppointTripSetController extends Controller 
 {
-	public $function_id='ZC18';
+	public $function_id='ZC19';
 
 	public function filters()
 	{
@@ -24,12 +24,12 @@ class AppointSetController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('new','edit','delete','save','copyTripSet'),
-				'expression'=>array('AppointSetController','allowReadWrite'),
+				'actions'=>array('new','edit','delete','save'),
+				'expression'=>array('AppointTripSetController','allowReadWrite'),
 			),
 			array('allow', 
 				'actions'=>array('index','view'),
-				'expression'=>array('AppointSetController','allowReadOnly'),
+				'expression'=>array('AppointTripSetController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -39,13 +39,13 @@ class AppointSetController extends Controller
 
 	public function actionIndex($pageNum=0) 
 	{
-		$model = new AppointSetList;
-		if (isset($_POST['AppointSetList'])) {
-			$model->attributes = $_POST['AppointSetList'];
+		$model = new AppointTripSetList;
+		if (isset($_POST['AppointTripSetList'])) {
+			$model->attributes = $_POST['AppointTripSetList'];
 		} else {
 			$session = Yii::app()->session;
-			if (isset($session['appointSet_c01']) && !empty($session['appointSet_c01'])) {
-				$criteria = $session['appointSet_c01'];
+			if (isset($session['appointTripSet_c01']) && !empty($session['appointTripSet_c01'])) {
+				$criteria = $session['appointTripSet_c01'];
 				$model->setCriteria($criteria);
 			}
 		}
@@ -57,14 +57,14 @@ class AppointSetController extends Controller
 
 	public function actionSave()
 	{
-		if (isset($_POST['AppointSetForm'])) {
-			$model = new AppointSetForm($_POST['AppointSetForm']['scenario']);
-			$model->attributes = $_POST['AppointSetForm'];
+		if (isset($_POST['AppointTripSetForm'])) {
+			$model = new AppointTripSetForm($_POST['AppointTripSetForm']['scenario']);
+			$model->attributes = $_POST['AppointTripSetForm'];
 			if ($model->validate()) {
 				$model->saveData();
 //				$model->scenario = 'edit';
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-				$this->redirect(Yii::app()->createUrl('appointSet/edit',array('index'=>$model->id)));
+				$this->redirect(Yii::app()->createUrl('appointTripSet/edit',array('index'=>$model->id)));
 			} else {
 				$message = CHtml::errorSummary($model);
 				Dialog::message(Yii::t('dialog','Validation Message'), $message);
@@ -75,7 +75,7 @@ class AppointSetController extends Controller
 
 	public function actionView($index)
 	{
-		$model = new AppointSetForm('view');
+		$model = new AppointTripSetForm('view');
 		if (!$model->retrieveData($index)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
@@ -85,13 +85,13 @@ class AppointSetController extends Controller
 	
 	public function actionNew()
 	{
-		$model = new AppointSetForm('new');
+		$model = new AppointTripSetForm('new');
 		$this->render('form',array('model'=>$model,));
 	}
 	
 	public function actionEdit($index)
 	{
-		$model = new AppointSetForm('edit');
+		$model = new AppointTripSetForm('edit');
 		if (!$model->retrieveData($index)) {
 			throw new CHttpException(404,'The requested page does not exist.');
 		} else {
@@ -101,42 +101,25 @@ class AppointSetController extends Controller
 	
 	public function actionDelete()
 	{
-		$model = new AppointSetForm('delete');
-		if (isset($_POST['AppointSetForm'])) {
-			$model->attributes = $_POST['AppointSetForm'];
+		$model = new AppointTripSetForm('delete');
+		if (isset($_POST['AppointTripSetForm'])) {
+			$model->attributes = $_POST['AppointTripSetForm'];
 			if ($model->isOccupied($model->id)) {
 				Dialog::message(Yii::t('dialog','Warning'), "该账户存在待审核的加班、请假单，无法删除");
-				$this->redirect(Yii::app()->createUrl('appointSet/edit',array('index'=>$model->id)));
+				$this->redirect(Yii::app()->createUrl('appointTripSet/edit',array('index'=>$model->id)));
 			} else {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
-                $this->redirect(Yii::app()->createUrl('appointSet/index'));
+                $this->redirect(Yii::app()->createUrl('appointTripSet/index'));
 			}
-		}
-	}
-
-	public function actionCopyTripSet()
-	{
-		$model = new AppointTripSetForm('new');
-		if (isset($_POST['AppointSetForm'])) {
-            $model->setAttrForCopy($_POST['AppointSetForm']);
-            if ($model->validate()) {
-                $model->saveData();
-                Dialog::message(Yii::t('dialog','Information'), "已复制到出差配置");
-                $this->redirect(Yii::app()->createUrl('appointSet/edit',array('index'=>$_POST['AppointSetForm']["id"])));
-            } else {
-                $message = CHtml::errorSummary($model);
-                Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $this->redirect(Yii::app()->createUrl('appointSet/edit',array('index'=>$_POST['AppointSetForm']["id"])));
-            }
 		}
 	}
 	
 	public static function allowReadWrite() {
-		return Yii::app()->user->validRWFunction('ZC18');
+		return Yii::app()->user->validRWFunction('ZC19');
 	}
 	
 	public static function allowReadOnly() {
-		return Yii::app()->user->validFunction('ZC18');
+		return Yii::app()->user->validFunction('ZC19');
 	}
 }

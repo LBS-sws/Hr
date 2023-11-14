@@ -143,7 +143,7 @@ class AppointTripForm extends CFormModel
             $this->start_time_lg = $row['start_time_lg'];
             $this->end_time_lg = $row['end_time_lg'];
             $this->z_index = $row["z_index"];
-            $this->appointList = AppointSetForm::getAppointSet($this->employee_id);
+            $this->appointList = AppointTripSetForm::getAppointTripSet($this->employee_id);
             if(!$this->appointList){
                 $message = "该员工没有指定审核人，数据异常";
                 $this->addError($attribute,$message);
@@ -276,7 +276,7 @@ class AppointTripForm extends CFormModel
 							z_index = :z_index,
 						";
                 $only++;
-                if(!key_exists($only,$this->appointList)){
+                if(is_array($this->appointList)&&!key_exists($only,$this->appointList)){
                     $auditSql = "status = 2,";
                 }
                 $sql.=$clause.$auditSql."luu = :luu
@@ -349,6 +349,15 @@ class AppointTripForm extends CFormModel
                 $message.= "<p>计划出差时间开始时间:".$this->start_time."</p>";
                 $message.= "<p>计划出差时间结束时间:".$this->end_time."</p>";
                 $emailModel = new Email($subject,$message,$subject);
+                if (is_array($this->appointList)&&key_exists($this->z_index,$this->appointList)){
+                    $key = $this->z_index-10;
+                    $subject="出差单{$key}次审核 - ".$this->employee_name;
+                    $emailModel->setSubject($subject);
+                    $emailModel->setDescription($subject);
+                    $emailModel->addEmailToLcu($this->appointList[$this->z_index]);
+                }else{
+                    $emailModel->addEmailToStaffId($this->employee_id);
+                }
                 $emailModel->addEmailToStaffId($this->employee_id);
                 $emailModel->sent();
                 return;

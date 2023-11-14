@@ -757,5 +757,7 @@ return array(
     'audit user date'=>'審核人審核時間',
     'z_index'=>'層級',
     'employee name'=>'員工名稱',
+
+    'copy trip set'=>'複製到出差配置',
     );
 ?>

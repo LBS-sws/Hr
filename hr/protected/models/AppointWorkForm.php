@@ -205,7 +205,7 @@ class AppointWorkForm extends CFormModel
 							audit_remark = :audit_remark,
 							 ";
                 $only++;
-                if(!key_exists($only,$this->appointList)){
+                if(is_array($this->appointList)&&!key_exists($only,$this->appointList)){
                     $auditSql = "status = 4,";
                 }
                 $sql.=$clause.$auditSql."luu = :luu
@@ -296,7 +296,7 @@ class AppointWorkForm extends CFormModel
         $message.="<p>员工城市：".General::getCityName($row["city"])."</p>";
         $message.="<p>加班时间：".$this->start_time." ~ ".$this->end_time."  (".$this->log_time."$dayStr)</p>";
         if($this->scenario == "audit"){
-            if (key_exists($this->z_index,$this->appointList)){
+            if (is_array($this->appointList)&&key_exists($this->z_index,$this->appointList)){
                 $key = $this->z_index-10;
                 $description="加班{$key}次审核 - ".$row["name"];
                 $subject="加班{$key}次审核 - ".$row["name"];

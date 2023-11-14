@@ -510,6 +510,10 @@ return array(
                 'access'=>'ZC18',
                 'url'=>'/appointSet/index',
             ),
+            'appoint trip set'=>array(//出差指定审核人
+                'access'=>'ZC19',
+                'url'=>'/appointTripSet/index',
+            ),
             'Config office'=>array(//办事处配置
                 'access'=>'ZC15',
                 'url'=>'/configOffice/index',
