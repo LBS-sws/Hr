@@ -29,7 +29,23 @@ class RptReviewList extends CReport {
 
 	public function retrieveData() {
         $year = $this->criteria['YEAR'];
+        $yearStart = key_exists("YEARSTART",$this->criteria)?$this->criteria['YEARSTART']:$year;
         $year_type = $this->criteria['YEARTYPE'];
+
+        $listYearType = array();
+        if(empty($year_type)){
+            $listYearType=array(1,2);
+        }else{
+            $listYearType[]=$year_type;
+        }
+        for ($i=$yearStart;$i<=$year;$i++){
+            foreach ($listYearType as $monthType){
+                $this->addData($i,$monthType);
+            }
+        }
+    }
+
+	public function addData($year,$year_type) {
         $dateTime = ReviewAllotList::getReviewDateTime($year,$year_type);
         if($year_type == 1){
             if(Yii::app()->params['retire']===false){
@@ -99,16 +115,14 @@ class RptReviewList extends CReport {
                 $temp['review_grade'] = Yii::t("contract","undistributed");
                 $temp['ranking_bool'] = Yii::t("misc","No");
 
-                $this->resetTemp($row,$temp);
+                $this->resetTemp($row,$temp,$year,$year_type);
 				$this->data[] = $temp;
 			}
 		}
 		return true;
 	}
 
-	protected function resetTemp($row,&$temp){
-        $year = $this->criteria['YEAR'];
-        $year_type = $this->criteria['YEARTYPE'];
+	protected function resetTemp($row,&$temp,$year,$year_type){
         $arr = Yii::app()->db->createCommand()->select("id,name_list,review_sum,ranking_bool,ranking_review,ranking_sum,status_type,year,year_type")->from("hr_review")
             ->where("year = :year and year_type = :year_type and employee_id = :employee_id",
                 array(":year"=>$year,":year_type"=>$year_type,":employee_id"=>$row['id']))->queryRow();
