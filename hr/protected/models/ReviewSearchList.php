@@ -28,7 +28,7 @@ class ReviewSearchList extends CListPageModel
             'city_name'=>Yii::t('contract','City'),
             'entry_time'=>Yii::t('contract','Entry Time'),
             'year'=>Yii::t('contract','what year'),
-            'year_type'=>Yii::t('contract','year type'),
+            'year_type'=>Yii::t('contract','monthly'),
             'name_list'=>Yii::t('contract','reviewAllot manager'),
             'review_sum'=>Yii::t('contract','review sum'),
             'review_type'=>Yii::t('contract','review type'),

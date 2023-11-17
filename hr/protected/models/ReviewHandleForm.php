@@ -59,7 +59,7 @@ class ReviewHandleForm extends CFormModel
             'city'=>Yii::t('contract','City'),
             'entry_time'=>Yii::t('contract','Entry Time'),
             'year'=>Yii::t('contract','what year'),
-            'year_type'=>Yii::t('contract','year type'),
+            'year_type'=>Yii::t('contract','monthly'),
             'handle_name'=>Yii::t('contract','reviewAllot manager'),
             'handle_per'=>Yii::t('contract','manager percent'),
 

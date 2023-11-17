@@ -759,5 +759,6 @@ return array(
     'employee name'=>'員工名稱',
 
     'copy trip set'=>'複製到出差配置',
+    'monthly'=>'月份',
     );
 ?>

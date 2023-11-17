@@ -26,7 +26,7 @@ class ReviewHandleList extends CListPageModel
             'city_name'=>Yii::t('contract','City'),
             'entry_time'=>Yii::t('contract','Entry Time'),
             'year'=>Yii::t('contract','what year'),
-            'year_type'=>Yii::t('contract','year type'),
+            'year_type'=>Yii::t('contract','monthly'),
             'department'=>Yii::t("contract","Department"),
 		);
 	}
