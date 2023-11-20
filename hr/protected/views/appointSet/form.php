@@ -17,18 +17,18 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-		<?php 
+		<?php
 			if ($model->scenario!='new' && $model->scenario!='view') {
 				echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add Another'), array(
 					'submit'=>Yii::app()->createUrl('appointSet/new')));
 			}
 		?>
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('appointSet/index'))); 
+				'submit'=>Yii::app()->createUrl('appointSet/index')));
 		?>
 <?php if ($model->scenario!='view'): ?>
 			<?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
-				'submit'=>Yii::app()->createUrl('appointSet/save'))); 
+				'submit'=>Yii::app()->createUrl('appointSet/save')));
 			?>
 <?php endif ?>
 <?php if ($model->scenario=='edit'): ?>
@@ -44,8 +44,8 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
                         'submit'=>Yii::app()->createUrl('appointSet/copyTripSet'))
                 );
                 ?>
-            <?php endif ?>
             </div>
+            <?php endif ?>
 	</div></div>
 
 	<div class="box box-info">
