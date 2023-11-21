@@ -40,6 +40,9 @@ class RptReviewList extends CReport {
         }
         for ($i=$yearStart;$i<=$year;$i++){
             foreach ($listYearType as $monthType){
+                if($i==2020&&$monthType==2&&Yii::app()->params['retire']!==false){
+                    continue;//2020年只有一次员工考核（大陆）
+                }
                 $this->addData($i,$monthType);
             }
         }
