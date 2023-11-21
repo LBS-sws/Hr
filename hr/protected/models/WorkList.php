@@ -80,6 +80,12 @@ class WorkList extends CListPageModel
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = $this->employee_id;
+        $uid = Yii::app()->user->id;
+        $auditSql = "";
+        foreach (AppointSetForm::getZIndexForUser() as $key=>$item){
+            $auditSql.= empty($auditSql)?"":" or ";
+            $auditSql.= "a.{$item}='$uid'";
+        }
         $manager = AuditConfigForm::getManager($employee_id);
         $masSql = Yii::app()->db->createCommand()->select("ew.id,max(df.lud) as file_lud")
             ->from("docman$suffix.dm_master dm")
@@ -99,12 +105,12 @@ class WorkList extends CListPageModel
                 where a.id!=0 
 			";
         if(!Yii::app()->user->validFunction('ZR03')){
-            $sql1.=" and d.manager <= ".$manager["manager"];
-            $sql2.=" and d.manager <= ".$manager["manager"];
+            $sql1.=" and (d.manager <= {$manager['manager']} or a.z_index>=10)";
+            $sql2.=" and (d.manager <= {$manager['manager']} or a.z_index>=10)";
         }
 		if(Yii::app()->user->validFunction('ZR03')){
-            $sql1.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
-            $sql2.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id') ";
+            $sql1.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or {$auditSql}) ";
+            $sql2.=" and ((b.city in($city_allow) and a.status !=0) or a.employee_id='$employee_id' or {$auditSql}) ";
         }elseif($manager["manager"] == 1){
             $sql1.=" and ((b.department='".$manager["department"]."' ";
             $sql2.=" and ((b.department='".$manager["department"]."' ";
@@ -112,11 +118,11 @@ class WorkList extends CListPageModel
                 $sql1.=" and b.group_type='".$manager["group_type"]."' ";
                 $sql2.=" and b.group_type='".$manager["group_type"]."' ";
             }
-            $sql1.=" and a.status !=0) or a.employee_id='$employee_id') ";
-            $sql2.=" and a.status !=0) or a.employee_id='$employee_id') ";
+            $sql1.=" and a.status !=0) or a.employee_id='$employee_id' or {$auditSql}) ";
+            $sql2.=" and a.status !=0) or a.employee_id='$employee_id' or {$auditSql}) ";
         }else{
-		    $sql1.=" and a.employee_id='$employee_id' ";
-            $sql2.=" and a.employee_id='$employee_id' ";
+            $sql1.=" and (a.employee_id='$employee_id' or a.lcu='$uid' or {$auditSql}) ";
+            $sql2.=" and (a.employee_id='$employee_id' or a.lcu='$uid' or {$auditSql}) ";
         }
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

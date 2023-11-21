@@ -42,7 +42,7 @@ class AuditConfigForm extends CFormModel
         }
     }
 
-    public function getManager($staff_id){
+    public static function getManager($staff_id){
         $staffList = Yii::app()->db->createCommand()->select("a.department,a.city,c.manager as c_manager,a.group_type")->from("hr_employee a")
             ->leftJoin("hr_dept c","c.id = a.position")
             ->where("a.id=:id", array(':id'=>$staff_id))->queryRow();
