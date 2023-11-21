@@ -750,7 +750,7 @@ class TripForm extends CFormModel
 
     //保存指定审核人资料
     private function saveAppointUser(){
-        if($this->appointList){
+        if($this->appointList&&is_array($this->appointList)){
             $userStr = array(
                 10=>"pers_lcu",
                 11=>"user_lcu",
@@ -759,8 +759,8 @@ class TripForm extends CFormModel
                 14=>"you_lcu",
             );
             $arr=array();
-            foreach ($this->appointList as $key=>$auditUser){
-                $arr[$userStr[$key]] = $auditUser;
+            foreach ($userStr as $key=>$item){
+                $arr[$item] = key_exists($key,$this->appointList)?$this->appointList[$key]:null;
             }
             Yii::app()->db->createCommand()->update('hr_employee_trip', $arr, 'id=:id', array(':id'=>$this->id));
         }

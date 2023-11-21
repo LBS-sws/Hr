@@ -39,7 +39,7 @@ class AppointSetList extends CListPageModel
 				case 'appoint_code':
 					$clause .= General::getSqlConditionClause('a.appoint_code',$svalue);
 					break;
-				case 'employee_id':
+				case 'employee_name':
 					$clause .= " and (b.name like'%{$svalue}%' or b.code like '%{$svalue}%')";
 					break;
 				case 'city_name':
