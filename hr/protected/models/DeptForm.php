@@ -173,7 +173,7 @@ class DeptForm extends CFormModel
         return $arr;
     }
 
-    public function getReviewType($str=""){
+    public static function getReviewType($str=""){
 	    $arr = array(
 	        1=>Yii::t("fete","normal"),
 	        2=>Yii::t("fete","technician"),
@@ -186,7 +186,7 @@ class DeptForm extends CFormModel
         return $arr;
     }
 
-    public function getGroupType($str="",$bool=false){
+    public static function getGroupType($str="",$bool=false){
 	    $arr = array(
 	        0=>Yii::t("fete","none"),//無
 	        1=>Yii::t("contract","group business"),//商業組
@@ -218,7 +218,7 @@ class DeptForm extends CFormModel
         return $arr;
     }
 
-    public function getManagerTypeLeave($str="",$bool=false){
+    public static function getManagerTypeLeave($str="",$bool=false){
 	    $arr = array(
 	        Yii::t("fete","none"),
 	        Yii::t("contract","Employee"),
@@ -281,7 +281,7 @@ class DeptForm extends CFormModel
     }
 
     //獲取崗位列表
-	public function getPosiList($dept_id){
+	public static function getPosiList($dept_id){
 	    $arr=array(""=>"");
 	    if(empty($dept_id)){
 	        return $arr;
@@ -297,7 +297,7 @@ class DeptForm extends CFormModel
     }
 
     //獲取職位列表(僅職位)
-    public function getDeptOneAllList(){
+    public static function getDeptOneAllList(){
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $arr=array(""=>array("name"=>"","type"=>"","dept_class"=>""));

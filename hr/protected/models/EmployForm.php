@@ -274,7 +274,7 @@ class EmployForm extends CFormModel
     }
 
     //獲取可用公司
-    public function getCompanyToCity($company_id){
+    public static function getCompanyToCity($company_id){
         $sql = "";
 	    if(!empty($company_id)&&is_numeric($company_id)){
 	        $sql = " or id='$company_id'";
@@ -292,7 +292,7 @@ class EmployForm extends CFormModel
     }
 
     //獲取可用合同
-    public function getContractToCity($con_id){
+    public static function getContractToCity($con_id){
         $sql = "";
         if(!empty($con_id)&&is_numeric($con_id)){
             $sql = " or id='$con_id'";
@@ -823,7 +823,7 @@ class EmployForm extends CFormModel
     }
 
     //工資權限
-    public function validateWageInput(){
+    public static function validateWageInput(){
 	    if(Yii::app()->user->validFunction('ZR02')||Yii::app()->user->validRWFunction('ZG01')||Yii::app()->user->validRWFunction('ZG02')){
 	        return true;
         }else{

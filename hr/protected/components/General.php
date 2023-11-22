@@ -18,7 +18,7 @@ class General extends CGeneral {
 		return $list;
 	}
 */
-	public function getUpdateDate() {
+	public static function getUpdateDate() {
 		$file = Yii::app()->basePath.'/config/lud.php';
 		if (file_exists($file)) {
 			$lud = require($file);

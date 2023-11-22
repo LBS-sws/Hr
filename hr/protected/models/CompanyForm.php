@@ -123,7 +123,7 @@ class CompanyForm extends CFormModel
         }
     }
     //獲取用戶表的所有用戶(相同城市)
-	public function getUserList(){
+	public static function getUserList(){
         //$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];

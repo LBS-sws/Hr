@@ -5,3 +5,10 @@ protected/runtime/*
 protected/data/*.db
 themes/classic/views/
 hr/protected/data/hr_20191210.sql
+
+/hr/protected/runtime/*
+/hr/assets/
+.idea/*
+desktop.ini
+AdminLTE
+yii

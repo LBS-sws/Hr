@@ -94,7 +94,7 @@ class WordForm extends CFormModel
 	}
 
 //获取地区名字
-	public function getCityNameToCode($code)
+	public static function getCityNameToCode($code)
 	{
         $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
         $rows = Yii::app()->db->createCommand()->select("name")->from($from)->where("code=:code",array(":code"=>$code))->queryRow();

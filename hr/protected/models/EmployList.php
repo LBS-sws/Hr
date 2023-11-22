@@ -9,7 +9,7 @@ class EmployList extends CListPageModel
 	 */
 	public function attributeLabels()
 	{
-		return array(	
+		return array(
 			'id'=>Yii::t('contract','ID'),
 			'name'=>Yii::t('contract','Employee Name'),
 			'code'=>Yii::t('contract','Employee Code'),
@@ -26,11 +26,11 @@ class EmployList extends CListPageModel
 	}
 
     //獲取性別列表
-    public function getSexList(){
+    public static function getSexList(){
         return array(""=>"","man"=>Yii::t("contract","man"),"woman"=>Yii::t("contract","woman"));
     }
     //獲取年齡列表
-    public function getAgeList(){
+    public static function getAgeList(){
         $list = array(""=>"");
         for ($num = 18;$num<70;$num++){
             $list[$num] = $num;
@@ -38,11 +38,11 @@ class EmployList extends CListPageModel
         return $list;
     }
     //獲取健康列表
-    public function getHealthList(){
+    public static function getHealthList(){
         return array(""=>"","poor"=>Yii::t("staff","poor"),"general"=>Yii::t("staff","general"),"good"=>Yii::t("staff","good"));
     }
     //獲取戶籍列表
-    public function getNationList(){
+    public static function getNationList(){
         return array(
             ""=>"",
             "Non-agricultural"=>Yii::t("contract","Non-agricultural"),
@@ -50,14 +50,14 @@ class EmployList extends CListPageModel
         );
     }
     //獲取合同期限列表
-    public function getFixTimeList(){
+    public static function getFixTimeList(){
         return array(
             "fixation"=>Yii::t("contract","fixation"),
             "nofixed"=>Yii::t("contract","nofixed")
         );
     }
     //獲取合同期限列表
-    public function getOperationTypeList($staff_id = 0,$type=""){
+    public static function getOperationTypeList($staff_id = 0,$type=""){
         if(empty($staff_id)){
             $num = "";
         }else{
@@ -76,7 +76,7 @@ class EmployList extends CListPageModel
         );
     }
     //獲取健康列表
-    public function getMonthList(){
+    public static function getMonthList(){
         $list = array(""=>"");
         for ($num = 1;$num<=12;$num++){
             $list[$num]=$num.Yii::t("staff"," months");
@@ -84,7 +84,7 @@ class EmployList extends CListPageModel
         return $list;
     }
     //試用期時長列表
-    public function getTestMonthLengthList(){
+    public static function getTestMonthLengthList(){
         $list = array(""=>"");
         for ($num = 1;$num<=6;$num++){
             $list[$num]=$num.Yii::t("staff"," months");
@@ -92,7 +92,7 @@ class EmployList extends CListPageModel
         return $list;
     }
     //獲取學歷列表
-    public function getEducationList(){
+    public static function getEducationList(){
         return array(
             ""=>"",
             "Primary school"=>Yii::t("staff","Primary school"),
@@ -106,19 +106,19 @@ class EmployList extends CListPageModel
         );
     }
     //獲取員工職能列表
-    public function getStaffLeaderList(){
+    public static function getStaffLeaderList(){
         return array("Nil"=>Yii::t("staff","Nil"),"Group Leader"=>Yii::t("staff","Group Leader"),"Team Leader"=>Yii::t("staff","Team Leader"));
     }
     //獲取員工類別列表
-    public function getStaffTypeList(){
+    public static function getStaffTypeList(){
         return array(""=>"","Office"=>Yii::t("staff","Office"),"Sales"=>Yii::t("staff","Sales"),"Technician"=>Yii::t("staff","Technician"),"Others"=>Yii::t("staff","Others"));
     }
     //技術員
-    public function getTechnicianList(){
+    public static function getTechnicianList(){
         return array(Yii::t("misc","No"),Yii::t("misc","Yes"));
     }
     //經理級別
-    public function getManagerList(){
+    public static function getManagerList(){
         return array(
             Yii::t("fete","none"),
             Yii::t("fete","handle"),
@@ -129,7 +129,7 @@ class EmployList extends CListPageModel
     }
 
     //獲取員工續約的次數
-    public function getContractNumber($staff_id){
+    public static function getContractNumber($staff_id){
         $num = Yii::app()->db->createCommand()->select("count('id')")->from("hr_employee_history")
             ->where('employee_id=:employee_id and status="contract"',array(":employee_id"=>$staff_id))->queryScalar();
         if($num){
@@ -177,7 +177,7 @@ class EmployList extends CListPageModel
                     break;
 			}
 		}
-		
+
 		$order = "";
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
@@ -188,7 +188,7 @@ class EmployList extends CListPageModel
 
 		$sql = $sql2.$clause;
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
-		
+
 		$sql = $sql1.$clause.$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$records = Yii::app()->db->createCommand($sql)->queryAll();
@@ -220,7 +220,7 @@ class EmployList extends CListPageModel
 	}
 
 
-	public function translateEmploy($status,$remark=0){
+	public static function translateEmploy($status,$remark=0){
 	    switch ($status){
 	        // text-danger
             case 1:
