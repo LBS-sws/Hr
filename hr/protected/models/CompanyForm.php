@@ -137,7 +137,7 @@ class CompanyForm extends CFormModel
     }
 
     //根據公司id獲取公司信息
-	public function getCompanyToId($company_id){
+	public static function getCompanyToId($company_id){
 	    $arr=array("name"=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
             ->where('id=:id', array(':id'=>$company_id))->queryRow();

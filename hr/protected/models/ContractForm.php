@@ -119,7 +119,7 @@ class ContractForm extends CFormModel
         return $arr;
     }
     //獲取合同下的所有文檔(并降序排序）
-    public function getWordListToConIdDesc($contract_id){
+    public static function getWordListToConIdDesc($contract_id){
 	    $arr = array();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract_docx")
             ->where('contract_id=:contract_id', array(':contract_id'=>$contract_id))->order('index desc')->queryAll();

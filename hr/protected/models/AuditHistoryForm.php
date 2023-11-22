@@ -228,7 +228,7 @@ class AuditHistoryForm extends CFormModel
     }
 
     //獲取員工歷史
-    public function getStaffHistoryList($staff_id){
+    public static function getStaffHistoryList($staff_id){
         $rows = Yii::app()->db->createCommand()->select()->from("hr_employee_history")
             ->where('employee_id=:id', array(':id'=>$staff_id))->order('id desc')->queryAll();
         $staff = Yii::app()->db->createCommand()->select("code,name")->from("hr_employee")
