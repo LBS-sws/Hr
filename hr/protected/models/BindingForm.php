@@ -193,11 +193,16 @@ class BindingForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->saveStaff($connection);
+            //本地变更保存
+            list($falg,$scenario) = $this->saveStaff($connection);
+
+            //远程变更保存
+            $this->save_to_NewUnited($scenario);
+
 			$transaction->commit();
-		}
-		catch(Exception $e) {
+		}catch(Exception $e) {
 			$transaction->rollback();
+//            echo "<pre>";print_r(json_encode($e->getMessage(),true));echo "</pre>";exit();
 			throw new CHttpException(404,'Cannot update.');
 		}
 	}
@@ -208,6 +213,9 @@ class BindingForm extends CFormModel
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
+        
+        /* 处理数据 */
+        $scenario = $this->scenario;
 		switch ($this->scenario) {
 			case 'delete':
                 $sql = "delete from hr_binding where id = :id and city IN ($city_allow)";
@@ -233,6 +241,7 @@ class BindingForm extends CFormModel
 				break;
 		}
 
+        /* 赋值 */
 		$command=$connection->createCommand($sql);
 		if (strpos($sql,':id')!==false)
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
@@ -252,12 +261,75 @@ class BindingForm extends CFormModel
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
 
+        /* 执行 */
 		$command->execute();
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
             $this->scenario = "edit";
         }
-        return true;
+        return array(true,$scenario);
 	}
+
+    /**
+     * 保存至新U派单系统
+     * @return void
+     * @throws CHttpException
+     */
+    public function save_to_NewUnited($scenario){
+        $url = yii::app()->params['nu_url'].'api/hr.DataSync/hrBinding_dataSync';
+
+        //构造数据
+        $uid = Yii::app()->user->id;
+        $post_data = array(
+            'scenario' => $scenario,
+            'id' => $this->id,
+            'employee_id' => $this->employee_id,
+            'employee_name' => $this->employee_name,
+            'user_id' => $this->user_id,
+            'user_name' => $this->user_name,
+            'city' => $this->city,
+            'luu' => $uid,
+            'lcu' => $uid,
+            'city_allow' => Yii::app()->user->city_allow(),
+        );
+
+        $res = $this->http_curl_get($url,$post_data);
+        if(!$res || $res['code']==400 || $res['data']['code']!=1){//执行成功
+            $msg = (isset($res)&&$res['msg']?$res['msg']:'Cannot update.');
+            throw new CHttpException(404,$msg);
+        }
+
+        return $res;
+    }
+
+
+    /**
+     * http post 请求
+     *
+     * @param string $url    请求地址
+     * @param array  $param  请求参数
+     * @param array  $header 请求头部
+     *
+     * @return array
+     */
+    public function http_curl_get($url, $param = array(), $header = array()) {
+        $param = json_encode($param,true);
+        $header = array_merge($header, ['Content-type:application/json;charset=utf-8', 'Accept:application/json']);
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $param);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        $response = json_decode($response, true);
+
+        return $response;
+    }
 }

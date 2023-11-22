@@ -134,5 +134,6 @@ return array(
 		'appcolor'=>'skin-red-light',
 		'retire'=>true,
         'showRank'=>'on',
+        'nu_url'=>'http://lbsapps.local.cn/nu/',//新U(new united) 派单系统地址
 	),
 );
