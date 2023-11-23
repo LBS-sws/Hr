@@ -68,6 +68,13 @@ return array(
 				'fields'=>'fieldsOnlib',
 			),
 	),
+	    'nu'=>array(
+        'webroot'=>'http://lbsapps.local.cn/nu',
+        'name'=>'New United',
+        'icon'=>'fa fa-suitcase',
+        'param'=>'/admin',
+        'script'=>'goNewUnited',
+    ),
 /*
 	'apps'=>array(
 		'webroot'=>'https://app.lbsgroup.com.tw/web',
