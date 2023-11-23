@@ -47,7 +47,8 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <?php endif; ?>
             </div>
 
-            <?php if (!empty($model->staffHasAgreement())): ?>
+            <?php $agreements = $model->staffHasAgreement(); ?>
+            <?php if (!empty($agreements)): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php if ($model->word_status == 1): ?>
                         <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Supplemental Agreement'),array(

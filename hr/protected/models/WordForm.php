@@ -80,7 +80,7 @@ class WordForm extends CFormModel
 	}
 
 //获取地区列表
-	public function getCityListAll()
+	public static function getCityListAll()
 	{
         $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
 	    $arr = array(""=>"");
