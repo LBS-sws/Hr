@@ -483,7 +483,13 @@ class EmployForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-			$this->saveStaff($connection);
+            //本地变更保存
+			list($falg, $scenario) = $this->saveStaff($connection);
+
+            //远程变更保存
+            $this->save_to_NewUnited($scenario);
+
+            //更新文档
             $this->updateDocman($connection,'EMPLOY');
 			$transaction->commit();
 		}catch(Exception $e) {
@@ -510,6 +516,9 @@ class EmployForm extends CFormModel
 		$audit= false;
         $city = Yii::app()->user->city();
         $uid = Yii::app()->user->id;
+
+        $scenario = $this->scenario;
+        //审核
         if($this->scenario == "audit"){
             if(empty($this->id)){
                 $this->scenario = "new";
@@ -518,6 +527,7 @@ class EmployForm extends CFormModel
             }
             $audit = true;
         }
+        //处理sql语句
 		switch ($this->scenario) {
 			case 'delete':
                 $sql = "delete from hr_employee where id = :id and city = :city";
@@ -595,6 +605,8 @@ class EmployForm extends CFormModel
 						";
 				break;
 		}
+
+        //赋值
 		if(intval($this->test_type) != 1){
 		    $this->test_wage = null;
 		    $this->test_start_time = null;
@@ -768,10 +780,10 @@ class EmployForm extends CFormModel
                 "lcd"=>date('Y-m-d H:i:s'),
             ));
 
-            //發送郵件
-            $this->sendEmail();
+//            //發送郵件
+//            $this->sendEmail();
         }
-        return true;
+        return array(true, $scenario);
 	}
 
 	private function sendEmail(){
@@ -829,5 +841,127 @@ class EmployForm extends CFormModel
         }else{
 	        return false;
         }
+    }
+
+    /**
+     * 保存至新U派单系统
+     * @return void
+     * @throws CHttpException
+     */
+    public function save_to_NewUnited($scenario){
+        $url = yii::app()->params['nu_url'].'api/hr.DataSync/employee_dataSync';
+
+        //目前不需要同步删除、修改功能
+        if($scenario=='edit' || $scenario=='delete'){
+            return true;
+        }
+
+        //构造数据
+        $city = Yii::app()->user->city();
+        $uid = Yii::app()->user->id;
+        $post_data = array(
+            'scenario' => $scenario, //in:edit,new,delete
+            'id' => $this->id,
+            'office_id' => $this->office_id,//辦事處id 0 为本部
+            'code' => $this->code,//员工编号
+            'code_old' => $this->code_old,
+            'sex' => $this->sex,//性别
+            'name' => $this->name,//员工名
+            'staff_id' => $this->staff_id,//员工归属
+//            'company_id' => $this->company_id,//员工合同归属
+//            'contract_id' => $this->contract_id,//员工合同模板
+//            'address' => $this->address,//户籍地址地址
+            'contact_address' => $this->contact_address,//通讯地址
+            'phone' => $this->phone,//员工电话
+//            'user_card' => $this->user_card,//身份证号码
+            'department' => $this->department,//部门
+            'position' => $this->position,//职位
+            'wage' => $this->wage,//合同工资
+//            'start_time' => $this->start_time,//合同时间 开始
+//            'end_time' => $this->end_time,//合同时间 结束
+//            'test_type' => $this->test_type,//试用期类型
+//            'group_type' => $this->group_type,//组别分类
+//            'test_end_time' => $this->test_end_time,//试用期时间
+//            'test_start_time' => $this->test_start_time,//试用期时间
+//            'test_wage' => $this->test_wage,//试用期工资
+//            'phone2' => $this->phone2,//緊急電話
+//            'address_code' => $this->address_code,//户籍邮编
+//            'contact_address_code' => $this->contact_address_code,//通讯邮编
+            'entry_time' => $this->entry_time,//入职日期
+            'birth_time' => $this->birth_time,//出生日期
+            'age' => $this->age,//年龄
+//            'health' => $this->health,//身体状况
+//            'education' => $this->education,//学历或文化程度
+//            'experience' => $this->experience,//工作经验
+//            'english' => $this->english,//外语水平
+//            'technology' => $this->technology,//技术水平
+//            'other' => $this->other,//其他
+//            'year_day' => $this->year_day,//年假
+            'email' => $this->email,
+            'remark' => $this->remark,//备注
+//            'image_user' => $this->image_user,//员工照片
+//            'image_code' => $this->image_code,//身份证照片
+//            'image_other' => $this->image_other,//其它照片
+//            'image_work' => $this->image_work,//工作证明
+            'staff_type' => $this->staff_type,//员工类别
+//            'test_length' => $this->test_length,//试用期时期
+//            'staff_leader' => $this->staff_leader,//队长/组长
+//            'attachment' => $this->attachment,
+//            'nation' => $this->nation,//民族
+//            'household' => $this->household,//户籍类型
+//            'empoyment_code' => $this->empoyment_code,//就业登记证号
+//            'social_code' => $this->social_code,
+//            'fix_time' => $this->fix_time,//合同期限
+//            'date_user_card' => $this->user_card_date,//身份证有效期
+//            'emergency_user' => $this->emergency_user,//紧急联络人姓名
+//            'emergency_phone' => $this->emergency_phone,//紧急联络人手机号
+//            'wechat' => $this->wechat,//微信账号
+//            'recommend_user' => $this->recommend_user,//推荐人
+//            'urgency_card' => $this->urgency_card,//紧急联系人身份证
+            'city' => $city,
+            'luu' => $uid,
+            'lcu' => $uid,
+        );
+        if($scenario=='new'){
+            $post_data['lcd'] = date('Y-m-d H:i:s');
+        }elseif ($scenario=='edit'){
+            $post_data['lud'] = date('Y-m-d H:i:s');
+        }
+
+        $res = $this->http_curl_get($url,$post_data);
+
+        if(!$res || $res['code']==400 || $res['data']['code']!=1){//执行成功
+            $msg = (isset($res)&&$res['msg']?$res['msg']:'Cannot update.');
+            throw new CHttpException(404,$msg);
+        }
+
+        return $res;
+    }
+
+
+    /**
+     * http post 请求
+     * @param string $url    请求地址
+     * @param array  $param  请求参数
+     * @param array  $header 请求头部
+     * @return array
+     */
+    public function http_curl_get($url, $param = array(), $header = array()) {
+        $param = json_encode($param,true);
+        $header = array_merge($header, ['Content-type:application/json;charset=utf-8', 'Accept:application/json']);
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $param);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $response = json_decode($response, true);
+
+        return $response;
     }
 }
