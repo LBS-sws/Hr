@@ -851,10 +851,10 @@ class EmployForm extends CFormModel
     public function save_to_NewUnited($scenario){
         $url = yii::app()->params['nu_url'].'api/hr.DataSync/employee_dataSync';
 
-        //目前不需要同步删除、修改功能
-        if($scenario=='edit' || $scenario=='delete'){
-            return true;
-        }
+//        //目前不需要同步删除、修改功能
+//        if($scenario=='edit' || $scenario=='delete'){
+//            return true;
+//        }
 
         //构造数据
         $city = Yii::app()->user->city();
