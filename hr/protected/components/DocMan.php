@@ -161,7 +161,7 @@ class DocMan {
 				$this->saveFile($connection, 'insert', $data);
 			}
 			$transaction->commit();
-			
+            $this->resetModelFileNumber();
 		} catch(Exception $e) {
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
@@ -209,6 +209,7 @@ class DocMan {
 						);
 				$this->saveFile($connection, 'delete', $data);
 				$transaction->commit();
+                $this->resetModelFileNumber();
 			} catch(Exception $e) {
 				$transaction->rollback();
 				throw new CHttpException(404,'Cannot update.');
@@ -327,7 +328,7 @@ class DocMan {
 		$sql = ($mastId > 0)
 				? "select
 						a.id, a.doc_type_code, a.doc_id, 
-						b.id as file_id, b.display_name, b.archive, b.lcd, b.file_type  
+						b.id as file_id, b.display_name, b.archive, b.lcd, b.file_type, b.phy_file_name, b.phy_path_name   
 					from 
 						docman$suffix.dm_master a inner join docman$suffix.dm_file b on a.id=b.mast_id 
 					where 
@@ -336,7 +337,7 @@ class DocMan {
 				"
 				: "select
 						a.id, a.doc_type_code, a.doc_id, 
-						b.id as file_id, b.display_name, b.archive, b.lcd, b.file_type  
+						b.id as file_id, b.display_name, b.archive, b.lcd, b.file_type, b.phy_file_name, b.phy_path_name   
 					from 
 						docman$suffix.dm_master a inner join docman$suffix.dm_file b on a.id=b.mast_id 
 					where 
@@ -370,20 +371,36 @@ class DocMan {
 			}
 */
 			foreach ($rows as $row) {
-					$rtn[] = array(
-								'id'=>$row['id'],
-								'doc_type_code'=>$row['doc_type_code'],
-								'doc_id'=>$row['doc_id'],
-								'file_id'=>$row['file_id'],
-								'file_type'=>$row['file_type'],
-								'display_name'=>$row['display_name'],
-								'archive'=>$row['archive'],
-								'lcd'=>$row['lcd'],
-							);
+                $rtn[] = array(
+                    'id'=>$row['id'],
+                    'doc_type_code'=>$row['doc_type_code'],
+                    'doc_id'=>$row['doc_id'],
+                    'file_id'=>$row['file_id'],
+                    'file_type'=>$row['file_type'],
+                    'display_name'=>$row['display_name'],
+                    'phy_file_name'=>$row['phy_file_name'],
+                    'phy_path_name'=>$row['phy_path_name'],
+                    'archive'=>$row['archive'],
+                    'lcd'=>$row['lcd'],
+                );
 			}
 		}
 		return $rtn;
 	}
+
+    private function getImgHtml($row){
+        $html = "";
+        if (strpos($row["file_type"],'image/')!==false){
+            $path = $row["phy_path_name"]."/".$row["phy_file_name"];
+            if(is_file($path)){
+                $imgData=file_get_contents($path);
+                $imgData = base64_encode($imgData);
+                $imgData="data:{$row["file_type"]};base64,{$imgData}";
+                $html = "<span class='fa fa-search-plus'><img src=\"{$imgData}\" class='hide'></span>";
+            }
+        }
+        return $html;
+    }
 
 	public function genTableFileList($readonly,$delBtn=true) {
 		$rtn = "";
@@ -402,6 +419,8 @@ class DocMan {
 				$id = $filerec['file_id'];
 				$x = $this->masterId;
 				$y = $this->formId;
+                $imgHtml = $this->getImgHtml($filerec);//图片资源
+                $clickImg = empty($imgHtml)?"":" search_box_img";
 				$vbutton = ($this->docId==0) ? "" : "<a href=\"#\" onclick=\"downloadFile$doctype($mid, $did, $id);return false;\" title=\"$title1\"><span class=\"fa fa-download\"></span></a>";
 				$dbutton = $readonly ? "" : "<a href=\"#\" onclick=\"removeFile$doctype($id);return false;\"><span class=\"fa fa-remove\" title=\"$title2\"></span></a>";
 				if(!$delBtn){
@@ -409,7 +428,7 @@ class DocMan {
                 }
 				$fname = $filerec['display_name'];
 				$ldate = $filerec['lcd'];
-				$rtn .= "<tr><td>$vbutton&nbsp;&nbsp;$dbutton</td><td>$fname</td><td>$ldate</td></tr>";
+                $rtn .= "<tr><td>$vbutton&nbsp;&nbsp;$dbutton</td><td class='{$clickImg}'>$fname {$imgHtml}</td><td>$ldate</td></tr>";
 				$reccnt++;
 			}
 		}
@@ -435,10 +454,12 @@ class DocMan {
 				$mid = $filerec['id'];
 				$did = $this->docId;
 				$id = $filerec['file_id'];
+                $imgHtml = $this->getImgHtml($filerec);//图片资源
+                $clickImg = empty($imgHtml)?"":" search_box_img";
 				$vbutton = "<a href=\"#\" onclick=\"downloadFile$doctype($mid, $did, $id);return false;\" title=\"$title1\"><span class=\"fa fa-download\"></span></a>";
 				$fname = $filerec['display_name'];
 				$ldate = $filerec['lcd'];
-				$rtn .= "<tr><td>$vbutton</td><td>$fname</td><td>$ldate</td></tr>";
+				$rtn .= "<tr><td>$vbutton</td><td class='{$clickImg}'>$fname {$imgHtml}</td><td>$ldate</td></tr>";
 				$reccnt++;
 			}
 		}
@@ -450,8 +471,8 @@ class DocMan {
 		$suffix = Yii::app()->params['envSuffix'];
 		$docId = $this->docId;
 		$sql = "update docman$suffix.dm_master set doc_id=$docId where id=$masterId";
-		var_dump($sql);
 		$connection->createCommand($sql)->execute();
+        $this->resetModelFileNumber();
 	}
 	
 	private function hashDirectory($filename) {
@@ -466,5 +487,14 @@ class DocMan {
 		if (!file_exists($path)) mkdir($path);
 		return $path;
 	}
+
+    //由於列表需要顯示附件數量，導致列表打開太慢，所以保存附件數量
+    public function resetModelFileNumber(){
+        $model = new $this->formId();
+        $funList = get_class_methods($model);
+        if(in_array("resetFileSum",$funList)){
+            $model->resetFileSum($this->docId);
+        }
+    }
 }
 ?>
