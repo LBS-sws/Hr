@@ -45,8 +45,8 @@ class CompanyController extends Controller
         return Yii::app()->user->validRWFunction('ZA02');
     }
 
-    public static function allowReadOnly() {
-        return Yii::app()->user->validFunction('ZA02');
+    public static function allowReadOnly() {//ZR25
+        return Yii::app()->user->validFunction('ZA02')||Yii::app()->user->validFunction('ZR25');
     }
 
     public function actionTest()
@@ -149,12 +149,13 @@ class CompanyController extends Controller
         $model = new CompanyForm();
         if (isset($_POST['CompanyForm'])) {
             $model->attributes = $_POST['CompanyForm'];
-
-            $id = ($_POST['CompanyForm']['scenario']=='new') ? 0 : $model->id;
-            $docman = new DocMan($doctype,$id,get_class($model));
-            $docman->masterId = $model->docMasterId[strtolower($doctype)];
-            if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
-            $docman->fileUpload();
+            if($model->validateID("id","")){
+                $id = ($_POST['CompanyForm']['scenario']=='new') ? 0 : $model->id;
+                $docman = new DocMan($doctype,$id,get_class($model));
+                $docman->masterId = $model->docMasterId[strtolower($doctype)];
+                if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
+                $docman->fileUpload();
+            }
             echo $docman->genTableFileList(false);
         } else {
             echo "NIL";
@@ -166,9 +167,11 @@ class CompanyController extends Controller
         if (isset($_POST['CompanyForm'])) {
             $model->attributes = $_POST['CompanyForm'];
 
-            $docman = new DocMan($doctype,$model->id,'CompanyForm');
-            $docman->masterId = $model->docMasterId[strtolower($doctype)];
-            $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+            if($model->validateID("id","")){
+                $docman = new DocMan($doctype,$model->id,'CompanyForm');
+                $docman->masterId = $model->docMasterId[strtolower($doctype)];
+                $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
+            }
             echo $docman->genTableFileList(false);
         } else {
             echo "NIL";
@@ -180,7 +183,8 @@ class CompanyController extends Controller
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if ($row!==false) {
             $citylist = Yii::app()->user->city_allow();
-            if (strpos($citylist, $row['city']) !== false) {
+            $bool = Yii::app()->user->validFunction('ZR25')&&"COMPANY2"==$doctype;
+            if ($bool||strpos($citylist, $row['city']) !== false) {
                 $docman = new DocMan($doctype,$docId,'CompanyForm');
                 $docman->masterId = $mastId;
                 $docman->fileDownload($fileId);

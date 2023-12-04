@@ -232,6 +232,7 @@ return array(
     'appoint for leave'=>'審核指定請假',
     'appoint for work'=>'審核指定加班',
     'appoint for trip'=>'審核指定出差',
+    'Company Information'=>'公司資質資料',
 //沈超添加結束
 );
 ?>

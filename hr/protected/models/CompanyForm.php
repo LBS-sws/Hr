@@ -101,6 +101,7 @@ class CompanyForm extends CFormModel
             ','safe'),
 			array('name','required'),
 			array('city','required'),
+			array('id','validateID'),
 			array('name','validateName'),
 			array('legal','required'),
 			array('head','required'),
@@ -112,6 +113,22 @@ class CompanyForm extends CFormModel
             array('files, removeFileId, docMasterId, no_of_attm','safe'),
         );
 	}
+
+	public function validateID($attribute, $params){
+	    if($this->getScenario()!="new"){
+            $city_allow = Yii::app()->user->city_allow();
+            $row = Yii::app()->db->createCommand()->select()->from("hr_company")
+                ->where("id=:id and city in ({$city_allow})", array(':id'=>$this->id))->queryRow();
+            if (!$row){
+                $message = "公司城市不在管辖范围内，无法修改";
+                $this->addError($attribute,$message);
+                return false;
+            }else{
+                $this->city = $row["city"];
+            }
+        }
+        return true;
+    }
 
 	public function validateName($attribute, $params){
         $city = $this->city;
@@ -163,12 +180,16 @@ class CompanyForm extends CFormModel
         //$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
+        $whereSql = " city in ($city_allow) ";
+        if(Yii::app()->user->validFunction('ZR25')){//允許查看所有公司列表
+            $whereSql = "id>0";
+        }
         $sql = "select a.* ,
 				docman$suffix.countdoc('COMPANY',id) as companydoc,
 				docman$suffix.countdoc('COMPANY2',id) as companydoc2,
 				docman$suffix.countdoc('COMPANY3',id) as companydoc3
 				from hr_company a
-				where a.id=$index AND a.city in ($city_allow)";
+				where a.id=$index AND {$whereSql}";
         $rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0)
 		{
@@ -365,5 +386,11 @@ class CompanyForm extends CFormModel
         }
     }
 
+    public function readyCityAndPix(){
+        $city_allow = Yii::app()->user->city_allow();
+        $bool = $this->getScenario()=="new";//新增
+        $bool = $bool||strpos($city_allow,$this->city) !== false;//管辖城市
+	    return $bool;
+    }
 
 }

@@ -33,7 +33,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				'submit'=>Yii::app()->createUrl('company/index')));
 		?>
 
-        <?php if ($model->scenario!='view'): ?>
+        <?php if ($model->scenario!='view'&&$model->readyCityAndPix()): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('company/save')));
             ?>
@@ -47,10 +47,12 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 	</div>
             <div class="btn-group pull-right" role="group">
                 <?php
-                $counter = ($model->no_of_attm['company3'] > 0) ? ' <span id="doccompany3" class="label label-info">'.$model->no_of_attm['company3'].'</span>' : ' <span id="doccompany3"></span>';
-                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('contract','Insurance Documents').$counter, array(
-                        'name'=>'btnCompany3','id'=>'btnCompany3','data-toggle'=>'modal','data-target'=>'#fileuploadcompany3',)
-                );
+                    if($model->readyCityAndPix()){
+                        $counter = ($model->no_of_attm['company3'] > 0) ? ' <span id="doccompany3" class="label label-info">'.$model->no_of_attm['company3'].'</span>' : ' <span id="doccompany3"></span>';
+                        echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('contract','Insurance Documents').$counter, array(
+                                'name'=>'btnCompany3','id'=>'btnCompany3','data-toggle'=>'modal','data-target'=>'#fileuploadcompany3',)
+                        );
+                    }
                 ?>
                 <?php
                 $counter = ($model->no_of_attm['company2'] > 0) ? ' <span id="doccompany2" class="label label-info">'.$model->no_of_attm['company2'].'</span>' : ' <span id="doccompany2"></span>';
@@ -59,10 +61,12 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                 );
                 ?>
                 <?php
-                $counter = ($model->no_of_attm['company'] > 0) ? ' <span id="doccompany" class="label label-info">'.$model->no_of_attm['company'].'</span>' : ' <span id="doccompany"></span>';
-                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                        'name'=>'btnCompany','id'=>'btnCompany','data-toggle'=>'modal','data-target'=>'#fileuploadcompany',)
-                );
+                if($model->readyCityAndPix()) {
+                    $counter = ($model->no_of_attm['company'] > 0) ? ' <span id="doccompany" class="label label-info">' . $model->no_of_attm['company'] . '</span>' : ' <span id="doccompany"></span>';
+                    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> ' . Yii::t('misc', 'Attachment') . $counter, array(
+                            'name' => 'btnCompany', 'id' => 'btnCompany', 'data-toggle' => 'modal', 'data-target' => '#fileuploadcompany',)
+                    );
+                }
                 ?>
             </div>
 	</div></div>
@@ -77,7 +81,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'name',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-5">
 					<?php echo $form->textField($model, 'name',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -85,7 +89,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-5">
                     <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
-                        array('disabled'=>($model->scenario=='view'))
+                        array('disabled'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
 				</div>
 			</div>
@@ -93,13 +97,13 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'head',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'head',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
 				<?php echo $form->labelEx($model,'head_email',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'head_email',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
 			</div>
@@ -107,13 +111,13 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                 <?php echo $form->labelEx($model,'legal',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'legal',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
                 <?php echo $form->labelEx($model,'legal_email',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'legal_email',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
             </div>
@@ -121,13 +125,13 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                 <?php echo $form->labelEx($model,'legal_city',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'legal_city',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
                 <?php echo $form->labelEx($model,'taxpayer_num',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'taxpayer_num',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
             </div>
@@ -135,13 +139,13 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'agent',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'agent',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
 				<?php echo $form->labelEx($model,'agent_email',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->textField($model, 'agent_email',
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
 			</div>
@@ -149,7 +153,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'address',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-8">
 					<?php echo $form->textField($model, 'address',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -157,13 +161,13 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'phone',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'phone',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 				<?php echo $form->labelEx($model,'postal',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'postal',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -171,7 +175,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'address2',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-8">
 					<?php echo $form->textField($model, 'address2',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -179,7 +183,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'postal2',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'postal2',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -187,7 +191,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'phone_two',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'phone_two',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -195,7 +199,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'mie',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
                     <?php echo $form->dropDownList($model, 'mie',array(""=>"","A"=>"A","B"=>"B","C"=>"C"),
-                        array('disabled'=>($model->scenario=='view'))
+                        array('disabled'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
 				</div>
 			</div>
@@ -203,7 +207,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'security_code',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'security_code',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -211,7 +215,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'organization_code',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'organization_code',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -223,7 +227,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'organization_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()),));
                         ?>
                     </div>
                 </div>
@@ -232,7 +236,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 				<?php echo $form->labelEx($model,'license_code',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
 					<?php echo $form->textField($model, 'license_code',
-						array('readonly'=>($model->scenario=='view'))
+						array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
 					); ?>
 				</div>
 			</div>
@@ -244,7 +248,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                             <i class="fa fa-calendar"></i>
                         </div>
                         <?php echo $form->textField($model, 'license_time',
-                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'),));
+                            array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()),));
                         ?>
                     </div>
                 </div>
@@ -253,7 +257,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                 <?php echo $form->labelEx($model,'tacitly',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
                     <?php echo $form->inlineRadioButtonList($model, 'tacitly',array(Yii::t("misc","No"),Yii::t("misc","Yes")),
-                        array('readonly'=>($model->scenario=='view'))
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
                 </div>
             </div>
@@ -267,19 +271,19 @@ $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
     'doctype'=>'COMPANY',
     'header'=>Yii::t('dialog','File Attachment'),
-    'ronly'=>($model->scenario=='view'),
+    'ronly'=>($model->scenario=='view'||!$model->readyCityAndPix()),
 ));
 $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
     'doctype'=>'COMPANY2',
     'header'=>Yii::t('contract','Qualification  Documents'),
-    'ronly'=>($model->scenario=='view'),
+    'ronly'=>($model->scenario=='view'||!$model->readyCityAndPix()),
 ));
 $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
     'doctype'=>'COMPANY3',
     'header'=>Yii::t('contract','Insurance Documents'),
-    'ronly'=>($model->scenario=='view'),
+    'ronly'=>($model->scenario=='view'||!$model->readyCityAndPix()),
 ));
 ?>
 <?php

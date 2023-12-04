@@ -25,12 +25,16 @@ class CompanyList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        $whereSql = " city in ($city_allow) ";
+        if(Yii::app()->user->validFunction('ZR25')){//允許查看所有公司列表
+            $whereSql = "id>0";
+        }
 		$sql1 = "select * from hr_company 
-                where city in ($city_allow) 
+                where {$whereSql} 
 			";
 		$sql2 = "select count(id)
 				from hr_company 
-				where city in ($city_allow) 
+                where {$whereSql} 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
