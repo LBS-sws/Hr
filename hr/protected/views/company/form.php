@@ -88,7 +88,7 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-5">
-                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList(),
+                    <?php echo $form->dropDownList($model, 'city',CompanyList::getSingleCityToList($model->city),
                         array('disabled'=>($model->scenario=='view'||!$model->readyCityAndPix()))
                     ); ?>
 				</div>
