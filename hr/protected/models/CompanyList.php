@@ -25,12 +25,16 @@ class CompanyList extends CListPageModel
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        $whereSql = " city in ($city_allow) ";
+        if(Yii::app()->user->validFunction('ZR25')){//允許查看所有公司列表
+            $whereSql = " city in ($city_allow) or (city='SH' and tacitly=1)";//修改为只能查看上海
+        }
 		$sql1 = "select * from hr_company 
-                where city in ($city_allow) 
+                where {$whereSql} 
 			";
 		$sql2 = "select count(id)
 				from hr_company 
-				where city in ($city_allow) 
+                where {$whereSql} 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -85,21 +89,16 @@ class CompanyList extends CListPageModel
 	}
 
 	//獲取管轄城市列表
-    public function getSingleCityToList() {
-        $str = Yii::app()->session['city_allow'];
-        $city = Yii::app()->session['city'];
-        $cityName = Yii::app()->session['city_name'];
-        $items = explode(",",str_replace("'","",$str));
+    public static function getSingleCityToList($city="") {
+        $city_allow = Yii::app()->user->city_allow();
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select()->from("security{$suffix}.sec_city")
+            ->where("code in ({$city_allow}) or code=:code",array(":code"=>$city))->queryAll();
+
         $arr = array();
-        if (($items===false) || empty($items)){
-            $arr[$city] = $cityName;
-        }else{
-            if(count($items)<=1){
-                $arr[$city] = $cityName;
-            }else{
-                foreach ($items as $item){
-                    $arr[$item] = CGeneral::getCityName($item);
-                }
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["code"]] = $row["name"];
             }
         }
         return $arr;

@@ -25,4 +25,5 @@ return array(
 	'Show all recruit'=>array('access'=>'ZR22',),//顯示所有招聘登记
 	'Show all household Search'=>array('access'=>'ZR23',),//顯示所有员工户籍查询
 	'Show all Trip'=>array('access'=>'ZR24',),//顯示所有出差记录
+	'Company Information'=>array('access'=>'ZR25',),//公司资质资料
 );

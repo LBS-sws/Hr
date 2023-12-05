@@ -233,6 +233,7 @@ return array(
     'appoint for leave'=>'审核指定请假',
     'appoint for work'=>'审核指定加班',
     'appoint for trip'=>'审核指定出差',
+    'Company Information'=>'公司资质资料',
     //沈超添加结束
 );
 ?>
