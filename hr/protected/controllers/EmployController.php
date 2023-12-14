@@ -143,20 +143,9 @@ class EmployController extends Controller
     {
         if (isset($_POST['EmployForm'])) {
             $data = $_POST['EmployForm'];
-            $uid = Yii::app()->user->id;
-            Yii::app()->db->createCommand()->update('hr_employee', array(
-                'jj_card'=>$data['jj_card'],
-                'social_code'=>$data['social_code'],
-                'staff_status'=>0,
-                'staff_old_status'=>0,
-            ), 'id=:id and staff_status=4', array(':id'=>$data['id']));
-            //記錄
-            Yii::app()->db->createCommand()->insert('hr_employee_history', array(
-                "employee_id"=>$data['id'],
-                "status"=>"finish",
-                "lcu"=>$uid,
-                "lcd"=>date('Y-m-d H:i:s'),
-            ));
+            $model = new EmployForm();
+            $model->finishData($data);
+
             Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
             $this->redirect(Yii::app()->createUrl('employ/index'));
         }

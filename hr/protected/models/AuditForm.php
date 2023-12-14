@@ -94,11 +94,12 @@ class AuditForm extends StaffForm
 
         //判斷是否需要生成簽署合同
         $this->signContract();
-
+/*
         if($this->getScenario() == "audit"){
             //U系统同步
             StaffForm::sendCurl($this->id,"new");
         }
+	*/
     }
 
     private function signContract(){

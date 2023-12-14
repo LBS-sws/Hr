@@ -337,7 +337,7 @@ class BindingForm extends CFormModel
             "scenario"=>1,"id"=>3,"employee_id"=>3,
             "employee_name"=>1,"user_id"=>1,"user_name"=>1,"city"=>1,
             //"employee_city"=>1,"user_city"=>1,
-            "luu"=>1,"lcu"=>1,"lcd"=>4,"lud"=>4
+            "luu"=>5,"lcu"=>5,"lcd"=>4,"lud"=>4
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;
@@ -353,6 +353,9 @@ class BindingForm extends CFormModel
                     break;
                 case 4://日期+时间
                     $value = empty($value)?null:General::toMyDateTime($value);
+                    break;
+                case 5://必填字段，但lbs为空的时候
+                    $value = $value===""?0:$value;
                     break;
             }
             $this->$key=$value;

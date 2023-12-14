@@ -668,8 +668,8 @@ class StaffForm extends CFormModel
         $list = array();
         $arr = array(
             "scenario"=>1,"id"=>3,"staff_status"=>3,"code"=>1,
-            "name"=>1,"sex"=>1,"table_type"=>3,"office_id"=>3,"phone"=>1,
-            "city"=>1,"luu"=>1,"lcu"=>1,"lcd"=>4,"contact_address"=>1,"department"=>3,
+            "name"=>1,"sex"=>1,"table_type"=>3,"office_id"=>3,"phone"=>5,
+            "city"=>1,"luu"=>5,"lcu"=>5,"lcd"=>4,"contact_address"=>1,"department"=>3,
             "position"=>3,"wage"=>1,"entry_time"=>2,"birth_time"=>2,"leave_time"=>2,
             "age"=>1,"email"=>1,"remark"=>1,"lud"=>4
         );
@@ -687,6 +687,9 @@ class StaffForm extends CFormModel
                     break;
                 case 4://日期+时间
                     $value = empty($value)?null:General::toMyDateTime($value);
+                    break;
+                case 5://必填字段，但lbs为空的时候
+                    $value = $value===""?0:$value;
                     break;
             }
             $this->$key=$value;
