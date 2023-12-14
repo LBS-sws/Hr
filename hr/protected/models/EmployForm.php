@@ -29,7 +29,7 @@ class EmployForm extends StaffForm
         if($this->getScenario()!='new'){
             $allow_city = Yii::app()->user->city_allow();
             $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
-                ->where("id=:id and city in ({$allow_city}) and staff_status in (1,3)", array(':id'=>$this->id))
+                ->where("id=:id and city in ({$allow_city}) and staff_status in (1,3) and table_type=1", array(':id'=>$this->id))
                 ->queryRow();
             if($row){
                 $this->city = $row["city"];
@@ -55,7 +55,7 @@ class EmployForm extends StaffForm
         $suffix = Yii::app()->params['envSuffix'];
         $allow_city = Yii::app()->user->city_allow();
         $row = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
-            ->where("id=:id and city in ({$allow_city})", array(':id'=>$index))->queryRow();
+            ->where("id=:id and city in ({$allow_city}) and table_type=1", array(':id'=>$index))->queryRow();
         if ($row){
             $this->no_of_attm['employ'] = $row['employdoc'];
             $arr = $this->getMyAttr();
