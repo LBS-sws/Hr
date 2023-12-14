@@ -256,7 +256,7 @@ class ExternalForm extends StaffForm
         $city = Yii::app()->user->city();
         $list=array();
         $arr = array(
-            "group_type"=>3,"office_id"=>3,"table_type"=>3,"name"=>1,
+            "group_type"=>3,"office_id"=>3,"table_type"=>3,"staff_status"=>3,"name"=>1,
             "staff_id"=>1,"company_id"=>1,"contract_id"=>1,"address"=>1,"address_code"=>1,
             "contact_address"=>1,"contact_address_code"=>1,"phone"=>1,"phone2"=>1,"user_card"=>1,
             "department"=>1,"position"=>1,"wage"=>1,
