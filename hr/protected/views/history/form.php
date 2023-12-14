@@ -41,7 +41,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     'submit'=>$url));
                 ?>
             </div>
-            <?php if ($model->scenario!='view'||$model->staff_status==3): ?>
+            <?php if (!$model->readonly()): ?>
                 <div class="btn-group" role="group">
                     <?php echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                         'submit'=>Yii::app()->createUrl('history/save')));
@@ -53,7 +53,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     ?>
                 </div>
             <?php endif; ?>
-            <?php if (!empty($model->id)&&($model->staff_status == 1||$model->staff_status == 3)): ?>
+            <?php if (!empty($model->id)&&(in_array($model->staff_status,array(1,3)))): ?>
                 <div class="btn-group" role="group">
                     <?php
                     echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
@@ -121,7 +121,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                                 <i class="fa fa-calendar"></i>
                             </div>
                             <?php echo $form->textField($model, 'effect_time',
-                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'&&$model->staff_status!=3),));
+                                array('class'=>'form-control pull-right','readonly'=>($model->readonly()),));
                             ?>
                         </div>
                     </div>
@@ -129,8 +129,8 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'opr_type',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'opr_type',EmployList::getOperationTypeList($model->employee_id,$model->scenario),
-                            array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3))
+                        <?php echo $form->dropDownList($model, 'opr_type',StaffFun::getOperationTypeList($model->employee_id,$model->scenario),
+                            array('disabled'=>($model->readonly()),'id'=>"opr_type")
                         ); ?>
                     </div>
                 </div>
@@ -138,7 +138,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     <div class="form-group">
                         <?php echo $form->labelEx($model,'change_city_old',array('class'=>"col-sm-2 control-label")); ?>
                         <div class="col-sm-3">
-                            <?php echo $form->dropDownList($model, 'city',WordForm::getCityListAll(),
+                            <?php echo $form->dropDownList($model, 'city',StaffFun::getCityListAll(),
                                 array('disabled'=>(true))
                             ); ?>
                         </div>
@@ -146,8 +146,8 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     <div class="form-group">
                         <?php echo $form->labelEx($model,'change_city',array('class'=>"col-sm-2 control-label")); ?>
                         <div class="col-sm-3">
-                            <?php echo $form->dropDownList($model, 'change_city',WordForm::getCityListAll(),
-                                array('disabled'=>($model->scenario=='view'&&$model->staff_status!=3),"id"=>"change_city")
+                            <?php echo $form->dropDownList($model, 'change_city',StaffFun::getCityListAll(),
+                                array('disabled'=>($model->readonly()),"id"=>"change_city")
                             ); ?>
                         </div>
                     </div>
@@ -157,7 +157,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">
                     <?php echo $form->textArea($model, 'update_remark',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
+                        array('rows'=>3,'readonly'=>($model->readonly()))
                     ); ?>
                 </div>
             </div>
@@ -170,7 +170,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                                 <i class="fa fa-calendar"></i>
                             </div>
                             <?php echo $form->textField($model, 'leave_time',
-                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'&&$model->staff_status!=3),));
+                                array('class'=>'form-control pull-right','readonly'=>($model->readonly()),));
                             ?>
                         </div>
                     </div>
@@ -179,7 +179,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                     <?php echo $form->labelEx($model,'leave_reason',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-7">
                         <?php echo $form->textArea($model, 'leave_reason',
-                            array('rows'=>3,'readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
+                            array('rows'=>3,'readonly'=>($model->readonly()))
                         ); ?>
                     </div>
                 </div>
@@ -187,11 +187,14 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
             <legend></legend>
 
             <?php
-            $this->renderPartial('//site/employform',array('model'=>$model,
+            $city = $model->city;
+            $model->city=$model->change_city;
+            $this->renderPartial('//employView/employform',array(
                 'form'=>$form,
                 'model'=>$model,
-                'readonly'=>($model->scenario=='view'&&$model->staff_status!=3),
+                'readonly'=>($model->readonly()),
             ));
+            $model->city=$city;
             ?>
 
             <legend></legend>
@@ -199,7 +202,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 <?php echo $form->labelEx($model,'remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'remark',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
+                        array('rows'=>3,'readonly'=>($model->readonly()))
                     ); ?>
                 </div>
             </div>
@@ -208,7 +211,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 <?php echo $form->labelEx($model,'social_code',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textField($model, 'social_code',
-                        array('readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
+                        array('readonly'=>($model->readonly()))
                     ); ?>
                 </div>
             </div>
@@ -216,7 +219,7 @@ $this->pageTitle=Yii::app()->name . ' - History Form';
                 <?php echo $form->labelEx($model,'jj_card',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textField($model, 'jj_card',
-                        array('readonly'=>($model->scenario=='view'&&$model->staff_status!=3))
+                        array('readonly'=>($model->readonly()))
                     ); ?>
                 </div>
             </div>
@@ -229,7 +232,10 @@ $this->renderPartial('//site/removedialog');
 ?>
 
 <?php
-$this->renderPartial('//site/historylist',array('model'=>$model));
+$id = $model->id;
+$model->id = $model->employee_id;
+$this->renderPartial('//employView/historylist',array('model'=>$model));
+$model->id = $id;
 ?>
 <?php if (array_key_exists('employ',$model->no_of_attm)&&$model->no_of_attm['employ'] > 0): ?>
     <?php
@@ -259,6 +265,7 @@ $this->renderPartial('//site/fileupload',array('model'=>$model,
 Script::genFileUpload($model,$form->id,'EMPLOYEE');
 Script::genFileUpload($model,$form->id,'EMPLOY');
 
+$ajaxCityUrl = Yii::app()->createUrl('employ/changeCity');
 $js = "
 var staffStatus = '".$model->staff_status."';
 $('#HistoryForm_test_type').on('change',function(){
@@ -303,13 +310,68 @@ $('#HistoryForm_test_type').on('change',function(){
         }
     });
     //調職變化
-    $('#HistoryForm_opr_type').on('change',function(){
+    $('#opr_type').on('change',function(){
         if($(this).val() == 'transfer'){
             $('.opr_next_div').removeClass('hide');
         }else{
             $('.opr_next_div').addClass('hide');
+            if($('#change_city').val()!=$('#HistoryForm_city').val()){
+                $('#change_city').val($('#HistoryForm_city').val());
+                $('#change_city').trigger('change');
+            }
         }
     }).trigger('change');
+    
+    $('#change_city').change(function(){
+        var changeCity = $('#change_city').val();
+        var staffId = $('#staff_id').data('id');
+        var companyId = $('#company_id').data('id');
+        var contractId = $('#contract_id').data('id');
+        $.ajax({
+            type: 'post',
+            url: '{$ajaxCityUrl}',
+            data: {
+                change_city: changeCity
+            },
+            dataType: 'json',
+            success: function (data) {
+                if(data.status==1){
+                    data = data.data;
+                    $('#staff_id').html('');
+                    $('#company_id').html('');
+                    $('#contract_id').html('');
+                    var keyStaff = '';
+                    var keyCompany = '';
+                    var keyContract = '';
+                    $.each(data.companyList,function(key,value){
+                        if(key==staffId){
+                            keyStaff = key;
+                        }
+                        if(key==companyId){
+                            keyCompany = key;
+                        }
+                        var optionOne = $('<option>'+value+'</option>');
+                        var optionTwo = $('<option>'+value+'</option>');
+                        optionOne.attr('value',key);
+                        optionTwo.attr('value',key);
+                        $('#staff_id').prepend(optionOne);
+                        $('#company_id').prepend(optionTwo);
+                    });
+                    $.each(data.contractList,function(key,value){
+                        if(key==contractId){
+                            keyContract = key;
+                        }
+                        var option = $('<option>'+value+'</option>');
+                        option.attr('value',key);
+                        $('#contract_id').prepend(option);
+                    });
+                    $('#staff_id').val(keyStaff);
+                    $('#company_id').val(keyCompany);
+                    $('#contract_id').val(keyContract);
+                }
+            }
+        });
+    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 

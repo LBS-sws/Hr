@@ -72,7 +72,7 @@ class HistoryController extends Controller
             Dialog::message(Yii::t('dialog','Validation Message'), Yii::t('contract','The employee has changed the information, please complete the change first'));
             $this->redirect(Yii::app()->createUrl('employee/edit',array('index'=>$index)));
         }
-        if (!$model->retrieveData($index)) {
+        if (!$model->newData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $this->render('form',array('model'=>$model,'back_type'=>$type));
@@ -87,6 +87,7 @@ class HistoryController extends Controller
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $model->staff_status = 2;
+            $model->setScenario('view');
             $oldModel->retrieveData($model->employee_id);
             $this->render('detail',array('model'=>$model,'oldModel'=>$oldModel));
         }
@@ -137,15 +138,13 @@ class HistoryController extends Controller
         if (isset($_POST['HistoryForm'])) {
             $model = new HistoryForm($_POST['HistoryForm']['scenario']);
             $model->attributes = $_POST['HistoryForm'];
-            $model->staff_status = 1;
             if ($model->validate()) {
+                $model->audit = false;
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('history/Form',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('history/edit',array('index'=>$model->id)));
             } else {
-                $model->change_city = empty($model->change_city)?null:$model->city;
                 $message = CHtml::errorSummary($model);
-                $model->historyList = AuditHistoryForm::getStaffHistoryList($model->employee_id);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }
@@ -158,30 +157,16 @@ class HistoryController extends Controller
         if (isset($_POST['HistoryForm'])) {
             $model = new HistoryForm($_POST['HistoryForm']['scenario']);
             $model->attributes = $_POST['HistoryForm'];
-            $model->staff_status = 2;
             if ($model->validate()) {
+                $model->audit = true;
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('history/Form',array('index'=>$model->id,"type"=>"view")));
+                $this->redirect(Yii::app()->createUrl('history/edit',array('index'=>$model->id,"type"=>"view")));
             } else {
                 $message = CHtml::errorSummary($model);
-                $model->historyList = AuditHistoryForm::getStaffHistoryList($model->employee_id);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->render('form',array('model'=>$model,));
             }
-        }
-    }
-
-
-    //變更合同
-    public function actionFinish(){
-        if (isset($_POST['HistoryForm'])) {
-            $model = new HistoryForm("finish");
-            $model->attributes = $_POST['HistoryForm'];
-            $model->finish();
-
-            Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-            $this->redirect(Yii::app()->createUrl('auditHistory/index'));
         }
     }
 

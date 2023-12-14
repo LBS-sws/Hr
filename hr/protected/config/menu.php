@@ -244,6 +244,17 @@ return array(
             ),
 		),
 	),
+	'External'=>array(//兼职及外聘员工
+		'access'=>'EL',
+		'icon'=>'fa-puzzle-piece',
+		'items'=>array(
+            //兼职及外聘员工
+            'External Info'=>array(
+                'access'=>'EL01',
+                'url'=>'/external/index',
+            ),
+		),
+	),
     //審核模塊
 	'Audit'=>array(
 		'access'=>'ZG',
@@ -521,6 +532,10 @@ return array(
             'Config System'=>array(//開發者配置
                 'access'=>'ZC14',
                 'url'=>'/configSystem/index',
+            ),
+            'Curl Notes'=>array(//Curl同步记录
+                'access'=>'ZC20',
+                'url'=>'/curlNotes/index',
             ),
 		),
 	),

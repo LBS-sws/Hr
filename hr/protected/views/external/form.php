@@ -1,8 +1,8 @@
 <?php
 if (empty($model->id)&&$model->scenario == "edit"){
-    $this->redirect(Yii::app()->createUrl('employ/index'));
+    $this->redirect(Yii::app()->createUrl('external/index'));
 }
-$this->pageTitle=Yii::app()->name . ' - Employ Form';
+$this->pageTitle=Yii::app()->name . ' - External Form';
 ?>
 
 <style>
@@ -10,7 +10,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
     select[readonly]{pointer-events: none;}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'employ-form',
+'id'=>'external-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL
@@ -18,7 +18,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('contract','Employ Form'); ?></strong>
+		<strong><?php echo Yii::t('contract','External Form'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -33,44 +33,29 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('employ/index')));
+				'submit'=>Yii::app()->createUrl('external/index')));
 		?>
         <?php
-            if($model->city == Yii::app()->user->city() && $model->scenario!='view'){
-                if(in_array($model->staff_status,array(1,3))){
-                    echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
-                        'submit'=>Yii::app()->createUrl('employ/audit')));
-                }
-                if(in_array($model->staff_status,array(1,3))){
-                    echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
-                        'submit'=>Yii::app()->createUrl('employ/save')));
-                }
-                if($model->scenario=='edit'&&in_array($model->staff_status,array(1,3,4))){
-                    echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
-                            'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
-                    );
-                }
-                if($model->scenario=='edit'&&$model->staff_status == 4){
-                    echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('contract','Finish'), array(
-                        'submit'=>Yii::app()->createUrl('employ/finish')));
-                }
+            if($model->scenario!='view'){
+                echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
+                    'submit'=>Yii::app()->createUrl('external/save')));
             }
         ?>
 	</div>
 
 	<div class="btn-group pull-right" role="group">
-        <?php if (Yii::app()->user->validFunction('ZR02')&&$model->staff_status == 4): ?>
-            <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
-                'id'=>"down_btn_word"
-            ));
-            ?>
-        <?php endif; ?>
-        <?php
-        $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
-        echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                'data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+        <?php if ($model->scenario!='new'): ?>
+        <?php echo TbHtml::button('<span class="fa fa-list"></span> '.Yii::t('contract','Flow Info'), array(
+                'data-toggle'=>'modal','data-target'=>'#flowinfodialog',)
         );
         ?>
+        <?php endif ?>
+    <?php
+        $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
+        echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+        );
+    ?>
 
 	</div>
 	</div></div>
@@ -115,11 +100,19 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 </div>
             <?php endif; ?>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'table_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->dropDownList($model, 'table_type',StaffFun::getTableTypeList(),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
             <?php
             $this->renderPartial('//employView/employform',array(
                 'form'=>$form,
                 'model'=>$model,
-                'readonly'=>$model->readonly(),
+                'readonly'=>($model->scenario=='view'),
             ));
             ?>
 
@@ -128,13 +121,14 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'remark',
-                        array('rows'=>3,'readonly'=>$model->readonly())
+                        array('rows'=>3,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
                     ); ?>
                 </div>
             </div>
 		</div>
 	</div>
 </section>
+<?php $this->renderPartial('//external/historylist',array("model"=>$model)); ?>
 
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
@@ -153,7 +147,7 @@ Script::genFileUpload($model,$form->id,'EMPLOY');
 
 $js = "
 var staffStatus = '".$model->staff_status."';
-$('#EmployForm_test_type').on('change',function(){
+$('#ExternalForm_test_type').on('change',function(){
     if($(this).val() == 1){
         $(this).parents('.form-group').next('div.test-div').slideDown(100);
     }else{
@@ -181,13 +175,13 @@ $('#EmployForm_test_type').on('change',function(){
         });
     }).trigger('change');
     
-    $('#EmployForm_staff_id').on('change',function(){
-        if($('#EmployForm_company_id').val() == ''){
-            $('#EmployForm_company_id').val($(this).val());
+    $('#ExternalForm_staff_id').on('change',function(){
+        if($('#ExternalForm_company_id').val() == ''){
+            $('#ExternalForm_company_id').val($(this).val());
         }
     });
     $('.changeButton').on('change',function(){
-        $('#EmployForm_staff_type').val($(this).find('option:selected').data('dept'));
+        $('#ExternalForm_staff_type').val($(this).find('option:selected').data('dept'));
     });
     //合同期限變化
     $('.fixTime').on('change',function(){
@@ -198,26 +192,21 @@ $('#EmployForm_test_type').on('change',function(){
             netDom.find('input').eq(1).prop('readonly',false).removeClass('readonly');
         }
     });
-    //合同下載
-    $('#down_btn_word').on('click',function(){
-        window.open('".Yii::app()->createUrl('employee/Downfile?index='.$model->id)."');
-        location.reload();
-    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 if ($model->scenario!='view') {
     $js = Script::genDatePicker(array(
         'birth_time',
-        'EmployForm_entry_time',
+        'ExternalForm_entry_time',
         'start_time',
         'end_time',
         'test_start_time',
-        'EmployForm_user_card_date',
+        'ExternalForm_user_card_date',
     ));
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 
-$js = Script::genDeleteData(Yii::app()->createUrl('employ/delete'));
+$js = Script::genDeleteData(Yii::app()->createUrl('External/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();

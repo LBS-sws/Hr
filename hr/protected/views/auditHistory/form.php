@@ -56,12 +56,12 @@ $form->compareNewStr=Yii::t("contract","update new");
                 <?php if ($model->scenario!='new'){
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
-                        'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
+                        'data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
                 <?php
                 $counter = ($model->no_of_attm['employee'] > 0) ? ' <span id="docemployee" class="label label-info">'.$model->no_of_attm['employee'].'</span>' : ' <span id="docemployee"></span>';
                 echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademployee',)
+                        'data-toggle'=>'modal','data-target'=>'#fileuploademployee',)
                 );
                 ?>
             </div>
@@ -98,7 +98,7 @@ $form->compareNewStr=Yii::t("contract","update new");
                                 <i class="fa fa-calendar"></i>
                             </div>
                             <?php echo $form->textField($model, 'effect_time',
-                                array('class'=>'form-control pull-right','readonly'=>($model->scenario=='view'&&$model->staff_status!=3),));
+                                array('class'=>'form-control pull-right','readonly'=>(true),));
                             ?>
                         </div>
                     </div>
@@ -106,7 +106,7 @@ $form->compareNewStr=Yii::t("contract","update new");
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'opr_type',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'opr_type',EmployList::getOperationTypeList($model->employee_id),
+                        <?php echo $form->dropDownList($model, 'opr_type',StaffFun::getOperationTypeList($model->employee_id),
                             array('disabled'=>(true))
                         ); ?>
                     </div>
@@ -115,7 +115,7 @@ $form->compareNewStr=Yii::t("contract","update new");
                     <div class="form-group">
                         <?php echo $form->labelEx($model,'change_city_old',array('class'=>"col-sm-2 control-label")); ?>
                         <div class="col-sm-3">
-                            <?php echo $form->dropDownList($model, 'city',WordForm::getCityListAll(),
+                            <?php echo $form->dropDownList($model, 'city',StaffFun::getCityListAll(),
                                 array('disabled'=>(true))
                             ); ?>
                         </div>
@@ -123,7 +123,7 @@ $form->compareNewStr=Yii::t("contract","update new");
                     <div class="form-group">
                         <?php echo $form->labelEx($model,'change_city',array('class'=>"col-sm-2 control-label")); ?>
                         <div class="col-sm-3">
-                            <?php echo $form->dropDownList($model, 'change_city',WordForm::getCityListAll(),
+                            <?php echo $form->dropDownList($model, 'change_city',StaffFun::getCityListAll(),
                                 array('disabled'=>(true))
                             ); ?>
                         </div>
@@ -134,7 +134,7 @@ $form->compareNewStr=Yii::t("contract","update new");
                 <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-7">
                     <?php echo $form->textArea($model, 'update_remark',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'))
+                        array('rows'=>3,'readonly'=>(true))
                     ); ?>
                 </div>
             </div>
@@ -164,12 +164,15 @@ $form->compareNewStr=Yii::t("contract","update new");
             <legend></legend>
 
             <?php
-            $this->renderPartial('//site/employcompare',array(
+            $city = $model->city;
+            $model->city=$model->change_city;
+            $this->renderPartial('//employView/employcompare',array(
                 'oldModel'=>$oldModel,
                 'form'=>$form,
                 'model'=>$model,
                 'readonly'=>(true),
             ));
+            $model->city=$city;
             ?>
 
 
@@ -214,7 +217,10 @@ $form->compareNewStr=Yii::t("contract","update new");
 </section>
 
 <?php
-$this->renderPartial('//site/historylist',array('model'=>$model));
+$id = $model->id;
+$model->id = $model->employee_id;
+$this->renderPartial('//employView/historylist',array('model'=>$model));
+$model->id = $id;
 ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,

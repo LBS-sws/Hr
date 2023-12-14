@@ -234,6 +234,9 @@ return array(
     'appoint for work'=>'审核指定加班',
     'appoint for trip'=>'审核指定出差',
     'Company Information'=>'公司资质资料',
+    'External'=>'兼职及外聘',
+    'External Info'=>'兼职及外聘员工',
+    'Curl Notes'=>'Curl同步记录',
     //沈超添加结束
 );
 ?>

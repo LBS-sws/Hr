@@ -1,0 +1,21 @@
+<tr class='clickable-row' data-href='<?php echo $this->getLink('EL01', 'external/edit', 'external/view', array('index'=>$this->record['id']));?>'>
+
+
+	<td><?php echo $this->drawEditButton('EL01', 'external/edit', 'external/view', array('index'=>$this->record['id'])); ?></td>
+
+
+
+    <td><?php echo $this->record['code']; ?></td>
+    <td><?php echo $this->record['name']; ?></td>
+    <td><?php echo $this->record['office_name']; ?></td>
+    <td><?php echo $this->record['phone']; ?></td>
+	<td><?php echo $this->record['position']; ?></td>
+	<td><?php echo $this->record['entry_time']; ?></td>
+	<td><?php echo $this->record['company_id']; ?></td>
+	<td><?php echo $this->record['table_type']; ?></td>
+    <td>
+        <?php if (!empty($this->record['externaldoc'])): ?>
+            <span class="fa fa-paperclip"></span>
+        <?php endif; ?>
+    </td>
+</tr>

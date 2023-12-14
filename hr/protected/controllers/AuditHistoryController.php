@@ -99,10 +99,9 @@ class AuditHistoryController extends Controller
             if ($model->validate()) {
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('AuditHistory/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('AuditHistory/index'));
             } else {
                 $message = CHtml::errorSummary($model);
-                $model->historyList = AuditHistoryForm::getStaffHistoryList($model->employee_id);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl('AuditHistory/edit',array('index'=>$model->id)));
             }
@@ -120,7 +119,6 @@ class AuditHistoryController extends Controller
                 $this->redirect(Yii::app()->createUrl('AuditHistory/index'));
             } else {
                 $message = CHtml::errorSummary($model);
-                $model->historyList = AuditHistoryForm::getStaffHistoryList($model->employee_id);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
                 $this->redirect(Yii::app()->createUrl('AuditHistory/edit',array('index'=>$model->id)));
             }

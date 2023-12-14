@@ -85,7 +85,7 @@ $form->compareNewStr=Yii::t("contract","history ago");
             <legend></legend>
 
             <?php
-            $this->renderPartial('//site/employcompare',array(
+            $this->renderPartial('//employView/employcompare',array(
                 'oldModel'=>$oldModel,
                 'form'=>$form,
                 'model'=>$model,
