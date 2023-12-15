@@ -689,7 +689,7 @@ class StaffForm extends CFormModel
                     $value = empty($value)?null:General::toMyDateTime($value);
                     break;
                 case 5://必填字段，但lbs为空的时候
-                    $value = $value===""?0:$value;
+                    $value = empty($value)?0:$value;
                     break;
             }
             $this->$key=$value;

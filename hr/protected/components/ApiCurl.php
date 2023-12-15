@@ -66,6 +66,11 @@ class ApiCurl{
         $rtn = $data;
         $rtn["lcu"]=Yii::app()->user->id;
         $rtn["status_type"]=$rtn["message"]=="Success"?"C":"E";
+        //{"code":400,"msg":"phone不能为空","data":[]}
+        if($rtn["status_type"]=="C"&&isset($rtn["out_content"]["code"])&&$rtn["out_content"]["code"]==400){
+            $rtn["status_type"]="E";
+            $rtn["message"]=isset($rtn["out_content"]["msg"])?$rtn["out_content"]["msg"]:$rtn["message"];
+        }
         $rtn["data_content"]=json_encode($rtn["data_content"]);
         $rtn["out_content"]=json_encode($rtn["out_content"]);
         return $rtn;
