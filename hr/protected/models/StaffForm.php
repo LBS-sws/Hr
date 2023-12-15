@@ -708,7 +708,9 @@ class StaffForm extends CFormModel
                 $data = $model->curlData();
                 $curlModel = new ApiCurl("employee",$data);
                 $curlModel->sendCurlAndAdd();
+                return true;
             }
         }
+        return false;
     }
 }

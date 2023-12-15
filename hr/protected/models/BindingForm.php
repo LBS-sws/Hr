@@ -369,6 +369,8 @@ class BindingForm extends CFormModel
             $data = $this->curlData();
             $curlModel = new ApiCurl("binding",$data);
             $curlModel->sendCurlAndAdd();
+            return false;
         }
+        return true;
     }
 }

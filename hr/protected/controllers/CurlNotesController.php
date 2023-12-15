@@ -24,7 +24,7 @@ class CurlNotesController extends Controller
 	{
 		return array(
 			array('allow', 
-				'actions'=>array('send'),
+				'actions'=>array('send','employee','binding'),
 				'expression'=>array('CurlNotesController','allowReadWrite'),
 			),
 			array('allow', 
@@ -54,7 +54,6 @@ class CurlNotesController extends Controller
 		$this->render('index',array('model'=>$model));
 	}
 
-
 	public function actionSend($index)
 	{
         $model = new CurlNotesList();
@@ -64,6 +63,20 @@ class CurlNotesController extends Controller
             Dialog::message(Yii::t('dialog','Validation Message'), "数据异常");
         }
         $this->redirect(Yii::app()->createUrl('curlNotes/index'));
+	}
+
+	public function actionEmployee($id,$type="edit")
+	{
+        $model = new CurlNotesList();
+        $model->sendCurlForIDAndType($id,$type,"employee");
+        Yii::app()->end();
+	}
+
+	public function actionBinding($id,$type="edit")
+	{
+        $model = new CurlNotesList();
+        $model->sendCurlForIDAndType($id,$type,"binding");
+        Yii::app()->end();
 	}
 	
 	public static function allowReadWrite() {

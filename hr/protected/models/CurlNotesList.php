@@ -109,4 +109,27 @@ class CurlNotesList extends CListPageModel
             return false;
         }
     }
+
+	public function sendCurlForIDAndType($id,$type,$info_type){
+	    switch ($info_type){
+            case "employee":
+                $bool = StaffForm::sendCurl($id,$type);
+                if($bool){
+                    echo "employee success ! id:{$id},Scenario:{$type}";
+                }else{
+                    echo "employee error ! id:{$id},Scenario:{$type}";
+                }
+                break;
+            case "binding":
+                $model = new BindingForm($type);
+                $model->retrieveData($id);
+                if(!empty($model->id)){
+                    $model->sendCurl();
+                    echo "binding success ! id:{$id},Scenario:{$type}";
+                }else{
+                    echo "binding error ! id:{$id},Scenario:{$type}";
+                }
+                break;
+        }
+    }
 }

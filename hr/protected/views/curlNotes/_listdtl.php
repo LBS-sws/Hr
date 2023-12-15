@@ -1,4 +1,5 @@
 <tr>
+    <td><?php echo $this->record['id']; ?></td>
     <td><?php echo $this->record['info_type']; ?></td>
 	<td style="word-break: break-all;"><?php echo $this->record['info_url']; ?></td>
 	<td class="text-break" data-text='<?php echo $this->record['data_content']; ?>'>查看</td>

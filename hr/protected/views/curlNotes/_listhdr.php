@@ -1,5 +1,10 @@
 <tr>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('id').$this->drawOrderArrow('id'),'#',$this->createOrderLink('curlNotes-list','id'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('info_type').$this->drawOrderArrow('info_type'),'#',$this->createOrderLink('curlNotes-list','info_type'))
 			;
 		?>
@@ -29,12 +34,12 @@
 			;
 		?>
 	</th>
-	<th>
+	<th width="10%">
 		<?php echo TbHtml::link($this->getLabelName('lcd').$this->drawOrderArrow('lcd'),'#',$this->createOrderLink('curlNotes-list','lcd'))
 			;
 		?>
 	</th>
-	<th>
+	<th width="10%">
 		<?php echo TbHtml::link($this->getLabelName('lud').$this->drawOrderArrow('lud'),'#',$this->createOrderLink('curlNotes-list','lud'))
 			;
 		?>
