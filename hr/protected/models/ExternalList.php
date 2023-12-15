@@ -2,6 +2,28 @@
 
 class ExternalList extends CListPageModel
 {
+    public $table_type="";
+
+    public function rules()
+    {
+        return array(
+            array('table_type,attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
+        );
+    }
+
+    public function getCriteria() {
+        return array(
+            'table_type'=>$this->table_type,
+            'searchField'=>$this->searchField,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+            'dateRangeValue'=>$this->dateRangeValue,
+        );
+    }
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -74,6 +96,13 @@ class ExternalList extends CListPageModel
                     break;
 			}
 		}
+        if($this->table_type!==""){//0:未分配 1：系统退回 2：手动退回 5：已分配 6：跟进中 8：无意向 10：已完成
+            $list = StaffFun::getTableTypeList();
+            $this->table_type="".$this->table_type;
+            if(key_exists($this->table_type,$list)){
+                $clause.=" and a.table_type='{$this->table_type}'";
+            }
+        }
 		
 		$order = "";
 		if (!empty($this->orderField)) {

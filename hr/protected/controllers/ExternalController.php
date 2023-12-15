@@ -175,8 +175,8 @@ class ExternalController extends Controller
             $model->attributes = $_POST['ExternalForm'];
             if($model->validateDelete()){
                 $model->saveData();
-                $this->redirect(Yii::app()->createUrl('external/index'));
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
+                $this->redirect(Yii::app()->createUrl('external/index'));
             }else{
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','The dept has staff being used, please delete the staff first'));
                 $this->redirect(Yii::app()->createUrl('external/edit',array('index'=>$model->id)));

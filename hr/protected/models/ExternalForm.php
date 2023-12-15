@@ -71,7 +71,7 @@ class ExternalForm extends StaffForm
     public function retrieveData($index){
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
-        $whereSql = " and a.city='{$city}' and a.table_type!=1 AND a.staff_status = 1";
+        $whereSql = " and a.city='{$city}' and a.table_type!=1 AND a.staff_status in (1,-1)";
         //$whereSql = " and a.status_type not in (8,10)";
         $sql = "select a.*,docman$suffix.countdoc('employ',a.id) as employdoc 
           from hr_employee a where a.id='{$index}' {$whereSql}";
@@ -288,7 +288,7 @@ class ExternalForm extends StaffForm
         }
         switch ($this->scenario) {
             case 'delete':
-                $connection->createCommand()->update("hr_employee", array("del_num"=>1), "id=:id", array(":id" => $this->id));
+                $connection->createCommand()->update("hr_employee", array("staff_status"=>-1), "id=:id", array(":id" => $this->id));
                 break;
             case 'new':
                 $list["city"] = $city;
@@ -315,8 +315,16 @@ class ExternalForm extends StaffForm
     }
 
     protected function lenStr(){
-        $code = strval($this->id);
-        $this->code = "EXT";
+        $codeStr = "E";
+        $codeLength = strlen($codeStr)+1;
+        $numberSql = "SUBSTRING(code,{$codeLength})";
+        $maxCode = Yii::app()->db->createCommand()
+            ->select("max(CONVERT({$numberSql}, UNSIGNED))")
+            ->from("hr_employee")->where("table_type in (2,3)")->queryScalar();
+        $maxCode = empty($maxCode)||!is_numeric($maxCode)?0:$maxCode;
+        $maxCode++;
+        $code = strval($maxCode);
+        $this->code = $codeStr;
         for($i = 0;$i < 5-strlen($code);$i++){
             $this->code.="0";
         }

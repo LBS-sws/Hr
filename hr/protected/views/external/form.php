@@ -39,6 +39,10 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
             if($model->scenario!='view'){
                 echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                     'submit'=>Yii::app()->createUrl('external/save')));
+
+                echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
+                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
+                );
             }
         ?>
 	</div>
@@ -206,7 +210,7 @@ if ($model->scenario!='view') {
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 
-$js = Script::genDeleteData(Yii::app()->createUrl('External/delete'));
+$js = Script::genDeleteData(Yii::app()->createUrl('external/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();

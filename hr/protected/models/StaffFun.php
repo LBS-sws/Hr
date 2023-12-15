@@ -9,6 +9,16 @@
 class StaffFun
 {
     //获取员工类型列表
+    public static function getTableTypeListIndex(){
+        $list = array(
+            ""=>Yii::t("misc","All"),//全部
+            2=>Yii::t("contract","part-time"),//兼职
+            3=>Yii::t("contract","external-time"),//外聘
+        );
+        return $list;
+    }
+
+    //获取员工类型列表
     public static function getTableTypeList($bool=true){
         $list = array(
             1=>Yii::t("contract","full-time"),//专职
