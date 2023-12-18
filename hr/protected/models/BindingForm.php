@@ -92,7 +92,7 @@ class BindingForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $plusSql = PlusCityForm::getPlusEmployeeList()["plusSql"];
         $rows = Yii::app()->db->createCommand()->select("name,city")->from("hr_employee")
-            ->where("id=:id and (city in ($city_allow) or id in ($plusSql)) and staff_status=0 ", array(':id'=>$this->employee_id))->queryRow();
+            ->where("id=:id and (city in ($city_allow) or id in ($plusSql)) and (staff_status=0 or (table_type in (2,3) and staff_status=1)) ", array(':id'=>$this->employee_id))->queryRow();
         if ($rows){
             $this->employee_name = $rows["name"];
             $this->city = $rows["city"];
@@ -119,13 +119,20 @@ class BindingForm extends CFormModel
         return $arr;
     }
     //獲取用戶表的所有員工(相同城市)
-	public function getEmployeeList(){
+	public function getEmployeeList($employee_id=''){
         $city_allow = Yii::app()->user->city_allow();
         $from = "hr_employee";
         $plusList = PlusCityForm::getPlusEmployeeList();
-        $rows = Yii::app()->db->createCommand()->select("id,name")->from($from)
-            ->where("(city in ($city_allow) or id in (:plusSql)) and staff_status in (0,-1)",array(":plusSql"=>$plusList["plusSql"]))->queryAll();
-        $bindList = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
+        $whereSql="";
+        if(!empty($employee_id)){
+            $whereSql = " or id='{$employee_id}' ";
+        }
+        $rows = Yii::app()->db->createCommand()->select("id,name,table_type")->from($from)
+            ->where("(city in ($city_allow) {$whereSql} or id in (:plusSql)) and (staff_status=0 or (table_type in (2,3) and staff_status=1))",array(
+                ":plusSql"=>$plusList["plusSql"]
+            ))->order("table_type asc,id desc")->queryAll();
+        $bindList = Yii::app()->db->createCommand()->select("employee_id")
+            ->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $arr = array(""=>"");
         $bindList = array_column($bindList,"employee_id");
         foreach ($rows as $row){
