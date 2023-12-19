@@ -576,7 +576,7 @@ class WorkForm extends CFormModel
         }else{
             $this->status = 0;
         }
-        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
+        $employeeList = StaffFun::getEmployeeOneToId($this->employee_id);
         $wage = floatval($employeeList["wage"]);
         switch ($this->work_type){
             case 2:

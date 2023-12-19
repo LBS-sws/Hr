@@ -234,7 +234,7 @@ class AssessController extends Controller
     public function actionAjaxStaff() {
         if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
             $staff = $_POST['staff'];
-            $staffList = EmployeeForm::getEmployeeOneToId($staff);
+            $staffList = StaffFun::getEmployeeOneToId($staff);
             if(empty($staffList)){
                 echo CJSON::encode(array("status"=>0));
             }else{

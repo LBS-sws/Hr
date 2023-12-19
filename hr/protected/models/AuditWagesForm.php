@@ -61,7 +61,7 @@ class AuditWagesForm extends CFormModel
         if ($row){
             $this->id = $row['id'];
             $this->employee_id = $row['employee_id'];
-            $this->staff_list = EmployeeForm::getEmployeeOneToId($row['employee_id']);
+            $this->staff_list = StaffFun::getEmployeeOneToId($row['employee_id']);
             $this->wages_arr = unserialize($row['wages_arr']);
             $this->wages_date = date("Y-m",strtotime($row['wages_date']));
             $this->wages_status = $row['wages_status'];
