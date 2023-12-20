@@ -168,12 +168,12 @@ class VacationDayForm
                     $diffMonth +=($diffYear*12);
                 }
                 if($this->city==$this->mo_city){
-                    if ($diffDay==-1){
-                        //$diffMonth++;
-                    }elseif ($diffDay>-1){
-                        $diffMonth++;
-                    }else{
-                        $diffMonth--;
+                    if($diffMonth>=12){//满一年之后，月份向上进一位
+                        if($diffDay<-1){
+                            $diffMonth--;
+                        }elseif ($diffDay>=0){
+                            $diffMonth++;
+                        }
                     }
                 }else{
                     if($diffDay<0){
