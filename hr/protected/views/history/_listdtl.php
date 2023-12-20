@@ -1,7 +1,7 @@
-<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('ZE04', 'history/form', 'history/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('ZE04', 'history/edit', 'history/view', array('index'=>$this->record['id']));?>'>
 
 
-    <td><?php echo $this->drawEditButton('ZE04', 'history/form',  'history/view', array('index'=>$this->record['id'])); ?></td>
+    <td><?php echo $this->drawEditButton('ZE04', 'history/edit',  'history/view', array('index'=>$this->record['id'])); ?></td>
 
     <td><?php echo $this->record['code']; ?></td>
     <td><?php echo $this->record['name']; ?></td>

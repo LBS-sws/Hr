@@ -64,7 +64,7 @@ $this->pageTitle=Yii::app()->name . ' - Binding Form';
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'employee_id',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-3">
-                    <?php echo $form->dropDownList($model, 'employee_id',$model->getEmployeeList(),
+                    <?php echo $form->dropDownList($model, 'employee_id',$model->getEmployeeList($model->employee_id),
                         array('disabled'=>($model->scenario=='view'))
                     ); ?>
                 </div>

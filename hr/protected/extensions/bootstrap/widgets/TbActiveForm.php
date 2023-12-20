@@ -437,6 +437,8 @@ class TbActiveForm extends CActiveForm
         if($oldModel[$attribute] == $model[$attribute]){
             return $this->createInput(TbHtml::INPUT_TYPE_DROPDOWNLIST, $model, $attribute, $htmlOptions, $data);
         }else{
+            $model[$attribute]="".$model[$attribute];
+            $oldModel[$attribute]="".$oldModel[$attribute];
             $newValue=key_exists($model[$attribute],$data)?$data[$model[$attribute]]:$model[$attribute];
             $oldValue=key_exists($oldModel[$attribute],$data)?$data[$oldModel[$attribute]]:$oldModel[$attribute];
             $this->compareList[]=array(

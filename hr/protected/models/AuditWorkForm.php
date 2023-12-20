@@ -412,7 +412,7 @@ class AuditWorkForm extends CFormModel
         if($this->bool_cost == 0){ //不支付加班工資
             $wage = 0;
         }else{
-            $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_name);
+            $employeeList = StaffFun::getEmployeeOneToId($this->employee_name);
             $wage = floatval($employeeList["wage"]);
         }
         switch ($this->work_type){
@@ -484,7 +484,7 @@ class AuditWorkForm extends CFormModel
             $start_month = date("Y-m-01");
             $end_month = date("Y-m-d",strtotime("$start_month + 1 month - 1 day"));
             $historyList = array();
-            $employeeList = EmployeeForm::getEmployeeOneToId($thisWork["employee_id"]);
+            $employeeList = StaffFun::getEmployeeOneToId($thisWork["employee_id"]);
             $workList = Yii::app()->db->createCommand()->select("*")
                 ->from("hr_employee_work")->where("employee_id=:id and status = 4 and start_time>='$start_month' and start_time<='$end_month'",
                     array(":id"=>$thisWork["employee_id"]))->queryAll();

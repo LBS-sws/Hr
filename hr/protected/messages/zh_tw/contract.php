@@ -760,5 +760,13 @@ return array(
 
     'copy trip set'=>'複製到出差配置',
     'monthly'=>'月份',
+    'Employee Type'=>'員工類型',
+    'full-time'=>'專職',
+    'part-time'=>'兼職',
+    'external-time'=>'外聘',
+    'External List'=>'兼職及外聘列表',
+    'External Form'=>'兼職及外聘表單',
+    'Flow Info'=>'流程',
+    'Operator Text'=>'操作內容',
     );
 ?>

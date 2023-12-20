@@ -13,7 +13,13 @@ class BindingForm extends CFormModel
 	public $employee_name;
 	public $user_id;
 	public $city;
+	public $employee_city;
+	public $user_city;
 	public $user_name;
+	public $lcu;
+	public $luu;
+	public $lcd;
+	public $lud;
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -39,10 +45,32 @@ class BindingForm extends CFormModel
             array('id, user_id, employee_id','safe'),
 			array('user_id','required'),
 			array('employee_id','required'),
+			array('id','validateID'),
 			array('user_id','validateUser'),
 			array('employee_id','validateEmployee'),
 		);
 	}
+
+    //
+    public function validateID($attribute, $params){
+	    if($this->getScenario()=="edit"){
+            $row = Yii::app()->db->createCommand()->select("lcu,luu,lcd,lud")
+                ->from("hr_binding a")
+                ->where("a.id=:id", array(':id'=>$this->id))->queryRow();
+            if($row){
+                $this->lcu = $row['lcu'];
+                $this->lcd = $row['lcd'];
+                $this->luu = Yii::app()->user->id;
+                $this->lud = date("Y-m-d H:i:s");
+            }else{
+                $message = "数据异常，请刷新重试";
+                $this->addError($attribute,$message);
+            }
+        }elseif ($this->getScenario()=="new"){
+            $this->lcu = Yii::app()->user->id;
+            $this->lcd = date("Y-m-d H:i:s");
+        }
+    }
 
 	public function validateUser($attribute, $params){
         $city = Yii::app()->user->city();
@@ -64,7 +92,7 @@ class BindingForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $plusSql = PlusCityForm::getPlusEmployeeList()["plusSql"];
         $rows = Yii::app()->db->createCommand()->select("name,city")->from("hr_employee")
-            ->where("id=:id and (city in ($city_allow) or id in ($plusSql)) and staff_status=0 ", array(':id'=>$this->employee_id))->queryRow();
+            ->where("id=:id and (city in ($city_allow) or id in ($plusSql)) and (staff_status=0 or (table_type in (2,3) and staff_status=1)) ", array(':id'=>$this->employee_id))->queryRow();
         if ($rows){
             $this->employee_name = $rows["name"];
             $this->city = $rows["city"];
@@ -91,14 +119,20 @@ class BindingForm extends CFormModel
         return $arr;
     }
     //獲取用戶表的所有員工(相同城市)
-	public function getEmployeeList(){
-        $city = Yii::app()->user->city();
+	public function getEmployeeList($employee_id=''){
         $city_allow = Yii::app()->user->city_allow();
         $from = "hr_employee";
         $plusList = PlusCityForm::getPlusEmployeeList();
-        $rows = Yii::app()->db->createCommand()->select("id,name")->from($from)
-            ->where("(city in ($city_allow) or id in (:plusSql)) and staff_status=0",array(":plusSql"=>$plusList["plusSql"]))->queryAll();
-        $bindList = Yii::app()->db->createCommand()->select("employee_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
+        $whereSql="";
+        if(!empty($employee_id)){
+            $whereSql = " or id='{$employee_id}' ";
+        }
+        $rows = Yii::app()->db->createCommand()->select("id,name,table_type")->from($from)
+            ->where("(city in ($city_allow) {$whereSql} or id in (:plusSql)) and (staff_status=0 or (table_type in (2,3) and staff_status=1))",array(
+                ":plusSql"=>$plusList["plusSql"]
+            ))->order("table_type asc,id desc")->queryAll();
+        $bindList = Yii::app()->db->createCommand()->select("employee_id")
+            ->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $arr = array(""=>"");
         $bindList = array_column($bindList,"employee_id");
         foreach ($rows as $row){
@@ -156,32 +190,54 @@ class BindingForm extends CFormModel
 
     //公司刪除時必須沒有員工
 	public function validateDelete(){
-/*        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('company_id=:company_id', array(':company_id'=>$this->id))->queryAll();
-        if ($rows){
+        $city_allow = Yii::app()->user->city_allow();
+        $plusList = PlusCityForm::getPlusEmployeeList();
+        $row = Yii::app()->db->createCommand()
+            ->select("a.id,a.employee_id,a.user_id,a.lcu,a.luu,a.lcd,a.lud")
+            ->from("hr_binding a")
+            ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->where("a.id=:id and (b.city in ($city_allow) or b.id in (:plusSql)) ", array(':id'=>$this->id,':plusSql'=>$plusList["plusSql"]))->queryRow();
+        if($row){
+            $this->employee_id = $row["employee_id"];
+            $this->user_id = $row["user_id"];
+            $this->lcu = $row['lcu'];
+            $this->lcd = $row['lcd'];
+            $this->luu = Yii::app()->user->id;
+            $this->lud = date("Y-m-d H:i:s");
+            return true;
+        }else{
             return false;
-        }*/
-        return true;
+        }
     }
 
 	public function retrieveData($index)
 	{
         $city = Yii::app()->user->city();
+        $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         $plusList = PlusCityForm::getPlusEmployeeList();
-        $rows = Yii::app()->db->createCommand()->select("a.*,b.city as employee_city")->from("hr_binding a")
+        $rows = Yii::app()->db->createCommand()
+            ->select("a.*,b.name as employ_name,b.city as employee_city,d.disp_name,d.city as user_city")
+            ->from("hr_binding a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
+            ->leftJoin("security{$suffix}.sec_user d","d.username = a.user_id")
             ->where("a.id=:id and (b.city in ($city_allow) or b.id in (:plusSql)) ", array(':id'=>$index,':plusSql'=>$plusList["plusSql"]))->queryAll();
-		if (count($rows) > 0)
+        if (count($rows) > 0)
 		{
 			foreach ($rows as $row)
 			{
 				$this->id = $row['id'];
-				$this->user_name = $row['user_name'];
+				$this->user_name = $row['disp_name'];
 				$this->user_id = $row['user_id'];
                 $this->employee_id = $row['employee_id'];
-                $this->employee_name = $row['employee_name'];
+                $this->employee_name = $row['employ_name'];
                 $this->city = $row['employee_city'];
+                $this->employee_city = $row['employee_city'];
+                $this->user_city = $row['user_city'];
+                $this->lcu = $row['lcu'];
+                $this->luu = $row['luu'];
+                $this->lcd = $row['lcd'];
+                $this->lud = $row['lud'];
 				break;
 			}
 		}
@@ -193,16 +249,11 @@ class BindingForm extends CFormModel
 		$connection = Yii::app()->db;
 		$transaction=$connection->beginTransaction();
 		try {
-            //本地变更保存
-            list($falg,$scenario) = $this->saveStaff($connection);
-
-            //远程变更保存
-            $this->save_to_NewUnited($scenario);
-
+			$this->saveStaff($connection);
 			$transaction->commit();
-		}catch(Exception $e) {
+		}
+		catch(Exception $e) {
 			$transaction->rollback();
-//            echo "<pre>";print_r(json_encode($e->getMessage(),true));echo "</pre>";exit();
 			throw new CHttpException(404,'Cannot update.');
 		}
 	}
@@ -213,9 +264,6 @@ class BindingForm extends CFormModel
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
-        
-        /* 处理数据 */
-        $scenario = $this->scenario;
 		switch ($this->scenario) {
 			case 'delete':
                 $sql = "delete from hr_binding where id = :id and city IN ($city_allow)";
@@ -241,7 +289,6 @@ class BindingForm extends CFormModel
 				break;
 		}
 
-        /* 赋值 */
 		$command=$connection->createCommand($sql);
 		if (strpos($sql,':id')!==false)
 			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
@@ -261,75 +308,76 @@ class BindingForm extends CFormModel
 		if (strpos($sql,':lcu')!==false)
 			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
 
-        /* 执行 */
 		$command->execute();
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
-            $this->scenario = "edit";
         }
-        return array(true,$scenario);
+
+        //同步记录
+        $this->sendCurl($this->getScenario());
+
+        if ($this->scenario=='new'){
+            $this->setScenario("edit");
+        }
+        return true;
 	}
 
-    /**
-     * 保存至新U派单系统
-     * @return void
-     * @throws CHttpException
-     */
-    public function save_to_NewUnited($scenario){
-        $url = yii::app()->params['nu_url'].'api/hr.DataSync/hrBinding_dataSync';
-
-        //构造数据
-        $uid = Yii::app()->user->id;
-        $post_data = array(
-            'scenario' => $scenario,
-            'id' => $this->id,
-            'employee_id' => $this->employee_id,
-            'employee_name' => $this->employee_name,
-            'user_id' => $this->user_id,
-            'user_name' => $this->user_name,
-            'city' => $this->city,
-            'luu' => $uid,
-            'lcu' => $uid,
-            'city_allow' => Yii::app()->user->city_allow(),
-        );
-
-        $res = $this->http_curl_get($url,$post_data);
-        if(!$res || $res['code']==400 || $res['data']['code']!=1){//执行成功
-            $msg = (isset($res)&&$res['msg']?$res['msg']:'Cannot update.');
-            throw new CHttpException(404,$msg);
+    //curl需要的字段
+    protected function curlData(){
+        $suffix = Yii::app()->params['envSuffix'];
+        $employeeRow = Yii::app()->db->createCommand()->select("code,name,city")
+            ->from("hr_employee")->where("id=:id", array(':id'=>$this->employee_id))->queryRow();
+        if($employeeRow){
+            $this->employee_name = $employeeRow["name"];
+            $this->employee_city = $employeeRow["city"];
+            $this->city = $employeeRow["city"];
         }
-
-        return $res;
+        $userRow = Yii::app()->db->createCommand()->select("disp_name,city")
+            ->from("security{$suffix}.sec_user")->where("username=:username", array(':username'=>$this->user_id))->queryRow();
+        if($userRow){
+            $this->user_name = $userRow["disp_name"];
+            $this->user_city = $userRow["city"];
+        }
+        $list = array();
+        $arr = array(
+            "scenario"=>1,"id"=>3,"employee_id"=>3,
+            "employee_name"=>1,"user_id"=>1,"user_name"=>1,"city"=>1,
+            //"employee_city"=>1,"user_city"=>1,
+            "luu"=>5,"lcu"=>5,"lcd"=>4,"lud"=>4
+        );
+        foreach ($arr as $key=>$type){
+            $value=$this->$key;
+            switch ($type){
+                case 1://原值
+                    $value = $value===""?null:$value;
+                    break;
+                case 2://日期
+                    $value = empty($value)?null:General::toMyDate($value);
+                    break;
+                case 3://数字
+                    $value = $value===""?0:floatval($value);
+                    break;
+                case 4://日期+时间
+                    $value = empty($value)?null:General::toMyDateTime($value);
+                    break;
+                case 5://必填字段，但lbs为空的时候
+                    $value = empty($value)?0:$value;
+                    break;
+            }
+            $this->$key=$value;
+            $list[$key] = $value;
+        }
+        return $list;
     }
 
-
-    /**
-     * http post 请求
-     *
-     * @param string $url    请求地址
-     * @param array  $param  请求参数
-     * @param array  $header 请求头部
-     *
-     * @return array
-     */
-    public function http_curl_get($url, $param = array(), $header = array()) {
-        $param = json_encode($param,true);
-        $header = array_merge($header, ['Content-type:application/json;charset=utf-8', 'Accept:application/json']);
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $param);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-        $response = json_decode($response, true);
-
-        return $response;
+    public function sendCurl($scenario=""){
+        if(in_array($scenario,array("new","edit","delete"))){
+            $data = $this->curlData();
+            $curlModel = new ApiCurl("binding",$data);
+            $curlModel->sendCurlAndAdd();
+            return false;
+        }
+        return true;
     }
 }

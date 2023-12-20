@@ -111,12 +111,14 @@ class AuditController extends Controller
             }
         }
     }
+
     public function actionAudit()
     {
         if (isset($_POST['AuditForm'])) {
             $model = new AuditForm('audit');
             $model->attributes = $_POST['AuditForm'];
             if ($model->validate()) {
+                $model->audit = true;
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('audit/edit',array('index'=>$model->id)));
@@ -133,7 +135,7 @@ class AuditController extends Controller
         if (empty($index) || !is_numeric($index)){
             $this->redirect(Yii::app()->createUrl('audit/index'));
         }else{
-            $bool = EmployeeForm::updateEmployeeWord($index);
+            $bool = StaffForm::updateEmployeeWord($index);
             if (!$bool){
                 $this->redirect(Yii::app()->createUrl('audit/index'));
             }else{

@@ -95,7 +95,7 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
             <legend></legend>
 
             <?php
-            $this->renderPartial('//site/employform',array('model'=>$model,
+            $this->renderPartial('//employView/employform',array(
                 'form'=>$form,
                 'model'=>$model,
                 'readonly'=>($model->scenario=='view'),

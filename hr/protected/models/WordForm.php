@@ -68,7 +68,7 @@ class WordForm extends CFormModel
     }
 
 //根據id獲取文檔地址
-	public function getDocxUrlToId($index)
+	public static function getDocxUrlToId($index)
 	{
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select()->from("hr_docx")

@@ -16,6 +16,11 @@ class CGeneral {
 		return (empty($value) || $value==0) ? null :
 			date_format(date_create($value),"Y-m-d");
 	}
+
+	public static function toMyDateTime($value) {
+		return (empty($value) || $value==0) ? null :
+			date_format(date_create($value),"Y/m/d H:i:s");
+	}
 	
 	public static function toMyNumber($value) {
 		return (empty($value) || $value==0 || !is_numeric($value)) ? null : $value;

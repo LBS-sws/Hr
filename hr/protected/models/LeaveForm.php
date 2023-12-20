@@ -127,7 +127,7 @@ class LeaveForm extends CFormModel
                 $message = Yii::t('contract','Employee Name').Yii::t('contract',' not exist');
                 $this->addError($attribute,$message);
             }else{
-                $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
+                $employeeList = StaffFun::getEmployeeOneToId($this->employee_id);
                 if($employeeList){
                     $this->city = $employeeList["city"];
                 }else{
@@ -1005,7 +1005,7 @@ class LeaveForm extends CFormModel
             $this->status = 0;
         }
         $this->foreachAddTime();
-        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
+        $employeeList = StaffFun::getEmployeeOneToId($this->employee_id);
         $wage = floatval($employeeList["wage"]);
         $vacationList = $this->vacation_list;
         if($vacationList["sub_bool"] == 1){ //

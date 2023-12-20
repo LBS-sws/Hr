@@ -405,7 +405,7 @@ class AuditLeaveForm extends CFormModel
         }else{
             $this->end_time.=" 18:00:00";
         }
-        $employeeList = EmployeeForm::getEmployeeOneToId($this->employee_id);
+        $employeeList = StaffFun::getEmployeeOneToId($this->employee_id);
         $wage = floatval($employeeList["wage"]);
         $vacationList = $this->vacation_list;
         if($vacationList["sub_bool"] == 1){ //
@@ -450,7 +450,7 @@ class AuditLeaveForm extends CFormModel
             $start_month = date("Y-m-01");
             $end_month = date("Y-m-d",strtotime("$start_month + 1 month - 1 day"));
             $historyList = array();
-            $employeeList = EmployeeForm::getEmployeeOneToId($thisWork["employee_id"]);
+            $employeeList = StaffFun::getEmployeeOneToId($thisWork["employee_id"]);
             $workList = Yii::app()->db->createCommand()->select("*")
                 ->from("hr_employee_leave")->where("employee_id=:id and status = 4 and start_time>='$start_month' and start_time<='$end_month'",
                     array(":id"=>$thisWork["employee_id"]))->queryAll();

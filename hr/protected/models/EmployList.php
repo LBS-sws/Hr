@@ -9,7 +9,7 @@ class EmployList extends CListPageModel
 	 */
 	public function attributeLabels()
 	{
-		return array(
+		return array(	
 			'id'=>Yii::t('contract','ID'),
 			'name'=>Yii::t('contract','Employee Name'),
 			'code'=>Yii::t('contract','Employee Code'),
@@ -25,120 +25,6 @@ class EmployList extends CListPageModel
 		);
 	}
 
-    //獲取性別列表
-    public static function getSexList(){
-        return array(""=>"","man"=>Yii::t("contract","man"),"woman"=>Yii::t("contract","woman"));
-    }
-    //獲取年齡列表
-    public static function getAgeList(){
-        $list = array(""=>"");
-        for ($num = 18;$num<70;$num++){
-            $list[$num] = $num;
-        }
-        return $list;
-    }
-    //獲取健康列表
-    public static function getHealthList(){
-        return array(""=>"","poor"=>Yii::t("staff","poor"),"general"=>Yii::t("staff","general"),"good"=>Yii::t("staff","good"));
-    }
-    //獲取戶籍列表
-    public static function getNationList(){
-        return array(
-            ""=>"",
-            "Non-agricultural"=>Yii::t("contract","Non-agricultural"),
-            "Agricultural"=>Yii::t("contract","Agricultural")
-        );
-    }
-    //獲取合同期限列表
-    public static function getFixTimeList(){
-        return array(
-            "fixation"=>Yii::t("contract","fixation"),
-            "nofixed"=>Yii::t("contract","nofixed")
-        );
-    }
-    //獲取合同期限列表
-    public static function getOperationTypeList($staff_id = 0,$type=""){
-        if(empty($staff_id)){
-            $num = "";
-        }else{
-            $num = EmployList::getContractNumber($staff_id);
-            if($type == "change"){
-                $num++;
-            }
-            $num = " - ".$num;
-        }
-        return array(
-            ""=>"",
-            "salary"=>Yii::t("contract","salary"),
-            "promotion"=>Yii::t("contract","promotion"),
-            "transfer"=>Yii::t("contract","transfer"),
-            "contract"=>Yii::t("contract","contract").$num
-        );
-    }
-    //獲取健康列表
-    public static function getMonthList(){
-        $list = array(""=>"");
-        for ($num = 1;$num<=12;$num++){
-            $list[$num]=$num.Yii::t("staff"," months");
-        }
-        return $list;
-    }
-    //試用期時長列表
-    public static function getTestMonthLengthList(){
-        $list = array(""=>"");
-        for ($num = 1;$num<=6;$num++){
-            $list[$num]=$num.Yii::t("staff"," months");
-        }
-        return $list;
-    }
-    //獲取學歷列表
-    public static function getEducationList(){
-        return array(
-            ""=>"",
-            "Primary school"=>Yii::t("staff","Primary school"),
-            "Junior school"=>Yii::t("staff","Junior school"),
-            "High school"=>Yii::t("staff","High school"),
-            "Technical school"=>Yii::t("staff","Technical school"),
-            "College school"=>Yii::t("staff","College school"),
-            "Undergraduate"=>Yii::t("staff","Undergraduate"),
-            "Graduate"=>Yii::t("staff","Graduate"),
-            "Doctorate"=>Yii::t("staff","Doctorate")
-        );
-    }
-    //獲取員工職能列表
-    public static function getStaffLeaderList(){
-        return array("Nil"=>Yii::t("staff","Nil"),"Group Leader"=>Yii::t("staff","Group Leader"),"Team Leader"=>Yii::t("staff","Team Leader"));
-    }
-    //獲取員工類別列表
-    public static function getStaffTypeList(){
-        return array(""=>"","Office"=>Yii::t("staff","Office"),"Sales"=>Yii::t("staff","Sales"),"Technician"=>Yii::t("staff","Technician"),"Others"=>Yii::t("staff","Others"));
-    }
-    //技術員
-    public static function getTechnicianList(){
-        return array(Yii::t("misc","No"),Yii::t("misc","Yes"));
-    }
-    //經理級別
-    public static function getManagerList(){
-        return array(
-            Yii::t("fete","none"),
-            Yii::t("fete","handle"),
-            Yii::t("fete","charge"),
-            Yii::t("fete","director"),
-            Yii::t("fete","you")
-        );
-    }
-
-    //獲取員工續約的次數
-    public static function getContractNumber($staff_id){
-        $num = Yii::app()->db->createCommand()->select("count('id')")->from("hr_employee_history")
-            ->where('employee_id=:employee_id and status="contract"',array(":employee_id"=>$staff_id))->queryScalar();
-        if($num){
-            return $num;
-        }else{
-            return 0;
-        }
-    }
-
 	public function retrieveDataByPage($pageNum=1)
 	{
 		$suffix = Yii::app()->params['envSuffix'];
@@ -146,12 +32,12 @@ class EmployList extends CListPageModel
 		$localOffice = Yii::t("contract","local office");
 		$sql1 = "select a.*,if(a.office_id=0,'{$localOffice}',f.name) as office_name,docman$suffix.countdoc('EMPLOY',a.id) as employdoc from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
-                where a.city='$city' AND a.staff_status != 0 AND a.staff_status != -1
+                where a.city='$city' AND a.staff_status not in (0,-1) and a.table_type=1 
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
-				where a.city='$city' AND a.staff_status != 0 AND a.staff_status != -1
+				where a.city='$city' AND a.staff_status not in (0,-1) and a.table_type=1 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -177,7 +63,7 @@ class EmployList extends CListPageModel
                     break;
 			}
 		}
-
+		
 		$order = "";
 		if (!empty($this->orderField)) {
 			$order .= " order by ".$this->orderField." ";
@@ -188,7 +74,7 @@ class EmployList extends CListPageModel
 
 		$sql = $sql2.$clause;
 		$this->totalRow = Yii::app()->db->createCommand($sql)->queryScalar();
-
+		
 		$sql = $sql1.$clause.$order;
 		$sql = $this->sqlWithPageCriteria($sql, $this->pageNum);
 		$records = Yii::app()->db->createCommand($sql)->queryAll();

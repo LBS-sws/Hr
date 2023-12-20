@@ -36,21 +36,21 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 				'submit'=>Yii::app()->createUrl('employ/index')));
 		?>
         <?php
-            if($model->scenario!='view'){
-                if($model->staff_status == 1 || $model->staff_status == 3){
+            if($model->city == Yii::app()->user->city() && $model->scenario!='view'){
+                if(in_array($model->staff_status,array(1,3))){
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                         'submit'=>Yii::app()->createUrl('employ/audit')));
                 }
-                if(($model->city == Yii::app()->user->city() || $model->scenario=='new')&&$model->staff_status == 1){
+                if(in_array($model->staff_status,array(1,3))){
                     echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                         'submit'=>Yii::app()->createUrl('employ/save')));
                 }
-                if(($model->city == Yii::app()->user->city() || $model->scenario=='edit')&&in_array(intval($model->staff_status),array(1,3,4))){
+                if($model->scenario=='edit'&&in_array($model->staff_status,array(1,3,4))){
                     echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                             'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
                     );
                 }
-                if($model->staff_status == 4){
+                if($model->scenario=='edit'&&$model->staff_status == 4){
                     echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('contract','Finish'), array(
                         'submit'=>Yii::app()->createUrl('employ/finish')));
                 }
@@ -59,20 +59,18 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 	</div>
 
 	<div class="btn-group pull-right" role="group">
-        <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')): ?>
-    <?php if ($model->staff_status == 4): ?>
-                <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
-                    'id'=>"down_btn_word"
-                ));
-                ?>
-    <?php endif; ?>
-    <?php endif; ?>
-    <?php
+        <?php if (Yii::app()->user->validFunction('ZR02')&&$model->staff_status == 4): ?>
+            <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
+                'id'=>"down_btn_word"
+            ));
+            ?>
+        <?php endif; ?>
+        <?php
         $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
         echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+                'data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
         );
-    ?>
+        ?>
 
 	</div>
 	</div></div>
@@ -118,10 +116,10 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
             <?php endif; ?>
 
             <?php
-            $this->renderPartial('//site/employform',array('model'=>$model,
+            $this->renderPartial('//employView/employform',array(
                 'form'=>$form,
                 'model'=>$model,
-                'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)),
+                'readonly'=>$model->readonly(),
             ));
             ?>
 
@@ -130,7 +128,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
                 <?php echo $form->labelEx($model,'remark',array('class'=>"col-sm-2 control-label")); ?>
                 <div class="col-sm-5">
                     <?php echo $form->textArea($model, 'remark',
-                        array('rows'=>3,'readonly'=>($model->scenario=='view'||($model->staff_status != 1 && $model->staff_status != 3)))
+                        array('rows'=>3,'readonly'=>$model->readonly())
                     ); ?>
                 </div>
             </div>

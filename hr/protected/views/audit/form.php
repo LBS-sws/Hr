@@ -35,12 +35,12 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 				'submit'=>Yii::app()->createUrl('audit/index')));
 		?>
         <?php
-            if($model->scenario!='view'){
+            if($model->city == Yii::app()->user->city() && $model->scenario!='view'){
                 if($model->staff_status == 2){
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                         'submit'=>Yii::app()->createUrl('audit/audit')));
                 }
-                if(($model->city == Yii::app()->user->city() || $model->scenario=='new')&&$model->staff_status == 2){
+                if($model->staff_status == 2){
                     echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('contract','Rejected'), array(
                         'data-toggle'=>'modal','data-target'=>'#jectdialog'));
                 }
@@ -78,7 +78,7 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 			<?php echo $form->hiddenField($model, 'staff_status'); ?>
 
             <?php
-            $this->renderPartial('//site/employform',array('model'=>$model,
+            $this->renderPartial('//employView/employform',array('model'=>$model,
                 'form'=>$form,
                 'model'=>$model,
                 'readonly'=>($model->scenario=='view'||($model->staff_status != 1)),

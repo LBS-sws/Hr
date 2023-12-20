@@ -5,265 +5,42 @@
  * UserForm is the data structure for keeping
  * user form data. It is used by the 'user' action of 'SiteController'.
  */
-class EmployForm extends CFormModel
+class EmployForm extends StaffForm
 {
-	/* User Fields */
-	public $employee_id=0;
-	public $id;
-	public $name;
-	public $city;
-	public $code;
-    public $sex;
-	public $company_id;
-	public $staff_id;
-	public $address;
-	public $address_code;
-	public $contact_address;
-	public $contact_address_code;
-	public $phone;
-	public $phone2;//緊急電話
-	public $contract_id;
-	public $user_card;
-	public $department;
-	public $position;
-	public $wage;
-	public $time=1;
-	public $start_time;
-	public $end_time;
-	public $test_start_time;
-	public $test_end_time;
-	public $test_wage;
-	public $word_status=1;
-	public $test_type=1;
-	public $word_html="";
-	public $staff_status = 1;
-	public $entry_time;//入職時間
-	public $birth_time;//出生日期
-	public $age;//年齡
-	public $health;//身體狀況
-	public $education;//學歷
-	public $experience;//工作經驗
-	public $english;//外語水平
-	public $technology;//技術水平
-	public $other;//其它說明
-	public $year_day;//年假
-	public $email;//員工郵箱
-	public $remark;//備註
-	public $price1;//每月工資
-	public $price2;//加班工資
-	public $price3=array();//每月補貼
-	public $image_user;//員工照片
-	public $image_code;//身份證照片
-	public $image_work;//工作證明照片
-	public $image_other;//其它照片
-	public $ject_remark;//拒絕原因
-	public $ld_card;//勞動保障卡號
-	public $sb_card;//社保卡號
-	public $jj_card;//公積金卡號
-	public $staff_type;//员工类别
-	public $staff_leader;//队长/组长
-	public $test_length;//
-	public $attachment="";//附件
-    public $nation;//民族
-    public $household;//户籍类型
-    public $empoyment_code;//就业登记证号
-    public $social_code;//社会保障卡号
-    public $fix_time=0;//合同類型
-    public $user_card_date;//身份证有效期
-    public $emergency_user;//紧急联络人姓名
-    public $emergency_phone;//紧急联络人手机号
-    public $code_old;//員工編號（舊）
-    public $group_type;//組別類型
-    public $office_id;//办事处id
-
-    public $wechat;//微信賬號
-    public $recommend_user;//推荐人
-    public $urgency_card;//緊急聯繫人身份證
-
-    public $no_of_attm = array(
-        'employ'=>0
-    );
-    public $docType = 'EMPLOY';
-    public $docMasterId = array(
-        'employ'=>0
-    );
-    public $files;
-    public $removeFileId = array(
-        'employ'=>0
-    );
-	/**
-	 * Declares customized attribute labels.
-	 * If not declared here, an attribute would have a label that is
-	 * the same as its name with the first letter in upper case.
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id'=>Yii::t('staff','Record ID'),
-			'code'=>Yii::t('contract','Employee Code'),
-			'sex'=>Yii::t('contract','Sex'),
-			'age'=>Yii::t('contract','Age'),
-			'birth_time'=>Yii::t('contract','Birth Date'),
-			'name'=>Yii::t('contract','Employee Name'),
-			'staff_id'=>Yii::t('contract','Employee Belong'),
-			'company_id'=>Yii::t('contract','Employee Contract Belong'),
-			'contract_id'=>Yii::t('contract','Employee Contract'),
-			'address'=>Yii::t('contract','Old Address'),
-			'contact_address'=>Yii::t('contract','Contact Address'),
-            'phone'=>Yii::t('contract','Employee Phone'),
-            'phone2'=>Yii::t('contract','Emergency call'),
-            'user_card'=>Yii::t('contract','ID Card'),
-            'department'=>Yii::t('contract','Department'),
-            'position'=>Yii::t('contract','Position'),
-            'wage'=>Yii::t('contract','Contract Pay'),
-            'time'=>Yii::t('contract','Contract Time'),
-            'start_time'=>Yii::t('contract','Contract Start Time'),
-            'end_time'=>Yii::t('contract','Contract End Time'),
-            'test_type'=>Yii::t('contract','Probation Type'),
-            'test_time'=>Yii::t('contract','Probation Time'),
-            'test_start_time'=>Yii::t('contract','Probation Start Time'),
-            'test_end_time'=>Yii::t('contract','Probation End Time'),
-            'test_wage'=>Yii::t('contract','Probation Wage'),
-            'entry_time'=>Yii::t('contract','Entry Time'),
-            'health'=>Yii::t('contract','Physical condition'),
-            'education'=>Yii::t('contract','Degree level'),
-            'experience'=>Yii::t('contract','Work experience'),
-            'english'=>Yii::t('contract','Foreign language level'),
-            'technology'=>Yii::t('contract','Technical level'),
-            'other'=>Yii::t('contract','Other'),
-            'year_day'=>Yii::t('contract','Annual leave'),
-            'email'=>Yii::t('contract','Email'),
-            'remark'=>Yii::t('contract','Remark'),
-            'price1'=>Yii::t('contract','Wages Name'),
-            'price3'=>Yii::t('contract','Wages Type'),
-            'image_user'=>Yii::t('contract','Staff photo'),
-            'image_code'=>Yii::t('contract','Id photo'),
-            'image_work'=>Yii::t('contract','Work photo'),
-            'image_other'=>Yii::t('contract','Other photo'),
-            'ject_remark'=>Yii::t('contract','Rejected Remark'),
-            'ld_card'=>Yii::t('contract','Labor security card'),
-            'sb_card'=>Yii::t('contract','Social security card'),
-            'jj_card'=>Yii::t('contract','Accumulation fund card'),
-            'staff_type'=>Yii::t('staff','Staff Type'),
-            'staff_leader'=>Yii::t('staff','Team/Group Leader'),
-            'test_length'=>Yii::t('contract','Probation Time Longer'),
-            'attachment'=>Yii::t('contract','Attachment'),
-            'nation'=>Yii::t('contract','nation'),
-            'household'=>Yii::t('contract','Household type'),
-            'empoyment_code'=>Yii::t('contract','Employment registration certificate'),
-            'social_code'=>Yii::t('contract','Social security card number'),
-            'fix_time'=>Yii::t('contract','contract deadline'),
-            'user_card_date'=>Yii::t('contract','ID Card Date'),
-            'emergency_user'=>Yii::t('contract','Emergency User'),
-            'emergency_phone'=>Yii::t('contract','Emergency Phone'),
-            'code_old'=>Yii::t('contract','Code Old'),
-            'group_type'=>Yii::t('contract','group type'),
-            'wechat'=>Yii::t('contract','wechat'),
-            'recommend_user'=>Yii::t('contract','recommend user'),
-            'urgency_card'=>Yii::t('contract','urgency card'),
-            'office_id'=>Yii::t('contract','staff office'),
-		);
-	}
 	/**
      *
 	 * Declares the validation rules.
 	 */
-	public function rules()
+	public function rulesEx()
 	{
+	    $requiredList = $this->getRequiredList();
+	    $requiredStr = implode(",",$requiredList);
 		return array(
-			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, group_type,office_id,code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
-             start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
-              education,wechat,recommend_user,urgency_card, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
-               test_length,staff_type,staff_leader,attachment,nation, household, empoyment_code, social_code, user_card_date, emergency_user, emergency_phone',
-                'safe'),
 			array('entry_time,emergency_user,emergency_phone','required','on'=>"audit"),
-			array('name','required','on'=>"audit"),
-			array('household','required','on'=>"audit"),
-			array('staff_id','required','on'=>"audit"),
-			array('sex','required','on'=>"audit"),
-			array('name','validateName','on'=>"audit"),
-			array('company_id','required','on'=>"audit"),
-			array('contract_id','required','on'=>"audit"),
-			array('address','required','on'=>"audit"),
-			array('contact_address','required','on'=>"audit"),
-			array('phone','required','on'=>"audit"),
-			array('user_card','required','on'=>"audit"),
-			array('department','required','on'=>"audit"),
-			array('position','required','on'=>"audit"),
+			array($requiredStr,'required','on'=>"audit"),
 			array('wage','validateWage','on'=>"audit"),//由於工資有些用戶沒有權限
-			array('time','required','on'=>"audit"),
-            array('fix_time','required','on'=>"audit"),
-			array('start_time','required','on'=>"audit"),
 			array('end_time','validateEndTime','on'=>"audit"),
-			array('test_type','required','on'=>"audit"),
 			array('test_type','validateTestType','on'=>"audit"),
-			array('year_day','required','on'=>"audit"),
             array('year_day', 'validateYearDay','on'=>"audit"),
-            array('image_user','required','on'=>"audit"),
-            array('image_code','required','on'=>"audit"),
-            array('files, removeFileId, docMasterId, no_of_attm','safe'),
 		);
 	}
 
-    public function validateYearDay($attribute, $params){
-        if(!empty($this->year_day)){
-            if(!is_numeric($this->year_day)){
-                $message = "年假只能为数字";
-                $this->addError($attribute,$message);
-            }elseif(floatval($this->year_day)<0){
-                $message = "年假不能小于0";
-                $this->addError($attribute,$message);
+    public function validateID($attribute, $params){
+        if($this->getScenario()!='new'){
+            $allow_city = Yii::app()->user->city_allow();
+            $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
+                ->where("id=:id and city in ({$allow_city}) and staff_status in (1,3) and table_type=1", array(':id'=>$this->id))
+                ->queryRow();
+            if($row){
+                $this->city = $row["city"];
             }else{
-                $year_day = strval($this->year_day);
-                $year_day = explode('.',$year_day);
-                if(count($year_day)===2){
-                    $year_day = end($year_day);
-                    if($year_day%5 !== 0){
-                        $message = "年假必须为0.5的倍数";
-                        $this->addError($attribute,$message);
-                    }
-                }
+                $this->addError($attribute,"员工不存在，请刷新重试");
             }
+        }else{
+            $this->city = Yii::app()->user->city();
         }
     }
 
-	public function validateEndTime($attribute, $params){
-	    if($this->fix_time == "fixation"){
-	        if(empty($this->end_time)){
-                $message = Yii::t('contract','Contract End Time'). Yii::t('contract',' can not be empty');
-                $this->addError($attribute,$message);
-            }
-        }
-    }
-
-	public function validateWage($attribute, $params){
-        if(empty($this->wage)){
-            if(Yii::app()->user->validFunction('ZR02')){
-                $message = Yii::t('contract','Contract Pay'). Yii::t('contract',' can not be empty');
-                $this->addError($attribute,$message);
-            }else{
-                $message = Yii::t('contract','You do not have salary change authority, please save the contact leader');
-                $this->addError($attribute,$message);
-            }
-        }
-    }
-
-	public function validateTestType($attribute, $params){
-	    if(!empty($this->test_type)){
-	        if(empty($this->test_end_time)||empty($this->test_end_time)){
-                $message = Yii::t('contract','Probation Time'). Yii::t('contract',' can not be empty');
-                $this->addError($attribute,$message);
-            }
-            if(empty($this->test_wage)){
-                $message = Yii::t('contract','Probation Wage'). Yii::t('contract',' can not be empty');
-                $this->addError($attribute,$message);
-            }elseif (!is_numeric($this->test_wage)){
-                $message = Yii::t('contract','Probation Wage'). Yii::t('contract',' Must be Numbers');
-                $this->addError($attribute,$message);
-            }
-        }
-    }
 	public function validateName($attribute, $params){
 /*        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
             ->where('id!=:id and name=:name ', array(':id'=>$this->id,':name'=>$this->name))->queryAll();
@@ -273,192 +50,36 @@ class EmployForm extends CFormModel
         }*/
     }
 
-    //獲取可用公司
-    public static function getCompanyToCity($company_id){
-        $sql = "";
-	    if(!empty($company_id)&&is_numeric($company_id)){
-	        $sql = " or id='$company_id'";
-        }
-	    $arr = array(""=>"");
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_company")
-            ->where("city=:city$sql", array(':city'=>$city))->queryAll();
-        if(count($rows)>0){
-            foreach ($rows as $row){
-                $arr[$row["id"]] = $row["name"];
-            }
-        }
-        return $arr;
-    }
-
-    //獲取可用合同
-    public static function getContractToCity($con_id){
-        $sql = "";
-        if(!empty($con_id)&&is_numeric($con_id)){
-            $sql = " or id='$con_id'";
-        }
-	    $arr = array(""=>"");
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
-            ->where("city=:city$sql", array(':city'=>$city))->queryAll();
-        if(count($rows)>0){
-            foreach ($rows as $row){
-                $arr[$row["id"]] = $row["name"];
-            }
-        }
-        return $arr;
-    }
-
-    //根據id獲取公司員工合同信息
-    public function getEmployeeToId($id){
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$id,':city'=>$city))->queryAll();
-        if($rows){
-            $arr["company"]=CompanyForm::getCompanyToId($rows[0]["company_id"]);
-            $wordIdList = ContractForm::getWordListToConIdDesc($rows[0]["contract_id"]);
-            $arr["word"]=array();
-            $arr["staff"]=$rows[0];
-            foreach ($wordIdList as $wordId){
-                $url = WordForm::getDocxUrlToId($wordId["name"]);
-                if($url){
-                    array_push($arr["word"],$url["docx_url"]);
+    public function retrieveData($index)
+    {
+        $suffix = Yii::app()->params['envSuffix'];
+        $allow_city = Yii::app()->user->city_allow();
+        $row = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
+            ->where("id=:id and city in ({$allow_city}) and table_type=1", array(':id'=>$index))->queryRow();
+        if ($row){
+            $this->no_of_attm['employ'] = $row['employdoc'];
+            $arr = $this->getMyAttr();
+            foreach ($arr as $key => $type){
+                switch ($type){
+                    case 1://原值
+                        $value = $row[$key];
+                        $value = $value===""?null:$value;
+                        $this->$key = $value;
+                        break;
+                    case 2://日期
+                        $this->$key = empty($row[$key])?null:General::toDate($row[$key]);
+                        break;
+                    case 3://数字
+                        $this->$key = $row[$key]===null?null:floatval($row[$key]);
+                        break;
+                    default:
                 }
             }
-            return $arr;
         }
-        return false;
+        return true;
     }
-    //根據id獲取員信息
-    public function getEmployeeOneToId($id){
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$id,':city'=>$city))->queryAll();
-        if($rows){
-            return $rows[0];
-        }
-        return "";
-    }
-    //根據id獲取員列表
-    public static function getEmployeeList($id=0){
-        $city = Yii::app()->user->city();
-        $arr = array(""=>"");
-        $rows = Yii::app()->db->createCommand()->select("id,code,name")->from("hr_employee")
-            ->where('id=:id or city=:city ', array(':id'=>$id,':city'=>$city))->order("name asc")->queryAll();
-        if($rows){
-            foreach ($rows as $row){
-                $arr[$row['id']] = $row["name"]." ({$row['code']})";
-            }
-        }
-        return $arr;
-    }
-    //根據id獲取員列表
-    public function changeUserCard($id,$userCard){
-        $userCard="".$userCard;
-        $userCard= strlen($userCard)>5?$userCard:"666666";
-        $userCard = substr($userCard,0,6);
-        $data = array('status'=>0,'html'=>'');
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select("id,code,name,user_card,address")->from("hr_employee")
-            ->where("id!=:id and user_card like '{$userCard}%' and city=:city", array(':id'=>$id,':city'=>$city))->order("name asc")->queryAll();
-        if($rows){
-            $data['status'] = 1;
-            $data['html'] = '<div class="popover fade bottom in" id="userCardHint">';
-            $data['html'].= '<div class="arrow"></div>';
-            $data['html'].= '<div class="popover-title">户籍相似的员工</div><div class="popover-content">';
-            $html="";
-            foreach ($rows as $row){
-                $html.=!empty($html)?"<p style='margin-bottom: 0px;'>---------------------------------------</p>":"";
-                $html.= "<p style='margin-bottom: 0px;'>员工姓名:{$row['name']} - {$row['code']}</p>";
-                $html.= "<p style='margin-bottom: 0px;'>户籍地址:{$row['address']}</p>";
-                $html.= "<p style='margin-bottom: 0px;'>身份证号:{$row['user_card']}</p>";
-            }
-            $data['html'].= $html.'</div></div>';
-        }
-        return $data;
-    }
-
-	public function retrieveData($index)
-	{
-        $suffix = Yii::app()->params['envSuffix'];
-        $city = Yii::app()->user->city();
-        $rows = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOY',id) as employdoc")->from("hr_employee")
-            ->where('id=:id and city=:city ', array(':id'=>$index,':city'=>$city))->queryAll();
-		if (count($rows) > 0)
-		{
-			foreach ($rows as $row)
-			{
-                $this->no_of_attm['employ'] = $row['employdoc'];
-				$this->id = $row['id'];
-				$this->code = $row['code'];
-				$this->name = $row['name'];
-				$this->sex = $row['sex'];
-				$this->company_id = $row['company_id'];
-				$this->staff_id = $row['staff_id'];
-                $this->contract_id = $row['contract_id'];
-                $this->address = $row['address'];
-                $this->contact_address = $row['contact_address'];
-                $this->phone = $row['phone'];
-                $this->city = $row['city'];
-                $this->user_card = $row['user_card'];
-                $this->department = $row['department'];
-                $this->position = $row['position'];
-                $this->wage = $row['wage'];
-                $this->start_time = $row['start_time'];
-                $this->end_time = $row['end_time'];
-                $this->test_type = $row['test_type'];
-                $this->test_end_time = $row['test_end_time'];
-                $this->test_start_time = $row['test_start_time'];
-                $this->test_wage = $row['test_wage'];
-                $this->word_status = $row['word_status'];
-                $this->address_code = $row['address_code'];
-                $this->contact_address_code = $row['contact_address_code'];
-                $this->phone2 = $row['phone2'];
-                $this->entry_time = $row['entry_time'];
-                $this->birth_time = $row['birth_time'];
-                $this->age = $row['age'];
-                $this->health = $row['health'];
-                $this->education = $row['education'];
-                $this->staff_status = $row['staff_status'];
-                $this->experience = $row['experience'];
-                $this->english = $row['english'];
-                $this->technology = $row['technology'];
-                $this->other = $row['other'];
-                $this->year_day = $row['year_day'];
-                $this->email = $row['email'];
-                $this->remark = $row['remark'];
-/*                $this->price1 = $row['price1'];
-                $this->price3 = explode(",",$row['price3']);*/
-                $this->image_user = $row['image_user'];
-                $this->image_code = $row['image_code'];
-                $this->image_work = $row['image_work'];
-                $this->image_other = $row['image_other'];
-                $this->ject_remark = $row['ject_remark'];
-                $this->test_length = $row['test_length'];
-                $this->staff_type = $row['staff_type'];
-                $this->staff_leader = $row['staff_leader'];
-                $this->attachment = $row['attachment'];
-                $this->nation = $row['nation'];
-                $this->household = $row['household'];
-                $this->empoyment_code = $row['empoyment_code'];
-                $this->social_code = $row['social_code'];
-                $this->fix_time = $row['fix_time'];
-                $this->user_card_date = $row['user_card_date'];
-                $this->emergency_user = $row['emergency_user'];
-                $this->emergency_phone = $row['emergency_phone'];
-                $this->code_old = $row['code_old'];
-                $this->group_type = $row['group_type'];
-                $this->wechat = $row['wechat'];
-                $this->recommend_user = $row['recommend_user'];
-                $this->urgency_card = $row['urgency_card'];
-                $this->office_id = $row['office_id'];
-				break;
-			}
-		}
-		return true;
-	}
-
-	public function parseWagesToArr($str){
+/*
+    public function parseWagesToArr($str){
         $arr = explode(",",$str);
         for($i=0;$i<count($arr);$i++){
             if(empty($arr[$i])){
@@ -467,296 +88,31 @@ class EmployForm extends CFormModel
         }
         return $arr;
     }
+*/
 
-    //員工刪除時必須是草稿
-    public function validateDelete(){
-        $rows = Yii::app()->db->createCommand()->select()->from("hr_employee")
-            ->where('id=:id and staff_status in (1,3,4)', array(':id'=>$this->id))->queryRow();
-        if ($rows){
-            return true;
-        }
-        return false;
-    }
-
-	public function saveData()
-	{
-		$connection = Yii::app()->db;
-		$transaction=$connection->beginTransaction();
-		try {
-            //本地变更保存
-			list($falg, $scenario) = $this->saveStaff($connection);
-
-            //远程变更保存
-            $this->save_to_NewUnited($scenario);
-
-            //更新文档
-            $this->updateDocman($connection,'EMPLOY');
-			$transaction->commit();
-		}catch(Exception $e) {
-			$transaction->rollback();
-			throw new CHttpException(404,'Cannot update.'.$e->getMessage());
-		}
-	}
-
-    protected function updateDocman(&$connection, $doctype) {
-        if ($this->scenario=='new') {
-            $docidx = strtolower($doctype);
-            if ($this->docMasterId[$docidx] > 0) {
-                $docman = new DocMan($doctype,$this->id,get_class($this));
-                $docman->masterId = $this->docMasterId[$docidx];
-                $docman->updateDocId($connection, $this->docMasterId[$docidx]);
-            }
-            $this->scenario = "edit";
-        }
-    }
-
-	protected function saveStaff(&$connection)
-	{
-		$sql = '';
-		$audit= false;
+    protected function saveStaff(&$connection){
+        $sql = '';
+        $audit= $this->audit;
         $city = Yii::app()->user->city();
+        $allow_city = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
-
-        $scenario = $this->scenario;
-        //审核
-        if($this->scenario == "audit"){
-            if(empty($this->id)){
-                $this->scenario = "new";
-            }else{
-                $this->scenario = "edit";
-            }
-            $audit = true;
-        }
-        //处理sql语句
-		switch ($this->scenario) {
-			case 'delete':
-                $sql = "delete from hr_employee where id = :id and city = :city";
-				break;
-			case 'new':
-				$sql = "insert into hr_employee(
-							name,recommend_user,wechat,urgency_card, sex, attachment, group_type, staff_id, company_id, contract_id, city, address, contact_address, phone, user_card, department, position, wage, start_time, end_time, test_type, test_end_time, test_start_time,
-							 test_wage,phone2,address_code,contact_address_code,entry_time,birth_time,age,health,education,experience,english,technology,other,year_day,fix_time,user_card_date,emergency_user,emergency_phone,code_old,
-							 email,office_id,remark,image_user,image_code,image_work,image_other,staff_status,staff_leader,test_length,staff_type,lcu, nation, household, empoyment_code, social_code
-						) values (
-							:name,:recommend_user,:wechat,:urgency_card, :sex, :attachment, :group_type, :staff_id, :company_id, :contract_id, :city, :address, :contact_address, :phone, :user_card, :department, :position, :wage, :start_time, :end_time, :test_type, :test_end_time, :test_start_time,
-							 :test_wage,:phone2,:address_code,:contact_address_code,:entry_time,:birth_time,:age,:health,:education,:experience,:english,:technology,:other,:year_day,:fix_time,:date_user_card,:emergency_user,:emergency_phone,:code_old,
-							 :email,:office_id,:remark,:image_user,:image_code,:image_work,:image_other,1,:staff_leader,:test_length,:staff_type,:lcu, :nation, :household, :empoyment_code, :social_code
-						)";
-				break;
-			case 'edit':
-				$sql = "update hr_employee set
-							name = :name, 
-							sex = :sex, 
-							attachment = :attachment, 
-							staff_type = :staff_type, 
-							test_length = :test_length, 
-							staff_leader = :staff_leader, 
-							staff_id = :staff_id,
-							company_id = :company_id,
-							contract_id = :contract_id,
-							address = :address,
-							contact_address = :contact_address,
-							phone = :phone,
-							user_card = :user_card,
-							department = :department,
-							position = :position,
-							wage = :wage,
-							start_time = :start_time,
-							end_time = :end_time,
-							test_type = :test_type,
-							test_end_time = :test_end_time,
-							test_start_time = :test_start_time,
-							test_wage = :test_wage,
-							entry_time = :entry_time,
-							birth_time = :birth_time,
-							phone2 = :phone2,
-							address_code = :address_code,
-							contact_address_code = :contact_address_code,
-							age = :age,
-							health = :health,
-							education = :education,
-							experience = :experience,
-							english = :english,
-							technology = :technology,
-							other = :other,
-							year_day = :year_day,
-							email = :email,
-							remark = :remark,
-							image_user = :image_user,
-							image_code = :image_code,
-							image_work = :image_work,
-							image_other = :image_other,
-							nation = :nation,
-							household = :household,
-							empoyment_code = :empoyment_code,
-							social_code = :social_code,
-							fix_time = :fix_time,
-							user_card_date = :date_user_card,
-							emergency_user = :emergency_user,
-							emergency_phone = :emergency_phone,
-							code_old = :code_old,
-							group_type = :group_type,
-							wechat = :wechat,
-							recommend_user = :recommend_user,
-							urgency_card = :urgency_card,
-							office_id = :office_id,
-							luu = :luu 
-						where id = :id
-						";
-				break;
-		}
-
-        //赋值
-		if(intval($this->test_type) != 1){
-		    $this->test_wage = null;
-		    $this->test_start_time = null;
-		    $this->test_end_time = null;
-        }
-
-		$command=$connection->createCommand($sql);
-		if (strpos($sql,':id')!==false)
-			$command->bindParam(':id',$this->id,PDO::PARAM_INT);
-		if (strpos($sql,':office_id')!==false){
-            $this->office_id = empty($this->office_id)?0:$this->office_id;
-            $command->bindParam(':office_id',$this->office_id,PDO::PARAM_INT);
-        }
-        if (strpos($sql,':code_old')!==false)
-            $command->bindParam(':code_old',$this->code_old,PDO::PARAM_STR);
-		if (strpos($sql,':sex')!==false)
-			$command->bindParam(':sex',$this->sex,PDO::PARAM_STR);
-		if (strpos($sql,':name')!==false)
-			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
-		if (strpos($sql,':staff_id')!==false)
-			$command->bindParam(':staff_id',$this->staff_id,PDO::PARAM_INT);
-		if (strpos($sql,':company_id')!==false){
-            if(empty($this->company_id)){
-                $command->bindValue(':company_id',null);
-            }else{
-                $command->bindParam(':company_id',$this->company_id,PDO::PARAM_INT);
-            }
-        }
-		if (strpos($sql,':contract_id')!==false){
-            if(empty($this->contract_id)){
-                $command->bindValue(':contract_id',null);
-            }else{
-                $command->bindParam(':contract_id',$this->contract_id,PDO::PARAM_INT);
-            }
-        }
-		if (strpos($sql,':address')!==false)
-			$command->bindParam(':address',$this->address,PDO::PARAM_STR);
-		if (strpos($sql,':contact_address')!==false)
-			$command->bindParam(':contact_address',$this->contact_address,PDO::PARAM_STR);
-		if (strpos($sql,':phone')!==false)
-			$command->bindParam(':phone',$this->phone,PDO::PARAM_STR);
-		if (strpos($sql,':user_card,')!==false)
-			$command->bindParam(':user_card',$this->user_card,PDO::PARAM_STR);
-		if (strpos($sql,':department')!==false)
-			$command->bindParam(':department',$this->department,PDO::PARAM_STR);
-		if (strpos($sql,':position')!==false)
-			$command->bindParam(':position',$this->position,PDO::PARAM_STR);
-		if (strpos($sql,':wage')!==false)
-			$command->bindParam(':wage',$this->wage,PDO::PARAM_INT);
-		if (strpos($sql,':start_time')!==false){
-		    if(empty($this->start_time)){
-                $command->bindValue(':start_time',null);
-            }else{
-                $command->bindParam(':start_time',$this->start_time,PDO::PARAM_STR);
-            }
-        }
-		if (strpos($sql,':end_time')!==false)
-			$command->bindParam(':end_time',$this->end_time,PDO::PARAM_STR);
-		if (strpos($sql,':test_type')!==false)
-			$command->bindParam(':test_type',$this->test_type,PDO::PARAM_INT);
-		if (strpos($sql,':group_type')!==false)
-			$command->bindParam(':group_type',$this->group_type,PDO::PARAM_INT);
-		if (strpos($sql,':test_end_time')!==false)
-			$command->bindParam(':test_end_time',$this->test_end_time,PDO::PARAM_STR);
-		if (strpos($sql,':test_start_time')!==false)
-			$command->bindParam(':test_start_time',$this->test_start_time,PDO::PARAM_STR);
-		if (strpos($sql,':test_wage')!==false)
-			$command->bindParam(':test_wage',$this->test_wage,PDO::PARAM_INT);
-
-		if (strpos($sql,':phone2')!==false)
-			$command->bindParam(':phone2',$this->phone2,PDO::PARAM_STR);
-		if (strpos($sql,':address_code')!==false)
-			$command->bindParam(':address_code',$this->address_code,PDO::PARAM_STR);
-		if (strpos($sql,':contact_address_code')!==false)
-			$command->bindParam(':contact_address_code',$this->contact_address_code,PDO::PARAM_STR);
-		if (strpos($sql,':entry_time')!==false)
-			$command->bindParam(':entry_time',$this->entry_time,PDO::PARAM_STR);
-		if (strpos($sql,':birth_time')!==false)
-			$command->bindParam(':birth_time',$this->birth_time,PDO::PARAM_STR);
-		if (strpos($sql,':age')!==false)
-			$command->bindParam(':age',$this->age,PDO::PARAM_STR);
-		if (strpos($sql,':health')!==false)
-			$command->bindParam(':health',$this->health,PDO::PARAM_STR);
-		if (strpos($sql,':education')!==false)
-			$command->bindParam(':education',$this->education,PDO::PARAM_STR);
-		if (strpos($sql,':experience')!==false)
-			$command->bindParam(':experience',$this->experience,PDO::PARAM_STR);
-		if (strpos($sql,':english')!==false)
-			$command->bindParam(':english',$this->english,PDO::PARAM_STR);
-		if (strpos($sql,':technology')!==false)
-			$command->bindParam(':technology',$this->technology,PDO::PARAM_STR);
-		if (strpos($sql,':other')!==false)
-			$command->bindParam(':other',$this->other,PDO::PARAM_STR);
-		if (strpos($sql,':year_day')!==false)
-			$command->bindParam(':year_day',$this->year_day,PDO::PARAM_STR);
-		if (strpos($sql,':email')!==false)
-			$command->bindParam(':email',$this->email,PDO::PARAM_STR);
-		if (strpos($sql,':remark')!==false)
-			$command->bindParam(':remark',$this->remark,PDO::PARAM_STR);
-		if (strpos($sql,':image_user')!==false)
-			$command->bindParam(':image_user',$this->image_user,PDO::PARAM_STR);
-		if (strpos($sql,':image_code')!==false)
-			$command->bindParam(':image_code',$this->image_code,PDO::PARAM_STR);
-		if (strpos($sql,':image_other')!==false)
-			$command->bindParam(':image_other',$this->image_other,PDO::PARAM_STR);
-		if (strpos($sql,':image_work')!==false)
-			$command->bindParam(':image_work',$this->image_work,PDO::PARAM_STR);
-		if (strpos($sql,':staff_type')!==false)
-			$command->bindParam(':staff_type',$this->staff_type,PDO::PARAM_STR);
-		if (strpos($sql,':test_length')!==false)
-			$command->bindParam(':test_length',$this->test_length,PDO::PARAM_STR);
-		if (strpos($sql,':staff_leader')!==false)
-			$command->bindParam(':staff_leader',$this->staff_leader,PDO::PARAM_STR);
-		if (strpos($sql,':attachment')!==false)
-			$command->bindParam(':attachment',$this->attachment,PDO::PARAM_STR);
-        if (strpos($sql,':nation')!==false)
-            $command->bindParam(':nation',$this->nation,PDO::PARAM_STR);
-        if (strpos($sql,':household')!==false)
-            $command->bindParam(':household',$this->household,PDO::PARAM_STR);
-        if (strpos($sql,':empoyment_code')!==false)
-            $command->bindParam(':empoyment_code',$this->empoyment_code,PDO::PARAM_STR);
-        if (strpos($sql,':social_code')!==false)
-            $command->bindParam(':social_code',$this->social_code,PDO::PARAM_STR);
-        if (strpos($sql,':fix_time')!==false)
-            $command->bindParam(':fix_time',$this->fix_time,PDO::PARAM_STR);
-        if (strpos($sql,':date_user_card')!==false)
-            $command->bindParam(':date_user_card',$this->user_card_date,PDO::PARAM_STR);
-        if (strpos($sql,':emergency_user')!==false)
-            $command->bindParam(':emergency_user',$this->emergency_user,PDO::PARAM_STR);
-        if (strpos($sql,':emergency_phone')!==false)
-            $command->bindParam(':emergency_phone',$this->emergency_phone,PDO::PARAM_STR);
-        if (strpos($sql,':wechat')!==false)
-            $command->bindParam(':wechat',$this->wechat,PDO::PARAM_STR);
-        if (strpos($sql,':recommend_user')!==false)
-            $command->bindParam(':recommend_user',$this->recommend_user,PDO::PARAM_STR);
-        if (strpos($sql,':urgency_card')!==false)
-            $command->bindParam(':urgency_card',$this->urgency_card,PDO::PARAM_STR);
-
-        if (strpos($sql,':city')!==false)
-            $command->bindParam(':city',$city,PDO::PARAM_STR);
-		if (strpos($sql,':luu')!==false)
-			$command->bindParam(':luu',$uid,PDO::PARAM_STR);
-		if (strpos($sql,':lcu')!==false)
-			$command->bindParam(':lcu',$uid,PDO::PARAM_STR);
-
-        //die();
-		$command->execute();
-
-        if ($this->scenario=='delete'){
-            $this->deleteEmployee();
+        $list = self::getSaveList();
+        switch ($this->scenario) {
+            case 'delete':
+                $connection->createCommand()->delete("hr_employee","id=:id and city in ({$allow_city})", array(":id" =>$this->id));
+                //删除员工记录
+                $connection->createCommand()->delete('hr_employee_history', 'employee_id=:id',array(":id"=>$this->id));
+                break;
+            case 'new':
+                $list["city"] = $city;
+                $list["lcu"] = $uid;
+                $connection->createCommand()->insert("hr_employee", $list);
+                break;
+            case 'edit':
+                unset($list["city"]);
+                $list["luu"] = $uid;
+                $connection->createCommand()->update("hr_employee", $list, "id=:id and city in ({$allow_city})", array(":id" => $this->id));
+                break;
         }
 
         if ($this->scenario=='new'){
@@ -766,12 +122,9 @@ class EmployForm extends CFormModel
                 'code'=>$this->code
             ), 'id=:id', array(':id'=>$this->id));
         }
+
         //審核
         if($audit){
-            Yii::app()->db->createCommand()->update('hr_employee', array(
-                'staff_status'=>2
-            ), 'id=:id', array(':id'=>$this->id));
-
             //記錄
             Yii::app()->db->createCommand()->insert('hr_employee_history', array(
                 "employee_id"=>$this->id,
@@ -780,13 +133,13 @@ class EmployForm extends CFormModel
                 "lcd"=>date('Y-m-d H:i:s'),
             ));
 
-//            //發送郵件
-//            $this->sendEmail();
+            //發送郵件
+            $this->sendEmail();
         }
-        return array(true, $scenario);
-	}
+        return true;
+    }
 
-	private function sendEmail(){
+	protected function sendEmail(){
         $description="员工录入 - ".$this->name;
         $subject="员工录入 - ".$this->name;
         $message="<p>员工编号：".$this->code."</p>";
@@ -799,169 +152,30 @@ class EmployForm extends CFormModel
         $email->sent();
     }
 
-	private function lenStr(){
-        $code = strval($this->id);
-//Percy: Yii::app()->params['employeeCode']用來處理不同地區版本不同字首
-        $this->code = Yii::app()->params['employeeCode'];
-        for($i = 0;$i < 5-strlen($code);$i++){
-            $this->code.="0";
-        }
-        $this->code .= $code;
-    }
+    public function finishData($data){
+        $this->retrieveData($data['id']);
+        if($this->staff_status==4){
+            $uid = Yii::app()->user->id;
+            Yii::app()->db->createCommand()->update('hr_employee', array(
+                'jj_card'=>$data['jj_card'],
+                'social_code'=>$data['social_code'],
+                'staff_status'=>0,
+                'staff_old_status'=>0,
+            ), 'id=:id and staff_status=4', array(':id'=>$data['id']));
+            //記錄
+            Yii::app()->db->createCommand()->insert('hr_employee_history', array(
+                "employee_id"=>$data['id'],
+                "status"=>"finish",
+                "lcu"=>$uid,
+                "lcd"=>date('Y-m-d H:i:s'),
+            ));
 
-	public function setAttachment(){
-        $str = $this->attachment;
-	    if(empty($str)){
-            $arr = array();
-        }else{
-	        $arr = explode(",",$str);
-	        for($i = 0;$i<count($arr);$i++){
-                $rows = Yii::app()->db->createCommand()->select()->from("hr_attachment")
-                    ->where('id=:id', array(':id'=>$arr[$i]))->queryRow();
-                if($rows){
-                    $arr[$i] = $rows;
-                }else{
-                    unset($arr[$i]);
-                }
-            }
-        }
-        $this->attachment = $arr;
-        return $arr;
-    }
-
-    //刪除員工記錄表
-    protected function deleteEmployee(){
-        Yii::app()->db->createCommand()->delete('hr_employee_history', 'employee_id=:id',array(":id"=>$this->id));
-    }
-
-    //工資權限
-    public static function validateWageInput(){
-	    if(Yii::app()->user->validFunction('ZR02')||Yii::app()->user->validRWFunction('ZG01')||Yii::app()->user->validRWFunction('ZG02')){
-	        return true;
-        }else{
-	        return false;
+            //U系统同步
+            StaffForm::sendCurl($this->id,"new");
         }
     }
 
-    /**
-     * 保存至新U派单系统
-     * @return void
-     * @throws CHttpException
-     */
-    public function save_to_NewUnited($scenario){
-        $url = yii::app()->params['nu_url'].'api/hr.DataSync/employee_dataSync';
-
-//        //目前不需要同步删除、修改功能
-//        if($scenario=='edit' || $scenario=='delete'){
-//            return true;
-//        }
-
-        //构造数据
-        $city = Yii::app()->user->city();
-        $uid = Yii::app()->user->id;
-        $post_data = array(
-            'scenario' => $scenario, //in:edit,new,delete
-            'id' => $this->id,
-            'office_id' => $this->office_id,//辦事處id 0 为本部
-            'code' => $this->code,//员工编号
-            'code_old' => $this->code_old,
-            'sex' => $this->sex,//性别
-            'name' => $this->name,//员工名
-            'staff_id' => $this->staff_id,//员工归属
-//            'company_id' => $this->company_id,//员工合同归属
-//            'contract_id' => $this->contract_id,//员工合同模板
-//            'address' => $this->address,//户籍地址地址
-            'contact_address' => $this->contact_address,//通讯地址
-            'phone' => $this->phone,//员工电话
-//            'user_card' => $this->user_card,//身份证号码
-            'department' => $this->department,//部门
-            'position' => $this->position,//职位
-            'wage' => $this->wage,//合同工资
-//            'start_time' => $this->start_time,//合同时间 开始
-//            'end_time' => $this->end_time,//合同时间 结束
-//            'test_type' => $this->test_type,//试用期类型
-//            'group_type' => $this->group_type,//组别分类
-//            'test_end_time' => $this->test_end_time,//试用期时间
-//            'test_start_time' => $this->test_start_time,//试用期时间
-//            'test_wage' => $this->test_wage,//试用期工资
-//            'phone2' => $this->phone2,//緊急電話
-//            'address_code' => $this->address_code,//户籍邮编
-//            'contact_address_code' => $this->contact_address_code,//通讯邮编
-            'entry_time' => $this->entry_time,//入职日期
-            'birth_time' => $this->birth_time,//出生日期
-            'age' => $this->age,//年龄
-//            'health' => $this->health,//身体状况
-//            'education' => $this->education,//学历或文化程度
-//            'experience' => $this->experience,//工作经验
-//            'english' => $this->english,//外语水平
-//            'technology' => $this->technology,//技术水平
-//            'other' => $this->other,//其他
-//            'year_day' => $this->year_day,//年假
-            'email' => $this->email,
-            'remark' => $this->remark,//备注
-//            'image_user' => $this->image_user,//员工照片
-//            'image_code' => $this->image_code,//身份证照片
-//            'image_other' => $this->image_other,//其它照片
-//            'image_work' => $this->image_work,//工作证明
-            'staff_type' => $this->staff_type,//员工类别
-//            'test_length' => $this->test_length,//试用期时期
-//            'staff_leader' => $this->staff_leader,//队长/组长
-//            'attachment' => $this->attachment,
-//            'nation' => $this->nation,//民族
-//            'household' => $this->household,//户籍类型
-//            'empoyment_code' => $this->empoyment_code,//就业登记证号
-//            'social_code' => $this->social_code,
-//            'fix_time' => $this->fix_time,//合同期限
-//            'date_user_card' => $this->user_card_date,//身份证有效期
-//            'emergency_user' => $this->emergency_user,//紧急联络人姓名
-//            'emergency_phone' => $this->emergency_phone,//紧急联络人手机号
-//            'wechat' => $this->wechat,//微信账号
-//            'recommend_user' => $this->recommend_user,//推荐人
-//            'urgency_card' => $this->urgency_card,//紧急联系人身份证
-            'city' => $city,
-            'luu' => $uid,
-            'lcu' => $uid,
-        );
-        if($scenario=='new'){
-            $post_data['lcd'] = date('Y-m-d H:i:s');
-        }elseif ($scenario=='edit'){
-            $post_data['lud'] = date('Y-m-d H:i:s');
-        }
-
-        $res = $this->http_curl_get($url,$post_data);
-
-        if(!$res || $res['code']==400 || $res['data']['code']!=1){//执行成功
-            $msg = (isset($res)&&$res['msg']?$res['msg']:'Cannot update.');
-            throw new CHttpException(404,$msg);
-        }
-
-        return $res;
-    }
-
-
-    /**
-     * http post 请求
-     * @param string $url    请求地址
-     * @param array  $param  请求参数
-     * @param array  $header 请求头部
-     * @return array
-     */
-    public function http_curl_get($url, $param = array(), $header = array()) {
-        $param = json_encode($param,true);
-        $header = array_merge($header, ['Content-type:application/json;charset=utf-8', 'Accept:application/json']);
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $param);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($curl);
-        curl_close($curl);
-        $response = json_decode($response, true);
-
-        return $response;
+    public function readonly(){
+        return $this->getScenario()=='view'||!in_array($this->staff_status,array(1,3));
     }
 }

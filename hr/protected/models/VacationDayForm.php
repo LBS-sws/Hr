@@ -23,6 +23,7 @@ class VacationDayForm
     protected $end_time;
 
     protected $year_type = "E";//年假
+    protected $mo_city = "MO";//澳门的城市code
     protected $monthLong=0;//新加坡病假間隔最大月份
 
     protected $error_bool = false;
@@ -166,19 +167,44 @@ class VacationDayForm
                 if($diffYear>0){
                     $diffMonth +=($diffYear*12);
                 }
-                if($diffDay<0){
-                    $diffMonth--;
+                if($this->city==$this->mo_city){
+                    if ($diffDay==-1){
+                        //$diffMonth++;
+                    }elseif ($diffDay>-1){
+                        $diffMonth++;
+                    }else{
+                        $diffMonth--;
+                    }
+                }else{
+                    if($diffDay<0){
+                        $diffMonth--;
+                    }
                 }
                 $this->diffMonth = $diffMonth;
 
                 if($this->yearLeaveType == 0){
-                    //大陸版的一年：員工月份為起點
-                    if(date("m-d",$time)>=date("m-d",$entry_time)){
-                        $this->start_time = $year.date("/m/d",$entry_time);
-                        $this->end_time = (intval($year)+1).date("/m/d",$entry_time);
+                    if($this->city==$this->mo_city){//澳门
+                        if($this->diffMonth<=24){
+                            $this->start_time = date("Y/m/d",$entry_time);
+                            $this->end_time = ($year+2).date("/m/d",$entry_time);
+                        }else{
+                            if(date("m-d",$time)>=date("m-d",$entry_time)){
+                                $this->start_time = (intval($year)-1).date("/m/d",$entry_time);
+                                $this->end_time = ($year+1).date("/m/d",$entry_time);
+                            }else{
+                                $this->start_time = (intval($year)-2).date("/m/d",$entry_time);
+                                $this->end_time = $year.date("/m/d",$entry_time);
+                            }
+                        }
                     }else{
-                        $this->start_time = (intval($year)-1).date("/m/d",$entry_time);
-                        $this->end_time = $year.date("/m/d",$entry_time);
+                        //大陸版的一年：員工月份為起點
+                        if(date("m-d",$time)>=date("m-d",$entry_time)){
+                            $this->start_time = $year.date("/m/d",$entry_time);
+                            $this->end_time = (intval($year)+1).date("/m/d",$entry_time);
+                        }else{
+                            $this->start_time = (intval($year)-1).date("/m/d",$entry_time);
+                            $this->end_time = $year.date("/m/d",$entry_time);
+                        }
                     }
                 }else{
                     $this->start_time = $year."/01/01";
@@ -206,6 +232,7 @@ class VacationDayForm
 
     //新加坡病假计算逻辑修改
     private function setXinJiaPoStartTime(){
+        //新加坡病假计算逻辑修改
         if($this->yearLeaveType == 1&&$this->vaca_type=="L"){
             $year = date("Y",strtotime($this->employee_list["entry_time"]." + {$this->monthLong} month"));
             $startYear=date("Y",strtotime($this->start_time));
@@ -281,7 +308,11 @@ class VacationDayForm
             $this->remain_bool = true;
             switch ($this->yearLeaveType){
                 case 0://正常（大陸版、台灣版）
-                    $this->addEmployeeNum();//年假根據員工信息計算
+                    if($this->city==$this->mo_city){ //澳门年假
+                        $this->addEmployeeNumToMO();//年假根據員工信息計算
+                    }else{
+                        $this->addEmployeeNum();//年假根據員工信息計算
+                    }
                     break;
                 case 1://1：新加坡
                     $this->addEmployeeNumToOne();
@@ -294,6 +325,21 @@ class VacationDayForm
         }else{
             $this->addRulesNum($this->vacation_list);//假期規則添加天數
             $this->sumDay=$this->vacation_sum;
+        }
+    }
+
+    //根據員工信息添加年假(澳门)
+    private function addEmployeeNumToMO(){
+        if($this->employee_list){
+            $this->sumDay=$this->employee_list["year_day"];
+            if($this->diffMonth>=12&&$this->diffMonth<=24){
+                $this->vacation_sum=$this->sumDay+($this->diffMonth-12)*0.5;
+            }elseif($this->diffMonth>24){
+                $this->vacation_sum=$this->sumDay+($this->diffMonth-12)*0.5;
+                $this->vacation_sum=$this->vacation_sum>12?12:$this->vacation_sum;
+            }else{
+                $this->vacation_sum=0;
+            }
         }
     }
 
@@ -376,7 +422,7 @@ class VacationDayForm
         $sumDay+=$sum;
         //用掉的年假
         $sum = Yii::app()->db->createCommand()->select("sum(a.log_time)")->from("hr$suffix.hr_employee_leave a")
-            ->leftJoin("hr_vacation b","a.vacation_id = b.id")
+            ->leftJoin("hr$suffix.hr_vacation b","a.vacation_id = b.id")
             ->where("b.vaca_type=:vaca_type and a.employee_id=:employee_id and a.status IN (1,2,4) and date_format(a.start_time,'%Y')=:year",
                 array(":employee_id"=>$this->employee_id,":year"=>$foreachYear,":vaca_type"=>$this->year_type))->queryScalar();
 

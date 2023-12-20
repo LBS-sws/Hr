@@ -34,12 +34,12 @@ class DepartureList extends CListPageModel
         $localOffice = Yii::t("contract","local office");
 		$sql1 = "select a.*,if(a.office_id=0,'{$localOffice}',f.name) as office_name from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
-                where a.city in ($city_allow) AND a.staff_status = -1
+                where a.city in ($city_allow) AND a.staff_status = -1 AND a.table_type = 1 
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
-				where a.city in ($city_allow) AND a.staff_status = -1
+				where a.city in ($city_allow) AND a.staff_status = -1 AND a.table_type = 1 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

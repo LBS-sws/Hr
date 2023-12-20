@@ -47,8 +47,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <?php endif; ?>
             </div>
 
-            <?php $agreements = $model->staffHasAgreement(); ?>
-            <?php if (!empty($agreements)): ?>
+            <?php if (!empty($model->staffHasAgreement())): ?>
                 <div class="btn-group pull-right" role="group">
                     <?php if ($model->word_status == 1): ?>
                         <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Supplemental Agreement'),array(
@@ -83,12 +82,12 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                 <?php if ($model->scenario!='new'&&Yii::app()->user->validFunction('ZR02')){
                     //流程
                     echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
-                        'name'=>'btnFlow','id'=>'btnFlow','data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
+                        'data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
                 <?php
                 $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
                 echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                        'name'=>'btnFile','id'=>'btnFile','data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+                        'data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
                 );
                 ?>
             </div>
@@ -106,7 +105,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
             <?php echo $form->hiddenField($model, 'staff_status'); ?>
 
             <?php
-            $this->renderPartial('//site/employform',array('model'=>$model,
+            $this->renderPartial('//employView/employform',array('model'=>$model,
                 'form'=>$form,
                 'model'=>$model,
                 'readonly'=>($model->scenario=='view'||$model->staff_status != 1),
@@ -144,8 +143,8 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
 </section>
 
 <?php
-$this->renderPartial('//site/historylist',array('model'=>$model));
-$this->renderPartial('//site/agreementlist',array('model'=>$model));
+$this->renderPartial('//employView/historylist',array('model'=>$model));
+$this->renderPartial('//employView/agreementlist',array('model'=>$model));
 ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,

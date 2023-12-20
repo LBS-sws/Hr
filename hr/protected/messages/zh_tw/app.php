@@ -234,6 +234,7 @@ return array(
     'appoint for work'=>'審核指定加班',
     'appoint for trip'=>'審核指定出差',
     'Company Information'=>'公司資質資料',
+    'Curl Notes'=>'Curl同步記錄',
 //沈超添加結束
 );
 ?>

@@ -37,7 +37,7 @@ class EmployController extends Controller
                 'expression'=>array('EmployController','allowReadOnly'),
             ),
             array('allow',
-                'actions'=>array('generate','addDate','printImage','changeDepart','changeUserCard'),
+                'actions'=>array('generate','addDate','printImage','changeCity','changeDepart','changeUserCard'),
                 'expression'=>array('EmployController','allowWrite'),
             ),
             array('deny',  // deny all users
@@ -76,6 +76,7 @@ class EmployController extends Controller
     public function actionNew()
     {
         $model = new EmployForm('new');
+        $model->city = Yii::app()->user->city();
         $model->entry_time = $model->test_start_time = date("Y/m/d");
         $this->render('form',array('model'=>$model,));
     }
@@ -106,6 +107,8 @@ class EmployController extends Controller
             $model = new EmployForm($_POST['EmployForm']['scenario']);
             $model->attributes = $_POST['EmployForm'];
             if ($model->validate()) {
+                $model->audit = false;
+                $model->staff_status = 1;
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('employ/edit',array('index'=>$model->id)));
@@ -120,9 +123,11 @@ class EmployController extends Controller
     public function actionAudit()
     {
         if (isset($_POST['EmployForm'])) {
-            $model = new EmployForm('audit');
+            $model = new EmployForm($_POST['EmployForm']['scenario']);
             $model->attributes = $_POST['EmployForm'];
             if ($model->validate()) {
+                $model->audit = true;
+                $model->staff_status = 2;
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
                 $this->redirect(Yii::app()->createUrl('employ/edit',array('index'=>$model->id)));
@@ -138,20 +143,9 @@ class EmployController extends Controller
     {
         if (isset($_POST['EmployForm'])) {
             $data = $_POST['EmployForm'];
-            $uid = Yii::app()->user->id;
-            Yii::app()->db->createCommand()->update('hr_employee', array(
-                'jj_card'=>$data['jj_card'],
-                'social_code'=>$data['social_code'],
-                'staff_status'=>0,
-                'staff_old_status'=>0,
-            ), 'id=:id and staff_status=4', array(':id'=>$data['id']));
-            //記錄
-            Yii::app()->db->createCommand()->insert('hr_employee_history', array(
-                "employee_id"=>$data['id'],
-                "status"=>"finish",
-                "lcu"=>$uid,
-                "lcd"=>date('Y-m-d H:i:s'),
-            ));
+            $model = new EmployForm();
+            $model->finishData($data);
+
             Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
             $this->redirect(Yii::app()->createUrl('employ/index'));
         }
@@ -206,9 +200,9 @@ class EmployController extends Controller
                 $myfile = fopen($path."index.php", "w");
                 fclose($myfile);
             }
-            $url = "upload/images/".$city."/".date("YmdHsi").".".$img->getExtensionName();
-            $model->file = $img->getName();
-            if ($model->file && $model->validate()) {
+            if ($model->validate()) {
+                $url = "upload/images/".$city."/".date("YmdHsi").".".$img->getExtensionName();
+                $model->file = $img->getName();
                 $img->saveAs($url);
                 //$url = "/".Yii::app()->params['systemId']."/".$url;
                 $url = "../../".$url;
@@ -286,6 +280,24 @@ class EmployController extends Controller
                 $json["data"]['dept_class'] = $model->dept_class;
             }
             echo CJSON::encode($json);
+        }else{
+            $this->redirect(Yii::app()->createUrl('employ/index'));
+        }
+    }
+
+    //職位
+    public function actionChangeCity(){
+        if(Yii::app()->request->isAjaxRequest) {//是否ajax请求
+            $json = array("data"=>"","status"=>1);
+            $change_city = Yii::app()->request->getPost('change_city',"");
+            if(empty($change_city)){
+                $json["status"] = 0;
+                echo CJSON::encode($json);
+            }else{
+                $json["data"]["companyList"]=StaffFun::getCompanyListToCity($change_city,0);
+                $json["data"]["contractList"]=StaffFun::getContractListToCity($change_city,0);
+                echo CJSON::encode($json);
+            }
         }else{
             $this->redirect(Yii::app()->createUrl('employ/index'));
         }
