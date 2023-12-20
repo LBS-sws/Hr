@@ -17,7 +17,7 @@ EOF;
 				$oid = 'btnSys'.$id;
 				$url = $value['webroot'];
 				if (!isset($value['script'])) {
-                    $temp = '$("#' . $oid . '").on("click",function(){$("#syschangedialog").modal("hide");window.location="' . $url . '";});';
+					$temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");window.location="'.$url.'";});';
                 }elseif($id=='nu'){
                     $url = $value['webroot'].$value['param'];
                     $incl_js = true;
@@ -37,8 +37,8 @@ EOF;
                     $jsonString = ($key.$String);
                     $encryptedString = base64_encode($jsonString);
                     //拼接
-                    $temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$value['script'].'("'.$id.'","'.$url.'","'.$homeurl.'","'.$encryptedString.'");});';
-				} else {
+                    $temp = '$("#'.$oid.'").on("click",function(){$("#syschangedialog").modal("hide");'.$value['script'].'("'.$id.'","'.$url.'","'.$homeurl.'","'.$encryptedString.'","'.$data['user_id'].'");});';
+                } else {
 					$func_name = $value['script'];
 					$lang = Yii::app()->language;
 					$homeurl = Yii::app()->createUrl("");
