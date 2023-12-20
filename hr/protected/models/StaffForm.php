@@ -671,7 +671,7 @@ class StaffForm extends CFormModel
             "name"=>1,"sex"=>1,"table_type"=>3,"office_id"=>3,"phone"=>5,
             "city"=>1,"luu"=>5,"lcu"=>5,"lcd"=>4,"contact_address"=>1,"department"=>3,
             "position"=>3,"wage"=>1,"entry_time"=>2,"birth_time"=>2,"leave_time"=>2,
-            "age"=>1,"email"=>1,"remark"=>1,"lud"=>4
+            "age"=>1,"email"=>6,"remark"=>1,"lud"=>4
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;
@@ -690,6 +690,9 @@ class StaffForm extends CFormModel
                     break;
                 case 5://必填字段，但lbs为空的时候
                     $value = empty($value)?0:$value;
+                    break;
+                case 6://邮箱
+                    $value = $value===""?null:(StaffFun::isEmail($value)?$value:null);
                     break;
             }
             $this->$key=$value;

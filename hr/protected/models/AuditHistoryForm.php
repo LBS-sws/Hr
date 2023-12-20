@@ -257,7 +257,7 @@ class AuditHistoryForm extends StaffForm
         $this->updateUserPassword($staffNew);
 
         //U系统同步
-        $str = $operation === "departure"?"delete":"edit";
+        $str = $operation === "departure"?"edit":"edit";//离职也是同步修改，不是delete
         StaffForm::sendCurl($this->employee_id,$str);
     }
 
