@@ -29,7 +29,6 @@ return array(
 
 	'Data Entry'=>'数据输入',
 	'Misc'=>'其他',
-
 	'Staff Info'=>'员工资料',
 	'Employer'=>'雇主资料',
 	'Department'=>'工作部门',
