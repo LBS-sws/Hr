@@ -215,7 +215,7 @@ class TimerCommand extends CConsoleCommand {
         $systemId = Yii::app()->params['systemId'];
         $email = new Email("人事系統待處理事項","","人事系統待處理事項");
         $userlist = $email->getEmailUserList($this->city_list,"kittyzhou");
-        $joeEmail = $email->getJoeEmail();
+        $joeEmailList = $email->getJoeEmailList();
         $kittyEmail = $email->getKittyEmail();
         if($userlist){
             foreach ($userlist as $user){
@@ -231,7 +231,7 @@ class TimerCommand extends CConsoleCommand {
                     $bool = array_intersect($this->city_list,$send["city_list"]);
                     if(key_exists("joeEmail",$send)){//驗證是否額外給繞生發郵件
                         if($send["joeEmail"]){
-                            if($user["email"]==$joeEmail){//用戶是繞生
+                            if(in_array($user["email"],$joeEmailList)){//用戶是繞生
                                 $bool=1;//繞生不需要城市驗證
                                 $maxBool = true;
                                 $city_list = $send["city_list"];//繞生收到所有城市的郵件

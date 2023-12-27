@@ -88,6 +88,14 @@ class Email {
         }
     }
 
+    //獲取繞生级别的所有邮箱
+    public function getJoeEmailList(){
+        return array(
+            "joeyiu@lbsgroup.com.cn",//饶生
+            "autumn.song@lbsgroup.com.cn",//人力资源总监
+        );
+    }
+
     //獲取Kitty郵件
     public function getKittyEmail(){
         return "kittyzhou@lbsgroup.com.cn";
