@@ -52,7 +52,18 @@ if (!$ronly) {
 		'file'=>' $file',
 		'options'=>array(
 			'list'=>'#'.$doc->listName,
-//			'onFileSelect'=>'function(e, v, m){ alert("onFileSelect - "+v) }',
+			//'onFileSelect'=>'function(e, v, m){ console.log(e);console.log(v);console.log(m);alert("onFileSelect - "+v); }',
+			'onFileSelect'=>'function(e, v, m){
+			    var fileSize = e.files[0].size;
+			    var fileType = e.files[0].type;
+			    if(fileType.indexOf("image")!=-1){
+			        if(fileSize>=2*1024*1024){
+			            alert("上传的图片不能大于2M");
+			            $(e).val("");
+			            return false;
+			        }
+			    }
+			 }',
 //			'afterFileSelect'=>'function(e, v, m){ $("ServiceFrom_files").attr("value","00"); }',
 //        'onFileAppend'=>'function(e, v, m){ alert("onFileAppend - "+v) }',
 //        'afterFileAppend'=>'function(e, v, m){ alert("afterFileAppend - "+v) }',
