@@ -57,8 +57,8 @@ if (!$ronly) {
 			    var fileSize = e.files[0].size;
 			    var fileType = e.files[0].type;
 			    if(fileType.indexOf("image")!=-1){
-			        if(fileSize>=2*1024*1024){
-			            alert("上传的图片不能大于2M");
+			        if(fileSize>=4*1024*1024){
+			            alert("上传的图片不能大于4M");
 			            $(e).val("");
 			            return false;
 			        }
