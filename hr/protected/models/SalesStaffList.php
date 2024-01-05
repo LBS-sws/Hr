@@ -1,5 +1,6 @@
 <?php
 
+
 class SalesStaffList extends CListPageModel
 {
     public $id =0;

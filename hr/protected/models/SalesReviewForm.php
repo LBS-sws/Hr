@@ -1,5 +1,6 @@
 <?php
 
+
 class SalesReviewForm extends CFormModel
 {
 	public $id;//组名id

@@ -1,3 +1,4 @@
+
 <?php
 if (empty($model->id)&&$model->scenario!='add'){
     $this->redirect(Yii::app()->createUrl('SalesGroup/index'));

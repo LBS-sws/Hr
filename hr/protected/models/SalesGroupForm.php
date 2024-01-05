@@ -1,5 +1,6 @@
 <?php
 
+
 class SalesGroupForm extends CFormModel
 {
 	public $id;

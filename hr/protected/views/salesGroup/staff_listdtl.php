@@ -1,3 +1,4 @@
+
 <tr class='clickable-row' data-href='<?php echo $this->getLink('SR01', 'salesGroup/staffEdit', 'salesGroup/staffView', array('index'=>$this->record['id']));?>'>
 
 
