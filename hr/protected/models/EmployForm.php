@@ -26,16 +26,12 @@ class EmployForm extends StaffForm
 	}
 
     public function validateID($attribute, $params){
-        if($this->getScenario()!='new'){
-            $allow_city = Yii::app()->user->city_allow();
-            $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
-                ->where("id=:id and city in ({$allow_city}) and staff_status in (1,3) and table_type=1", array(':id'=>$this->id))
-                ->queryRow();
-            if($row){
-                $this->city = $row["city"];
-            }else{
-                $this->addError($attribute,"员工不存在，请刷新重试");
-            }
+        $allow_city = Yii::app()->user->city_allow();
+        $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
+            ->where("id=:id and city in ({$allow_city}) and staff_status in (1,3) and table_type=1", array(':id'=>$this->id))
+            ->queryRow();
+        if($row){
+            $this->city = $row["city"];
         }else{
             $this->city = Yii::app()->user->city();
         }

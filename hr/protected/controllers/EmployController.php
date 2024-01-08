@@ -123,9 +123,10 @@ class EmployController extends Controller
     public function actionAudit()
     {
         if (isset($_POST['EmployForm'])) {
-            $model = new EmployForm($_POST['EmployForm']['scenario']);
+            $model = new EmployForm("audit");
             $model->attributes = $_POST['EmployForm'];
             if ($model->validate()) {
+                $model->setScenario($_POST['EmployForm']['scenario']);
                 $model->audit = true;
                 $model->staff_status = 2;
                 $model->saveData();
