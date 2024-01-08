@@ -49,6 +49,18 @@ class SalesReviewForm extends CFormModel
 		return true;
 	}
 
+    //获取什么是签单的查询字符串
+    public static function getDealString($field) {
+        $suffix = Yii::app()->params['envSuffix'];
+        $rtn = '';
+        $sql = "select id from sales{$suffix}.sal_visit_obj where rpt_type='DEAL'";
+        $rows = Yii::app()->db->createCommand($sql)->queryAll();
+        foreach ($rows as $row) {
+            $rtn .= ($rtn=='' ? '' : ' or ').$field." like '%\"".$row['id']."\"%'";
+        }
+        return ($rtn=='' ? "$field='0'" : $rtn);
+    }
+
 	private function getSalesDataForStaffList(){
         $suffix = Yii::app()->params['envSuffix'];
         $staffKeyList = array_keys($this->staff_list);
@@ -61,7 +73,8 @@ class SalesReviewForm extends CFormModel
         $svcList = array("svc_A7","svc_B6","svc_C7","svc_D6","svc_E7","svc_F4","svc_G3");//查詢該屬性的所有金額
         $notList = array("svc_F4","svc_G3");//只計算次數，不計算金額
         $svcSql = implode("','",$svcList);
-        $visitObjSql = " and sales$suffix.VisitObjDesc(b.visit_obj) like '%签单%'";
+        $dealSQL = self::getDealString("b.visit_obj");//签单的sql
+        $visitObjSql = "  and ({$dealSQL})";
         $rows = Yii::app()->db->createCommand()->select("a.field_value,a.field_id,b.visit_dt,b.username")->from("sales$suffix.sal_visit_info a")
             ->leftJoin("sales$suffix.sal_visit b","b.id=a.visit_id")
             ->where("b.id is not null and a.field_id in('$svcSql') and (a.field_value+0)>0 and date_format(b.visit_dt,'%Y/%m')>='$minYear' and date_format(b.visit_dt,'%Y/%m')<='$maxYear' $staffSql $visitObjSql")->queryAll();

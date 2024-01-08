@@ -58,7 +58,7 @@ class SalesGroupForm extends CFormModel
 		}
 		return true;
 	}
-	public function getGroupListToId($id){
+	public static function getGroupListToId($id){
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_sales_group")
             ->where('id=:id',array(':id'=>$id))->queryRow();
         if($row){
