@@ -641,7 +641,7 @@ class ReviewAllotForm extends CFormModel
         $className = get_class($model);
         $html = "";
         $html .= "<tr>";
-        $html.="<td>".TbHtml::dropDownList($className."[id_list][$num][employee_id]",$list["employee_id"],$managerList,array("class"=>"form-control","readonly"=>$bool))."</td>";
+        $html.="<td>".TbHtml::dropDownList($className."[id_list][$num][employee_id]",$list["employee_id"],$managerList,array("class"=>"form-control selectStaff","readonly"=>$bool))."</td>";
         $html.="<td>".TbHtml::numberField($className."[id_list][$num][num]",$list["num"],array("class"=>"form-control changeNum","readonly"=>$bool))."</td>";
         if(!$bool){
             if(empty($num)){

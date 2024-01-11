@@ -10,9 +10,10 @@ $this->pageTitle=Yii::app()->name . ' - TemplateEmployee Form';
     'htmlOptions'=>array('enctype' => 'multipart/form-data')
 )); ?>
 <style>
-    select[readonly="readonly"]{pointer-events: none;}
+    input[readonly]{pointer-events: none;}
+    select[readonly]{pointer-events: none;}
+    .select2-container .select2-selection--single{ height: 34px;}
 </style>
-
 <section class="content-header">
 	<h1>
 		<strong><?php echo Yii::t('contract','Template Employee Form'); ?></strong>
@@ -87,8 +88,24 @@ $this->pageTitle=Yii::app()->name . ' - TemplateEmployee Form';
     <?php echo $ReviewAllotForm->getRowOnly($model,":num",ReviewAllotForm::getReviewManagerList($model->city),false,array("employee_id"=>"","num"=>""));?>
 </xmp>
 <?php
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = $model->getReadonly() ? 'true' : 'false';
 
 $js = "
+function selectStaffChange(){
+    $('.selectStaff').select2({
+        multiple: false,
+        maximumInputLength: 10,
+        language: '$lang',
+        disabled: $disabled
+    });
+}
+selectStaffChange();
+
     var rowHtml = $('#readyOne').html();
     $('#readyOne').remove();
     $('#addManager').on('click',function(){
@@ -98,6 +115,7 @@ $js = "
         $('#managerTable>tbody').data('num',num)
         var newHtml = rowHtml.replace(/:num/g,num);
         $('#managerTable>tbody').append(newHtml);
+        selectStaffChange();
     });
     
     $('#managerTable').delegate('.delManager','click',function(){
