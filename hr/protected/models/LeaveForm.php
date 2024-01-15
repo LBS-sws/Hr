@@ -664,7 +664,7 @@ class LeaveForm extends CFormModel
         return $sub_multiple;
     }
     //獲取當前城市的所有請假類型
-    public function getLeaveTypeList($city,$id=0){
+    public static function getLeaveTypeList($city,$id=0){
         $id = empty($id)?0:$id;
         if(empty($city)){
             $city = Yii::app()->user->city();
@@ -680,7 +680,7 @@ class LeaveForm extends CFormModel
         return $arr;
     }
     //獲取請假類型说明
-    public function getLeaveTypeRemark($id=0){
+    public static function getLeaveTypeRemark($id=0){
         $row = Yii::app()->db->createCommand()->select("remark")
             ->from("hr_vacation")->where("id=:id",array(":id"=>$id))->queryRow();
         return $row?$row["remark"]:"";

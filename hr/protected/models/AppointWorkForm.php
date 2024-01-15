@@ -137,8 +137,9 @@ class AppointWorkForm extends CFormModel
             foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->work_code = $row['work_code'];
-                $this->employee_name = $row['employee_name'];
-                $this->employee_id = $row['employee_id'];
+                //$this->employee_name = $row['employee_name'];
+                $this->employee_id = $row['employee_name'];
+                $this->employee_name = $row['employee_id'];
                 $this->wage = $row['wage'];
                 $this->work_type = $row['work_type'];
                 $this->work_cause = $row['work_cause'];

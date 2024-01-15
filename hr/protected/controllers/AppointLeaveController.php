@@ -8,6 +8,8 @@
  */
 class AppointLeaveController extends Controller
 {
+    public $function_id='ZG11';
+
     public function filters()
     {
         return array(
