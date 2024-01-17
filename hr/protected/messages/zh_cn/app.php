@@ -236,6 +236,8 @@ return array(
     'External'=>'兼职及外聘',
     'External Info'=>'兼职及外聘员工',
     'Curl Notes'=>'Curl同步记录',
+    'Staff Apply Info'=>'员工申请流程',
+    'Company Detail'=>'集团/公司资质信息',
     //沈超添加结束
 );
 ?>

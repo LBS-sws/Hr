@@ -235,6 +235,8 @@ return array(
     'appoint for trip'=>'審核指定出差',
     'Company Information'=>'公司資質資料',
     'Curl Notes'=>'Curl同步記錄',
+    'Staff Apply Info'=>'員工申請流程',
+    'Company Detail'=>'集團/公司資質信息',
 //沈超添加結束
 );
 ?>

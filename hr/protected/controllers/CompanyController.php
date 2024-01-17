@@ -8,7 +8,7 @@
  */
 class CompanyController extends Controller
 {
-	public $function_id='ZA02';
+	public $function_id='CL01';
 
     public function filters()
     {
@@ -42,11 +42,11 @@ class CompanyController extends Controller
         );
     }
     public static function allowReadWrite() {
-        return Yii::app()->user->validRWFunction('ZA02');
+        return Yii::app()->user->validRWFunction('CL01');
     }
 
     public static function allowReadOnly() {//ZR25
-        return Yii::app()->user->validFunction('ZA02')||Yii::app()->user->validFunction('ZR25');
+        return Yii::app()->user->validFunction('CL01')||Yii::app()->user->validFunction('ZR25');
     }
 
     public function actionTest()

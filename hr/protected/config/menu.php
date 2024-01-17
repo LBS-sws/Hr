@@ -1,15 +1,21 @@
 <?php
 
 return array(
-	'Data Entry'=>array(
+    'Company Detail'=>array(//集团/公司资质信息
+        'access'=>'CL',
+        'icon'=>'fa-building',
+        'items'=>array(
+            //公司资料
+            'Company Info'=>array(
+                'access'=>'CL01',
+                'url'=>'/company/index',
+            ),
+        ),
+    ),
+	'Staff Apply Info'=>array(//员工申请流程
 		'access'=>'ZA',
 		'icon'=>'fa-pencil-square-o',
 		'items'=>array(
-		    //公司资料
-            'Company Info'=>array(
-                'access'=>'ZA02',
-                'url'=>'/company/index',
-            ),
             //配置工资单
             'Wages Config'=>array(
                 'access'=>'ZA03',
