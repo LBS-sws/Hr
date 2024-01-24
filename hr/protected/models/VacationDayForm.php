@@ -159,6 +159,7 @@ class VacationDayForm
         if($this->employee_list){
             $entry_time = strtotime($this->employee_list["entry_time"]);
             $time = strtotime($this->time);
+
             if($entry_time<$time){
                 $year = date("Y",$time);
                 $diffYear = date("Y",$time)-date("Y",$entry_time);
@@ -234,6 +235,10 @@ class VacationDayForm
     private function setXinJiaPoStartTime(){
         //新加坡病假计算逻辑修改
         if($this->yearLeaveType == 1&&$this->vaca_type=="L"){
+            $startYear=date("Y",strtotime($this->start_time));
+            $this->start_time = $startYear."/01/01";
+            $this->end_time = $startYear."/12/31";
+            /* 2024/01/24号又修改回去了
             $year = date("Y",strtotime($this->employee_list["entry_time"]." + {$this->monthLong} month"));
             $startYear=date("Y",strtotime($this->start_time));
             if($year==$startYear){ //當員工入職+病假的最大分割=請假的年份時，需要計算上一年的請假
@@ -243,6 +248,7 @@ class VacationDayForm
                 $this->start_time = $startYear."/01/01";
                 $this->end_time = $startYear."/12/31";
             }
+            */
         }
     }
     //計算已申請多少假期
