@@ -400,6 +400,7 @@ class DeptForm extends CFormModel
 			$transaction->commit();
 		}
 		catch(Exception $e) {
+		    var_dump($e);
 			$transaction->rollback();
 			throw new CHttpException(404,'Cannot update.');
 		}
