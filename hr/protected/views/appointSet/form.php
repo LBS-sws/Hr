@@ -53,6 +53,7 @@ $this->pageTitle=Yii::app()->name . ' - Visit Type Form';
 			<?php echo $form->hiddenField($model, 'scenario'); ?>
             <?php echo CHtml::hiddenField('dtltemplate'); ?>
 			<?php echo $form->hiddenField($model, 'id'); ?>
+			<?php echo TbHtml::hiddenField("searchType","appoint"); ?>
 
             <?php if ($model->scenario!='new'): ?>
 			<div class="form-group">
@@ -163,7 +164,7 @@ EOF;
 $js = Script::genLookupSearchEx();
 Yii::app()->clientScript->registerScript('lookupSearch',$js,CClientScript::POS_READY);
 
-$js = Script::genLookupButtonEx('btnEmployee', 'employee', 'employee_id','employee_name');
+$js = Script::genLookupButtonEx('btnEmployee', 'employee', 'employee_id','employee_name',array(),false,array("searchType"=>"searchType"));
 Yii::app()->clientScript->registerScript('lookupEmployee',$js,CClientScript::POS_READY);
 
 $js = Script::genLookupSelect();

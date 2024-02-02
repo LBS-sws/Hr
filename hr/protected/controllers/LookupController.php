@@ -156,20 +156,35 @@ class LookupController extends Controller
 		print json_encode($result);
 	}
 
-	public function actionEmployeeex($search)
+	public function actionEmployeeex($search,$searchType="")
 	{
         $city_allow = Yii::app()->user->city_allow();
 		$result = array();
 		$searchx = str_replace("'","\'",$search);
         $records = Yii::app()->db->createCommand()->select("id,code,name")
             ->from("hr_employee")
-            ->where("(name like '%$searchx%' or code like '%$searchx%') and city in ($city_allow)")->queryAll();
-		if (count($records) > 0) {
+            ->where("(name like '%$searchx%' or code like '%$searchx%') and staff_status=0 and city in ($city_allow)")->queryAll();
+		$notArr = array();
+		switch ($searchType){
+            case "appoint"://加班、请假指定审核人查询
+                $list = Yii::app()->db->createCommand()->select("employee_id")
+                    ->from("hr_appoint")->queryAll();
+                $notArr = $list?array_column($list,"employee_id"):array();
+                break;
+            case "trip"://出差指定审核人查询
+                $list = Yii::app()->db->createCommand()->select("employee_id")
+                    ->from("hr_set_trip")->queryAll();
+                $notArr = $list?array_column($list,"employee_id"):array();
+                break;
+        }
+        if (count($records) > 0) {
 			foreach ($records as $k=>$record) {
-				$result[] = array(
-						'id'=>$record['id'],
-						'value'=>$record['name']." ({$record['code']})",
-					);
+			    if(!in_array($record['id'],$notArr)){
+                    $result[] = array(
+                        'id'=>$record['id'],
+                        'value'=>$record['name']." ({$record['code']})",
+                    );
+                }
 			}
 		}
 		print json_encode($result);
