@@ -118,7 +118,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'dept_class',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'dept_class',EmployList::getStaffTypeList(),
+                        <?php echo $form->dropDownList($model, 'dept_class',StaffFun::getStaffTypeList(),
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
@@ -136,7 +136,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'manager',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'manager',EmployList::getManagerList(),
+                        <?php echo $form->dropDownList($model, 'manager',StaffFun::getManagerList(),
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
@@ -149,7 +149,7 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
                 <div class="form-group">
                     <?php echo $form->labelEx($model,'technician',array('class'=>"col-sm-2 control-label")); ?>
                     <div class="col-sm-3">
-                        <?php echo $form->dropDownList($model, 'technician',EmployList::getTechnicianList(),
+                        <?php echo $form->dropDownList($model, 'technician',StaffFun::getTechnicianList(),
                             array('disabled'=>($model->scenario=='view'))
                         ); ?>
                     </div>
