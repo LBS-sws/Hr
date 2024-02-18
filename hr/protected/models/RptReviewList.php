@@ -119,6 +119,10 @@ class RptReviewList extends CReport {
                 $temp['ranking_bool'] = Yii::t("misc","No");
 
                 $this->resetTemp($row,$temp,$year,$year_type);
+                //后续添加：已离职（未分配）的员工不需要显示
+                if($row["staff_status"]==-1&&$temp["name_list"]==Yii::t("contract","undistributed")){
+                    continue;
+                }
 				$this->data[] = $temp;
 			}
 		}
