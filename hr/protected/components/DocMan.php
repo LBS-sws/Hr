@@ -393,10 +393,16 @@ class DocMan {
         if (strpos($row["file_type"],'image/')!==false){
             $path = $row["phy_path_name"]."/".$row["phy_file_name"];
             if(is_file($path)){
-                $imgData=file_get_contents($path);
-                $imgData = base64_encode($imgData);
-                $imgData="data:{$row["file_type"]};base64,{$imgData}";
-                $html = "<span class='fa fa-search-plus'><img src=\"{$imgData}\" class='hide'></span>";
+                $size = filesize($path);
+                $maxSize = 4*1024*1024;//4M
+                if($size>$maxSize){
+                    $html = "<span class='fa fa-search-plus'><img data-src=\"{$size}\" data-path='{$path}' class='hide'></span>";
+                }else{
+                    $imgData=file_get_contents($path);
+                    $imgData = base64_encode($imgData);
+                    $imgData="data:{$row["file_type"]};base64,{$imgData}";
+                    $html = "<span class='fa fa-search-plus'><img data-src=\"{$imgData}\" class='hide'></span>";
+                }
             }
         }
         return $html;

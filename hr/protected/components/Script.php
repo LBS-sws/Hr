@@ -376,7 +376,7 @@ $('#$btnid').on('click', function() {
                     var title = $(this).parents('td.search_box_img').eq(0).text();
                     var li = $('<li></li>');
                     var img = $('<img>');
-                    img.attr({ src:$(this).attr('src'),alt:title });
+                    img.attr({ src:$(this).data('src'),alt:title });
                     if(title == clickText){
                         img.addClass('click_viewer_img');
                     }
