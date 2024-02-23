@@ -389,6 +389,8 @@ class DocMan {
 	}
 
     private function getImgHtml($row){
+        static $no_calls = 0;//判断调用了多少次
+        $no_calls++;
         $html = "";
         if (strpos($row["file_type"],'image/')!==false){
             $path = $row["phy_path_name"]."/".$row["phy_file_name"];
@@ -396,7 +398,7 @@ class DocMan {
                 $size = filesize($path);
                 $imgSrc = Yii::app()->baseUrl."/images/user-icon.png";
                 $maxSize = 4*1024*1024;//4M
-                if($size>$maxSize){
+                if($no_calls>20||$size>$maxSize){
                     $html = "<span class='fa fa-search-plus'><img src='{$imgSrc}' data-src=\"{$size}\" data-path='{$path}' class='hide'></span>";
                 }else{
                     $imgData=file_get_contents($path);
