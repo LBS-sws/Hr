@@ -27,21 +27,25 @@ $this->pageTitle=Yii::app()->name . ' - External';
         <div class="box-body">
             <div class="btn-group" role="group">
                 <?php
+                //var_dump(Yii::app()->session['rw_func']);
+                if (Yii::app()->user->validRWFunction('EL01'))
+                    echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('contract','Add Employee'), array(
+                        'submit'=>Yii::app()->createUrl('external/new'),
+                    ));
+                ?>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="box-body">
+            <div class="btn-group" role="group">
+                <?php
                 $modelName = get_class($model);
                 $tableList=StaffFun::getTableTypeListIndex();
                 foreach ($tableList as $key=>$value){
                     $class = $key==$model->table_type?" btn-primary active":"";
                     echo TbHtml::button($value,array("class"=>"btn_submit".$class,"data-key"=>$key));
                 }
-                ?>
-            </div>
-            <div class="btn-group pull-right" role="group">
-                <?php
-                //var_dump(Yii::app()->session['rw_func']);
-                if (Yii::app()->user->validRWFunction('EL01'))
-                    echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('contract','Add Employee'), array(
-                        'submit'=>Yii::app()->createUrl('external/new'),
-                    ));
                 ?>
             </div>
         </div>
