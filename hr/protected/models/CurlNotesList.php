@@ -91,7 +91,7 @@ class CurlNotesList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['curlNotes_c01'] = $this->getCriteria();
+		$session['hr_curlNotes_c01'] = $this->getCriteria();
 		return true;
 	}
 

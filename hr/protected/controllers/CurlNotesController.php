@@ -44,8 +44,8 @@ class CurlNotesController extends Controller
 			$model->attributes = $_POST['CurlNotesList'];
 		} else {
 			$session = Yii::app()->session;
-			if (isset($session['curlNotes_c01']) && !empty($session['curlNotes_c01'])) {
-				$criteria = $session['curlNotes_c01'];
+			if (isset($session['hr_curlNotes_c01']) && !empty($session['hr_curlNotes_c01'])) {
+				$criteria = $session['hr_curlNotes_c01'];
 				$model->setCriteria($criteria);
 			}
 		}
