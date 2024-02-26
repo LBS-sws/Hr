@@ -52,10 +52,11 @@ class ExternalForm extends StaffForm
     }
 
     public function validateID($attribute, $params){
+        $city = Yii::app()->user->city();
+        $allow_city = Yii::app()->user->city_allow();
         if($this->getScenario()!='new'){
-            $city = Yii::app()->user->city();
             $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
-                ->where("id=:id and city='{$city}' and table_type!=1 AND staff_status = 1", array(
+                ->where("id=:id and city in ({$allow_city}) and table_type!=1 AND staff_status = 1", array(
                     ':id'=>$this->id
                 ))->queryRow();
             if($row){
@@ -64,14 +65,15 @@ class ExternalForm extends StaffForm
                 $this->addError($attribute,"员工不存在，请刷新重试");
             }
         }else{
-            $this->city = Yii::app()->user->city();
+            $this->city = $city;
         }
     }
 
     public function retrieveData($index){
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
-        $whereSql = " and a.city='{$city}' and a.table_type!=1 AND a.staff_status in (1,-1)";
+        $allow_city = Yii::app()->user->city_allow();
+        $whereSql = " and a.city in ({$allow_city}) and a.table_type!=1 AND a.staff_status in (1,-1)";
         //$whereSql = " and a.status_type not in (8,10)";
         $sql = "select a.*,docman$suffix.countdoc('employ',a.id) as employdoc 
           from hr_employee a where a.id='{$index}' {$whereSql}";

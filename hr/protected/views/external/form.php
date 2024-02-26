@@ -40,9 +40,11 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
                 echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
                     'submit'=>Yii::app()->createUrl('external/save')));
 
-                echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
-                        'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)
-                );
+                if($model->scenario!='new') {
+                    echo TbHtml::button('<span class="fa fa-remove"></span> ' . Yii::t('misc', 'Delete'), array(
+                            'name' => 'btnDelete', 'id' => 'btnDelete', 'data-toggle' => 'modal', 'data-target' => '#removedialog',)
+                    );
+                }
             }
         ?>
 	</div>

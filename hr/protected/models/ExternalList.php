@@ -63,14 +63,14 @@ class ExternalList extends CListPageModel
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept b ON b.id=a.position
                 LEFT JOIN security{$suffix}.sec_city g ON g.code=a.city
-                where a.city='{$city}' AND a.table_type != 1 AND a.staff_status = 1
+                where a.city in ({$allow_city}) AND a.table_type != 1 AND a.staff_status = 1
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept b ON b.id=a.position
                 LEFT JOIN security{$suffix}.sec_city g ON g.code=a.city
-                where a.city='{$city}' AND a.table_type != 1 AND a.staff_status = 1
+                where a.city in ({$allow_city}) AND a.table_type != 1 AND a.staff_status = 1
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
