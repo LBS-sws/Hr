@@ -11,6 +11,7 @@ class HistoryForm extends StaffForm
     public $effect_time;
     public $operation;
     public $change_city;
+    public $docType = 'EMPLOYEE';
 
     public $opr_type;
     public $leave_time;
