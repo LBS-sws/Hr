@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('monthly','Sales Summary'); ?></strong>
+		<strong><?php echo Yii::t('report','Staff List'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -38,6 +38,20 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 			<?php echo $form->hiddenField($model, 'name'); ?>
 			<?php echo $form->hiddenField($model, 'fields'); ?>
 
+
+            <?php if ($model->showField('city')): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'city',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <?php echo $form->dropDownList($model, 'city', ReportY06Form::getCityList(),
+                            array('disabled'=>($model->scenario=='view'))
+                        ); ?>
+                    </div>
+                </div>
+            <?php else: ?>
+                <?php echo $form->hiddenField($model, 'city'); ?>
+            <?php endif ?>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'year',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-3">
@@ -59,22 +73,6 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 					?>
 				</div>
 			</div>
-<?php if (Yii::app()->user->validFunction('YN01')) :?>
-			<div class="form-group">
-				<?php echo $form->labelEx($model,'region',array('class'=>"col-sm-2 control-label")); ?>
-				<div class="col-sm-3">
-					<?php 
-						$item = array(
-								1=>Yii::t('report','China & Franchise'),
-//								2=>Yii::t('report','South East Asia'),
-							);
-						echo $form->dropDownList($model, 'region', $item); 
-					?>
-				</div>
-			</div>
-<?php else : ?>
-			<?php echo $form->hiddenField($model, 'region'); ?>
-<?php endif ?>
 
 		</div>
 	</div>

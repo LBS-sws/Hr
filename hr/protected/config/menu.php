@@ -551,8 +551,8 @@ return array(
 		'items'=>array(
 			'Staff List'=>array(
 				'access'=>'YB04',
-				'url'=>'#',
-				'hidden'=>true,
+				'url'=>'/report/salessummary',
+				//'hidden'=>true,
 			),
 			'Overtime records List'=>array(
 				'access'=>'YB02',

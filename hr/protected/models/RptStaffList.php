@@ -35,10 +35,14 @@ class RptStaffList extends CReport {
 		$month = date('Y/m', strtotime($this->criteria['TARGET_DT'].' -1 month'));
 		$this->subtitle = Yii::t('report','Date of Month').': '.$month;
 		$output = $this->exportExcel();
-		$this->submitEmail($output);
+		$emailBool = key_exists("EMAILBOOL",$this->criteria)?$this->criteria["EMAILBOOL"]:true;
+		if($emailBool){
+            $this->submitEmail($output);
+        }
 		return $output;
 	}
-		public function retrieveData() {
+	
+	public function retrieveData() {
 		$temp_dt = strtotime($this->criteria['TARGET_DT'].' -1 month');
 		$start_dt = date('Y',$temp_dt).'-'.date('m',$temp_dt).'-01 00:00:00';
 		
@@ -46,12 +50,13 @@ class RptStaffList extends CReport {
 		$end_dt = date('Y',$temp_dt).'-'.date('m',$temp_dt).'-01';
 
 		$city = $this->criteria['CITY'];
-		
+		$city_allow = isset($this->criteria['REGION'])?$this->criteria['REGION']:$city;
+
 		$suffix = Yii::app()->params['envSuffix'];
 
-		$tolist = $this->getTransferOutList($city, $start_dt);
-		$tilist = $this->getTransferInList($city, $end_dt.' 00:00:00');
-		$exist = $this->getExistList($city, $start_dt);
+		$tolist = $this->getTransferOutList($city_allow, $start_dt);
+		$tilist = $this->getTransferInList($city_allow, $end_dt.' 00:00:00');
+		$exist = $this->getExistList($city_allow, $start_dt);
 		
 		$idlist = '';
 		if (!empty($exist)) {
@@ -69,7 +74,7 @@ class RptStaffList extends CReport {
 		$sql = "select a.*, b.name as job_title 
 				from hr_employee a left outer join hr_dept b on a.position = b.id
 				where a.id in ($idlist)
-				order by a.name
+				order by a.city,a.name
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (count($rows) > 0) {
@@ -105,7 +110,8 @@ class RptStaffList extends CReport {
 			}
 		}
 		
-		return true;	}
+		return true;
+	}
 
 	protected function getExistList($city, $dt) {
 		$rtn = array();
@@ -260,6 +266,9 @@ class RptStaffList extends CReport {
 	}
 	
 	protected function getCityQueryString($city) {
+        if (strpos($city,"'")!==false){//如果查询多个城市，直接返回
+            return $city;
+        }
 		return isset($this->mergeCities[$city]) ? "'$city','".implode("','",$this->mergeCities[$city])."'" : "'$city'";
 	}
 }
