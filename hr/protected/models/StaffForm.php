@@ -82,6 +82,7 @@ class StaffForm extends CFormModel
     public $leave_time;//
     public $leave_reason;//
 
+    public $work_area;//主要工作地点
     public $wechat;//微信賬號
     public $recommend_user;//推荐人
     public $urgency_card;//緊急聯繫人身份證
@@ -186,6 +187,7 @@ class StaffForm extends CFormModel
             'table_type'=>Yii::t('contract','Employee Type'),
             'address_code'=>Yii::t('contract','postcode'),
             'contact_address_code'=>Yii::t('contract','postcode'),
+            'work_area'=>Yii::t('contract','work area'),
 		);
 	}
 	/**
@@ -196,7 +198,7 @@ class StaffForm extends CFormModel
 	{
 		$rules = array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, group_type,office_id,code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
+            array('id, group_type,office_id,work_area,code, name, staff_id, company_id, contract_id, address, address_code, contact_address, contact_address_code, phone, phone2, user_card, department, position, wage,time,
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
               education,wechat,recommend_user,urgency_card, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
                test_length,staff_type,staff_leader,nation, household, empoyment_code, social_code, user_card_date, emergency_user,
@@ -349,7 +351,7 @@ class StaffForm extends CFormModel
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,"jj_card"=>1,
             "social_code"=>1,"user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,
-            "lud"=>1,"lcd"=>1,"lcu"=>1,"luu"=>1,
+            "lud"=>1,"lcd"=>1,"lcu"=>1,"luu"=>1,"work_area"=>1,
         );
     }
 
@@ -443,7 +445,7 @@ class StaffForm extends CFormModel
             "email"=>1,"remark"=>1,"image_user"=>1,"image_code"=>1,"image_work"=>1,
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,
-            "user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,
+            "user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,"work_area"=>1,
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;
@@ -550,6 +552,11 @@ class StaffForm extends CFormModel
                 $word->setValue("staffprovtype",Yii::t("contract",$staff["staff"]["household"]));//戶籍類型
                 $word->setValue("staffhealth",Yii::t("staff",$staff["staff"]["health"]));//身体状况
                 $word->setValue("staffworkexp",$staff["staff"]["experience"]);//工作经验
+
+                if(empty($staff["staff"]["work_area"])){//如果地点为空，则默认当前城市
+                    $staff["staff"]["work_area"] = $staff["company"]["city_name"];
+                }
+                $word->setValue("work_area",$staff["staff"]["work_area"]);//主要工作地点
                 //2020-04-14新增（開始）
                 $word->setValue("staffwechat",$staff["staff"]["wechat"]);//微信賬號
                 $word->setValue("staffemergencycard",$staff["staff"]["urgency_card"]);//緊急聯絡人身份證

@@ -775,5 +775,6 @@ return array(
     'External Form'=>'兼职及外聘表单',
     'Flow Info'=>'流程',
     'Operator Text'=>'操作内容',
+    'work area'=>'主要工作地点',
 );
 ?>

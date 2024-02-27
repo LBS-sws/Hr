@@ -228,6 +228,13 @@
             array('disabled'=>($readonly),'id'=>'staff_id','data-id'=>$model->staff_id)
         ); ?>
     </div>
+    <?php echo $form->label($model,'work_area',array('class'=>"col-sm-2 control-label",
+        'required'=>$model->isRequired("work_area"))); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'work_area',
+            array('readonly'=>($readonly))
+        ); ?>
+    </div>
 </div>
 <div class="form-group">
     <?php echo $form->label($model,'department',array('class'=>"col-sm-2 control-label",

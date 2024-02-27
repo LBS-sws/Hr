@@ -768,5 +768,6 @@ return array(
     'External Form'=>'兼職及外聘表單',
     'Flow Info'=>'流程',
     'Operator Text'=>'操作內容',
+    'work area'=>'主要工作地點',
     );
 ?>

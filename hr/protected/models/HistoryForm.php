@@ -236,7 +236,7 @@ class HistoryForm extends StaffForm
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,
             "social_code"=>1,"jj_card"=>1,"user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,
-            "leave_time"=>2,"leave_reason"=>1,
+            "leave_time"=>2,"leave_reason"=>1,"work_area"=>1,
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;
