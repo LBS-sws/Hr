@@ -214,7 +214,8 @@ class TimerCommand extends CConsoleCommand {
     private function sendEmail(){
         $systemId = Yii::app()->params['systemId'];
         $email = new Email("人事系統待處理事項","","人事系統待處理事項");
-        $userlist = $email->getEmailUserList($this->city_list,"kittyzhou");
+        //Autumn不需要收到邮件通知
+        $userlist = $email->getEmailUserList($this->city_list,"kittyzhou","Autumn");
         $joeEmailList = $email->getJoeEmailList();
         $kittyEmail = $email->getKittyEmail();
         if($userlist){

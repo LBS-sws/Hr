@@ -204,12 +204,15 @@ class Email {
     }
 
     //
-    public function getEmailUserList($city_allow,$usernameEx=""){
+    public function getEmailUserList($city_allow,$usernameEx="",$notUsername=""){
         if(!empty($city_allow)){
             $city_allow = implode("','",$city_allow);
             $sql = "a.city in ('CN','$city_allow')";
             if(!empty($usernameEx)){//額外的lcu
                 $sql = " (a.city in ('CN','$city_allow') or a.username='{$usernameEx}')";
+            }
+            if(!empty($notUsername)){
+                $sql.= " and a.username!='{$notUsername}'";
             }
         }else{
             return false;
