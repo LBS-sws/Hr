@@ -42,5 +42,6 @@ class ReportY01Form extends CReportForm
         $cstr = $city;
         $city_allow .= (empty($city_allow)) ? "'$cstr'" : ",'$cstr'";
         $this->region = $city_allow;
+        $this->target_dt = date("Y-m-d",strtotime($this->year."/".$this->month."/01"));
     }
 }
