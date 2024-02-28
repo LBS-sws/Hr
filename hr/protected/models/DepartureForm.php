@@ -46,6 +46,8 @@ class DepartureForm extends StaffForm
             $this->no_of_attm['employ'] = $row['employdoc'];
             $this->no_of_attm['signc'] = $row['signcdoc'];
             $arr = $this->getMyAttr();
+            $arr["leave_time"] = 2;
+            $arr["leave_reason"] = 1;
             foreach ($arr as $key => $type){
                 switch ($type){
                     case 1://原值
