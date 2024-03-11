@@ -39,6 +39,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ';
         'code',
         'name',
         'phone',
+        'department',
         'position',
         'office_name',
     );

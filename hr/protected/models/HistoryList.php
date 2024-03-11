@@ -14,6 +14,7 @@ class HistoryList extends CListPageModel
             'name'=>Yii::t('contract','Employee Name'),
             'code'=>Yii::t('contract','Employee Code'),
             'phone'=>Yii::t('contract','Employee Phone'),
+            'department'=>Yii::t('contract','Department'),
             'position'=>Yii::t('contract','Position'),
             'company_id'=>Yii::t('contract','Company Name'),
             'contract_id'=>Yii::t('contract','Contract Name'),
@@ -32,13 +33,15 @@ class HistoryList extends CListPageModel
         $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $localOffice = Yii::t("contract","local office");
-        $sql1 = "select a.*,if(a.office_id=0,'{$localOffice}',f.name) as office_name from hr_employee_operate a
+        $sql1 = "select a.*,g.name as department_name,if(a.office_id=0,'{$localOffice}',f.name) as office_name from hr_employee_operate a
                 LEFT JOIN hr_office f ON f.id=a.office_id
+                LEFT JOIN hr_dept g ON g.id=a.department
                 where a.city IN ($city_allow) AND a.finish != 1
 			";
         $sql2 = "select count(a.id)
 				from hr_employee_operate a
                 LEFT JOIN hr_office f ON f.id=a.office_id
+                LEFT JOIN hr_dept g ON g.id=a.department
 				where a.city IN ($city_allow) AND a.finish != 1
 			";
         $clause = "";
@@ -53,6 +56,9 @@ class HistoryList extends CListPageModel
                     break;
                 case 'phone':
                     $clause .= General::getSqlConditionClause('a.phone',$svalue);
+                    break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('g.name',$svalue);
                     break;
                 case 'office_name':
                     $clause .= General::getSqlConditionClause("if(a.office_id=0,'{$localOffice}',f.name)",$svalue);
@@ -91,6 +97,7 @@ class HistoryList extends CListPageModel
                     'name'=>$record['name'],
                     'code'=>$record['code'],
                     'operation'=>$record['operation'],
+                    'department'=>$record['department_name'],
                     'office_name'=>$record['office_name'],
                     'position'=>DeptForm::getDeptToid($record['position']),
                     'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],

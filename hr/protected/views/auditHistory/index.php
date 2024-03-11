@@ -28,6 +28,7 @@ $this->pageTitle=Yii::app()->name . ' - History';
         'code',
         'name',
         'phone',
+        'department',
         'position',
     );
     if (!Yii::app()->user->isSingleCity()) $search[] = 'city_name';

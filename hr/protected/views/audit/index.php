@@ -35,6 +35,7 @@ $this->pageTitle=Yii::app()->name . ' - Audit';
             'code',
             'name',
             'phone',
+            'department',
             'position',
         ),
     ));

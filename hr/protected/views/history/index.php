@@ -28,6 +28,7 @@ $this->pageTitle=Yii::app()->name . ' - History';
         'code',
         'name',
         'phone',
+        'department',
         'position',
         'office_name',
     );

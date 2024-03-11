@@ -8,6 +8,7 @@
     <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['office_name']; ?></td>
     <td><?php echo $this->record['phone']; ?></td>
+    <td><?php echo $this->record['department']; ?></td>
     <td><?php echo $this->record['position']; ?></td>
     <td><?php echo $this->record['entry_time']; ?></td>
     <td><?php echo $this->record['company_id']; ?></td>

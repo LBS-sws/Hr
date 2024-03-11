@@ -96,7 +96,7 @@ class YearDayList extends CListPageModel
     }
 
     //根據id獲取員工名字
-    public function getEmployeeNameToId($id){
+    public static function getEmployeeNameToId($id){
         $rows = Yii::app()->db->createCommand()->select("name")->from("hr_employee")
             ->where('id=:id', array(':id'=>$id))->queryRow();
         if($rows){

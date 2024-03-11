@@ -26,6 +26,11 @@
         ?>
     </th>
     <th>
+        <?php echo TbHtml::link($this->getLabelName('department').$this->drawOrderArrow('g.name'),'#',$this->createOrderLink('history-list','g.name'))
+        ;
+        ?>
+    </th>
+    <th>
         <?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('a.position'),'#',$this->createOrderLink('history-list','a.position'))
         ;
         ?>

@@ -129,7 +129,7 @@ class DeptForm extends CFormModel
             }
         }
     }
-    public function getDeptSqlLikeName($dept_name){
+    public static function getDeptSqlLikeName($dept_name){
         $sql = "select id from hr_dept
                 where type=1 AND name LIKE '%$dept_name%'
 			";

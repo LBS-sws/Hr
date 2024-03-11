@@ -14,6 +14,7 @@ class EmployeeList extends CListPageModel
 			'name'=>Yii::t('contract','Employee Name'),
 			'code'=>Yii::t('contract','Employee Code'),
 			'phone'=>Yii::t('contract','Employee Phone'),
+            'department'=>Yii::t('contract','Department'),
 			'position'=>Yii::t('contract','Position'),
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
@@ -33,13 +34,15 @@ class EmployeeList extends CListPageModel
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $localOffice = Yii::t("contract","local office");
-		$sql1 = "select a.*,f.id as aaa,if(a.office_id=0,'{$localOffice}',f.name) as office_name,docman$suffix.countdoc('EMPLOY',a.id) as employdoc,docman$suffix.countdoc('SIGNC',a.id) as signcdoc from hr_employee a
+		$sql1 = "select a.*,g.name as department_name,f.id as aaa,if(a.office_id=0,'{$localOffice}',f.name) as office_name,docman$suffix.countdoc('EMPLOY',a.id) as employdoc,docman$suffix.countdoc('SIGNC',a.id) as signcdoc from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
+                LEFT JOIN hr_dept g ON g.id=a.department
                 where a.city IN ($city_allow) AND a.staff_status = 0
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
+                LEFT JOIN hr_dept g ON g.id=a.department
 				where a.city IN ($city_allow) AND a.staff_status = 0
 			";
 		$clause = "";
@@ -55,6 +58,9 @@ class EmployeeList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('a.phone',$svalue);
 					break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('g.name',$svalue);
+                    break;
 				case 'office_name':
 					$clause .= General::getSqlConditionClause("if(a.office_id=0,'{$localOffice}',f.name)",$svalue);
 					break;
@@ -97,6 +103,7 @@ class EmployeeList extends CListPageModel
 					'name'=>$record['name'],
 					'employdoc'=>empty($record['employdoc'])?$record['signcdoc']:$record['employdoc'],
 					'code'=>$record['code'],
+                    'department'=>$record['department_name'],
 					'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),

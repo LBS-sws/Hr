@@ -14,6 +14,7 @@ class DepartureList extends CListPageModel
 			'name'=>Yii::t('contract','Employee Name'),
 			'code'=>Yii::t('contract','Employee Code'),
 			'phone'=>Yii::t('contract','Employee Phone'),
+            'department'=>Yii::t('contract','Department'),
 			'position'=>Yii::t('contract','Position'),
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
@@ -32,13 +33,15 @@ class DepartureList extends CListPageModel
 		$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $localOffice = Yii::t("contract","local office");
-		$sql1 = "select a.*,if(a.office_id=0,'{$localOffice}',f.name) as office_name from hr_employee a
+		$sql1 = "select a.*,g.name as department_name,if(a.office_id=0,'{$localOffice}',f.name) as office_name from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
+                LEFT JOIN hr_dept g ON g.id=a.department
                 where a.city in ($city_allow) AND a.staff_status = -1 AND a.table_type = 1 
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
+                LEFT JOIN hr_dept g ON g.id=a.department
 				where a.city in ($city_allow) AND a.staff_status = -1 AND a.table_type = 1 
 			";
 		$clause = "";
@@ -54,6 +57,9 @@ class DepartureList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('a.phone',$svalue);
 					break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('g.name',$svalue);
+                    break;
 				case 'office_name':
 					$clause .= General::getSqlConditionClause("if(a.office_id=0,'{$localOffice}',f.name)",$svalue);
 					break;
@@ -90,6 +96,7 @@ class DepartureList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'code'=>$record['code'],
+                    'department'=>$record['department_name'],
 					'office_name'=>$record['office_name'],
                     'position'=>DeptForm::getDeptToid($record['position']),
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
