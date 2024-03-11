@@ -489,7 +489,11 @@ class VacationDayForm
     private function addYearLeaveNum($vacation_list=''){
         switch ($this->vaca_type){
             case $this->year_type://年假（需要添加累計年假的天數）
-                $year = date("Y",strtotime($this->start_time));
+                if(!empty($this->time)){
+                    $year = date("Y",strtotime($this->time));
+                }else{
+                    $year = date("Y",strtotime($this->start_time));
+                }
                 $suffix = Yii::app()->params['envSuffix'];
                 $sum = Yii::app()->db->createCommand()->select("sum(add_num)")->from("hr$suffix.hr_staff_year")
                     ->where("employee_id=:employee_id and year=:year",array(":employee_id"=>$this->employee_id,":year"=>$year))->queryScalar();
