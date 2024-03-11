@@ -91,7 +91,7 @@ class RptStaffExList extends CReport {//员工花名册
                 $temp = array();
                 $temp['code'] = $row['code'];
                 $temp['name'] = $row['name'];
-                $temp['user_card'] = $row['user_card'];
+                $temp['user_card'] = " ".$row['user_card'];
                 $temp['table_type'] = StaffFun::getTableTypeNameForID($row['table_type']);
                 $temp['entry_time'] = $row['entry_time'];
                 $temp['city_name'] = $row['city_name'];
@@ -112,12 +112,12 @@ class RptStaffExList extends CReport {//员工花名册
                 if($row['test_type']=="1"){//有试用期
                     $temp['test_length'] = StaffFun::getTestMonthLengthNameForID($row['test_length']);
                     $temp['test_end_time'] = $row['test_end_time'];
-                    $temp['test_wage'] = $row['test_wage'];
+                    $temp['test_wage'] = " ".$row['test_wage'];
                 }
                 $temp['test_type'] = StaffFun::getTestTypeNameForID($row['test_type']);
-                $temp['wage'] = $row['wage'];
+                $temp['wage'] = " ".$row['wage'];
                 $temp['email'] = $row['email'];
-                $temp['phone'] = $row['phone'];
+                $temp['phone'] = " ".$row['phone'];
                 $temp['user_card_date'] = $row['user_card_date'];
                 $temp['dob'] = $row['birth_time'];
                 $temp['gender'] = StaffFun::getAgeForBirthDate($row['birth_time']);
@@ -128,7 +128,7 @@ class RptStaffExList extends CReport {//员工花名册
                 $temp['contact_address'] = $row['contact_address'];
                 $temp['social_code'] = $row['social_code'];
                 $temp['emergency_user'] = $row['emergency_user'];
-                $temp['emergency_phone'] = $row['emergency_phone'];
+                $temp['emergency_phone'] = " ".$row['emergency_phone'];
                 $temp['change_dt'] = "";
                 $temp['reason'] = "";
                 if($row["staff_status"]==-1){//离职
