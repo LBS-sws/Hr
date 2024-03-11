@@ -36,6 +36,7 @@ class ExternalList extends CListPageModel
 			'name'=>Yii::t('contract','Employee Name'),
 			'code'=>Yii::t('contract','Employee Code'),
 			'phone'=>Yii::t('contract','Employee Phone'),
+            'department'=>Yii::t('contract','Department'),
 			'position'=>Yii::t('contract','Position'),
 			'company_id'=>Yii::t('contract','Company Name'),
 			'contract_id'=>Yii::t('contract','Contract Name'),
@@ -55,13 +56,14 @@ class ExternalList extends CListPageModel
 		$city = Yii::app()->user->city();
 		$allow_city = Yii::app()->user->city_allow();
 		$localOffice = Yii::t("contract","local office");
-		$sql1 = "select a.*,
+		$sql1 = "select a.*,de.name as department_name,
                   b.name as position_name,g.name as city_name,
                   if(a.office_id=0,'{$localOffice}',f.name) as office_name,
                   docman$suffix.countdoc('EXTER',a.id) as externaldoc
                 from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept b ON b.id=a.position
+                LEFT JOIN hr_dept de ON de.id=a.department
                 LEFT JOIN security{$suffix}.sec_city g ON g.code=a.city
                 where a.city in ({$allow_city}) AND a.table_type != 1 AND a.staff_status = 1
 			";
@@ -69,6 +71,7 @@ class ExternalList extends CListPageModel
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept b ON b.id=a.position
+                LEFT JOIN hr_dept de ON de.id=a.department
                 LEFT JOIN security{$suffix}.sec_city g ON g.code=a.city
                 where a.city in ({$allow_city}) AND a.table_type != 1 AND a.staff_status = 1
 			";
@@ -85,6 +88,9 @@ class ExternalList extends CListPageModel
 				case 'phone':
 					$clause .= General::getSqlConditionClause('a.phone',$svalue);
 					break;
+                case 'department':
+                    $clause .= General::getSqlConditionClause('de.name',$svalue);
+                    break;
                 case 'position':
                     $clause .= General::getSqlConditionClause('b.name',$svalue);
                     break;
@@ -130,6 +136,7 @@ class ExternalList extends CListPageModel
 					'office_name'=>$record['office_name'],
 					'code'=>$record['code'],
 					'position'=>$record['position_name'],
+					'department'=>$record['department_name'],
 					'city'=>$record['city_name'],
 					'company_id'=>CompanyForm::getCompanyToId($record['company_id'])["name"],
 					//'contract_id'=>ContractForm::getContractNameToId($record['contract_id']),

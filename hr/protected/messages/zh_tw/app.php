@@ -237,6 +237,7 @@ return array(
     'Curl Notes'=>'Curl同步記錄',
     'Staff Apply Info'=>'員工申請流程',
     'Company Detail'=>'集團/公司資質信息',
+    'Staff Rpt List'=>'員工花名冊',
 //沈超添加結束
 );
 ?>

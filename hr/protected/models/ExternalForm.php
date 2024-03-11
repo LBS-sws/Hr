@@ -94,6 +94,9 @@ class ExternalForm extends StaffForm
                     case 3://数字
                         $this->$key = $row[$key]===null?null:floatval($row[$key]);
                         break;
+                    case "birth_time"://年龄
+                        $this->$key = isset($row["birth_time"])?StaffFun::getAgeForBirthDate($row["birth_time"]):floatval($row[$key]);
+                        break;
                     default:
                 }
             }

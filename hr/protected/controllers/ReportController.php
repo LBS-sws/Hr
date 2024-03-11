@@ -2,7 +2,7 @@
 class ReportController extends Controller
 {
 	protected static $actions = array(
-        'salessummary'=>'YB04',
+        'staffRpt'=>'YB04',
         'overtimelist'=>'YB02',
         'pennantexlist'=>'YB05',
         'pennantculist'=>'YB06',
@@ -49,8 +49,8 @@ class ReportController extends Controller
 	    echo "success!";
 	}
 
-	public function actionSalessummary() {
-		$this->function_id = self::$actions['salessummary'];
+	public function actionstaffRpt() {
+		$this->function_id = self::$actions['staffRpt'];
 		Yii::app()->session['active_func'] = $this->function_id;
 
 		$model = new ReportY01Form;

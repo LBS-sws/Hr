@@ -21,6 +21,11 @@
 		?>
 	</th>
 	<th>
+		<?php echo TbHtml::link($this->getLabelName('department').$this->drawOrderArrow('de.name'),'#',$this->createOrderLink('external-list','de.name'))
+			;
+		?>
+	</th>
+	<th>
 		<?php echo TbHtml::link($this->getLabelName('position').$this->drawOrderArrow('a.position'),'#',$this->createOrderLink('external-list','a.position'))
 			;
 		?>

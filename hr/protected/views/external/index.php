@@ -55,6 +55,7 @@ $this->pageTitle=Yii::app()->name . ' - External';
         'code',
         'name',
         'phone',
+        'department',
         'position',
         'office_name',
     );

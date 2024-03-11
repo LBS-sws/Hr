@@ -549,9 +549,9 @@ return array(
 		'access'=>'YB',
 		'icon'=>'fa-file-text-o',
 		'items'=>array(
-			'Staff List'=>array(
+			'Staff Rpt List'=>array( //员工花名册
 				'access'=>'YB04',
-				'url'=>'/report/salessummary',
+				'url'=>'/report/staffRpt',
 				//'hidden'=>true,
 			),
 			'Overtime records List'=>array(

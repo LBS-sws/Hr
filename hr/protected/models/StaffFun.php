@@ -139,6 +139,23 @@ class StaffFun
             return $id;
         }
     }
+    //獲取试用期类型列表
+    public static function getTestTypeList(){
+        return array(
+            "1"=>Yii::t("contract","Have probation period"),
+            "0"=>Yii::t("contract","No probation period")
+        );
+    }
+    //獲取试用期类型翻译
+    public static function getTestTypeNameForID($id){
+        $id = "".$id;
+        $list = self::getTestTypeList();
+        if(key_exists($id,$list)){
+            return $list[$id];
+        }else{
+            return $id;
+        }
+    }
     //獲取合同期限列表
     public static function getOperationTypeList($staff_id = 0,$type=""){
         if(empty($staff_id)){
@@ -490,5 +507,15 @@ class StaffFun
     //邮箱验证
     public static function isEmail($email){
         return filter_var($email, FILTER_VALIDATE_EMAIL)!==false;
+    }
+
+    public static function getAgeForBirthDate($birth_date){
+        list($age,$month,$day) = explode("-",date("Y-m-d",strtotime($birth_date)));
+        $age = date("Y")-$age;
+        $month = intval(date("m"))-intval($month);
+        $month = date("d")-$day<0?$month-1:$month;
+        $age = $month<0?$age-1:$age;
+
+        return $age;
     }
 }

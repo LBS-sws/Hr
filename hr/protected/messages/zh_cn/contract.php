@@ -54,7 +54,7 @@ return array(
     'Employee Phone'=>'员工电话',
     'Employee Code'=>'员工编号',
     'Employee Belong'=>'员工归属',
-    'Employee Contract'=>'员工合同模板',
+    'Employee Contract'=>'员工合同模版',
     'Address'=>'地址',
     'Old Address'=>'户籍地址',
     'Contact Address'=>'通讯地址',
