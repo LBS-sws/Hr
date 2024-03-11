@@ -489,7 +489,7 @@ class VacationDayForm
     private function addYearLeaveNum($vacation_list=''){
         switch ($this->vaca_type){
             case $this->year_type://年假（需要添加累計年假的天數）
-                if(!empty($this->time)){
+                if($this->city==$this->mo_city){ //澳门年假
                     $year = date("Y",strtotime($this->time));
                 }else{
                     $year = date("Y",strtotime($this->start_time));
