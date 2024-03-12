@@ -442,7 +442,7 @@ class StaffForm extends CFormModel
             "department"=>1,"position"=>1,"wage"=>1,"city"=>1,
             "start_time"=>2,"end_time"=>2,"test_type"=>3,"test_start_time"=>2,
             "sex"=>1,"test_end_time"=>2,"test_wage"=>1,"staff_status"=>3,
-            "entry_time"=>2,"age"=>"birth_time","birth_time"=>2,"health"=>1,
+            "entry_time"=>2,"birth_time"=>2,"age"=>"birth_time","health"=>1,
             "education"=>1,"wechat"=>1,"recommend_user"=>1,"urgency_card"=>1,
             "experience"=>1,"english"=>1,"technology"=>1,"other"=>1,"year_day"=>1,
             "email"=>1,"remark"=>1,"image_user"=>1,"image_code"=>1,"image_work"=>1,
@@ -463,7 +463,7 @@ class StaffForm extends CFormModel
                     $value = $value===""?null:floatval($value);
                     break;
                 case "birth_time"://年龄
-                    $this->$key = isset($row["birth_time"])?StaffFun::getAgeForBirthDate($row["birth_time"]):floatval($row[$key]);
+                    $this->$key = isset($this->birth_time)?StaffFun::getAgeForBirthDate($this->birth_time):floatval($value);
                     break;
             }
             $this->$key=$value;
