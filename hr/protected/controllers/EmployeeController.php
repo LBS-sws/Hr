@@ -29,7 +29,7 @@ class EmployeeController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','save','test'),
+                'actions'=>array('new','edit','save','test','displace'),
                 'expression'=>array('EmployeeController','allowReadWrite'),
             ),
             array('allow',
@@ -91,6 +91,20 @@ class EmployeeController extends Controller
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
             $this->render('form',array('model'=>$model,));
+        }
+    }
+
+    public function actionDisplace($index)
+    {
+        $model = new EmployeeForm('edit');
+        if ($model->validateDisplace($index)) {
+            $model->saveDisplace();
+            Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','displace finish'));
+            $this->redirect(Yii::app()->createUrl('employee/index'));
+        } else {
+            $message = CHtml::errorSummary($model);
+            Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            $this->redirect(Yii::app()->createUrl('employee/edit',array('index'=>$index)));
         }
     }
 

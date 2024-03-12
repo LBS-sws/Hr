@@ -44,6 +44,9 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
                     <?php echo TbHtml::button('<span class="fa fa-user-times"></span> '.Yii::t('contract','Staff Departure'), array(
                         'submit'=>Yii::app()->createUrl('history/form',array("index"=>$model->id,"type"=>"departure"))));
                     ?>
+                    <?php echo TbHtml::button('<span class="fa fa-refresh"></span> '.Yii::t('contract','displace'), array(
+                        'data-toggle'=>'modal','data-target'=>'#displaceDialog'));
+                    ?>
                 <?php endif; ?>
             </div>
 
@@ -145,6 +148,7 @@ $this->pageTitle=Yii::app()->name . ' - Employee Form';
 <?php
 $this->renderPartial('//employView/historylist',array('model'=>$model));
 $this->renderPartial('//employView/agreementlist',array('model'=>$model));
+$this->renderPartial('//employView/displaceDialog',array('model'=>$model));
 ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,

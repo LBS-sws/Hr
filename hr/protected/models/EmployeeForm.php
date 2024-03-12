@@ -122,4 +122,48 @@ class EmployeeForm extends StaffForm
             }
         }
     }
+
+    public function validateDisplace($id){
+        $suffix = Yii::app()->params['envSuffix'];
+        $allow_city = Yii::app()->user->city_allow();
+        $row = Yii::app()->db->createCommand()->select("id")->from("hr_employee")
+            ->where("id=:id and city in ({$allow_city}) and staff_status=0", array(':id'=>$id))->queryRow();
+        if($row){
+            $count = Yii::app()->db->createCommand()->select("count(id)")->from("hr_employee_operate")
+                ->where("employee_id=:id and city in ($allow_city)  and finish=0", array(':id'=>$id))->queryScalar();
+            if($count>0){
+                $this->addError("id","该员工已有变更信息，请先完成变更");
+                return false;
+            }
+            $table_type = key_exists("table_type",$_POST)?$_POST["table_type"]:"";
+            if(!in_array($table_type,array(2,3))){
+                $this->addError("id","员工类型选择异常，请重试");
+            }
+            $this->id = $id;
+            $this->table_type = $table_type;
+            return true;
+        }
+        $this->addError("id","员工不存在，请刷新重试");
+        return false;
+    }
+
+    public function saveDisplace(){
+        $uid = Yii::app()->user->id;
+        Yii::app()->db->createCommand()->update('hr_employee', array(
+            "table_type"=>$this->table_type,
+            "staff_status"=>1
+        ), 'id=:id', array(':id'=>$this->id));
+        //記錄
+        $list=array(
+            "table_name"=>"hr_employee",
+            "table_id"=>$this->id,
+            "lcu"=>$uid,
+            "update_type"=>1,
+            "update_html"=>"<span>员工转移</span>",
+        );
+        Yii::app()->db->createCommand()->insert("hr_table_history", $list);
+
+        //U系统同步
+        StaffForm::sendCurl($this->id,"edit");
+    }
 }

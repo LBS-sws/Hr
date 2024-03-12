@@ -776,5 +776,7 @@ return array(
     'Flow Info'=>'流程',
     'Operator Text'=>'操作内容',
     'work area'=>'主要工作地点',
+    'displace'=>'转移',
+    'displace finish'=>'转移成功',
 );
 ?>
