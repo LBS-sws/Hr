@@ -554,6 +554,11 @@ return array(
 				'url'=>'/report/staffRpt',
 				//'hidden'=>true,
 			),
+			'Staff Entry Rpt List'=>array( //新员工录入表
+				'access'=>'YB14',
+				'url'=>'/report/staffEnRpt',
+				//'hidden'=>true,
+			),
 			'Overtime records List'=>array(
 				'access'=>'YB02',
                 'url'=>'/report/overtimelist',

@@ -12,7 +12,7 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('report','Staff Rpt List'); ?></strong>
+		<strong><?php echo $model->name; ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -26,8 +26,10 @@ $this->pageTitle=Yii::app()->name . ' - Report';
 <section class="content">
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
-		<?php echo TbHtml::button(Yii::t('misc','Submit'), array(
-				'submit'=>Yii::app()->createUrl('report/staffRpt')));
+		<?php
+        $action= Yii::app()->getController()->getAction()->id;
+        echo TbHtml::button(Yii::t('misc','Submit'), array(
+            'submit'=>Yii::app()->createUrl("report/{$action}")));
 		?>
 	</div>
 	</div></div>

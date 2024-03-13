@@ -3,6 +3,7 @@ class ReportController extends Controller
 {
 	protected static $actions = array(
         'staffRpt'=>'YB04',
+        'staffEnRpt'=>'YB14',
         'overtimelist'=>'YB02',
         'pennantexlist'=>'YB05',
         'pennantculist'=>'YB06',
@@ -54,6 +55,27 @@ class ReportController extends Controller
 		Yii::app()->session['active_func'] = $this->function_id;
 
 		$model = new ReportY01Form;
+		if (isset($_POST['ReportY01Form'])) {
+			$model->attributes = $_POST['ReportY01Form'];
+			$model->resetCityForAllow();
+			if ($model->validate()) {
+				$model->addQueueItem();
+				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+			} else {
+				$message = CHtml::errorSummary($model);
+				Dialog::message(Yii::t('dialog','Validation Message'), $message);
+			}
+		}
+		$this->render('form_y01',array('model'=>$model));
+	}
+
+	public function actionstaffEnRpt() {
+		$this->function_id = self::$actions['staffEnRpt'];
+		Yii::app()->session['active_func'] = $this->function_id;
+
+		$model = new ReportY01Form;
+		$model->id = "RptStaffEnList";
+		$model->name = Yii::t('report','Staff Entry Rpt List');
 		if (isset($_POST['ReportY01Form'])) {
 			$model->attributes = $_POST['ReportY01Form'];
 			$model->resetCityForAllow();

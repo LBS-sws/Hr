@@ -59,5 +59,7 @@ return array(
     'Age'=>'年齡',
     'Degree level'=>'學歷或文化程度',
     'Household type'=>'戶籍類型',
+
+    'Staff Entry Rpt List'=>'新員工錄入表',
 );
 ?>
