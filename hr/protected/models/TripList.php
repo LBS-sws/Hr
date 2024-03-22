@@ -42,11 +42,16 @@ class TripList extends CListPageModel
         $lcuId = Yii::app()->user->id;
         $city_allow = Yii::app()->user->city_allow();
         $employee_id = empty($this->employee_id)?0:$this->employee_id;
+        $auditSql = "";
+        foreach (AppointTripSetForm::getZIndexForUser() as $key=>$item){
+            $auditSql.= empty($auditSql)?"":" or ";
+            $auditSql.= "a.{$item}='$lcuId'";
+        }
         $whereSql="";
         if(Yii::app()->user->validFunction('ZR24')){//所有出差記錄
-            $whereSql.=" and ((b.id={$employee_id})or(b.city in ({$city_allow}) and a.status!=0))";
+            $whereSql.=" and ((b.id={$employee_id}) or {$auditSql} or (b.city in ({$city_allow}) and a.status!=0))";
         }else{
-            $whereSql=" and b.id={$employee_id}";
+            $whereSql=" and b.id={$employee_id} or {$auditSql}";
         }
 		$sql1 = "select a.*,f.name as city_name,b.code,b.name from hr_employee_trip a
                 LEFT JOIN hr_employee b ON a.employee_id=b.id
