@@ -69,6 +69,15 @@ $this->pageTitle=Yii::app()->name . ' - ConfigOffice Info';
             </div>
 
             <div class="form-group">
+                <?php echo $form->labelEx($model,'u_id',array('class'=>"col-lg-2 control-label")); ?>
+                <div class="col-lg-4">
+                    <?php echo $form->numberField($model, 'u_id',
+                        array('min'=>0,'readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+
+            <div class="form-group">
                 <?php echo $form->labelEx($model,'z_display',array('class'=>"col-lg-2 control-label")); ?>
                 <div class="col-lg-4">
                     <div class="input-group">

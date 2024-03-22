@@ -10,6 +10,7 @@ class ConfigOfficeList extends CListPageModel
 			'z_display'=>Yii::t('contract','display'),
 			'office_sum'=>Yii::t('contract','office sum'),
 			'staff'=>Yii::t('app','Employee'),
+			'u_id'=>Yii::t('contract','u_id'),
 		);
 	}
 	
@@ -33,6 +34,9 @@ class ConfigOfficeList extends CListPageModel
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
+				case 'u_id':
+					$clause .= General::getSqlConditionClause('a.u_id', $svalue);
+					break;
 				case 'name':
 					$clause .= General::getSqlConditionClause('a.name', $svalue);
 					break;
@@ -65,6 +69,7 @@ class ConfigOfficeList extends CListPageModel
 					$this->attr[] = array(
 						'id'=>$record['id'],
 						'name'=>$record['name'],
+						'u_id'=>$record['u_id'],
 						'city'=>$record['city_name'],
 						'office_sum'=>empty($record['office_sum'])?0:$record['office_sum'],
 						'z_display'=>empty($record['z_display'])?Yii::t("contract","none"):Yii::t("contract","show"),

@@ -5,6 +5,7 @@ class ConfigOfficeForm extends CFormModel
 	public $id;
 	public $name;
     public $city;
+    public $u_id;
 	public $z_display=1;
 	public $office_sum = 0;
 
@@ -15,6 +16,7 @@ class ConfigOfficeForm extends CFormModel
             'city'=>Yii::t('contract','City'),
             'z_display'=>Yii::t('contract','display'),
             'office_sum'=>Yii::t('contract','office sum'),
+            'u_id'=>Yii::t('contract','u_id'),
 		);
 	}
 
@@ -24,7 +26,7 @@ class ConfigOfficeForm extends CFormModel
 	public function rules()
 	{
 		return array(
-			array('id, name, city,z_display,office_sum','safe'),
+			array('id, u_id, name, city,z_display,office_sum','safe'),
             array('name','required'),
 			array('name','validateName'),
 		);
@@ -53,6 +55,7 @@ class ConfigOfficeForm extends CFormModel
 			foreach ($rows as $row) {
                 $this->id = $row['id'];
                 $this->name = $row['name'];
+                $this->u_id = $row['u_id'];
                 $this->z_display = $row['z_display'];
                 $this->city = $row['city'];
                 $this->office_sum = Yii::app()->db->createCommand()->select("COUNT(id)")
@@ -149,14 +152,15 @@ class ConfigOfficeForm extends CFormModel
                 break;
             case 'new':
                 $sql = "insert into hr_office(
-							name,z_display, city, lcu
+							name,u_id,z_display, city, lcu
 						) values (
-							:name,:z_display, :city, :lcu
+							:name,:u_id,:z_display, :city, :lcu
 						)";
                 break;
             case 'edit':
                 $sql = "update hr_office set
 							name = :name, 
+							u_id = :u_id, 
 							z_display = :z_display, 
 							luu = :luu
 						where id = :id and city=:city
@@ -171,6 +175,8 @@ class ConfigOfficeForm extends CFormModel
         $command=$connection->createCommand($sql);
         if (strpos($sql,':id')!==false)
             $command->bindParam(':id',$this->id,PDO::PARAM_INT);
+        if (strpos($sql,':u_id')!==false)
+            $command->bindParam(':u_id',$this->u_id,PDO::PARAM_INT);
         if (strpos($sql,':name')!==false)
             $command->bindParam(':name',$this->name,PDO::PARAM_STR);
         if (strpos($sql,':z_display')!==false)

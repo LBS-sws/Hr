@@ -45,6 +45,7 @@ $this->pageTitle=Yii::app()->name . ' - ConfigOffice Info';
 							'name',
 							'city',
 							'staff',
+							'u_id',
 						),
 		));
 	?>

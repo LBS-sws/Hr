@@ -778,5 +778,7 @@ return array(
     'work area'=>'主要工作地点',
     'displace'=>'转移',
     'displace finish'=>'转移成功',
+
+    'u_id'=>'U系统对应id',
 );
 ?>

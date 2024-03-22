@@ -11,6 +11,11 @@
         ?>
     </th>
     <th>
+        <?php echo TbHtml::link($this->getLabelName('u_id').$this->drawOrderArrow('a.u_id'),'#',$this->createOrderLink('configOffice-list','a.u_id'))
+        ;
+        ?>
+    </th>
+    <th>
         <?php echo TbHtml::link($this->getLabelName('z_display').$this->drawOrderArrow('a.z_display'),'#',$this->createOrderLink('configOffice-list','a.z_display'))
         ;
         ?>
