@@ -562,7 +562,7 @@ class StaffForm extends CFormModel
                 if(empty($staff["staff"]["work_area"])){//如果地点为空，则默认当前城市
                     $staff["staff"]["work_area"] = $staff["company"]["city_name"];
                 }
-                $word->setValue("work_area",$staff["staff"]["work_area"]);//主要工作地点
+                $word->setValue("workarea",$staff["staff"]["work_area"]);//主要工作地点
                 //2020-04-14新增（開始）
                 $word->setValue("staffwechat",$staff["staff"]["wechat"]);//微信賬號
                 $word->setValue("staffemergencycard",$staff["staff"]["urgency_card"]);//緊急聯絡人身份證
