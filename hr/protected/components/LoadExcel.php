@@ -33,6 +33,14 @@ class LoadExcel {
             for($currentColumn= 0;$currentColumn<= $allColumn; $currentColumn++){
                 //$val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getValue();/**ord()将字符转为十进制数*/
                 $val = $currentSheet->getCellByColumnAndRow($currentColumn,$currentRow)->getCalculatedValue();//獲取公式后的結果
+                if(PHPExcel_Shared_Date::isDateTime($currentSheet->getCellByColumnAndRow($currentColumn,$currentRow))){
+                    //日期格式
+                    $val = gmdate("Y-m-d H:i:s", PHPExcel_Shared_Date::ExcelToPHP($val));//日期格式
+                    $list = explode(" ",$val);
+                    if(count($list)==2&&$list[1]=="00:00:00"){
+                        $val = $list[0];
+                    }
+                }
                 array_push($arr,$val);
             }
             array_push($listBody,$arr);
