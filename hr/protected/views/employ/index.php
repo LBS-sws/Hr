@@ -33,6 +33,16 @@ $this->pageTitle=Yii::app()->name . ' - Employ';
                     ));
                 ?>
             </div>
+
+            <?php
+            if (Yii::app()->user->validFunction('ZR26')){ //导入
+                echo '<div class="btn-group pull-right" role="group">';
+                echo TbHtml::button('<span class="fa fa-file-excel-o"></span> '.Yii::t('contract','import'), array(
+                        'data-toggle'=>'modal','data-target'=>'#importdialog',)
+                );
+                echo '</div>';
+            }
+            ?>
         </div></div>
     <?php
     $search = array(
@@ -68,3 +78,4 @@ $js = Script::genTableRowClick();
 Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>
 
+<?php $this->renderPartial('//employView/importdialog'); ?>

@@ -239,6 +239,7 @@ return array(
     'Company Detail'=>'集團/公司資質信息',
     'Staff Rpt List'=>'員工花名冊',
     'Staff Entry Rpt List'=>'新員工錄入表',
+    'Import Staff'=>'員工導入',
 //沈超添加結束
 );
 ?>

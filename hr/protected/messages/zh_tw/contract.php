@@ -773,5 +773,8 @@ return array(
     'displace finish'=>'轉移成功',
 
     'u_id'=>'U系統對應id',
+    'import'=>'導入',
+    'file'=>'excel文件',
+    'down temp'=>'導入模板',
     );
 ?>

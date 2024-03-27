@@ -518,4 +518,79 @@ class StaffFun
 
         return $age;
     }
+
+//获取地区列表(导入专用)
+    public static function getCityForCityAllow($city_allow)
+    {
+        $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
+        $arr = array();
+        $rows = Yii::app()->db->createCommand()->select("code,name")
+            ->from($from)->where("code in ({$city_allow})")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["code"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+
+//获取职位列表(导入专用)
+    public static function getDeptForCityAllow($city_allow)
+    {
+        $from =  'hr'.Yii::app()->params['envSuffix'].'.hr_dept';
+        $arr = array();
+        $rows = Yii::app()->db->createCommand()->select("id,name,city")
+            ->from($from)->where("city in ({$city_allow})")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["city"]][$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+
+//获取办事处列表(导入专用)
+    public static function getOfficeForCityAllow($city_allow)
+    {
+        $from =  'hr'.Yii::app()->params['envSuffix'].'.hr_office';
+        $arr = array();
+        $rows = Yii::app()->db->createCommand()->select("id,name,city")
+            ->from($from)->where("city in ({$city_allow})")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["city"]][$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+
+//获取公司列表(导入专用)
+    public static function getCompanyForCityAllow($city_allow)
+    {
+        $from =  'hr'.Yii::app()->params['envSuffix'].'.hr_company';
+        $arr = array();
+        $rows = Yii::app()->db->createCommand()->select("id,name,city")
+            ->from($from)->where("city in ({$city_allow})")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["city"]][$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
+
+//获取合同列表(导入专用)
+    public static function getContractForCityAllow($city_allow)
+    {
+        $from =  'hr'.Yii::app()->params['envSuffix'].'.hr_contract';
+        $arr = array();
+        $rows = Yii::app()->db->createCommand()->select("id,name,city")
+            ->from($from)->where("city in ({$city_allow})")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $arr[$row["city"]][$row["id"]] = $row["name"];
+            }
+        }
+        return $arr;
+    }
 }

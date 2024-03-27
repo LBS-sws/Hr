@@ -37,6 +37,10 @@ class EmployController extends Controller
                 'expression'=>array('EmployController','allowReadOnly'),
             ),
             array('allow',
+                'actions'=>array('downTemp','importExcel'),
+                'expression'=>array('EmployController','allowDownEmploy'),
+            ),
+            array('allow',
                 'actions'=>array('generate','addDate','printImage','changeCity','changeDepart','changeUserCard'),
                 'expression'=>array('EmployController','allowWrite'),
             ),
@@ -53,8 +57,51 @@ class EmployController extends Controller
         return Yii::app()->user->validFunction('ZE01');
     }
 
+    public static function allowDownEmploy() {//导入
+        return Yii::app()->user->validFunction('ZR26');
+    }
+
     public static function allowWrite() {
         return !empty(Yii::app()->user->id);
+    }
+
+    //导入Excel
+    public function actionImportExcel(){
+        $model = new EmployDown();
+        $model->attributes = $_POST['EmployDown'];
+        $path =Yii::app()->basePath."/../upload/";
+        if ($model->validate()) {
+            $img = CUploadedFile::getInstance($model,'file');
+            $model->file = $img->getName();
+            $url = $path."importEmploy.".$img->getExtensionName();
+            $img->saveAs($url);
+            $loadExcel = new LoadExcel($url);
+            $list = $loadExcel->getExcelList();
+            $model->insertStaticList();
+            $headBool = $model->loadData($list);
+            if($headBool){
+                if($model->_errorSum>0){
+                    $model->downErrorList();
+                }else{
+                    $dialog = "导入成功。成功数量：".count($model->_successList);
+                    Dialog::message(Yii::t('dialog','Information'), $dialog);
+                }
+            }else{
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+            $this->redirect(Yii::app()->createUrl('employ/index'));
+        }else{
+            $message = CHtml::errorSummary($model);
+            Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            $this->redirect(Yii::app()->createUrl('employ/index'));
+        }
+    }
+
+    //下载导入模板
+    public function actionDownTemp(){
+        $model = new EmployDown();
+        $model->downTemp();
     }
 
     public function actionIndex($pageNum=0){

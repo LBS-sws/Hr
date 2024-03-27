@@ -240,6 +240,7 @@ return array(
     'Company Detail'=>'集团/公司资质信息',
     'Staff Rpt List'=>'员工花名册',
     'Staff Entry Rpt List'=>'新员工录入表',
+    'Import Staff'=>'员工导入',
     //沈超添加结束
 );
 ?>
