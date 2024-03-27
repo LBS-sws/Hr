@@ -116,6 +116,7 @@ class StaffForm extends CFormModel
 	{
 		return array(
 			'id'=>Yii::t('staff','Record ID'),
+			'city'=>Yii::t('contract','City'),
 			'code'=>Yii::t('contract','Employee Code'),
 			'sex'=>Yii::t('contract','Sex'),
 			'age'=>Yii::t('contract','Age'),
@@ -221,7 +222,7 @@ class StaffForm extends CFormModel
 
     public function getRequiredList(){//必填内容
         return array(
-            "name","household","staff_id","sex","company_id","contract_id","address",
+            "city","name","household","staff_id","sex","company_id","contract_id","address",
             "contact_address","phone","user_card","department","position","image_user",
             "time","fix_time","start_time","test_type","year_day","image_code"
         );

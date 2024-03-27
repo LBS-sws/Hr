@@ -7,6 +7,17 @@
  */
 class EmployForm extends StaffForm
 {
+
+    public function isRequired($str){
+        $list = $this->getRequiredList();
+        $list = array_merge($list,array("entry_time","emergency_user","emergency_phone"));
+        if(in_array($str,$list)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 	/**
      *
 	 * Declares the validation rules.
@@ -27,13 +38,18 @@ class EmployForm extends StaffForm
 
     public function validateID($attribute, $params){
         $allow_city = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
-            ->where("id=:id and city in ({$allow_city}) and staff_status in (1,3) and table_type=1", array(':id'=>$this->id))
-            ->queryRow();
-        if($row){
-            $this->city = $row["city"];
-        }else{
-            $this->city = Yii::app()->user->city();
+        $suffix = Yii::app()->params['envSuffix'];
+        if(!empty($this->city)){
+            $row = Yii::app()->db->createCommand()->select("code")
+                ->from("security{$suffix}.sec_city")
+                ->where("code=:city and code in ({$allow_city})", array(':city'=>$this->city))
+                ->queryRow();
+            if($row){
+                $this->city = $row["code"];
+            }else{
+                $message = "城市权限不足：".$this->city;
+                $this->addError($attribute,$message);
+            }
         }
     }
 
@@ -103,12 +119,11 @@ class EmployForm extends StaffForm
                 $connection->createCommand()->delete('hr_employee_history', 'employee_id=:id',array(":id"=>$this->id));
                 break;
             case 'new':
-                $list["city"] = $city;
+                //$list["city"] = $city;
                 $list["lcu"] = $uid;
                 $connection->createCommand()->insert("hr_employee", $list);
                 break;
             case 'edit':
-                unset($list["city"]);
                 $list["luu"] = $uid;
                 $connection->createCommand()->update("hr_employee", $list, "id=:id and city in ({$allow_city})", array(":id" => $this->id));
                 break;

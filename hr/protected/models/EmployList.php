@@ -30,17 +30,18 @@ class EmployList extends CListPageModel
 	{
 		$suffix = Yii::app()->params['envSuffix'];
 		$city = Yii::app()->user->city();
+        $city_allow = Yii::app()->user->city_allow();
 		$localOffice = Yii::t("contract","local office");
 		$sql1 = "select a.*,g.name as department_name,if(a.office_id=0,'{$localOffice}',f.name) as office_name,docman$suffix.countdoc('EMPLOY',a.id) as employdoc from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept g ON g.id=a.department
-                where a.city='$city' AND a.staff_status not in (0,-1) and a.table_type=1 
+                where a.city in ({$city_allow}) AND a.staff_status not in (0,-1) and a.table_type=1 
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept g ON g.id=a.department
-				where a.city='$city' AND a.staff_status not in (0,-1) and a.table_type=1 
+				where a.city in ({$city_allow}) AND a.staff_status not in (0,-1) and a.table_type=1 
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {

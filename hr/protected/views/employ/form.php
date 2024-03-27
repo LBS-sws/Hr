@@ -36,7 +36,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 				'submit'=>Yii::app()->createUrl('employ/index')));
 		?>
         <?php
-            if($model->city == Yii::app()->user->city() && $model->scenario!='view'){
+            if($model->scenario!='view'){
                 if(in_array($model->staff_status,array(1,3))){
                     echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
                         'submit'=>Yii::app()->createUrl('employ/audit')));

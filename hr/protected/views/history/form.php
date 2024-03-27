@@ -321,57 +321,6 @@ $('#HistoryForm_test_type').on('change',function(){
             }
         }
     }).trigger('change');
-    
-    $('#change_city').change(function(){
-        var changeCity = $('#change_city').val();
-        var staffId = $('#staff_id').data('id');
-        var companyId = $('#company_id').data('id');
-        var contractId = $('#contract_id').data('id');
-        $.ajax({
-            type: 'post',
-            url: '{$ajaxCityUrl}',
-            data: {
-                change_city: changeCity
-            },
-            dataType: 'json',
-            success: function (data) {
-                if(data.status==1){
-                    data = data.data;
-                    $('#staff_id').html('');
-                    $('#company_id').html('');
-                    $('#contract_id').html('');
-                    var keyStaff = '';
-                    var keyCompany = '';
-                    var keyContract = '';
-                    $.each(data.companyList,function(key,value){
-                        if(key==staffId){
-                            keyStaff = key;
-                        }
-                        if(key==companyId){
-                            keyCompany = key;
-                        }
-                        var optionOne = $('<option>'+value+'</option>');
-                        var optionTwo = $('<option>'+value+'</option>');
-                        optionOne.attr('value',key);
-                        optionTwo.attr('value',key);
-                        $('#staff_id').prepend(optionOne);
-                        $('#company_id').prepend(optionTwo);
-                    });
-                    $.each(data.contractList,function(key,value){
-                        if(key==contractId){
-                            keyContract = key;
-                        }
-                        var option = $('<option>'+value+'</option>');
-                        option.attr('value',key);
-                        $('#contract_id').prepend(option);
-                    });
-                    $('#staff_id').val(keyStaff);
-                    $('#company_id').val(keyCompany);
-                    $('#contract_id').val(keyContract);
-                }
-            }
-        });
-    });
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
