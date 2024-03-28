@@ -78,6 +78,15 @@ $this->pageTitle=Yii::app()->name . ' - Contract Form';
                 </div>
 			</div>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'local_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->inlineRadioButtonList($model, 'local_type',array(Yii::t("contract","local"),Yii::t("contract","default")),
+                        array('readonly'=>($model->scenario=='view'))
+                    ); ?>
+                </div>
+            </div>
+
 			<div class="form-group">
 				<?php echo $form->labelEx($model,'word_arr',array('class'=>"col-sm-2 control-label")); ?>
 				<div class="col-sm-6">

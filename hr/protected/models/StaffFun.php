@@ -387,7 +387,7 @@ class StaffFun
     public static function getContractListToCity($city,$contract_id){
         $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
-            ->where("city=:city or id=:id", array(':city'=>$city,':id'=>$contract_id))->queryAll();
+            ->where("city=:city or local_type=1 or id=:id", array(':city'=>$city,':id'=>$contract_id))->queryAll();
         if(count($rows)>0){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
@@ -476,6 +476,33 @@ class StaffFun
             return $rows["name"];
         }
         return $code;
+    }
+
+//获取银行简称列表
+    public static function getBankTypeList()
+    {
+        $list = array();
+        $from =  'hr'.Yii::app()->params['envSuffix'].'.hr_bank_set';
+        $rows = Yii::app()->db->createCommand()->select("id,name")
+            ->from($from)->order("z_index desc")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $list[$row["id"]] = $row["name"];
+            }
+        }
+        return $list;
+    }
+
+//获取银行简称名字
+    public static function getBankTypeNameForId($bank_type)
+    {
+        $from =  'hr'.Yii::app()->params['envSuffix'].'.hr_bank_set';
+        $row = Yii::app()->db->createCommand()->select("id,name")
+            ->from($from)->where("id=:id",array(":id"=>$bank_type))->queryRow();
+        if($row){
+            return $row["name"];
+        }
+        return $bank_type;
     }
 
     //获取户籍相似的员工
@@ -584,11 +611,15 @@ class StaffFun
     {
         $from =  'hr'.Yii::app()->params['envSuffix'].'.hr_contract';
         $arr = array();
-        $rows = Yii::app()->db->createCommand()->select("id,name,city")
-            ->from($from)->where("city in ({$city_allow})")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("id,name,city,local_type")
+            ->from($from)->where("city in ({$city_allow}) or local_type=1")->queryAll();
         if($rows){
             foreach ($rows as $row){
-                $arr[$row["city"]][$row["id"]] = $row["name"];
+                if($row["local_type"]==1){
+                    $arr["all"][$row["id"]] = $row["name"];
+                }else{
+                    $arr[$row["city"]][$row["id"]] = $row["name"];
+                }
             }
         }
         return $arr;

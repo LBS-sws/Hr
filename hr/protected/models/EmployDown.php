@@ -60,7 +60,7 @@ class EmployDown extends CFormModel{
             array("width"=>25,"name"=>"公民身份号码","sql"=>"user_card","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"员工类型","sql"=>"table_type","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"城市","sql"=>"city","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
-            array("width"=>12,"name"=>"入职日期","sql"=>"entry_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
+            array("width"=>12,"name"=>"入职日期","dateType"=>true,"sql"=>"entry_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>15,"name"=>"主要工作地点","sql"=>"work_area","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"部门","sql"=>"department","max_len"=>100,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"职位","sql"=>"position","max_len"=>100,"background"=>"#AFECFF","color"=>"#000000"),//
@@ -72,19 +72,19 @@ class EmployDown extends CFormModel{
             array("width"=>20,"name"=>"员工合同归属","sql"=>"company_id","max_len"=>200,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>25,"name"=>"员工合同模版","sql"=>"contract_id","max_len"=>200,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"合同期限","sql"=>"fix_time","max_len"=>100,"background"=>"#AFECFF","color"=>"#000000"),//
-            array("width"=>20,"name"=>"劳动合同起始日期","sql"=>"start_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
-            array("width"=>20,"name"=>"劳动合同终止日期","sql"=>"end_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
+            array("width"=>20,"name"=>"劳动合同起始日期","dateType"=>true,"sql"=>"start_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
+            array("width"=>20,"name"=>"劳动合同终止日期","dateType"=>true,"sql"=>"end_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"合同工资","sql"=>"wage","max_len"=>18,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>15,"name"=>"试用期类型","sql"=>"test_type","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>15,"name"=>"试用期时期","sql"=>"test_length","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
-            array("width"=>20,"name"=>"试用期起始时间","sql"=>"test_start_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
+            array("width"=>20,"name"=>"试用期起始时间","dateType"=>true,"sql"=>"test_start_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>15,"name"=>"试用期工资","sql"=>"test_wage","max_len"=>18,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"年假","sql"=>"year_day","max_len"=>8,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>20,"name"=>"邮箱","sql"=>"email","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>15,"name"=>"微信账号","sql"=>"wechat","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"员工电话","sql"=>"phone","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>20,"name"=>"公民身份证有效期","sql"=>"user_card_date","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
-            array("width"=>12,"name"=>"出生日期","sql"=>"birth_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
+            array("width"=>12,"name"=>"出生日期","dateType"=>true,"sql"=>"birth_time","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"性别","sql"=>"sex","max_len"=>10,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"身体状况","sql"=>"health","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
             array("width"=>12,"name"=>"民族","sql"=>"nation","max_len"=>50,"background"=>"#AFECFF","color"=>"#000000"),//
@@ -211,6 +211,9 @@ class EmployDown extends CFormModel{
     }
 
     private function resetTempForTitle(&$temp,$value,$title,$dataRow){
+        if(isset($title["dateType"])&&$title["dateType"]&&!empty($value)){
+            //转换excel内的日期格式
+        }
         if(isset($title["max_len"])&&mb_strlen($value, 'UTF-8')>=$title["max_len"]){
             $dataRow["error"]=$title["name"]."长度不能大于".$title["max_len"];
             $this->_errorList[]=$dataRow;
@@ -231,7 +234,7 @@ class EmployDown extends CFormModel{
                     $city = $temp["city"];
                     $value = $dateObj->format('Y-m-d');
                     $row = Yii::app()->db->createCommand()->select("id,code")->from("hr_employee")
-                        ->where("city='{$city}' and name='{$username}' and date_format(entry_time,'%Y-%m-%d') = '{$value}'")
+                        ->where("city='{$city}' and staff_status!='-1' and name='{$username}' and date_format(entry_time,'%Y-%m-%d') = '{$value}'")
                         ->queryRow();
                     if($row){
                         $dataRow["error"]=$title["name"]."员工名称重复，重复员工：".$row["code"];
@@ -338,23 +341,24 @@ class EmployDown extends CFormModel{
                     return false;
                 }
                 break;
-            case "contract_id"://员工合同归属
+            case "contract_id"://员工合同模版
                 $city = $temp["city"];
-                if(key_exists($city,$this->_contractList)){
+                $contract_id = false;
+                if($contract_id===false&&key_exists($city,$this->_contractList)){
+                    //查找本城市合同模版
                     $contract_id = array_search($value,$this->_contractList[$city]);
-                    if($contract_id===false){
-                        $dataRow["error"]=$title["name"]."不存在";
-                        $this->_errorList[]=$dataRow;
-                        $this->_errorSum++;
-                        return false;
-                    }else{
-                        $temp[$title["sql"]]=$contract_id;
-                    }
-                }else{
-                    $dataRow["error"]=$title["name"]."该城市没有合同信息，请与管理员联系";
+                }
+                if($contract_id===false&&key_exists("all",$this->_contractList)){
+                    //查找通用合同模版
+                    $contract_id = array_search($value,$this->_contractList["all"]);
+                }
+                if($contract_id===false){
+                    $dataRow["error"]=$title["name"]."不存在";
                     $this->_errorList[]=$dataRow;
                     $this->_errorSum++;
                     return false;
+                }else{
+                    $temp[$title["sql"]]=$contract_id;
                 }
                 break;
             case "fix_time"://员工归属

@@ -458,7 +458,7 @@ return array(
             ),
         ),
     ),
-	'System Setting'=>array(
+	'System Setting'=>array(//系统设置
 		'access'=>'ZC',
 		'icon'=>'fa-gear',
 		'items'=>array(
@@ -534,6 +534,10 @@ return array(
             'Config office'=>array(//办事处配置
                 'access'=>'ZC15',
                 'url'=>'/configOffice/index',
+            ),
+            'Bank Abbr set'=>array(//银行简称设置
+                'access'=>'ZC21',
+                'url'=>'/bankAbbrSet/index',
             ),
             'Config System'=>array(//開發者配置
                 'access'=>'ZC14',

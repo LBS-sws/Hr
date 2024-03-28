@@ -12,6 +12,7 @@ class ContractForm extends CFormModel
 	public $name;
 	public $city;
 	public $retire;
+	public $local_type=0;
 	public $word_arr=array();
 	/**
 	 * Declares customized attribute labels.
@@ -26,6 +27,7 @@ class ContractForm extends CFormModel
 			'city'=>Yii::t('misc','City'),
 			'word_arr'=>Yii::t('contract','Contract Word'),
             'retire'=>Yii::t('contract','judge retire'),
+            'local_type'=>Yii::t('contract','Restrict'),
 		);
 	}
 
@@ -36,7 +38,7 @@ class ContractForm extends CFormModel
 	{
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
-            array('id, name, word_arr, city, retire','safe'),
+            array('id, name, word_arr, city, retire, local_type','safe'),
 			array('name','required'),
 			array('city','required'),
 			array('word_arr','required'),
@@ -152,6 +154,7 @@ class ContractForm extends CFormModel
 				$this->name = $row['name'];
 				$this->city = $row['city'];
 				$this->retire = $row['retire'];
+				$this->local_type = $row['local_type'];
 				$this->word_arr =$this->getWordListToConId($row['id']);
 				break;
 			}
@@ -184,9 +187,9 @@ class ContractForm extends CFormModel
 				break;
 			case 'new':
 				$sql = "insert into hr_contract(
-							name, city, retire, lcu
+							name, city, retire, local_type, lcu
 						) values (
-							:name, :city, :retire, :lcu
+							:name, :city, :retire, :local_type, :lcu
 						)";
 				break;
 			case 'edit':
@@ -194,6 +197,7 @@ class ContractForm extends CFormModel
 							name = :name, 
 							city = :city, 
 							retire = :retire, 
+							local_type = :local_type, 
 							luu = :luu 
 						where id = :id
 						";
@@ -207,6 +211,8 @@ class ContractForm extends CFormModel
 			$command->bindParam(':name',$this->name,PDO::PARAM_STR);
 		if (strpos($sql,':retire')!==false)
 			$command->bindParam(':retire',$this->retire,PDO::PARAM_STR);
+		if (strpos($sql,':local_type')!==false)
+			$command->bindParam(':local_type',$this->local_type,PDO::PARAM_STR);
 
         if (strpos($sql,':city')!==false)
             $command->bindParam(':city',$this->city,PDO::PARAM_STR);

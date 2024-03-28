@@ -14,6 +14,7 @@ class ContractList extends CListPageModel
 			'city'=>Yii::t('contract','City'),
 			'name'=>Yii::t('contract','Contract Name'),
 			'retire'=>Yii::t('contract','judge retire'),
+			'local_type'=>Yii::t('contract','Restrict'),
 		);
 	}
 
@@ -67,6 +68,7 @@ class ContractList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'retire'=>$record['retire']==1?Yii::t("misc","Yes"):Yii::t("misc","No"),
+					'local_type'=>$record['local_type']==1?Yii::t("contract","default"):Yii::t("contract","local"),
 					'city'=>WordForm::getCityNameToCode($record['city']),
 				);
 			}

@@ -8,4 +8,5 @@
     <td><?php echo $this->record['name']; ?></td>
     <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['retire']; ?></td>
+    <td><?php echo $this->record['local_type']; ?></td>
 </tr>

@@ -161,8 +161,11 @@ class EmployForm extends StaffForm
         $message.="<p>员工所在城市：".Yii::app()->user->city_name()."</p>";
         $message.="<p>员工职位：".DeptForm::getDeptToId($this->position)."</p>";
         $message.="<p>员工入职日期：".$this->entry_time."</p>";
+        $message.="<p>员工合同归属：".StaffFun::getCompanyNameToID($this->staff_id)."</p>";
+        $message.="<p>员工归属：".StaffFun::getCompanyNameToID($this->company_id)."</p>";
         $email = new Email($subject,$message,$description);
-        $email->addEmailToPrefix("ZG01");
+        //$email->addEmailToPrefix("ZG01");
+        $email->addEmailToPrefixAndCity("ZG01",$this->city);
         $email->sent();
     }
 

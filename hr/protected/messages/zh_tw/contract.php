@@ -776,5 +776,8 @@ return array(
     'import'=>'導入',
     'file'=>'excel文件',
     'down temp'=>'導入模板',
+
+    'Bank Abbr Name'=>'銀行簡稱',
+    'Bank card'=>'銀行卡號',
     );
 ?>

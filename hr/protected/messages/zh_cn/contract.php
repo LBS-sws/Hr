@@ -783,5 +783,8 @@ return array(
     'import'=>'导入',
     'file'=>'excel文件',
     'down temp'=>'导入模板',
+
+    'Bank Abbr Name'=>'银行简称',
+    'Bank card'=>'银行卡号',
 );
 ?>

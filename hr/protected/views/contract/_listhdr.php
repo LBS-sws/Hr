@@ -15,4 +15,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('local_type').$this->drawOrderArrow('local_type'),'#',$this->createOrderLink('contract-list','local_type'))
+			;
+		?>
+	</th>
 </tr>

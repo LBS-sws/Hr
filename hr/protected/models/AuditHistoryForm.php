@@ -174,6 +174,8 @@ class AuditHistoryForm extends StaffForm
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工所在城市：".CGeneral::getCityName($row["city"])."</p>";
             $message.="<p>员工职位：".DeptForm::getDeptToId($row["position"])."</p>";
+            $message.="<p>员工合同归属：".StaffFun::getCompanyNameToID($row["staff_id"])."</p>";
+            $message.="<p>员工归属：".StaffFun::getCompanyNameToID($row["company_id"])."</p>";
             $message.="<p>操作原因：".Yii::t("contract",$row["operation"])."</p>";
             $message.="<p>审核日期：".date('Y-m-d H:i:s')."</p>";
             if ($this->getScenario() == "reject"){

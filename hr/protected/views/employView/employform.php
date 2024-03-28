@@ -478,6 +478,23 @@ if (!empty($contractNum)){
 
 <legend><?php echo Yii::t("contract","additional information");?></legend>
 <div class="form-group">
+    <?php echo $form->label($model,'bank_type',array('class'=>"col-sm-2 control-label",
+        'required'=>$model->isRequired("bank_type"))); ?>
+    <div class="col-sm-3">
+        <?php echo $form->dropDownList($model, 'bank_type',StaffFun::getBankTypeList(),
+            array('disabled'=>($readonly),'empty'=>'')
+        ); ?>
+    </div>
+    <!--分割-->
+    <?php echo $form->label($model,'bank_number',array('class'=>"col-sm-2 control-label",
+        'required'=>$model->isRequired("bank_number"))); ?>
+    <div class="col-sm-3">
+        <?php echo $form->textField($model, 'bank_number',
+            array('readonly'=>($readonly))
+        ); ?>
+    </div>
+</div>
+<div class="form-group">
     <?php echo $form->label($model,'education',array('class'=>"col-sm-2 control-label",
         'required'=>$model->isRequired("education"))); ?>
     <div class="col-sm-3">

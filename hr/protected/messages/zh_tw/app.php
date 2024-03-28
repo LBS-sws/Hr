@@ -240,6 +240,7 @@ return array(
     'Staff Rpt List'=>'員工花名冊',
     'Staff Entry Rpt List'=>'新員工錄入表',
     'Import Staff'=>'員工導入',
+    'Bank Abbr set'=>'銀行簡稱設置',
 //沈超添加結束
 );
 ?>

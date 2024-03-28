@@ -236,7 +236,7 @@ class HistoryForm extends StaffForm
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,
             "social_code"=>1,"jj_card"=>1,"user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,
-            "leave_time"=>2,"leave_reason"=>1,"work_area"=>1,
+            "leave_time"=>2,"leave_reason"=>1,"work_area"=>1,"bank_type"=>3,"bank_number"=>1,
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;
@@ -334,10 +334,13 @@ class HistoryForm extends StaffForm
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工所在城市：".CGeneral::getCityName($row["city"])."</p>";
             $message.="<p>员工职位：".DeptForm::getDeptToId($row["position"])."</p>";
+            $message.="<p>员工合同归属：".StaffFun::getCompanyNameToID($row["staff_id"])."</p>";
+            $message.="<p>员工归属：".StaffFun::getCompanyNameToID($row["company_id"])."</p>";
             $message.="<p>要求审核日期：".date('Y-m-d H:i:s')."</p>";
             $message.="<p>操作备注：".$row["update_remark"]."</p>";
             $email = new Email($subject,$message,$description);
-            $email->addEmailToPrefix("ZG02");
+            //$email->addEmailToPrefix("ZG02");
+            $email->addEmailToPrefixAndCity("ZG02",$row["city"]);
             $email->sent();
         }
     }

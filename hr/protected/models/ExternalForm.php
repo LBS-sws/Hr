@@ -158,6 +158,7 @@ class ExternalForm extends StaffForm
             "remark","fix_time","code_old","test_length","staff_type",
             "staff_leader","attachment","nation","household","empoyment_code",
             "social_code","user_card_date","emergency_user","emergency_phone",
+            "work_area","bank_type","bank_number",
         );
     }
 
@@ -206,6 +207,9 @@ class ExternalForm extends StaffForm
                 break;
             case "education":
                 $value = StaffFun::getEducationNameForID($value);
+                break;
+            case "bank_type":
+                $value = StaffFun::getBankTypeNameForId($value);
                 break;
         }
         return $value;
@@ -274,6 +278,7 @@ class ExternalForm extends StaffForm
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"attachment"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,
             "social_code"=>1,"user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,
+            "work_area"=>1,"bank_type"=>3,"bank_number"=>1,
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;

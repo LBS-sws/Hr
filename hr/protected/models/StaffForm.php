@@ -81,6 +81,8 @@ class StaffForm extends CFormModel
     public $lud;//
     public $leave_time;//
     public $leave_reason;//
+    public $bank_type;//
+    public $bank_number;//
 
     public $work_area;//主要工作地点
     public $wechat;//微信賬號
@@ -189,6 +191,8 @@ class StaffForm extends CFormModel
             'address_code'=>Yii::t('contract','postcode'),
             'contact_address_code'=>Yii::t('contract','postcode'),
             'work_area'=>Yii::t('contract','work area'),
+            'bank_type'=>Yii::t('contract','Bank Abbr Name'),
+            'bank_number'=>Yii::t('contract','Bank card'),
 		);
 	}
 	/**
@@ -203,7 +207,7 @@ class StaffForm extends CFormModel
              start_time, end_time, test_type, test_start_time, sex, test_end_time, test_wage, word_status, city, entry_time, age, birth_time, health, ject_remark, staff_status,
               education,wechat,recommend_user,urgency_card, experience, english, technology, other, year_day, email, remark, image_user, image_code, image_work, image_other, fix_time, code_old,
                test_length,staff_type,staff_leader,nation, household, empoyment_code, social_code, user_card_date, emergency_user,
-                emergency_phone','safe'),
+                emergency_phone,bank_type,bank_number','safe'),
             array('id','validateID'),
 		);
         //额外规则
@@ -352,7 +356,7 @@ class StaffForm extends CFormModel
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,"jj_card"=>1,
             "social_code"=>1,"user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,
-            "lud"=>1,"lcd"=>1,"lcu"=>1,"luu"=>1,"work_area"=>1,
+            "lud"=>1,"lcd"=>1,"lcu"=>1,"luu"=>1,"work_area"=>1,"bank_type"=>3,"bank_number"=>1,
         );
     }
 
@@ -450,6 +454,7 @@ class StaffForm extends CFormModel
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,
             "user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,"work_area"=>1,
+            "bank_type"=>3,"bank_number"=>1,
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;
