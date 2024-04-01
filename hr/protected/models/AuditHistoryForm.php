@@ -118,6 +118,7 @@ class AuditHistoryForm extends StaffForm
                 ), 'id=:id', array(':id'=>$this->id));
                 break;
         }
+        $thisScenario = $this->getScenario();
         if($this->scenario == "audit"){
             $this->finish();
             $this->resetEmployeeStatusAndIndex();
@@ -126,13 +127,13 @@ class AuditHistoryForm extends StaffForm
         //記錄
         Yii::app()->db->createCommand()->insert('hr_employee_history', array(
             "employee_id"=>$this->employee_id,
-            "status"=>$this->scenario,
+            "status"=>$thisScenario,
             "remark"=>$this->ject_remark,
             "lcu"=>$uid,
             "lcd"=>$lud,
         ));
         //發送郵件
-        $this->sendEmail();
+        $this->sendEmail($thisScenario);
 	}
 
     private function signContract($staffNew,$city_allow=0){
@@ -159,11 +160,11 @@ class AuditHistoryForm extends StaffForm
     }
 
 
-    protected function sendEmail(){
+    protected function sendEmail($thisScenario){
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_employee_operate")
             ->where("id=:id",array(":id"=>$this->id))->queryRow();
         if($row){
-            if ($this->getScenario() == "audit"){
+            if ($thisScenario == "audit"){
                 $description="员工变更审核 - ".$row["name"]."（通过）";
                 $subject="员工变更审核 - ".$row["name"]."（通过）";
             }else{
@@ -178,7 +179,7 @@ class AuditHistoryForm extends StaffForm
             $message.="<p>员工归属：".StaffFun::getCompanyNameToID($row["company_id"])."</p>";
             $message.="<p>操作原因：".Yii::t("contract",$row["operation"])."</p>";
             $message.="<p>审核日期：".date('Y-m-d H:i:s')."</p>";
-            if ($this->getScenario() == "reject"){
+            if ($thisScenario == "reject"){
                 $message.="<p>拒绝原因：".$this->ject_remark."</p>";
             }
             $email = new Email($subject,$message,$description);
