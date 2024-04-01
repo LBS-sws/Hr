@@ -4,6 +4,11 @@ if (empty($model->id)&&$model->scenario != "new"){
 }
 $this->pageTitle=Yii::app()->name . ' - Dept Form';
 ?>
+<style>
+    input[readonly]{pointer-events: none;}
+    select[readonly]{pointer-events: none;}
+    .select2-container .select2-selection--single{ height: 34px;}
+</style>
 
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'dept-form',
@@ -235,7 +240,23 @@ $this->pageTitle=Yii::app()->name . ' - Dept Form';
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = ($model->scenario!='view') ? 'false' : 'true';
 $js="
+$('#DeptForm_dept_id').select2({
+    multiple: false,
+    maximumInputLength: 10,
+    language: '$lang',
+    disabled: $disabled
+});
+function formatState(state) {
+	var rtn = $('<span style=\"color:black\">'+state.text+'</span>');
+	return rtn;
+}
 ";
 Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 $js = Script::genDeleteData(Yii::app()->createUrl('dept/delete',array("type"=>$model->type)));
