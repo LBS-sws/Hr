@@ -353,10 +353,13 @@ class EmployDown extends CFormModel{
                     $contract_id = array_search($value,$this->_contractList["all"]);
                 }
                 if($contract_id===false){
+                    $temp[$title["sql"]]=null;
+                    /*2024-04-02不需要验证
                     $dataRow["error"]=$title["name"]."不存在";
                     $this->_errorList[]=$dataRow;
                     $this->_errorSum++;
                     return false;
+                    */
                 }else{
                     $temp[$title["sql"]]=$contract_id;
                 }
@@ -380,10 +383,13 @@ class EmployDown extends CFormModel{
                 if($temp["fix_time"]=="fixation"){
                     $dateObj = DateTime::createFromFormat('Y-m-d',$value);
                     if (empty($value)||$dateObj===false){
+                        $temp[$title["sql"]]=null;
+                    /*2024-04-02不需要验证
                         $dataRow["error"]=$title["name"]."时间格式异常";
                         $this->_errorList[]=$dataRow;
                         $this->_errorSum++;
                         return false;
+                    */
                     }else{
                         $temp[$title["sql"]]=$dateObj->format('Y-m-d');
                     }
