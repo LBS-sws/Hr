@@ -12,6 +12,11 @@ $this->pageTitle=Yii::app()->name . ' - Binding Form';
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL,
     'htmlOptions'=>array('enctype' => 'multipart/form-data')
 )); ?>
+<style>
+    input[readonly]{pointer-events: none;}
+    select[readonly]{pointer-events: none;}
+    .select2-container .select2-selection--single{ height: 34px;}
+</style>
 
 <section class="content-header">
 	<h1>
@@ -86,6 +91,26 @@ $this->pageTitle=Yii::app()->name . ' - Binding Form';
 $this->renderPartial('//site/removedialog');
 ?>
 <?php
+
+switch(Yii::app()->language) {
+    case 'zh_cn': $lang = 'zh-CN'; break;
+    case 'zh_tw': $lang = 'zh-TW'; break;
+    default: $lang = Yii::app()->language;
+}
+$disabled = ($model->scenario!='view') ? 'false' : 'true';
+$js="
+$('#BindingForm_employee_id,#BindingForm_user_id').select2({
+    multiple: false,
+    maximumInputLength: 10,
+    language: '$lang',
+    disabled: $disabled
+});
+function formatState(state) {
+	var rtn = $('<span style=\"color:black\">'+state.text+'</span>');
+	return rtn;
+}
+";
+Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_READY);
 
 $js = Script::genDeleteData(Yii::app()->createUrl('binding/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
