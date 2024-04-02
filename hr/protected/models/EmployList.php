@@ -94,6 +94,7 @@ class EmployList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
+                    'city'=>CGeneral::getCityName($record["city"]),
 					'employdoc'=>$record['employdoc'],
 					'office_name'=>$record['office_name'],
 					'code'=>$record['code'],

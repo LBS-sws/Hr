@@ -7,6 +7,7 @@
 
     <td><?php echo $this->record['code']; ?></td>
     <td><?php echo $this->record['name']; ?></td>
+    <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['office_name']; ?></td>
     <td><?php echo $this->record['phone']; ?></td>
     <td><?php echo $this->record['department']; ?></td>

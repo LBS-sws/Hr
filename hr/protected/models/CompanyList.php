@@ -16,7 +16,7 @@ class CompanyList extends CListPageModel
 			'head'=>Yii::t('contract','Head'),
 			'agent'=>Yii::t('contract','Agent'),
 			'tacitly'=>Yii::t('contract','Status'),
-            'city'=>Yii::t('contract','City'),
+            'city_name'=>Yii::t('contract','City'),
 		);
 	}
 
@@ -46,12 +46,12 @@ class CompanyList extends CListPageModel
 				case 'head':
 					$clause .= General::getSqlConditionClause('head',$svalue);
 					break;
-				case 'city':
-					$clause .= General::getSqlConditionClause('city',$svalue);
-					break;
 				case 'agent':
 					$clause .= General::getSqlConditionClause('agent',$svalue);
 					break;
+				case 'city_name':
+                    $clause .= ' and city in '.WordForm::getCityCodeSqlLikeName($svalue);
+                    break;
 			}
 		}
 		
