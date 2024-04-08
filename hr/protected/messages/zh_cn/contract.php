@@ -786,5 +786,9 @@ return array(
 
     'Bank Abbr Name'=>'银行简称',
     'Bank card'=>'银行卡号',
+    'contracting'=>'业务承揽',
+    'external part one'=>'兼职：实习生，劳务工，临时工',
+    'external part two'=>'外聘：形式外包',
+    'external part three'=>'业务承揽：业务外包',
 );
 ?>

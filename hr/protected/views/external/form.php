@@ -113,6 +113,13 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
                         array('readonly'=>($model->scenario=='view'))
                     ); ?>
                 </div>
+                <div class="col-sm-7">
+                    <ul class="list-unstyled text-danger">
+                        <li><?php echo Yii::t("contract","external part one");?></li>
+                        <li><?php echo Yii::t("contract","external part two");?></li>
+                        <li><?php echo Yii::t("contract","external part three");?></li>
+                    </ul>
+                </div>
             </div>
             <?php
             $this->renderPartial('//employView/employform',array(

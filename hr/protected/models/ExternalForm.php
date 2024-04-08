@@ -52,20 +52,23 @@ class ExternalForm extends StaffForm
     }
 
     public function validateID($attribute, $params){
-        $city = Yii::app()->user->city();
+        $city = $this->city;
         $allow_city = Yii::app()->user->city_allow();
+        if (strpos($allow_city,"'{$city}'")!==false){
+            $this->city = $city;
+        }else{
+            $this->city = Yii::app()->user->city();
+        }
         if($this->getScenario()!='new'){
             $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
                 ->where("id=:id and city in ({$allow_city}) and table_type!=1 AND staff_status = 1", array(
                     ':id'=>$this->id
                 ))->queryRow();
             if($row){
-                $this->city = $row["city"];
+                $this->id = $row["id"];
             }else{
                 $this->addError($attribute,"员工不存在，请刷新重试");
             }
-        }else{
-            $this->city = $city;
         }
     }
 
@@ -265,7 +268,7 @@ class ExternalForm extends StaffForm
         $city = Yii::app()->user->city();
         $list=array();
         $arr = array(
-            "group_type"=>3,"office_id"=>3,"table_type"=>3,"staff_status"=>3,"name"=>1,
+            "group_type"=>3,"office_id"=>3,"table_type"=>3,"staff_status"=>3,"name"=>1,"city"=>1,
             "staff_id"=>1,"company_id"=>1,"contract_id"=>1,"address"=>1,"address_code"=>1,
             "contact_address"=>1,"contact_address_code"=>1,"phone"=>1,"phone2"=>1,"user_card"=>1,
             "department"=>1,"position"=>1,"wage"=>1,
@@ -301,7 +304,6 @@ class ExternalForm extends StaffForm
                 $connection->createCommand()->update("hr_employee", array("staff_status"=>-1), "id=:id", array(":id" => $this->id));
                 break;
             case 'new':
-                $list["city"] = $city;
                 $list["lcu"] = $uid;
                 $connection->createCommand()->insert("hr_employee", $list);
                 break;

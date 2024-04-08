@@ -779,5 +779,9 @@ return array(
 
     'Bank Abbr Name'=>'銀行簡稱',
     'Bank card'=>'銀行卡號',
+    'contracting'=>'業務承攬',
+    'external part one'=>'兼職：實習生，勞務工，臨時工',
+    'external part two'=>'外聘：形式外包',
+    'external part three'=>'業務承攬：業務外包',
     );
 ?>

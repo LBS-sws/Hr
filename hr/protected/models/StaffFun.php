@@ -14,6 +14,7 @@ class StaffFun
             ""=>Yii::t("misc","All"),//全部
             2=>Yii::t("contract","part-time"),//兼职
             3=>Yii::t("contract","external-time"),//外聘
+            4=>Yii::t("contract","contracting"),//业务承揽
         );
         return $list;
     }
@@ -24,6 +25,7 @@ class StaffFun
             1=>Yii::t("contract","full-time"),//专职
             2=>Yii::t("contract","part-time"),//兼职
             3=>Yii::t("contract","external-time"),//外聘
+            4=>Yii::t("contract","contracting"),//业务承揽
         );
         if($bool){
             unset($list[1]);
