@@ -326,14 +326,7 @@ class ExternalForm extends StaffForm
 
     protected function lenStr(){
         $codeStr = "E";
-        $codeLength = strlen($codeStr)+1;
-        $numberSql = "SUBSTRING(code,{$codeLength})";
-        $maxCode = Yii::app()->db->createCommand()
-            ->select("max(CONVERT({$numberSql}, UNSIGNED))")
-            ->from("hr_employee")->where("table_type in (2,3)")->queryScalar();
-        $maxCode = empty($maxCode)||!is_numeric($maxCode)?0:$maxCode;
-        $maxCode++;
-        $code = strval($maxCode);
+        $code = strval($this->id);
         $this->code = $codeStr;
         for($i = 0;$i < 5-strlen($code);$i++){
             $this->code.="0";

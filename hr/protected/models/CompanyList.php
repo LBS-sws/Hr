@@ -27,7 +27,7 @@ class CompanyList extends CListPageModel
         $city_allow = Yii::app()->user->city_allow();
         $whereSql = " city in ($city_allow) ";
         if(Yii::app()->user->validFunction('ZR25')){//允許查看所有公司列表
-            $whereSql = " city in ($city_allow) or (city='SH' and tacitly=1)";//修改为只能查看上海
+            $whereSql = " (city in ($city_allow) or (city='SH' and tacitly=1))";//修改为只能查看上海
         }
 		$sql1 = "select * from hr_company 
                 where {$whereSql} 

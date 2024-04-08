@@ -108,7 +108,7 @@ class WordForm extends CFormModel
 	public static function getCityCodeSqlLikeName($code)
 	{
         $from =  'security'.Yii::app()->params['envSuffix'].'.sec_city';
-        $rows = Yii::app()->db->createCommand()->select("code")->from($from)->where(array('like', 'name', "%$code%"))->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("code")->from($from)->where("name like '%{$code}%'")->queryAll();
         $arr = array();
         foreach ($rows as $row){
             array_push($arr,"'".$row["code"]."'");
