@@ -790,5 +790,8 @@ return array(
     'external part one'=>'兼职：实习生，劳务工，临时工',
     'external part two'=>'外聘：形式外包',
     'external part three'=>'业务承揽：业务外包',
+    'audit on'=>'是否审核',
+    'Look'=>'查看',
+    'look employee'=>'额外查看员工',
 );
 ?>

@@ -783,5 +783,8 @@ return array(
     'external part one'=>'兼職：實習生，勞務工，臨時工',
     'external part two'=>'外聘：形式外包',
     'external part three'=>'業務承攬：業務外包',
+    'audit on'=>'是否審核',
+    'Look'=>'查看',
+    'look employee'=>'額外查看員工',
     );
 ?>

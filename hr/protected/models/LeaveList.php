@@ -58,6 +58,7 @@ class LeaveList extends CListPageModel
             $auditSql.= empty($auditSql)?"":" or ";
             $auditSql.= "a.{$item}='$uid'";
         }
+        $auditSql.=LookSetForm::getLookSqlForStr("a.employee_id");
         $manager = AuditConfigForm::getManager($employee_id);
         //,docman$suffix.countdoc('LEAVE',a.id) as leavedoc
         $masSql = Yii::app()->db->createCommand()->select("ew.id,max(df.lud) as file_lud")

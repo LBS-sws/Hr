@@ -86,6 +86,7 @@ class WorkList extends CListPageModel
             $auditSql.= empty($auditSql)?"":" or ";
             $auditSql.= "a.{$item}='$uid'";
         }
+        $auditSql.=LookSetForm::getLookSqlForStr("a.employee_id");
         $manager = AuditConfigForm::getManager($employee_id);
         $masSql = Yii::app()->db->createCommand()->select("ew.id,max(df.lud) as file_lud")
             ->from("docman$suffix.dm_master dm")

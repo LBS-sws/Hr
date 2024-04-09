@@ -242,6 +242,7 @@ return array(
     'Staff Entry Rpt List'=>'新员工录入表',
     'Import Staff'=>'员工导入',
     'Bank Abbr set'=>'银行简称设置',
+    'look manage set'=>'额外查看设置',
     //沈超添加结束
 );
 ?>

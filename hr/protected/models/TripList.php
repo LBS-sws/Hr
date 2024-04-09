@@ -47,6 +47,7 @@ class TripList extends CListPageModel
             $auditSql.= empty($auditSql)?"":" or ";
             $auditSql.= "a.{$item}='$lcuId'";
         }
+        $auditSql.=LookSetForm::getLookSqlForStr("a.employee_id");
         $whereSql="";
         if(Yii::app()->user->validFunction('ZR24')){//所有出差記錄
             $whereSql.=" and ((b.id={$employee_id}) or {$auditSql} or (b.city in ({$city_allow}) and a.status!=0))";

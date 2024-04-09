@@ -531,6 +531,10 @@ return array(
                 'access'=>'ZC19',
                 'url'=>'/appointTripSet/index',
             ),
+            'look manage set'=>array(//查看管理配置
+                'access'=>'ZC22',
+                'url'=>'/lookSet/index',
+            ),
             'Config office'=>array(//办事处配置
                 'access'=>'ZC15',
                 'url'=>'/configOffice/index',
