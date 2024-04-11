@@ -156,9 +156,10 @@ class EmployForm extends StaffForm
 	protected function sendEmail(){
         $description="员工录入 - ".$this->name;
         $subject="员工录入 - ".$this->name;
-        $message="<p>员工编号：".$this->code."</p>";
+        $message="<p>员工类型：".StaffFun::getTableTypeNameForID($this->table_type)."</p>";
+        $message.="<p>员工编号：".$this->code."</p>";
         $message.="<p>员工姓名：".$this->name."</p>";
-        $message.="<p>员工所在城市：".Yii::app()->user->city_name()."</p>";
+        $message.="<p>员工所在城市：".CGeneral::getCityName($this->city)."</p>";
         $message.="<p>员工职位：".DeptForm::getDeptToId($this->position)."</p>";
         $message.="<p>员工入职日期：".$this->entry_time."</p>";
         $message.="<p>员工合同归属：".StaffFun::getCompanyNameToID($this->staff_id)."</p>";

@@ -1,8 +1,8 @@
 <?php
 if (empty($model->id)&&$model->scenario == "edit"){
-    $this->redirect(Yii::app()->createUrl('external/index'));
+    $this->redirect(Yii::app()->createUrl('extUpdate/index'));
 }
-$this->pageTitle=Yii::app()->name . ' - External Form';
+$this->pageTitle=Yii::app()->name . ' - ExtUpdate Form';
 ?>
 
 <style>
@@ -10,7 +10,7 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
     select[readonly]{pointer-events: none;}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
-'id'=>'external-form',
+'id'=>'extUpdate-form',
 'enableClientValidation'=>true,
 'clientOptions'=>array('validateOnSubmit'=>true),
 'layout'=>TbHtml::FORM_LAYOUT_HORIZONTAL
@@ -18,7 +18,7 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
 
 <section class="content-header">
 	<h1>
-		<strong><?php echo Yii::t('contract','External Form'); ?></strong>
+		<strong><?php echo Yii::t('app','External Update'); ?></strong>
 	</h1>
 <!--
 	<ol class="breadcrumb">
@@ -33,14 +33,14 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
 	<div class="box"><div class="box-body">
 	<div class="btn-group" role="group">
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
-				'submit'=>Yii::app()->createUrl('external/index')));
+				'submit'=>Yii::app()->createUrl('extUpdate/index')));
 		?>
         <?php
             if(!$model->readonly()){
                 echo TbHtml::button('<span class="fa fa-save"></span> '.Yii::t('misc','Save'), array(
-                    'submit'=>Yii::app()->createUrl('external/save')));
+                    'submit'=>Yii::app()->createUrl('extUpdate/save')));
                 echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('contract','Audit'), array(
-                    'submit'=>Yii::app()->createUrl('external/audit')));
+                    'submit'=>Yii::app()->createUrl('extUpdate/audit')));
             }
             if($model->scenario=='edit'&&$model->staff_status==9){
                 echo TbHtml::button('<span class="fa fa-remove"></span> ' . Yii::t('misc', 'Delete'), array(
@@ -49,20 +49,18 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
             }
             if($model->scenario=='edit'&&$model->staff_status==1){
                 echo TbHtml::button('<span class="fa fa-pencil"></span> ' . Yii::t('contract', 'Update'), array(
-                    'submit'=>Yii::app()->createUrl('extUpdate/update',array("index"=>$model->id))));
+                    'submit'=>Yii::app()->createUrl('extUpdate/update')));
                 echo TbHtml::button('<span class="fa fa-user-times"></span> ' . Yii::t('contract', 'Staff Departure'), array(
-                    'submit'=>Yii::app()->createUrl('extUpdate/departure',array("index"=>$model->id))));
+                    'submit'=>Yii::app()->createUrl('extUpdate/departure')));
             }
         ?>
 	</div>
 
 	<div class="btn-group pull-right" role="group">
-        <?php if ($model->scenario!='new'): ?>
         <?php echo TbHtml::button('<span class="fa fa-list"></span> '.Yii::t('contract','Flow Info'), array(
                 'data-toggle'=>'modal','data-target'=>'#flowinfodialog',)
         );
         ?>
-        <?php endif ?>
     <?php
         $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
         echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
@@ -83,6 +81,8 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
 			<?php echo $form->hiddenField($model, 'id'); ?>
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'staff_status'); ?>
+			<?php echo $form->hiddenField($model, 'operation'); ?>
+			<?php echo $form->hiddenField($model, 'employee_id'); ?>
 
             <?php if ($model->staff_status == 3): ?>
                 <div class="form-group has-error">
@@ -93,9 +93,40 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
                         ); ?>
                     </div>
                 </div>
+                <legend></legend>
             <?php endif; ?>
-            <?php if ($model->staff_status == 4): ?>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'update_remark',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-7">
+                    <?php echo $form->textArea($model, 'update_remark',
+                        array('rows'=>3,'readonly'=>($model->readonly()))
+                    ); ?>
+                </div>
+            </div>
+            <?php if ($model->operation=='departure'): ?>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'leave_time',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-3">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-calendar"></i>
+                            </div>
+                            <?php echo $form->textField($model, 'leave_time',
+                                array('class'=>'form-control pull-right','readonly'=>($model->readonly()),));
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <?php echo $form->labelEx($model,'leave_reason',array('class'=>"col-sm-2 control-label")); ?>
+                    <div class="col-sm-7">
+                        <?php echo $form->textArea($model, 'leave_reason',
+                            array('rows'=>3,'readonly'=>($model->readonly()))
+                        ); ?>
+                    </div>
+                </div>
             <?php endif; ?>
+            <legend></legend>
 
             <div class="form-group">
                 <?php echo $form->labelEx($model,'table_type',array('class'=>"col-sm-2 control-label")); ?>
@@ -149,9 +180,18 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
 		</div>
 	</div>
 </section>
-<?php $this->renderPartial('//external/historylist',array("model"=>$model)); ?>
+<?php
+$this->renderPartial('//site/removedialog');
+?>
 
-<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
+<?php
+$id = $model->id;
+$model->id = $model->employee_id;
+?>
+<?php
+$this->renderPartial('//external/historylist',array("model"=>$model));
+
+$this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,
     'doctype'=>'EMPLOY',
     'header'=>Yii::t('misc','Attachment'),
@@ -159,16 +199,15 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
 ));
 ?>
 <?php
-$this->renderPartial('//site/removedialog');
-?>
-<?php
 /*if ($model->scenario!='new')
     $this->renderPartial('//site/flowword',array('model'=>$model));*/
 Script::genFileUpload($model,$form->id,'EMPLOY');
 
+$model->id = $id;
+
 $js = "
 var staffStatus = '".$model->staff_status."';
-$('#ExternalForm_test_type').on('change',function(){
+$('#ExtUpdateForm_test_type').on('change',function(){
     if($(this).val() == 1){
         $(this).parents('.form-group').next('div.test-div').slideDown(100);
     }else{
@@ -196,13 +235,13 @@ $('#ExternalForm_test_type').on('change',function(){
         });
     }).trigger('change');
     
-    $('#ExternalForm_staff_id').on('change',function(){
-        if($('#ExternalForm_company_id').val() == ''){
-            $('#ExternalForm_company_id').val($(this).val());
+    $('#ExtUpdateForm_staff_id').on('change',function(){
+        if($('#ExtUpdateForm_company_id').val() == ''){
+            $('#ExtUpdateForm_company_id').val($(this).val());
         }
     });
     $('.changeButton').on('change',function(){
-        $('#ExternalForm_staff_type').val($(this).find('option:selected').data('dept'));
+        $('#ExtUpdateForm_staff_type').val($(this).find('option:selected').data('dept'));
     });
     //合同期限變化
     $('.fixTime').on('change',function(){
@@ -218,16 +257,17 @@ Yii::app()->clientScript->registerScript('calcFunction',$js,CClientScript::POS_R
 if ($model->scenario!='view') {
     $js = Script::genDatePicker(array(
         'birth_time',
-        'ExternalForm_entry_time',
+        'ExtUpdateForm_leave_time',
+        'ExtUpdateForm_entry_time',
         'start_time',
         'end_time',
         'test_start_time',
-        'ExternalForm_user_card_date',
+        'ExtUpdateForm_user_card_date',
     ));
     Yii::app()->clientScript->registerScript('datePick',$js,CClientScript::POS_READY);
 }
 
-$js = Script::genDeleteData(Yii::app()->createUrl('external/delete'));
+$js = Script::genDeleteData(Yii::app()->createUrl('extUpdate/delete'));
 Yii::app()->clientScript->registerScript('deleteRecord',$js,CClientScript::POS_READY);
 
 $js = Script::genReadonlyField();

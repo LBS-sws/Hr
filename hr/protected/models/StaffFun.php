@@ -15,6 +15,7 @@ class StaffFun
             2=>Yii::t("contract","part-time"),//兼职
             3=>Yii::t("contract","external-time"),//外聘
             4=>Yii::t("contract","contracting"),//业务承揽
+            5=>Yii::t("contract","outsourcer"),//外包商
         );
         return $list;
     }
@@ -26,6 +27,7 @@ class StaffFun
             2=>Yii::t("contract","part-time"),//兼职
             3=>Yii::t("contract","external-time"),//外聘
             4=>Yii::t("contract","contracting"),//业务承揽
+            5=>Yii::t("contract","outsourcer"),//外包商
         );
         if($bool){
             unset($list[1]);
@@ -438,7 +440,7 @@ class StaffFun
             ->where("table_id=:table_id and table_name=:table_name",array(
                 ":table_id"=>$id,
                 ":table_name"=>$table_name
-            ))->order("lcd desc")->queryAll();
+            ))->order("lcd desc,id desc")->queryAll();
         return $rows;
     }
     //獲取員工歷史

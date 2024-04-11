@@ -6,7 +6,7 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 ?>
 
 <style>
-    input[readonly="readonly"]{pointer-events: none;}
+    select[readonly="readonly"]{pointer-events: none;}
 </style>
 <?php $form=$this->beginWidget('TbActiveForm', array(
 'id'=>'audit-form',
@@ -50,6 +50,11 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 
 <?php if ($model->scenario!='new'): ?>
 	<div class="btn-group pull-right" role="group">
+        <?php if ($model->scenario!='new'){
+            //流程
+            echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
+                'data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
+        } ?>
         <?php if ($model->staff_status == 4): ?>
             <?php echo TbHtml::button('<span class="fa fa-file-word-o"></span> '.Yii::t('contract','Staff Contract'),array(
                 'id'=>"down_btn_word"
@@ -77,10 +82,19 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 			<?php echo $form->hiddenField($model, 'city'); ?>
 			<?php echo $form->hiddenField($model, 'staff_status'); ?>
 
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'table_type',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-2">
+                    <?php
+                    echo $form->dropDownList($model, 'table_type',StaffFun::getTableTypeList(false),
+                        array('readonly'=>(true))
+                    ); ?>
+                </div>
+            </div>
+
             <?php
             $this->renderPartial('//employView/employform',array('model'=>$model,
                 'form'=>$form,
-                'model'=>$model,
                 'readonly'=>($model->scenario=='view'||($model->staff_status != 1)),
             ));
             ?>
@@ -108,6 +122,11 @@ $this->pageTitle=Yii::app()->name . ' - Audit Form';
 
 <?php
 $this->renderPartial('//site/removedialog');
+if($model->table_type==1){
+    $this->renderPartial('//employView/historylist',array('model'=>$model));
+}else{
+    $this->renderPartial('//external/historylist',array('model'=>$model));
+}
 ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,

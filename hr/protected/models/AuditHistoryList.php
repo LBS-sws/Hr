@@ -23,6 +23,7 @@ class AuditHistoryList extends CListPageModel
             'entry_time'=>Yii::t('contract','Entry Time'),
             'city'=>Yii::t('contract','City'),
             'city_name'=>Yii::t('contract','City'),
+            'table_type'=>Yii::t('contract','Employee Type'),
         );
     }
 
@@ -99,6 +100,7 @@ class AuditHistoryList extends CListPageModel
                     'staff_status'=>$arr["status"],
                     'style'=>$arr["style"],
                     'entry_time'=>$record["entry_time"],
+                    'table_type'=>StaffFun::getTableTypeNameForID($record["table_type"]),
                 );
             }
         }

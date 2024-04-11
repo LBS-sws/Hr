@@ -11,7 +11,7 @@ $this->pageTitle=Yii::app()->name . ' - External';
 
 <section class="content-header">
     <h1>
-        <strong><?php Yii::t('app','External Info'); ?></strong>
+        <strong><?php echo Yii::t('app','External Info'); ?></strong>
     </h1>
     <!--
         <ol class="breadcrumb">

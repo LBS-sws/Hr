@@ -48,11 +48,15 @@ class AuditHistoryForm extends StaffForm
 
     public function validateID($attribute, $params){
         $allow_city = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("id,employee_id")->from("hr_employee_operate")
+        $row = Yii::app()->db->createCommand()->select("id,employee_id,table_type,city")->from("hr_employee_operate")
             ->where("id=:id and finish != 1", array(':id'=>$this->id))
             ->queryRow();
         if($row){
             $this->employee_id = $row["employee_id"];
+            $this->table_type = $row["table_type"];
+            if($this->table_type!=1){
+                $this->change_city = $row["city"];
+            }
         }else{
             $this->addError($attribute,"更改记录不存在，请刷新重试");
         }
@@ -66,10 +70,11 @@ class AuditHistoryForm extends StaffForm
     public function retrieveData($index){
         $suffix = Yii::app()->params['envSuffix'];
         $allow_city = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOYEE',id) as employeedoc")->from("hr_employee_operate")
+        $row = Yii::app()->db->createCommand()->select("*,docman$suffix.countdoc('EMPLOYEE',id) as employeedoc,docman$suffix.countdoc('EMPLOY',employee_id) as employdoc")->from("hr_employee_operate")
             ->where('id=:id and finish != 1', array(':id'=>$index))->queryRow();
         if ($row){
             $this->no_of_attm['employee'] = $row['employeedoc'];
+            $this->no_of_attm['employ'] = $row['employdoc'];
             $arr = $this->getMyAttrEx();
             foreach ($arr as $key => $type){
                 switch ($type){
@@ -100,8 +105,10 @@ class AuditHistoryForm extends StaffForm
         $uid = Yii::app()->user->id;
         $lud = date("Y-m-d H:i:s");
         $city = Yii::app()->user->city();
+        $update_html="";
         switch ($this->scenario){
             case "audit"://通過
+                $update_html = "<span class='text-success'>审核通过</span>";
                 Yii::app()->db->createCommand()->update('hr_employee_operate', array(
                     'staff_status'=>4,
                     'city'=>$this->change_city,
@@ -110,6 +117,8 @@ class AuditHistoryForm extends StaffForm
                 ), 'id=:id', array(':id'=>$this->id));
                 break;
             case "reject"://拒絕
+                $update_html = "<span class='text-danger'>审核被拒绝</span><br/>";
+                $update_html.= "<span>{$this->ject_remark}</span>";
                 Yii::app()->db->createCommand()->update('hr_employee_operate', array(
                     'staff_status'=>3,
                     'ject_remark'=>$this->ject_remark,
@@ -124,14 +133,24 @@ class AuditHistoryForm extends StaffForm
             $this->resetEmployeeStatusAndIndex();
         }
 
-        //記錄
-        Yii::app()->db->createCommand()->insert('hr_employee_history', array(
-            "employee_id"=>$this->employee_id,
-            "status"=>$thisScenario,
-            "remark"=>$this->ject_remark,
-            "lcu"=>$uid,
-            "lcd"=>$lud,
-        ));
+        if($this->table_type==1){
+            //記錄
+            Yii::app()->db->createCommand()->insert('hr_employee_history', array(
+                "employee_id"=>$this->employee_id,
+                "status"=>$thisScenario,
+                "remark"=>$this->ject_remark,
+                "lcu"=>$uid,
+                "lcd"=>$lud,
+            ));
+        }else{
+            Yii::app()->db->createCommand()->insert("hr_table_history", array(
+                "table_name"=>"hr_employee",
+                "table_id"=>$this->employee_id,
+                "lcu"=>$uid,
+                "update_type"=>1,
+                "update_html"=>$update_html,
+            ));
+        }
         //發送郵件
         $this->sendEmail($thisScenario);
 	}
@@ -171,7 +190,8 @@ class AuditHistoryForm extends StaffForm
                 $description="员工变更审核 - ".$row["name"]."（拒绝）";
                 $subject="员工变更审核 - ".$row["name"]."（拒绝）";
             }
-            $message="<p>员工编号：".$row["code"]."</p>";
+            $message="<p>员工类型：".StaffFun::getTableTypeNameForID($row["table_type"])."</p>";
+            $message.="<p>员工编号：".$row["code"]."</p>";
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工所在城市：".CGeneral::getCityName($row["city"])."</p>";
             $message.="<p>员工职位：".DeptForm::getDeptToId($row["position"])."</p>";
@@ -242,22 +262,22 @@ class AuditHistoryForm extends StaffForm
             $staffNew["staff_status"] = -1;//離職
             $this->setScenario($operation);
         }else{
-            $staffNew["staff_status"] = 0;
+            $staffNew["staff_status"] = $this->table_type==1?0:1;//兼职的状态为1
         }
         $staff["finish"] = 1;
         Yii::app()->db->createCommand()->update('hr_employee', $staffNew, 'id=:id', array(':id'=>$this->employee_id));
         Yii::app()->db->createCommand()->update('hr_employee_operate', $staff, 'id=:id', array(':id'=>$this->id));
 
-        //修改流程的記錄的時間
-        Yii::app()->db->createCommand()->update('hr_employee_history', array('lud'=>$date), 'history_id=:id',array(":id"=>$this->id));
-        //交換員工附件
-        $this->replaceAttachment();
-
-        //判斷是否需要生成簽署合同
-        $this->signContract($staffNew,implode(",",$city_allow));
-
-        //員工姓名變更後需要修改其它數據表
-        $this->resetOtherTable($staff,$staffNew);
+        if($this->table_type==1){
+            //修改流程的記錄的時間
+            Yii::app()->db->createCommand()->update('hr_employee_history', array('lud'=>$date), 'history_id=:id',array(":id"=>$this->id));
+            //交換員工附件
+            $this->replaceAttachment();
+            //判斷是否需要生成簽署合同
+            $this->signContract($staffNew,implode(",",$city_allow));
+            //員工姓名變更後需要修改其它數據表
+            $this->resetOtherTable($staff,$staffNew);
+        }
 
         //員工離職後需要隨機修改登錄賬號的密碼
         $this->updateUserPassword($staffNew);

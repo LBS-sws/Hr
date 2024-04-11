@@ -21,10 +21,11 @@ class AuditForm extends StaffForm
 
     public function validateID($attribute, $params){
         $city_allow = Yii::app()->user->city_allow();
-        $row = Yii::app()->db->createCommand()->select("city")->from("hr_employee")
+        $row = Yii::app()->db->createCommand()->select("city,table_type")->from("hr_employee")
             ->where("id=:id and city in ($city_allow) and staff_status=2",array(':id'=>$this->id))->queryRow();
         if($row){
             $this->city = $row["city"];
+            $this->table_type = $row["table_type"];
         }else{
             $message = "审核单不存在或已审核，请刷新重试";
             $this->addError($attribute,$message);
@@ -68,8 +69,11 @@ class AuditForm extends StaffForm
         $city = Yii::app()->user->city();
         $allow_city = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
+        $update_html="";
         switch ($this->scenario) {
             case 'reject':
+                $update_html = "<span class='text-danger'>审核被拒绝</span><br/>";
+                $update_html.= "<span>{$this->ject_remark}</span>";
                 $connection->createCommand()->update("hr_employee", array(
                     "staff_status"=>3,
                     "ject_remark"=>$this->ject_remark,
@@ -77,8 +81,9 @@ class AuditForm extends StaffForm
                 ), "id=:id and city in ({$allow_city})", array(":id" => $this->id));
                 break;
             case 'audit':
+                $update_html = "<span class='text-success'>审核通过</span>";
                 $connection->createCommand()->update("hr_employee", array(
-                    "staff_status"=>4,
+                    "staff_status"=>$this->table_type==1?4:1,
                     "lcd"=>date('Y-m-d H:i:s'),
                     "luu"=>$uid,
                 ), "id=:id and city in ({$allow_city})", array(":id" => $this->id));
@@ -86,17 +91,26 @@ class AuditForm extends StaffForm
         }
 
         //記錄
-        Yii::app()->db->createCommand()->insert('hr_employee_history', array(
-            "employee_id"=>$this->id,
-            "status"=>$this->scenario,
-            "lcu"=>$uid,
-            "lcd"=>date('Y-m-d H:i:s'),
-        ));
-
+        if($this->table_type==1){
+            Yii::app()->db->createCommand()->insert('hr_employee_history', array(
+                "employee_id"=>$this->id,
+                "status"=>$this->scenario,
+                "lcu"=>$uid,
+                "lcd"=>date('Y-m-d H:i:s'),
+            ));
+            $this->signContract();
+        }else{
+            Yii::app()->db->createCommand()->insert("hr_table_history", array(
+                "table_name"=>"hr_employee",
+                "table_id"=>$this->id,
+                "lcu"=>$uid,
+                "update_type"=>1,
+                "update_html"=>$update_html,
+            ));
+        }
         $this->sendEmail();
 
         //判斷是否需要生成簽署合同
-        $this->signContract();
 /*
         if($this->getScenario() == "audit"){
             //U系统同步
@@ -128,7 +142,8 @@ class AuditForm extends StaffForm
                 $description="员工审核 - ".$row["name"]."（拒绝）";
                 $subject="员工审核 - ".$row["name"]."（拒绝）";
             }
-            $message="<p>员工编号：".$row["code"]."</p>";
+            $message="<p>员工类型：".StaffFun::getTableTypeNameForID($row["table_type"])."</p>";
+            $message.="<p>员工编号：".$row["code"]."</p>";
             $message.="<p>员工姓名：".$row["name"]."</p>";
             $message.="<p>员工所在城市：".CGeneral::getCityName($row["city"])."</p>";
             $message.="<p>员工入职日期：".$row["entry_time"]."</p>";

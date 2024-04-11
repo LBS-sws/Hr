@@ -787,11 +787,15 @@ return array(
     'Bank Abbr Name'=>'银行简称',
     'Bank card'=>'银行卡号',
     'contracting'=>'业务承揽',
+    'outsourcer'=>'外包商',
     'external part one'=>'兼职：实习生，劳务工，临时工',
     'external part two'=>'外聘：形式外包',
     'external part three'=>'业务承揽：业务外包',
+    'external part four'=>'外包商：外包商的工作人员且不加入企微',
     'audit on'=>'是否审核',
     'Look'=>'查看',
     'look employee'=>'额外查看员工',
+    'Update List'=>'修改列表',
+    'Update From'=>'修改表单',
 );
 ?>

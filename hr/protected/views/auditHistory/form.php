@@ -59,10 +59,17 @@ $form->compareNewStr=Yii::t("contract","update new");
                         'data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
                 } ?>
                 <?php
-                $counter = ($model->no_of_attm['employee'] > 0) ? ' <span id="docemployee" class="label label-info">'.$model->no_of_attm['employee'].'</span>' : ' <span id="docemployee"></span>';
-                echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
-                        'data-toggle'=>'modal','data-target'=>'#fileuploademployee',)
-                );
+                if($model->table_type==1){
+                    $counter = ($model->no_of_attm['employee'] > 0) ? ' <span id="docemployee" class="label label-info">'.$model->no_of_attm['employee'].'</span>' : ' <span id="docemployee"></span>';
+                    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                            'data-toggle'=>'modal','data-target'=>'#fileuploademployee',)
+                    );
+                }else{
+                    $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
+                    echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
+                            'data-toggle'=>'modal','data-target'=>'#fileuploademploy',)
+                    );
+                }
                 ?>
             </div>
         </div></div>
@@ -219,21 +226,35 @@ $form->compareNewStr=Yii::t("contract","update new");
 <?php
 $id = $model->id;
 $model->id = $model->employee_id;
-$this->renderPartial('//employView/historylist',array('model'=>$model));
+if($model->table_type==1){
+    $this->renderPartial('//employView/historylist',array('model'=>$model));
+}else{
+    $this->renderPartial('//external/historylist',array('model'=>$model));
+}
 $model->id = $id;
 ?>
-<?php $this->renderPartial('//site/fileupload',array('model'=>$model,
-    'form'=>$form,
-    'doctype'=>'EMPLOYEE',
-    'header'=>Yii::t('misc','Attachment'),
-    'ronly'=>($model->scenario=='view'),
-));
+<?php
+if($model->table_type==1){
+    $this->renderPartial('//site/fileupload',array('model'=>$model,
+        'form'=>$form,
+        'doctype'=>'EMPLOYEE',
+        'header'=>Yii::t('misc','Attachment'),
+        'ronly'=>($model->scenario=='view'),
+    ));
+    Script::genFileUpload($model,$form->id,'EMPLOYEE');
+}else{
+    $model->id = $model->employee_id;
+    $this->renderPartial('//site/fileupload',array('model'=>$model,
+        'form'=>$form,
+        'doctype'=>'EMPLOY',
+        'header'=>Yii::t('misc','Attachment'),
+        'ronly'=>($model->scenario=='view'),
+    ));
+    Script::genFileUpload($model,$form->id,'EMPLOY');
+    $model->id = $id;
+}
 ?>
 <?php
-/*if ($model->scenario!='new')
-    $this->renderPartial('//site/flowword',array('model'=>$model));*/
-Script::genFileUpload($model,$form->id,'EMPLOYEE');
-
 $js = "
 $('input.compare-error,select.compare-error,textarea.compare-error').each(function(){
     $(this).parents('div:first').addClass('has-error');

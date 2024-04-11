@@ -50,6 +50,11 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('status').$this->drawOrderArrow('a.staff_status'),'#',$this->createOrderLink('external-list','a.staff_status'))
+			;
+		?>
+	</th>
     <th width="1%">
     </th>
 </tr>

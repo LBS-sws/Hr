@@ -6,9 +6,9 @@
  * Date: 2017/6/7 0007
  * Time: 上午 11:30
  */
-class ExternalController extends Controller
+class ExtUpdateController extends Controller
 {
-	public $function_id='EL01';
+	public $function_id='EL02';
 
     public function filters()
     {
@@ -29,12 +29,12 @@ class ExternalController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','save','delete','audit','uploadImg','fileupload','fileRemove'),
-                'expression'=>array('ExternalController','allowReadWrite'),
+                'actions'=>array('update','departure','edit','save','delete','audit','fileupload','fileRemove'),
+                'expression'=>array('ExtUpdateController','allowReadWrite'),
             ),
             array('allow',
-                'actions'=>array('index','view','fileDownload','printImage'),
-                'expression'=>array('ExternalController','allowReadOnly'),
+                'actions'=>array('index','view','fileDownload'),
+                'expression'=>array('ExtUpdateController','allowReadOnly'),
             ),
             array('deny',  // deny all users
                 'users'=>array('*'),
@@ -42,11 +42,11 @@ class ExternalController extends Controller
         );
     }
     public static function allowReadWrite() {
-        return Yii::app()->user->validRWFunction('EL01');
+        return Yii::app()->user->validRWFunction('EL02');
     }
 
     public static function allowReadOnly() {
-        return Yii::app()->user->validFunction('EL01');
+        return Yii::app()->user->validFunction('EL02');
     }
 
     public static function allowWrite() {
@@ -54,13 +54,13 @@ class ExternalController extends Controller
     }
 
     public function actionIndex($pageNum=0){
-        $model = new ExternalList;
-        if (isset($_POST['ExternalList'])) {
-            $model->attributes = $_POST['ExternalList'];
+        $model = new ExtUpdateList;
+        if (isset($_POST['ExtUpdateList'])) {
+            $model->attributes = $_POST['ExtUpdateList'];
         } else {
             $session = Yii::app()->session;
-            if (isset($session['external_01']) && !empty($session['external_01'])) {
-                $criteria = $session['external_01'];
+            if (isset($session['extUpdate_01']) && !empty($session['extUpdate_01'])) {
+                $criteria = $session['extUpdate_01'];
                 $model->setCriteria($criteria);
             }
         }
@@ -69,16 +69,35 @@ class ExternalController extends Controller
         $this->render('index',array('model'=>$model));
     }
 
-    public function actionNew()
-    {
-        $model = new ExternalForm('new');
-        $model->entry_time = $model->test_start_time = date("Y/m/d");
-        $this->render('form',array('model'=>$model,));
+    public function actionUpdate($index)
+    {//修改
+        $model = new ExtUpdateForm('new');
+        if(!$model->validateStaff($index)){
+            Dialog::message(Yii::t('dialog','Validation Message'), Yii::t('contract','The employee has changed the information, please complete the change first'));
+            $this->redirect(Yii::app()->createUrl('external/edit',array('index'=>$index)));
+        }else{
+            $model->retrieveDataForOld($index);
+            $model->operation="update";
+            $this->render('form',array('model'=>$model,));
+        }
+    }
+
+    public function actionDeparture($index)
+    {//离职
+        $model = new ExtUpdateForm('new');
+        if(!$model->validateStaff($index)){
+            Dialog::message(Yii::t('dialog','Validation Message'), Yii::t('contract','The employee has changed the information, please complete the change first'));
+            $this->redirect(Yii::app()->createUrl('external/edit',array('index'=>$index)));
+        }else{
+            $model->retrieveDataForOld($index);
+            $model->operation="departure";
+            $this->render('form',array('model'=>$model,));
+        }
     }
 
     public function actionEdit($index)
     {
-        $model = new ExternalForm('edit');
+        $model = new ExtUpdateForm('edit');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
@@ -88,7 +107,7 @@ class ExternalController extends Controller
 
     public function actionView($index)
     {
-        $model = new ExternalForm('view');
+        $model = new ExtUpdateForm('view');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
@@ -97,14 +116,14 @@ class ExternalController extends Controller
     }
 
     public function actionSave(){ //草稿
-        if (isset($_POST['ExternalForm'])) {
-            $model = new ExternalForm($_POST['ExternalForm']['scenario']);
-            $model->attributes = $_POST['ExternalForm'];
+        if (isset($_POST['ExtUpdateForm'])) {
+            $model = new ExtUpdateForm($_POST['ExtUpdateForm']['scenario']);
+            $model->attributes = $_POST['ExtUpdateForm'];
             if ($model->validate()) {
                 $model->staff_status=9;
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('external/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('extUpdate/edit',array('index'=>$model->id)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
@@ -114,18 +133,18 @@ class ExternalController extends Controller
     }
 
     public function actionAudit(){//要求审核
-        if (isset($_POST['ExternalForm'])) {
-            $model = new ExternalForm($_POST['ExternalForm']['scenario']);
-            $model->attributes = $_POST['ExternalForm'];
+        if (isset($_POST['ExtUpdateForm'])) {
+            $model = new ExtUpdateForm($_POST['ExtUpdateForm']['scenario']);
+            $model->attributes = $_POST['ExtUpdateForm'];
             if ($model->validate()) {
                 $model->staff_status=2;
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Save Done'));
-                $this->redirect(Yii::app()->createUrl('external/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('extUpdate/edit',array('index'=>$model->id)));
             } else {
                 $message = CHtml::errorSummary($model);
                 Dialog::message(Yii::t('dialog','Validation Message'), $message);
-                $model->setScenario($_POST['ExternalForm']['scenario']);
+                $model->setScenario($_POST['ExtUpdateForm']['scenario']);
                 $this->render('form',array('model'=>$model,));
             }
         }
@@ -133,27 +152,27 @@ class ExternalController extends Controller
 
     //刪除草稿
     public function actionDelete(){
-        $model = new ExternalForm('delete');
-        if (isset($_POST['ExternalForm'])) {
-            $model->attributes = $_POST['ExternalForm'];
+        $model = new ExtUpdateForm('delete');
+        if (isset($_POST['ExtUpdateForm'])) {
+            $model->attributes = $_POST['ExtUpdateForm'];
             if($model->validateDelete()){
                 $model->saveData();
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Record Deleted'));
-                $this->redirect(Yii::app()->createUrl('external/index'));
+                $this->redirect(Yii::app()->createUrl('extUpdate/index'));
             }else{
                 Dialog::message(Yii::t('dialog','Information'), Yii::t('contract','The dept has staff being used, please delete the staff first'));
-                $this->redirect(Yii::app()->createUrl('external/edit',array('index'=>$model->id)));
+                $this->redirect(Yii::app()->createUrl('extUpdate/edit',array('index'=>$model->id)));
             }
         }
     }
 
     //上傳附件
     public function actionFileupload($doctype) {
-        $model = new ExternalForm();
-        if (isset($_POST['ExternalForm'])) {
-            $model->attributes = $_POST['ExternalForm'];
+        $model = new ExtUpdateForm();
+        if (isset($_POST['ExtUpdateForm'])) {
+            $model->attributes = $_POST['ExtUpdateForm'];
 
-            $id = ($_POST['ExternalForm']['scenario']=='new') ? 0 : $model->id;
+            $id = $model->employee_id;
             $docman = new DocMan($model->docType,$id,get_class($model));
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             if (isset($_FILES[$docman->inputName])) $docman->files = $_FILES[$docman->inputName];
@@ -166,11 +185,11 @@ class ExternalController extends Controller
 
     //刪除附件
     public function actionFileRemove($doctype) {
-        $model = new ExternalForm();
-        if (isset($_POST['ExternalForm'])) {
-            $model->attributes = $_POST['ExternalForm'];
+        $model = new ExtUpdateForm();
+        if (isset($_POST['ExtUpdateForm'])) {
+            $model->attributes = $_POST['ExtUpdateForm'];
 
-            $docman = new DocMan($model->docType,$model->id,'ExternalForm');
+            $docman = new DocMan($model->docType,$model->employee_id,'ExtUpdateForm');
             $docman->masterId = $model->docMasterId[strtolower($doctype)];
             $docman->fileRemove($model->removeFileId[strtolower($doctype)]);
             echo $docman->genTableFileList(false);
@@ -181,12 +200,12 @@ class ExternalController extends Controller
 
     //下載附件
     public function actionFileDownload($mastId, $docId, $fileId, $doctype) {
-        $sql = "select city from hr_externalee where id = $docId";
+        $sql = "select city from hr_employee where table_type!=1 and id = $docId";
         $row = Yii::app()->db->createCommand($sql)->queryRow();
         if ($row!==false) {
             $citylist = Yii::app()->user->city_allow();
             if (strpos($citylist, $row['city']) !== false) {
-                $docman = new DocMan($doctype,$docId,'ExternalForm');
+                $docman = new DocMan($doctype,$docId,'ExtUpdateForm');
                 $docman->masterId = $mastId;
                 $docman->fileDownload($fileId);
             } else {
@@ -194,33 +213,6 @@ class ExternalController extends Controller
             }
         } else {
             throw new CHttpException(404,'Record not found.');
-        }
-    }
-
-
-    public function actionPrintImage($id = 0,$staff = 0,$str="") {
-        $id = empty($id)?$staff:$id;
-        $rows = Yii::app()->db->createCommand()->select("$str")
-            ->from("hr_external")->where("id=:id",array(":id"=>$id))->queryRow();
-        if($rows){
-            if(empty($rows[$str])){
-                echo "圖片不存在";
-                return false;
-            }else{
-                $n = new imgdata;
-                $path = "protected/controllers/".$rows[$str];
-                if (file_exists($path)) {
-                    $n -> getdir($path);
-                    $n -> img2data();
-                    $n -> data2img();
-                } else {
-                    echo "地址不存在";
-                    return false;
-                }
-            }
-        }else{
-            echo "沒找到圖片";
-            return false;
         }
     }
 }

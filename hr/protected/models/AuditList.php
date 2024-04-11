@@ -22,6 +22,7 @@ class AuditList extends CListPageModel
             'entry_time'=>Yii::t('contract','Entry Time'),
             'city'=>Yii::t('contract','City'),
             'city_name'=>Yii::t('contract','City'),
+            'table_type'=>Yii::t('contract','Employee Type'),
 		);
 	}
 
@@ -31,12 +32,12 @@ class AuditList extends CListPageModel
 		$city_allow = Yii::app()->user->city_allow();
 		$sql1 = "select a.*,g.name as department_name from hr_employee a
                 LEFT JOIN hr_dept g ON g.id=a.department
-                where a.city in ($city_allow) AND (a.staff_status = 2 OR a.staff_status = 3 OR a.staff_status = 4)
+                where a.city in ($city_allow) AND a.staff_status in (2,3,4)
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a  
                 LEFT JOIN hr_dept g ON g.id=a.department
-				where a.city in ($city_allow) AND (a.staff_status = 2 OR a.staff_status = 3 OR a.staff_status = 4)
+				where a.city in ($city_allow) AND a.staff_status in (2,3,4)
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -97,6 +98,7 @@ class AuditList extends CListPageModel
 					'phone'=>$record['phone'],
                     'staff_status'=>$arr["status"],
                     'style'=>$arr["style"],
+                    'table_type'=>StaffFun::getTableTypeNameForID($record["table_type"]),
                     'city'=>CGeneral::getCityName($record["city"]),
                     'entry_time'=>$record["entry_time"],
 				);

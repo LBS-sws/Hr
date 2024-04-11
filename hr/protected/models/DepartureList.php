@@ -2,6 +2,28 @@
 
 class DepartureList extends CListPageModel
 {
+    public $table_type="";
+
+    public function rules()
+    {
+        return array(
+            array('table_type,attr, pageNum, noOfItem, totalRow, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
+        );
+    }
+
+    public function getCriteria() {
+        return array(
+            'table_type'=>$this->table_type,
+            'searchField'=>$this->searchField,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+            'dateRangeValue'=>$this->dateRangeValue,
+        );
+    }
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -24,6 +46,7 @@ class DepartureList extends CListPageModel
 			'city_name'=>Yii::t('contract','City'),
             'entry_time'=>Yii::t('contract','Entry Time'),
             'office_name'=>Yii::t('contract','staff office'),
+            'table_type'=>Yii::t('contract','Employee Type'),
 		);
 	}
 
@@ -36,13 +59,13 @@ class DepartureList extends CListPageModel
 		$sql1 = "select a.*,g.name as department_name,if(a.office_id=0,'{$localOffice}',f.name) as office_name from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept g ON g.id=a.department
-                where a.city in ($city_allow) AND a.staff_status = -1 AND a.table_type = 1 
+                where a.city in ($city_allow) AND a.staff_status = -1
 			";
 		$sql2 = "select count(a.id)
 				from hr_employee a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept g ON g.id=a.department
-				where a.city in ($city_allow) AND a.staff_status = -1 AND a.table_type = 1 
+				where a.city in ($city_allow) AND a.staff_status = -1
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -71,6 +94,13 @@ class DepartureList extends CListPageModel
                     break;
 			}
 		}
+        if($this->table_type!==""){//
+            $list = StaffFun::getTableTypeList(false);
+            $this->table_type="".$this->table_type;
+            if(key_exists($this->table_type,$list)){
+                $clause.=" and a.table_type='{$this->table_type}'";
+            }
+        }
 		
 		$order = "";
 		if (!empty($this->orderField)) {
@@ -107,6 +137,7 @@ class DepartureList extends CListPageModel
                     'city'=>CGeneral::getCityName($record["city"]),
 					'style'=>$arr["style"],
                     'entry_time'=>$record["entry_time"],
+                    'table_type'=>StaffFun::getTableTypeNameForID($record["table_type"]),
 				);
 			}
 		}

@@ -6,10 +6,16 @@
  * Date: 2023/12/12 0012
  * Time: 14:20
  */
-class ExternalForm extends StaffForm
+class ExtUpdateForm extends StaffForm
 {
     public $table_type=2;
     public $staff_status=9;//外聘人员，状态：9：草稿 1:入职
+
+    public $operation;
+    public $update_remark;
+
+    public $leave_time;
+    public $leave_reason;
 
     /**
      * Declares customized attribute labels.
@@ -27,7 +33,7 @@ class ExternalForm extends StaffForm
 
     public function getRequiredList(){//必填内容
         return array(
-            "name","sex","table_type","office_id",
+            "name","sex","table_type","office_id","operation",
             "phone","department","position","birth_time","user_card","user_card_date"
         );
     }
@@ -39,9 +45,10 @@ class ExternalForm extends StaffForm
         $requiredList = $this->getRequiredList();
         $requiredStr = implode(",",$requiredList);
         return array(
-            array('table_type,jj_card','safe'),
+            array('table_type,jj_card,employee_id,operation,update_remark,leave_time,leave_reason','safe'),
             array($requiredStr,'required'),
             array('table_type','validateTableType'),
+            array('operation','validateOperation'),
         );
     }
 
@@ -49,6 +56,25 @@ class ExternalForm extends StaffForm
         $list = StaffFun::getTableTypeList();
         if(!key_exists($this->table_type,$list)){
             $this->addError($attribute,"员工类型不存在，请刷新重试");
+        }
+    }
+
+    public function validateOperation($attribute, $params){
+        if(empty($this->operation)){
+            switch ($this->operation){
+                case "update":
+                    break;
+                case "departure":
+                    if(empty($this->leave_time)){
+                        $this->addError($attribute,"离职时间不能为空");
+                    }
+                    if(empty($this->leave_reason)){
+                        $this->addError($attribute,"离职原因不能为空");
+                    }
+                    break;
+                default:
+                    $this->addError($attribute,"修改类型不存在，请刷新重试");
+            }
         }
     }
 
@@ -61,19 +87,42 @@ class ExternalForm extends StaffForm
             $this->city = Yii::app()->user->city();
         }
         if($this->getScenario()!='new'){
-            $row = Yii::app()->db->createCommand()->select("id,city")->from("hr_employee")
+            $row = Yii::app()->db->createCommand()->select("id,code,employee_id,operation,city")->from("hr_employee_operate")
                 ->where("id=:id and city in ({$allow_city}) and table_type!=1 AND staff_status in (9,3)", array(
                     ':id'=>$this->id
                 ))->queryRow();
             if($row){
                 $this->id = $row["id"];
+                $this->employee_id = $row["employee_id"];
+                $this->operation = $row["operation"];
+                $this->code = $row["code"];
+            }else{
+                $this->addError($attribute,"员工不存在，请刷新重试");
+            }
+        }else{
+            $row = Yii::app()->db->createCommand()->select("id,code,city")->from("hr_employee")
+                ->where("id=:id and city in ({$allow_city}) and table_type!=1 AND staff_status=1", array(
+                    ':id'=>$this->employee_id
+                ))->queryRow();
+            if($row){
+                $this->code = $row["code"];
             }else{
                 $this->addError($attribute,"员工不存在，请刷新重试");
             }
         }
     }
 
-    public function retrieveData($index){
+    //驗證是否有變更記錄
+    public static function validateStaff($index){
+        $count = Yii::app()->db->createCommand()->select("count(id)")->from("hr_employee_operate")
+            ->where("employee_id=:id and finish=0", array(':id'=>$index))->queryScalar();
+        if($count>0){
+            return false;
+        }
+        return true;
+    }
+
+    public function retrieveDataForOld($index){
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
         $allow_city = Yii::app()->user->city_allow();
@@ -85,6 +134,51 @@ class ExternalForm extends StaffForm
         if ($row!==false) {
             $this->no_of_attm['employ'] = $row['employdoc'];
             $arr = $this->getMyAttr();
+            foreach ($arr as $key => $type){
+                switch ($type){
+                    case 1://原值
+                        $value = $row[$key];
+                        $value = $value===""?null:$value;
+                        $this->$key = $value;
+                        break;
+                    case 2://日期
+                        $this->$key = empty($row[$key])?null:General::toDate($row[$key]);
+                        break;
+                    case 3://数字
+                        $this->$key = $row[$key]===null?null:floatval($row[$key]);
+                        break;
+                    case "birth_time"://年龄
+                        $this->$key = isset($row["birth_time"])?StaffFun::getAgeForBirthDate($row["birth_time"]):floatval($row[$key]);
+                        break;
+                    default:
+                }
+            }
+            $this->employee_id = $this->id;
+            $this->staff_status = 9;
+            $this->id=null;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function retrieveData($index){
+        $suffix = Yii::app()->params['envSuffix'];
+        $city = Yii::app()->user->city();
+        $allow_city = Yii::app()->user->city_allow();
+        $whereSql = " and a.city in ({$allow_city}) and a.table_type!=1";
+        //$whereSql = " and a.status_type not in (8,10)";
+        $sql = "select a.*,docman$suffix.countdoc('EMPLOY',a.employee_id) as employdoc 
+          from hr_employee_operate a where a.id='{$index}' {$whereSql}";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+        if ($row!==false) {
+            $this->no_of_attm['employ'] = $row['employdoc'];
+            $arr = $this->getMyAttr();
+            $arr["employee_id"]=3;
+            $arr["operation"]=1;
+            $arr["update_remark"]=1;
+            $arr["leave_time"]=1;
+            $arr["leave_reason"]=1;
             foreach ($arr as $key => $type){
                 switch ($type){
                     case 1://原值
@@ -123,11 +217,11 @@ class ExternalForm extends StaffForm
         $connection = Yii::app()->db;
         $transaction=$connection->beginTransaction();
         try {
-            $model = new ExternalForm();
-            $model->retrieveData($this->id);
+            $model = new ExtUpdateForm();
+            $model->retrieveDataForOld($this->employee_id);
             $this->save($connection);
             $this->historySave($connection,$model);
-            $this->updateDocman($connection,'EMPLOY');
+            //$this->updateDocman($connection,'EMPLOY');
             $transaction->commit();
             if($this->getScenario()=="new"){
                 $this->setScenario("edit");
@@ -226,9 +320,17 @@ class ExternalForm extends StaffForm
             case "delete":
                 $connection->createCommand()->delete("hr_table_history", "table_id=:id and table_name='hr_employee'",array(":id"=>$this->id));
                 break;
+            case "new":
             case "edit":
                 $keyArr = self::historyUpdateList();
-                $list=array("table_id"=>$this->id,"table_name"=>"hr_employee","lcu"=>$uid,"update_type"=>1,"update_html"=>array());
+                $list=array(
+                    "table_id"=>$this->employee_id,
+                    "table_name"=>"hr_employee",
+                    "lcu"=>$uid,
+                    "update_type"=>1,
+                    "update_html"=>array(),
+                    "update_json"=>"operate_id:{$this->id}",
+                );
                 foreach ($keyArr as $key){
                     if($model->$key!=$this->$key){
                         $list["update_html"][]="<span>".$this->getAttributeLabel($key)."：".self::getNameForValue($key,$model->$key)." 修改为 ".self::getNameForValue($key,$this->$key)."</span>";
@@ -236,29 +338,18 @@ class ExternalForm extends StaffForm
                 }
                 if(!empty($list["update_html"])){
                     $list["update_html"] = implode("<br/>",$list["update_html"]);
-                    $list["update_json"] = $this->getUpdateJson();
                     $connection->createCommand()->insert("hr_table_history", $list);
                 }
                 break;
-            case "new"://新增
-                $list=array(
-                    "table_name"=>"hr_employee",
-                    "table_id"=>$this->id,
-                    "lcu"=>$uid,
-                    "update_type"=>2,
-                    "update_html"=>"<span>新增</span>",
-                    "update_json"=>$this->getUpdateJson(),
-                );
-                $connection->createCommand()->insert("hr_table_history", $list);
-                break;
         }
         if($this->staff_status==2){
+            $update = $this->operation=="update"?"修改":"离职";
             $connection->createCommand()->insert("hr_table_history", array(
                 "table_name"=>"hr_employee",
-                "table_id"=>$this->id,
+                "table_id"=>$this->employee_id,
                 "lcu"=>$uid,
                 "update_type"=>1,
-                "update_html"=>"<span class='text-success'>要求审核</span>",
+                "update_html"=>"<span class='text-success'>要求审核({$update})</span>",
             ));
         }
     }
@@ -272,7 +363,7 @@ class ExternalForm extends StaffForm
             "group_type"=>3,"office_id"=>3,"table_type"=>3,"staff_status"=>3,"name"=>1,"city"=>1,
             "staff_id"=>1,"company_id"=>1,"contract_id"=>1,"address"=>1,"address_code"=>1,
             "contact_address"=>1,"contact_address_code"=>1,"phone"=>1,"phone2"=>1,"user_card"=>1,
-            "department"=>1,"position"=>1,"wage"=>1,
+            "department"=>1,"position"=>1,"wage"=>1,"operation"=>1,
             "start_time"=>2,"end_time"=>2,"test_type"=>3,"test_start_time"=>2,
             "sex"=>1,"test_end_time"=>2,"test_wage"=>1,
             "entry_time"=>2,"age"=>1,"birth_time"=>2,"health"=>1,
@@ -282,7 +373,8 @@ class ExternalForm extends StaffForm
             "image_other"=>1,"fix_time"=>1,"code_old"=>1,"test_length"=>1,"staff_type"=>1,
             "staff_leader"=>1,"attachment"=>1,"nation"=>1,"household"=>1,"empoyment_code"=>1,
             "social_code"=>1,"user_card_date"=>1,"emergency_user"=>1,"emergency_phone"=>1,
-            "work_area"=>1,"bank_type"=>3,"bank_number"=>1,"jj_card"=>1,
+            "work_area"=>1,"bank_type"=>3,"bank_number"=>1,"jj_card"=>1,"leave_reason"=>1,"leave_time"=>2,
+            "update_remark"=>1,"code"=>1,"employee_id"=>3,
         );
         foreach ($arr as $key=>$type){
             $value=$this->$key;
@@ -302,38 +394,33 @@ class ExternalForm extends StaffForm
         }
         switch ($this->scenario) {
             case 'delete':
-                $connection->createCommand()->delete("hr_employee", "id=:id and a.table_type!=1 AND staff_status=9", array(":id" => $this->id));
+                $connection->createCommand()->delete("hr_employee_operate", "id=:id and table_type!=1 AND staff_status=9", array(":id" => $this->id));
+                $connection->createCommand()->delete("hr_table_history", "table_id='{$this->employee_id}' and table_name='hr_employee' and update_json='operate_id:{$this->id}'");
                 break;
             case 'new':
                 $list["lcu"] = $uid;
-                $connection->createCommand()->insert("hr_employee", $list);
+                $connection->createCommand()->insert("hr_employee_operate", $list);
                 break;
             case 'edit':
                 $list["luu"] = $uid;
-                $connection->createCommand()->update("hr_employee", $list, "id=:id", array(":id" => $this->id));
+                $connection->createCommand()->update("hr_employee_operate", $list, "id=:id", array(":id" => $this->id));
                 break;
         }
 
         if ($this->scenario=='new'){
             $this->id = Yii::app()->db->getLastInsertID();
-            $this->lenStr();
-            Yii::app()->db->createCommand()->update('hr_employee', array(
-                'code'=>$this->code
-            ), 'id=:id', array(':id'=>$this->id));
         }
 
         if($this->staff_status==2){
             $this->sendEmail();//发送邮件
         }
-
-        //U系统同步(由于需要审核，所以同步放到审核)
-        //StaffForm::sendCurl($this->id,$this->getScenario());
         return true;
     }
 
     protected function sendEmail(){
-        $description="兼职、外聘员工录入 - ".$this->name;
-        $subject="兼职、外聘员工录入 - ".$this->name;
+        $update = $this->operation=="update"?"修改":"离职";
+        $description="兼职、外聘员工（{$update}） - ".$this->name;
+        $subject="兼职、外聘员工（{$update}） - ".$this->name;
         $message="<p>员工类型：".StaffFun::getTableTypeNameForID($this->table_type)."</p>";
         $message.="<p>员工编号：".$this->code."</p>";
         $message.="<p>员工姓名：".$this->name."</p>";
@@ -344,20 +431,14 @@ class ExternalForm extends StaffForm
         $message.="<p>员工归属：".StaffFun::getCompanyNameToID($this->company_id)."</p>";
         $email = new Email($subject,$message,$description);
         //$email->addEmailToPrefix("ZG01");
-        $email->addEmailToPrefixAndCity("ZG01",$this->city);
+        $email->addEmailToPrefixAndCity("ZG02",$this->city);
         $email->sent();
     }
 
-    protected function lenStr(){
-        $codeStr = "E";
-        $code = strval($this->id);
-        $this->code = $codeStr;
-        for($i = 0;$i < 5-strlen($code);$i++){
-            $this->code.="0";
-        }
-        $this->code .= $code;
+    //員工刪除時必須是草稿
+    public function validateDelete(){
+        return true;
     }
-
 
     public function readonly(){
         return $this->scenario=='view'||!in_array($this->staff_status,array(9,3));

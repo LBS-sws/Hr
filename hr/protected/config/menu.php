@@ -259,6 +259,11 @@ return array(
                 'access'=>'EL01',
                 'url'=>'/external/index',
             ),
+            //兼职及外聘修改
+            'External Update'=>array(
+                'access'=>'EL02',
+                'url'=>'/extUpdate/index',
+            ),
 		),
 	),
     //審核模塊

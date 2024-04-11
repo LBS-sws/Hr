@@ -1,7 +1,7 @@
-<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('EL01', 'external/edit', 'external/view', array('index'=>$this->record['id']));?>'>
+<tr class='clickable-row <?php echo $this->record['style'];?>' data-href='<?php echo $this->getLink('EL02', 'extUpdate/edit', 'extUpdate/view', array('index'=>$this->record['id']));?>'>
 
 
-	<td><?php echo $this->drawEditButton('EL01', 'external/edit', 'external/view', array('index'=>$this->record['id'])); ?></td>
+	<td><?php echo $this->drawEditButton('EL02', 'extUpdate/edit', 'extUpdate/view', array('index'=>$this->record['id'])); ?></td>
 
 
 
@@ -17,7 +17,7 @@
 	<td><?php echo $this->record['table_type']; ?></td>
 	<td><?php echo $this->record['status']; ?></td>
     <td>
-        <?php if (!empty($this->record['externaldoc'])): ?>
+        <?php if (!empty($this->record['extUpdatedoc'])): ?>
             <span class="fa fa-paperclip"></span>
         <?php endif; ?>
     </td>

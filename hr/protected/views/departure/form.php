@@ -135,7 +135,11 @@ $this->pageTitle=Yii::app()->name . ' - Departure Form';
 </section>
 
 <?php
-$this->renderPartial('//employView/historylist',array('model'=>$model));
+if($model->table_type==1){
+    $this->renderPartial('//employView/historylist',array('model'=>$model));
+}else{
+    $this->renderPartial('//external/historylist',array('model'=>$model));
+}
 ?>
 <?php $this->renderPartial('//site/fileupload',array('model'=>$model,
     'form'=>$form,

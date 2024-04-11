@@ -5,6 +5,7 @@
 
 
     <td><?php echo $this->record['code']; ?></td>
+    <td><?php echo $this->record['table_type']; ?></td>
     <td><?php echo $this->record['name']; ?></td>
     <td><?php echo $this->record['city']; ?></td>
     <td><?php echo $this->record['office_name']; ?></td>

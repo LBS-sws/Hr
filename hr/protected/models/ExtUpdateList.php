@@ -1,6 +1,6 @@
 <?php
 
-class ExternalList extends CListPageModel
+class ExtUpdateList extends CListPageModel
 {
     public $table_type="";
 
@@ -60,21 +60,21 @@ class ExternalList extends CListPageModel
 		$sql1 = "select a.*,de.name as department_name,
                   b.name as position_name,g.name as city_name,
                   if(a.office_id=0,'{$localOffice}',f.name) as office_name,
-                  docman$suffix.countdoc('EMPLOY',a.id) as externaldoc
-                from hr_employee a
+                  docman$suffix.countdoc('EMPLOY',a.employee_id) as extUpdatedoc
+                from hr_employee_operate a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept b ON b.id=a.position
                 LEFT JOIN hr_dept de ON de.id=a.department
                 LEFT JOIN security{$suffix}.sec_city g ON g.code=a.city
-                where a.city in ({$allow_city}) AND a.table_type != 1 AND staff_status!=-1
+                where a.city in ({$allow_city}) AND a.finish != 1 AND a.table_type != 1
 			";
 		$sql2 = "select count(a.id)
-				from hr_employee a
+				from hr_employee_operate a
                 LEFT JOIN hr_office f ON f.id=a.office_id
                 LEFT JOIN hr_dept b ON b.id=a.position
                 LEFT JOIN hr_dept de ON de.id=a.department
                 LEFT JOIN security{$suffix}.sec_city g ON g.code=a.city
-                where a.city in ({$allow_city}) AND a.table_type != 1 AND staff_status!=-1
+                where a.city in ({$allow_city}) AND a.finish != 1 AND a.table_type != 1
 			";
 		$clause = "";
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
@@ -134,7 +134,7 @@ class ExternalList extends CListPageModel
 				$this->attr[] = array(
 					'id'=>$record['id'],
 					'name'=>$record['name'],
-					'externaldoc'=>$record['externaldoc'],
+					'extUpdatedoc'=>$record['extUpdatedoc'],
 					'office_name'=>$record['office_name'],
 					'code'=>$record['code'],
 					'position'=>$record['position_name'],
@@ -151,7 +151,7 @@ class ExternalList extends CListPageModel
 			}
 		}
 		$session = Yii::app()->session;
-		$session['external_01'] = $this->getCriteria();
+		$session['extUpdate_01'] = $this->getCriteria();
 		return true;
 	}
 

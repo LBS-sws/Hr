@@ -70,10 +70,14 @@ class AuditHistoryController extends Controller
     public function actionEdit($index)
     {
         $model = new AuditHistoryForm('edit');
-        $oldModel = new EmployeeForm('view');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
+            if($model->table_type==1){
+                $oldModel = new EmployeeForm('view');
+            }else{
+                $oldModel = new ExternalForm('view');
+            }
             $oldModel->retrieveData($model->employee_id);
             $this->render('form',array('model'=>$model,'oldModel'=>$oldModel));
         }
@@ -82,10 +86,14 @@ class AuditHistoryController extends Controller
     public function actionView($index)
     {
         $model = new AuditHistoryForm('view');
-        $oldModel = new EmployeeForm('view');
         if (!$model->retrieveData($index)) {
             throw new CHttpException(404,'The requested page does not exist.');
         } else {
+            if($model->table_type==1){
+                $oldModel = new EmployeeForm('view');
+            }else{
+                $oldModel = new ExternalForm('view');
+            }
             $oldModel->retrieveData($model->employee_id);
             $this->render('form',array('model'=>$model,'oldModel'=>$oldModel));
         }
