@@ -200,7 +200,7 @@ class SalesStaffList extends CListPageModel
         $city = Yii::app()->user->city();
         $rows = Yii::app()->db->createCommand()->select("a.id,a.code,a.name")->from("hr_employee a")
             ->leftJoin("hr_dept d","a.position = d.id")
-            ->where("(a.city='$city' or a.id='".$this->employee_id."') AND a.staff_status = 0 AND d.review_type = 3")->order("a.id desc")->queryAll();
+            ->where("(a.city='$city' AND a.table_type=1 AND a.staff_status = 0 AND d.review_type = 3) or a.id='".$this->employee_id."'")->order("a.id desc")->queryAll();
         if($rows){
             foreach ($rows as $row){
                 $bool = Yii::app()->db->createCommand()->select("a.id")->from("hr_sales_staff a")
