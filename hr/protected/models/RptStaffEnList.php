@@ -7,9 +7,11 @@ class RptStaffEnList extends CReport {//新员工录入表
 			'name'=>array('label'=>Yii::t('report','Name'),'width'=>25,'align'=>'L'),//姓名
             'user_card'=>array('label'=>Yii::t('report','ID No.'),'width'=>20,'align'=>'L'),//公民身份号码
             'table_type'=>array('label'=>Yii::t('report','Staff Type'),'width'=>20,'align'=>'L'),//员工类型
+            'staff_status'=>array('label'=>Yii::t('report','Staff Status'),'width'=>20,'align'=>'L'),//员工状态
             'entry_time'=>array('label'=>Yii::t('report','Entry Time'),'width'=>20,'align'=>'L'),//入职日期
 			'department'=>array('label'=>Yii::t('report','Department'),'width'=>25,'align'=>'L'),//部门
             'city_name'=>array('label'=>Yii::t('report','City Name'),'width'=>25,'align'=>'L'),//城市
+            'work_area'=>array('label'=>Yii::t('contract','work area'),'width'=>25,'align'=>'L'),//主要工作地点
 			'position'=>array('label'=>Yii::t('report','Position'),'width'=>25,'align'=>'L'),//职位
             'test_type'=>array('label'=>Yii::t('report','Probation Type'),'width'=>25,'align'=>'L'),//试用期类型
             'test_length'=>array('label'=>Yii::t('report','Probation Time Longer'),'width'=>25,'align'=>'L'),//试用期时期
@@ -25,6 +27,8 @@ class RptStaffEnList extends CReport {//新员工录入表
             'remarks'=>array('label'=>Yii::t('report','Remarks'),'width'=>40,'align'=>'L'),//备注
             'phone'=>array('label'=>Yii::t('report','Contact Type'),'width'=>20,'align'=>'L'),//联系方式（如手机号）
             'household'=>array('label'=>Yii::t('report','Household type'),'width'=>20,'align'=>'L'),//户籍类型
+            'bank_type'=>array('label'=>Yii::t('contract','Bank Abbr Name'),'width'=>20,'align'=>'L'),//银行简称
+            'bank_number'=>array('label'=>Yii::t('contract','Bank card'),'width'=>20,'align'=>'L'),//银行卡号
 		);
 	}
 
@@ -47,12 +51,15 @@ class RptStaffEnList extends CReport {//新员工录入表
         $city_allow = $this->criteria['REGION'];
         $suffix = Yii::app()->params['envSuffix'];
 
-        $sql_date=" a.staff_status not in (0,-1)
-         and a.table_type=1 
+        $sql_date=" (
+        (a.staff_status not in (0,-1) and a.table_type=1) or 
+        (a.staff_status not in (1,-1) and a.table_type!=1)
+        ) 
          and date_format(a.entry_time,'%Y/%m/%d') BETWEEN '{$start_dt}' and '{$end_dt}'
          ";
 
         $localOffice = Yii::t("contract","local office");
+        $bankTypeList = StaffFun::getBankTypeList();
         $sql = "select a.*,
                 p.name as position_name,
                 d.name as department_name,
@@ -73,9 +80,11 @@ class RptStaffEnList extends CReport {//新员工录入表
                 $temp['code'] = $row['code'];
                 $temp['name'] = $row['name'];
                 $temp['user_card'] = " ".$row['user_card'];
-                $temp['table_type'] = $this->getStaffEnStatus($row['staff_status']);
+                $temp['table_type'] = StaffFun::getTableTypeNameForID($row['table_type']);
+                $temp['staff_status'] = $this->getStaffEnStatus($row['staff_status']);
                 $temp['entry_time'] = $row['entry_time'];
                 $temp['city_name'] = $row['city_name'];
+                $temp['work_area'] = $row['work_area'];
                 $temp['department'] = $row['department_name'];
                 $temp['position'] = $row['position_name'];
                 $temp['office_name'] = $row['office_name'];
@@ -110,13 +119,11 @@ class RptStaffEnList extends CReport {//新员工录入表
                 $temp['social_code'] = $row['social_code'];
                 $temp['emergency_user'] = $row['emergency_user'];
                 $temp['emergency_phone'] = " ".$row['emergency_phone'];
+                $temp['bank_type'] = "".$row['bank_type'];
+                $temp['bank_type'] = key_exists($row['bank_type'],$bankTypeList)?$bankTypeList[$row['bank_type']]:"";
+                $temp['bank_number'] = " ".$row['bank_number'];
                 $temp['change_dt'] = "";
                 $temp['reason'] = "";
-                if($row["staff_status"]==-1){//离职
-                    $temp['change_dt'] = $row['leave_time'];
-                    $temp['reason'] = $row['leave_reason'];
-                    $temp['table_type'] = "离职";
-                }
                 $temp['remarks'] = $row['remark'];
                 $this->data[] = $temp;
             }
@@ -130,6 +137,7 @@ class RptStaffEnList extends CReport {//新员工录入表
 	        2=>Yii::t("contract","Sent, pending approval"),//已發送，等待審核
 	        3=>Yii::t("contract","Rejected"),//拒絕
 	        4=>Yii::t("contract","Wait for social security"),//等待社保
+            9=>Yii::t("contract","Draft"),//草稿
         );
 	    if(key_exists($status,$list)){
 	        return $list[$status];

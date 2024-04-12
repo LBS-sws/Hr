@@ -10,6 +10,7 @@ class RptStaffExList extends CReport {//员工花名册
             'entry_time'=>array('label'=>Yii::t('report','Entry Time'),'width'=>20,'align'=>'L'),//入职日期
 			'department'=>array('label'=>Yii::t('report','Department'),'width'=>25,'align'=>'L'),//部门
             'city_name'=>array('label'=>Yii::t('report','City Name'),'width'=>25,'align'=>'L'),//城市
+            'work_area'=>array('label'=>Yii::t('contract','work area'),'width'=>25,'align'=>'L'),//主要工作地点
 			'position'=>array('label'=>Yii::t('report','Position'),'width'=>25,'align'=>'L'),//职位
 			'office_name'=>array('label'=>Yii::t('report','staff office'),'width'=>25,'align'=>'L'),//办事处
 			'staff_type'=>array('label'=>Yii::t('report','Staff Class'),'width'=>25,'align'=>'L'),//员工类别
@@ -38,6 +39,8 @@ class RptStaffExList extends CReport {//员工花名册
             'social_code'=>array('label'=>Yii::t('report','Social Security Code'),'width'=>20,'align'=>'L'),//社保卡号
             'emergency_user'=>array('label'=>Yii::t('report','Emergency Contact'),'width'=>30,'align'=>'L'),//紧急联络人姓名
             'emergency_phone'=>array('label'=>Yii::t('report','Emergency Phone'),'width'=>20,'align'=>'L'),//紧急联络人手机号
+            'bank_type'=>array('label'=>Yii::t('contract','Bank Abbr Name'),'width'=>20,'align'=>'L'),//银行简称
+            'bank_number'=>array('label'=>Yii::t('contract','Bank card'),'width'=>20,'align'=>'L'),//银行卡号
 			'change_dt'=>array('label'=>Yii::t('report','Leave Date'),'width'=>15,'align'=>'C'),//离职日期
 			'reason'=>array('label'=>Yii::t('report','Leave Reason'),'width'=>40,'align'=>'L'),//离职原因
 			'remarks'=>array('label'=>Yii::t('report','Remarks'),'width'=>40,'align'=>'L'),//备注
@@ -72,6 +75,7 @@ class RptStaffExList extends CReport {//员工花名册
          )";
 
         $localOffice = Yii::t("contract","local office");
+        $bankTypeList = StaffFun::getBankTypeList();
         $sql = "select a.*,
                 p.name as position_name,
                 d.name as department_name,
@@ -95,6 +99,7 @@ class RptStaffExList extends CReport {//员工花名册
                 $temp['table_type'] = StaffFun::getTableTypeNameForID($row['table_type']);
                 $temp['entry_time'] = $row['entry_time'];
                 $temp['city_name'] = $row['city_name'];
+                $temp['work_area'] = $row['work_area'];
                 $temp['department'] = $row['department_name'];
                 $temp['position'] = $row['position_name'];
                 $temp['office_name'] = $row['office_name'];
@@ -129,12 +134,15 @@ class RptStaffExList extends CReport {//员工花名册
                 $temp['social_code'] = $row['social_code'];
                 $temp['emergency_user'] = $row['emergency_user'];
                 $temp['emergency_phone'] = " ".$row['emergency_phone'];
+                $temp['bank_type'] = "".$row['bank_type'];
+                $temp['bank_type'] = key_exists($row['bank_type'],$bankTypeList)?$bankTypeList[$row['bank_type']]:"";
+                $temp['bank_number'] = " ".$row['bank_number'];
                 $temp['change_dt'] = "";
                 $temp['reason'] = "";
                 if($row["staff_status"]==-1){//离职
                     $temp['change_dt'] = $row['leave_time'];
                     $temp['reason'] = $row['leave_reason'];
-                    $temp['table_type'] = "离职";
+                    $temp['table_type'].= "(离职)";
                 }
                 $temp['remarks'] = $row['remark'];
                 $this->data[] = $temp;

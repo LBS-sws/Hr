@@ -61,5 +61,6 @@ return array(
     'Household type'=>'戶籍類型',
 
     'Staff Entry Rpt List'=>'新員工錄入表',
+    'Staff Status'=>'员工状态',
 );
 ?>
