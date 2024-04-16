@@ -98,6 +98,7 @@ class AuditForm extends StaffForm
                 "lcu"=>$uid,
                 "lcd"=>date('Y-m-d H:i:s'),
             ));
+            //判斷是否需要生成簽署合同
             $this->signContract();
         }else{
             Yii::app()->db->createCommand()->insert("hr_table_history", array(
@@ -110,13 +111,11 @@ class AuditForm extends StaffForm
         }
         $this->sendEmail();
 
-        //判斷是否需要生成簽署合同
-/*
+
         if($this->getScenario() == "audit"){
             //U系统同步
             StaffForm::sendCurl($this->id,"new");
         }
-	*/
     }
 
     private function signContract(){
