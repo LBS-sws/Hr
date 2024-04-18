@@ -261,6 +261,14 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                     ); ?>
                 </div>
             </div>
+            <div class="form-group">
+                <?php echo $form->labelEx($model,'share_bool',array('class'=>"col-sm-2 control-label")); ?>
+                <div class="col-sm-3">
+                    <?php echo $form->inlineRadioButtonList($model, 'share_bool',array(Yii::t("contract","not share"),Yii::t("contract","share")),
+                        array('readonly'=>($model->scenario=='view'||!$model->readyCityAndPix()))
+                    ); ?>
+                </div>
+            </div>
 
 		</div>
 	</div>

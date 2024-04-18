@@ -18,4 +18,5 @@
         }
         ?>
     </td>
+    <td><?php echo $this->record['share_bool']; ?></td>
 </tr>

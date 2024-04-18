@@ -788,5 +788,10 @@ return array(
     'audit on'=>'是否審核',
     'Look'=>'查看',
     'look employee'=>'額外查看員工',
+    'Update List'=>'修改列表',
+    'Update From'=>'修改表單',
+    'share bool'=>'是否共享',
+    'not share'=>'不共享',
+    'share'=>'共享',
     );
 ?>

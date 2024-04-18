@@ -32,6 +32,7 @@ class CompanyForm extends CFormModel
 	public $license_code;
 	public $license_time;
 	public $taxpayer_num;//納稅人識別號
+	public $share_bool=0;//是否共享  0：不共享  1：共享
 
 
 
@@ -86,6 +87,7 @@ class CompanyForm extends CFormModel
             'mie'=>Yii::t('contract','Level of pest control'),
             'taxpayer_num'=>Yii::t('contract','Taxpayer number'),
             'city'=>Yii::t('contract','City'),
+            'share_bool'=>Yii::t('contract','share bool'),
 		);
 	}
 
@@ -97,7 +99,7 @@ class CompanyForm extends CFormModel
 		return array(
 			//array('id, position, leave_reason, remarks, email, staff_type, leader','safe'),
             array('id, name, head, agent, phone_two, address, phone, city, tacitly, security_code, organization_code, organization_time, license_code, license_time,
-            legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
+            legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num, share_bool
             ','safe'),
 			array('name','required'),
 			array('city','required'),
@@ -180,10 +182,7 @@ class CompanyForm extends CFormModel
         //$city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
-        $whereSql = " city in ($city_allow) ";
-        if(Yii::app()->user->validFunction('ZR25')){//允許查看所有公司列表
-            $whereSql = " (city in ($city_allow) or (city='SH' and tacitly=1))";//修改为只能查看上海
-        }
+        $whereSql = " (a.city in ($city_allow) or a.share_bool=1) ";
         $sql = "select a.* ,
 				docman$suffix.countdoc('COMPANY',id) as companydoc,
 				docman$suffix.countdoc('COMPANY2',id) as companydoc2,
@@ -220,6 +219,7 @@ class CompanyForm extends CFormModel
                 $this->address2 = $row['address2'];
                 $this->mie = $row['mie'];
                 $this->taxpayer_num = $row['taxpayer_num'];
+                $this->share_bool = $row['share_bool'];
                 $this->no_of_attm['company'] = $row['companydoc'];
                 $this->no_of_attm['company2'] = $row['companydoc2'];
                 $this->no_of_attm['company3'] = $row['companydoc3'];
@@ -277,10 +277,10 @@ class CompanyForm extends CFormModel
 			case 'new':
 				$sql = "insert into hr_company(
 							name, agent, head, city, address, phone, security_code, phone_two, organization_code, organization_time, license_code, license_time, tacitly, lcu
-							, legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
+							, legal, share_bool, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie, taxpayer_num
 						) values (
 							:name, :agent, :head, :city, :address, :phone, :security_code, :two_phone, :organization_code, :organization_time, :license_code, :license_time, :tacitly, :lcu
-							, :legal, :legal_email, :legal_city, :head_email, :agent_email, :postal, :postal2, :address2, :mie, :taxpayer_num
+							, :legal, :share_bool, :legal_email, :legal_city, :head_email, :agent_email, :postal, :postal2, :address2, :mie, :taxpayer_num
 						)";
 				break;
 			case 'edit':
@@ -307,6 +307,7 @@ class CompanyForm extends CFormModel
 							legal_city = :legal_city,
 							legal_email = :legal_email,
 							legal = :legal,
+							share_bool = :share_bool,
 							taxpayer_num = :taxpayer_num,
 							luu = :luu 
 						where id = :id
@@ -343,6 +344,8 @@ class CompanyForm extends CFormModel
 			$command->bindParam(':tacitly',$this->tacitly,PDO::PARAM_INT);
         if (strpos($sql,':legal')!==false)
             $command->bindParam(':legal',$this->legal,PDO::PARAM_STR);
+        if (strpos($sql,':share_bool')!==false)
+            $command->bindParam(':share_bool',$this->share_bool,PDO::PARAM_INT);
         if (strpos($sql,':legal_email')!==false)
             $command->bindParam(':legal_email',$this->legal_email,PDO::PARAM_STR);
         if (strpos($sql,':legal_city')!==false)

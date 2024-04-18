@@ -25,4 +25,9 @@
 			;
 		?>
 	</th>
+	<th>
+		<?php echo TbHtml::link($this->getLabelName('share_bool').$this->drawOrderArrow('share_bool'),'#',$this->createOrderLink('company-list','share_bool'))
+			;
+		?>
+	</th>
 </tr>
