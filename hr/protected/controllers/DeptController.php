@@ -28,7 +28,7 @@ class DeptController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('edit','new','save','delete','copy'),
+                'actions'=>array('edit','new','save','delete','copy','copyCity'),
                 'expression'=>array('DeptController','allowReadWrite'),
             ),
             array('allow',
@@ -55,6 +55,14 @@ class DeptController extends Controller
         }else{
             return Yii::app()->user->validFunction('ZC01');
         }
+    }
+
+    public function actionCopyCity($toCity,$formCity="ZH")
+    {
+        $model = new DeptForm('new');
+        $arr = $model->copyCity($toCity,$formCity);
+        var_dump($arr);
+        Yii::app()->end();
     }
 
     public function actionIndex($pageNum=0,$type=0){

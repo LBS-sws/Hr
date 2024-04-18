@@ -253,4 +253,47 @@ class ContractForm extends CFormModel
         }
         return true;
 	}
+
+    public function copyCity($toCity,$formCity){
+        $uid = Yii::app()->user->id;
+        $dateTime = date_format(date_create(),"Y/m/d H:i:s");
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
+            ->where('local_type=0 and city=:city', array(':city'=>$formCity))->queryAll();
+        echo "复制<b>{$formCity}</b>城市的合同模板到<b>{$toCity}</b>城市<br/>";
+        echo "start:<br/>";
+        if($rows){
+            $i=0;
+            foreach ($rows as $row){
+                $i++;
+                echo "{$i}、copy 合同模板:".$row["name"];
+                $oneList = $row;
+                unset($oneList["id"]);
+                $oneList["city"]=$toCity;
+                $oneList["lcu"]=$uid;
+                $oneList["luu"]=$uid;
+                $oneList["lcd"]=$dateTime;
+                $conRow = Yii::app()->db->createCommand()->select("id")->from("hr_contract")
+                    ->where('city=:city and name=:name', array(':city'=>$toCity,':name'=>$row["name"]))->queryRow();
+                if($conRow){
+                    echo " - 已存在，不重复添加。<br/>";
+                }else{
+                    Yii::app()->db->createCommand()->insert("hr_contract",$oneList);
+                    $conId = Yii::app()->db->getLastInsertID();
+                    $poRows = Yii::app()->db->createCommand()->select()->from("hr_contract_docx")
+                        ->where('contract_id=:contract_id', array(':contract_id'=>$row["id"]))->queryAll();
+                    if($poRows){
+                        foreach ($poRows as $poRow){
+                            $twoList = $poRow;
+                            unset($twoList["id"]);
+                            $twoList["contract_id"]=$conId;
+                            Yii::app()->db->createCommand()->insert("hr_contract_docx",$twoList);
+                        }
+                    }
+                    echo " - 添加成功。<br/>";
+                }
+            }
+        }
+        echo "end;<br/>";
+        return "Success!";
+    }
 }

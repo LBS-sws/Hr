@@ -30,7 +30,7 @@ class ContractController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','save','delete','wordDelete'),
+                'actions'=>array('new','edit','save','delete','wordDelete','copyCity'),
                 'expression'=>array('ContractController','allowReadWrite'),
             ),
             array('allow',
@@ -56,6 +56,14 @@ class ContractController extends Controller
 
     public static function allowWrite() {
         return !empty(Yii::app()->user->id);
+    }
+
+    public function actionCopyCity($toCity,$formCity="ZH")
+    {
+        $model = new ContractForm('new');
+        $arr = $model->copyCity($toCity,$formCity);
+        var_dump($arr);
+        Yii::app()->end();
     }
 
     public function actionIndex($pageNum=0){

@@ -494,4 +494,63 @@ class DeptForm extends CFormModel
         }
         return true;
 	}
+
+	public function copyCity($toCity,$formCity){
+        $uid = Yii::app()->user->id;
+        $dateTime = date_format(date_create(),"Y/m/d H:i:s");
+        $rows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+            ->where('type=0 and city=:city', array(':city'=>$formCity))->queryAll();
+        echo "复制<b>{$formCity}</b>城市的部门及职位到<b>{$toCity}</b>城市<br/>";
+        echo "start:<br/>";
+        if($rows){
+            $i=0;
+            foreach ($rows as $row){
+                $j=0;
+                $i++;
+                echo "{$i}、copy 部门:".$row["name"];
+                $oneList = $row;
+                unset($oneList["id"]);
+                $oneList["city"]=$toCity;
+                $oneList["lcu"]=$uid;
+                $oneList["luu"]=$uid;
+                $oneList["lcd"]=$dateTime;
+                $deptRow = Yii::app()->db->createCommand()->select("id")->from("hr_dept")
+                    ->where('type=0 and city=:city and name=:name', array(':city'=>$toCity,':name'=>$row["name"]))->queryRow();
+                if($deptRow){
+                    $deptId = $deptRow["id"];
+                    echo " - 已存在，不重复添加。<br/>";
+                }else{
+                    Yii::app()->db->createCommand()->insert("hr_dept",$oneList);
+                    $deptId = Yii::app()->db->getLastInsertID();
+                    echo " - 添加成功。<br/>";
+                }
+                $poRows = Yii::app()->db->createCommand()->select()->from("hr_dept")
+                    ->where('type=1 and dept_id=:dept_id', array(':dept_id'=>$row["id"]))->queryAll();
+                if($poRows){
+                    foreach ($poRows as $poRow){
+                        $j++;
+                        echo "&nbsp;&nbsp;&nbsp;&nbsp;{$i}.{$j}、copy 职位:".$poRow["name"];
+                        $twoList = $poRow;
+                        unset($twoList["id"]);
+                        $twoList["city"]=$toCity;
+                        $twoList["dept_id"]=$deptId;
+                        $twoList["lcu"]=$uid;
+                        $twoList["luu"]=$uid;
+                        $twoList["lcd"]=$dateTime;
+                        $deptRow = Yii::app()->db->createCommand()->select("id")->from("hr_dept")
+                            ->where('type=1 and dept_id=:dept_id and name=:name',
+                                array(':dept_id'=>$deptId,':name'=>$poRow["name"]))->queryRow();
+                        if($deptRow){
+                            echo " - 已存在，不重复添加。<br/>";
+                        }else{
+                            Yii::app()->db->createCommand()->insert("hr_dept",$twoList);
+                            echo " - 添加成功。<br/>";
+                        }
+                    }
+                }
+            }
+        }
+        echo "end;<br/>";
+        return "Success!";
+    }
 }
