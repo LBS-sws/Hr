@@ -269,6 +269,11 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
                     ); ?>
                 </div>
             </div>
+            <div class="form-group">
+                <div class="col-sm-7 col-sm-offset-2">
+                    <p class="form-control-static text-danger">注：选择共享后，公司资料信息及资质资料附件其他城市能查看并下载</p>
+                </div>
+            </div>
 
 		</div>
 	</div>
