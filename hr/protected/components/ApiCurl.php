@@ -13,6 +13,7 @@ class ApiCurl{
     protected $infoData=array(//所有接口
         "employee"=>"/api/hr.DataSync/employee_dataSync",//员工
         "binding"=>"/api/hr.DataSync/hrBinding_dataSync",//绑定员工
+        "cross"=>"/index.php/api/lbs.CrossAudit/getAuditInfo",//交叉派单
     );
 
     public function __construct($infoType,$curlData){
@@ -67,7 +68,7 @@ class ApiCurl{
         $rtn["lcu"]=Yii::app()->user->id;
         $rtn["status_type"]=$rtn["message"]=="Success"?"C":"E";
         //{"code":400,"msg":"phone不能为空","data":[]}
-        if($rtn["status_type"]=="C"&&isset($rtn["out_content"]["code"])&&$rtn["out_content"]["code"]==400){
+        if($rtn["status_type"]=="C"&&isset($rtn["out_content"]["code"])&&$rtn["out_content"]["code"]!=200){
             $rtn["status_type"]="E";
             $rtn["message"]=isset($rtn["out_content"]["msg"])?$rtn["out_content"]["msg"]:$rtn["message"];
         }
@@ -105,6 +106,8 @@ class ApiCurl{
             //'Content-Length:'.strlen($data_string),
             'Content-Length:'.mb_strlen($data_string, 'UTF-8'),
         ));
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
         $out = curl_exec($ch);
         if ($out===false) {
             $rtn['message'] = curl_error($ch);

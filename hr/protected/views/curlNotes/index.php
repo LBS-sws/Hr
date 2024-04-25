@@ -31,6 +31,15 @@ $this->pageTitle=Yii::app()->name . ' - CurlNotes';
         </div>
     </div>
 	<?php
+    $search_add_html="";
+    $modelName = get_class($model);
+    $typeList=CurlNotesList::getInfoTypeList();
+    if(!empty($typeList)){
+        $typeList = array_merge(array(""=>"-- 全部 --"),$typeList);
+        $search_add_html .= TbHtml::dropDownList($modelName.'[info_type]',$model->info_type,$typeList,
+            array("class"=>"form-control submitBtn"));
+    }
+
     $this->widget('ext.layout.ListPageWidget', array(
         'title'=>Yii::t('curl','CurlNotes List'),
         'model'=>$model,
@@ -38,6 +47,7 @@ $this->pageTitle=Yii::app()->name . ' - CurlNotes';
         'viewdtl'=>'//curlNotes/_listdtl',
         'gridsize'=>'24',
         'height'=>'600',
+        'search_add_html'=>$search_add_html,
         'search'=>array(
             'status_type',
             'info_type',
@@ -86,6 +96,10 @@ $this->pageTitle=Yii::app()->name . ' - CurlNotes';
 	        $('#textInput').val(text);
 	        $('#textModal').modal('show');
 	    });
+	    
+$('.submitBtn').change(function(){
+    $('form:first').submit();
+});
 	";
 	Yii::app()->clientScript->registerScript('rowClick',$js,CClientScript::POS_READY);
 ?>

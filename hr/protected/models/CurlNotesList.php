@@ -2,6 +2,28 @@
 
 class CurlNotesList extends CListPageModel
 {
+    public $info_type;
+
+    public function rules()
+    {
+        return array(
+            array('info_type,attr, pageNum, noOfItem, totalRow,city, searchField, searchValue, orderField, orderType, filter, dateRangeValue','safe',),
+        );
+    }
+
+    public function getCriteria() {
+        return array(
+            'info_type'=>$this->info_type,
+            'searchField'=>$this->searchField,
+            'searchValue'=>$this->searchValue,
+            'orderField'=>$this->orderField,
+            'orderType'=>$this->orderType,
+            'noOfItem'=>$this->noOfItem,
+            'pageNum'=>$this->pageNum,
+            'filter'=>$this->filter,
+            'dateRangeValue'=>$this->dateRangeValue,
+        );
+    }
 	/**
 	 * Declares customized attribute labels.
 	 * If not declared here, an attribute would have a label that is
@@ -34,6 +56,10 @@ class CurlNotesList extends CListPageModel
 				where 1=1 
 			";
 		$clause = "";
+        if(!empty($this->info_type)){
+            $svalue = str_replace("'","\'",$this->info_type);
+            $clause.=" and info_type='$svalue' ";
+        }
 		if (!empty($this->searchField) && !empty($this->searchValue)) {
 			$svalue = str_replace("'","\'",$this->searchValue);
 			switch ($this->searchField) {
@@ -79,7 +105,7 @@ class CurlNotesList extends CListPageModel
 					$this->attr[] = array(
 						'id'=>$record['id'],
 						'status_type'=>StaffFun::getCurlStatusNameToID($record['status_type']),
-						'info_type'=>$record['info_type'],
+						'info_type'=>self::getInfoTypeList($record['info_type'],true),
 						'info_url'=>$record['info_url'],
 						'data_content'=>$record['data_content'],
 						'out_content'=>$record['out_content'],
@@ -94,6 +120,24 @@ class CurlNotesList extends CListPageModel
 		$session['hr_curlNotes_c01'] = $this->getCriteria();
 		return true;
 	}
+
+    //翻译curl的类型
+    public static function getInfoTypeList($key="",$bool=false){
+        $list = array(
+            "employee"=>"员工资料",
+            "binding"=>"员工绑定",
+            "cross"=>"交叉派单",
+        );
+        if($bool){
+            if(key_exists($key,$list)){
+                return $list[$key];
+            }else{
+                return $key;
+            }
+        }else{
+            return $list;
+        }
+    }
 
 	public function sendID($index){
         $row = Yii::app()->db->createCommand()->select("*")->from("hr_api_curl")
