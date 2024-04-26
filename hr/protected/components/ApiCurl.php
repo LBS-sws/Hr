@@ -92,7 +92,7 @@ class ApiCurl{
         $root = Yii::app()->params['uCurlRootURL'];
         $url = $root.$this->infoData[$this->infoType];
         $rtn["data_content"] = $this->curlData;
-        $rtn["data_content"]["key"] = $key;
+        $rtn["data_content"]["key"] = self::generate_key();
         $rtn["info_url"] = $url;
         $data_string = json_encode($rtn["data_content"]);
 
@@ -136,5 +136,30 @@ class ApiCurl{
             default:
                 return' - Unknown error ('.$error.')';
         }
+    }
+
+
+    //生成key,每10分钟一变
+    public static function generate_key(){
+        $ip = self::getCurlIP();
+        $interval = 600; // 10分钟的秒数
+        $secret_key = '5dd6f4b8ea2eda324a5629325e8868a8'; // 加密密钥
+
+        //生成key
+        $salt = floor(time() / $interval) * $interval; // 使用10分钟为间隔的时间戳作为盐
+
+        $ip_split = explode('.', $ip);
+        $hexip = sprintf('%02x%02x%02x%02x', $ip_split[0], $ip_split[1], $ip_split[2], $ip_split[3]);
+        $key = hash('sha256', $ip . $salt . $hexip);
+
+        //加密发送时间戳
+        $encryptedData = openssl_encrypt($salt, 'AES-128-ECB', $secret_key, OPENSSL_RAW_DATA);
+        $encrypted = base64_encode($encryptedData);
+
+        return $key.'.'.$encrypted;
+    }
+
+    public static function getCurlIP(){
+        return Yii::app()->params['uCurlIP'];
     }
 }
