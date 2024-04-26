@@ -110,6 +110,7 @@ $this->pageTitle=Yii::app()->name . ' - External Form';
                         <li><?php echo Yii::t("contract","external part two");?></li>
                         <li><?php echo Yii::t("contract","external part three");?></li>
                         <li><?php echo Yii::t("contract","external part four");?></li>
+                        <li><?php echo Yii::t("contract","external part five");?></li>
                     </ul>
                 </div>
             </div>

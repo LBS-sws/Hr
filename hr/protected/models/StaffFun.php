@@ -16,6 +16,7 @@ class StaffFun
             3=>Yii::t("contract","external-time"),//外聘
             4=>Yii::t("contract","contracting"),//业务承揽
             5=>Yii::t("contract","outsourcer"),//外包商
+            6=>Yii::t("contract","temporary employee"),//临时账号
         );
         return $list;
     }
@@ -28,6 +29,7 @@ class StaffFun
             3=>Yii::t("contract","external-time"),//外聘
             4=>Yii::t("contract","contracting"),//业务承揽
             5=>Yii::t("contract","outsourcer"),//外包商
+            6=>Yii::t("contract","temporary employee"),//临时账号
         );
         if($bool){
             unset($list[1]);
