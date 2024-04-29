@@ -233,8 +233,6 @@ class AuditConfigForm extends CFormModel
 
     //判斷審核人是否空缺
     public static function getAccessAndCity($city,$department,$auditType=""){
-        $city_allow = self::getAllCityToMinCity($city);
-        $city_allow = implode("','",$city_allow);
         $systemId = Yii::app()->params['systemId'];
         $suffix = Yii::app()->params['envSuffix'];
         $command = Yii::app()->db->createCommand();
@@ -259,7 +257,7 @@ class AuditConfigForm extends CFormModel
             $command->reset();
             $workThree = $command->select("a.username")->from("security$suffix.sec_user a")
                 ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
-                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZG04%' and a.city in ('{$city_allow}')")
+                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZG04%' and FIND_IN_SET('{$city}',a.look_city)")
                 ->queryAll();
             if($workThree){
                 $workThree = array_column($workThree, 'username');
@@ -296,7 +294,7 @@ class AuditConfigForm extends CFormModel
             $command->reset();
             $leaveThree = $command->select("a.username")->from("security$suffix.sec_user a")
                 ->leftJoin("security$suffix.sec_user_access b","b.username = a.username")
-                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZG05%' and a.city in ('{$city_allow}')")
+                ->where("a.status='A' and b.system_id='$systemId' and b.a_read_write like '%ZG05%' and FIND_IN_SET('{$city}',a.look_city)")
                 ->queryAll();
             if($leaveThree){
                 $leaveThree = array_column($leaveThree, 'username');

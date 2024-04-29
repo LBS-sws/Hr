@@ -589,8 +589,7 @@ class TimerCommand extends CConsoleCommand {
                 }
             }
             if(!in_array($row["city"],$this->city_list)){
-                $cityAllow = Email::getAllCityToMinCity($row["city"]);
-                $this->city_list = array_unique(array_merge($cityAllow,$this->city_list));
+                $this->city_list[]=$row["city"];
             }
             if(!key_exists($row["city"],$arr)){
                 $arr["city_list"][]=$row["city"];
@@ -615,8 +614,7 @@ class TimerCommand extends CConsoleCommand {
         $arr["table_head"] = "<thead><th>员工编号</th><th>员工姓名</th><th>出生日期</th><th>员工年龄</th><th>员工所在城市</th><th>员工入职日期</th><th>员工合同模板</th></thead>";
         foreach ($rows as $row){
             if(!in_array($row["city"],$this->city_list)){
-                $cityAllow = Email::getAllCityToMinCity($row["city"]);
-                $this->city_list = array_unique(array_merge($cityAllow,$this->city_list));
+                $this->city_list[]=$row["city"];
             }
             if(!key_exists($row["city"],$arr)){
                 $arr["city_list"][]=$row["city"];
@@ -652,8 +650,7 @@ class TimerCommand extends CConsoleCommand {
         foreach ($rows as $row){
             if ($this->docmanSearch($str, $row["id"], $row["lud"])) {
                 if(!in_array($row["city"],$this->city_list)){
-                    $cityAllow = Email::getAllCityToMinCity($row["city"]);
-                    $this->city_list = array_unique(array_merge($cityAllow,$this->city_list));
+                    $this->city_list[]=$row["city"];
                 }
                 if(!key_exists($row["city"],$arr)){
                     $arr["city_list"][]=$row["city"];
