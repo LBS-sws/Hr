@@ -19,6 +19,11 @@ class RptStaffDeparture extends CReport {
         $this->title = $this->getReportName();
         $this->subtitle = Yii::t('report','Date').':'.$this->criteria['START_DT'].' - '.$this->criteria['END_DT']
         ;
+        if (isset($this->criteria['CITY'])&&!empty($this->criteria['CITY'])) {
+            $this->subtitle.= empty($this->subtitle)?"":" ；";
+            $this->subtitle.= Yii::t('report','City').': ';
+            $this->subtitle.= General::getCityNameForList($this->criteria['CITY']);
+        }
         return $this->exportExcel();
     }
 
@@ -29,9 +34,12 @@ class RptStaffDeparture extends CReport {
         $end_dt = date("Y/m/d",strtotime($end_dt));
         $city = $this->criteria['CITY'];
 
-        $citymodel = new City();
-        $citylist = $citymodel->getDescendantList($city);
-        $citylist = empty($citylist) ? "'$city'" : "$citylist,'$city'";
+        if(!General::isJSON($city)){
+            $citylist = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $citylist = json_decode($city,true);
+            $citylist = "'".implode("','",$citylist)."'";
+        }
 
         $suffix = Yii::app()->params['envSuffix'];
         $sql = "select a.code,a.name,a.entry_time,a.leave_time,a.user_card,f.name as city_name,
@@ -65,8 +73,8 @@ class RptStaffDeparture extends CReport {
     }
 
     public function getReportName() {
-        $city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria['CITY']) : '';
-        return (isset($this->criteria) ? Yii::t('report',$this->criteria['RPT_NAME']) : Yii::t('report','Nil')).$city_name;
+        //$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria['CITY']) : '';
+        return (isset($this->criteria) ? Yii::t('report',$this->criteria['RPT_NAME']) : Yii::t('report','Nil'));
     }
 }
 ?>

@@ -57,7 +57,6 @@ class ReportController extends Controller
 		$model = new ReportY01Form;
 		if (isset($_POST['ReportY01Form'])) {
 			$model->attributes = $_POST['ReportY01Form'];
-			$model->resetCityForAllow();
 			if ($model->validate()) {
 				$model->addQueueItem();
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
@@ -78,7 +77,6 @@ class ReportController extends Controller
 		$model->name = Yii::t('report','Staff Entry Rpt List');
 		if (isset($_POST['ReportY01Form'])) {
 			$model->attributes = $_POST['ReportY01Form'];
-			$model->resetCityForAllow();
 			if ($model->validate()) {
 				$model->addQueueItem();
 				Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
@@ -169,7 +167,7 @@ class ReportController extends Controller
         $model = new ReportY05Form;
         $model->start_dt = date("Y/m/d");
         $model->end_dt = date("Y/m/d",strtotime("+1 month"));
-        $model->fields = 'start_dt,end_dt,staffs,staffs_desc';
+        $model->fields = 'city,start_dt,end_dt,staffs,staffs_desc';
         if (isset($_POST['ReportY05Form'])) {
             $model->attributes = $_POST['ReportY05Form'];
             if ($model->validate()) {
@@ -261,7 +259,7 @@ class ReportController extends Controller
         $model->name = Yii::t('app','Pin Report');
         $model->start_dt = date("Y/m/d");
         $model->end_dt = date("Y/m/d",strtotime("+1 month"));
-        $model->fields = 'start_dt,end_dt,staffs,staffs_desc';
+        $model->fields = 'city,start_dt,end_dt,staffs,staffs_desc';
         if (isset($_POST['ReportY05Form'])) {
             $model->attributes = $_POST['ReportY05Form'];
             if ($model->validate()) {

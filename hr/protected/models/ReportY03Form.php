@@ -30,7 +30,7 @@ class ReportY03Form extends CReportForm
 		$this->name = Yii::t('app','Leave record List');
 		$this->format = 'EXCEL';
 		$this->city = Yii::app()->user->city();
-        $this->fields = 'start_dt,end_dt,staffs,staffs_desc';
+        $this->fields = 'city,start_dt,end_dt,staffs,staffs_desc';
         $this->start_dt = date("Y/m/d");
         $this->end_dt = date("Y/m/d");
         $this->staffs = '';

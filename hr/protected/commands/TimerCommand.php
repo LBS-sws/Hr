@@ -126,7 +126,7 @@ class TimerCommand extends CConsoleCommand {
         $this->setDailyHintHtml();
 
         if(!empty($this->in_list)||!empty($this->out_list)){//如果有提示信息則發送郵件
-            $rs = Yii::app()->db->createCommand()->selectDistinct("b.email,b.city")->from("security$suffix.sec_user_access a")
+            $rs = Yii::app()->db->createCommand()->selectDistinct("b.email,b.city,b.look_city")->from("security$suffix.sec_user_access a")
                 ->leftJoin("security$suffix.sec_user b","a.username=b.username")
                 ->where("a.system_id='$systemId' and a.a_control like '%ZR10%' and b.email is not null and b.status='A'")
                 ->queryAll();
@@ -136,7 +136,9 @@ class TimerCommand extends CConsoleCommand {
                     if(!empty($row["email"])){
                         $email->resetToAddr();
                         $email->addToAddrEmail($row["email"]);
-                        $message = $this->getDailyHintHtmlToCity($email->getAllCityToMaxCity($row["city"]));
+                        $lookCity= $row["look_city"];
+                        $cityList = empty($lookCity)?array():explode(",",$lookCity);
+                        $message = $this->getDailyHintHtmlToCity($cityList);
                         if(!empty($message)){
                             $email->setMessage($message);
                             $email->sent("系統自動發送",$systemId);
@@ -222,7 +224,7 @@ class TimerCommand extends CConsoleCommand {
             foreach ($userlist as $user){
                 if($this->city != $user["city"]){
                     $this->city = $user["city"];
-                    $this->city_list = $email->getAllCityToMaxCity($user["city"]);
+                    $this->city_list = explode(",",$user["look_city"]);
                 }
                 $message="";
                 foreach ($this->send_list as $send){

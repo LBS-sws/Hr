@@ -120,13 +120,7 @@ class Email {
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
         $city = Yii::app()->user->city();
-        $cityList = $this->getAllCityToMinCity($city);
-        if(count($cityList)>1){
-            $cityList = "'".implode("','",$cityList)."'";
-            $sql = " and b.city in ($cityList) ";
-        }else{
-            $sql = " and b.city = '$city' ";
-        }
+        $sql = " and FIND_IN_SET('{$city}',b.look_city)";
         $rs = Yii::app()->db->createCommand()->select("b.email, b.username")->from("security$suffix.sec_user_access a")
             ->leftJoin("security$suffix.sec_user b","a.username=b.username")
             ->where("a.system_id='$systemId' and a.a_read_write like '%$str%' $sql and b.email != '' and b.status='A'")
@@ -206,10 +200,14 @@ class Email {
     //
     public function getEmailUserList($city_allow,$usernameEx="",$notUsername=""){
         if(!empty($city_allow)){
-            $city_allow = implode("','",$city_allow);
-            $sql = "a.city in ('CN','$city_allow')";
+            $sql = "";
+            foreach ($city_allow as $city){
+                $sql.= empty($sql)?"":" or ";
+                $sql.= "FIND_IN_SET('{$city}',a.look_city)";
+            }
+            $sql = "({$sql})";
             if(!empty($usernameEx)){//額外的lcu
-                $sql = " (a.city in ('CN','$city_allow') or a.username='{$usernameEx}')";
+                $sql.= " or a.username='{$usernameEx}'";
             }
             if(!empty($notUsername)){
                 $sql.= " and a.username!='{$notUsername}'";
@@ -219,7 +217,7 @@ class Email {
         }
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
-        $rows = Yii::app()->db->createCommand()->select("a.username,a.city,a.email,(CASE WHEN a.username IN (SELECT incharge FROM security$suffix.sec_city) THEN 1 ELSE 0 END) AS incharge,c.a_read_write")
+        $rows = Yii::app()->db->createCommand()->select("a.username,a.city,a.email,a.look_city,(CASE WHEN a.username IN (SELECT incharge FROM security$suffix.sec_city) THEN 1 ELSE 0 END) AS incharge,c.a_read_write")
             ->from("security$suffix.sec_user a")
             ->leftJoin("security$suffix.sec_city b","a.city = b.code")
             ->leftJoin("security$suffix.sec_user_access c","a.username = c.username")
@@ -255,7 +253,6 @@ class Email {
         $suffix = Yii::app()->params['envSuffix'];
         $systemId = Yii::app()->params['systemId'];
         //$city = Yii::app()->user->city();
-        $cityList = $this->getAllCityToMinCity($city);
         switch ($readyType){
             case 1://唯读
                 $readStr="a_read_only";
@@ -270,12 +267,7 @@ class Email {
                 $readStr="a_read_write";
 
         }
-        if(count($cityList)>1){
-            $cityList = "'".implode("','",$cityList)."'";
-            $sql = " and b.city in ($cityList) ";
-        }else{
-            $sql = " and b.city = '$city' ";
-        }
+        $sql = " and FIND_IN_SET('{$city}',b.look_city) ";
         if(!is_array($str)){
             $likeSql = " and a.{$readStr} like '%$str%'";
         }else{

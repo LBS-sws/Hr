@@ -48,12 +48,4 @@ class ReportY01Form extends CReportForm
 		$this->search_start = date("Y/01");
 		$this->search_end = date("Y/m");
 	}
-
-	public function resetCityForAllow(){
-        $city = $this->city;
-        $city_allow = City::model()->getDescendantList($city);
-        $cstr = $city;
-        $city_allow .= (empty($city_allow)) ? "'$cstr'" : ",'$cstr'";
-        $this->region = $city_allow;
-    }
 }

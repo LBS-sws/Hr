@@ -36,9 +36,13 @@ class RptStaffEnList extends CReport {//新员工录入表
     public function genReport() {
         $this->retrieveData();
         $this->title = $this->getReportName();
-        $this->subtitle = Yii::t('report','Date').':'.$this->criteria['SEARCHS'].' - '.$this->criteria['SEARCHE'].' / '
-            .Yii::t('report','City Name').':'.$this->criteria['CITY']
+        $this->subtitle = Yii::t('report','Date').':'.$this->criteria['SEARCHS'].' - '.$this->criteria['SEARCHE']
         ;
+        if (isset($this->criteria['CITY'])&&!empty($this->criteria['CITY'])) {
+            $this->subtitle.= empty($this->subtitle)?"":" ；";
+            $this->subtitle.= Yii::t('report','City').': ';
+            $this->subtitle.= General::getCityNameForList($this->criteria['CITY']);
+        }
         return $this->exportExcel();
     }
 
@@ -48,8 +52,14 @@ class RptStaffEnList extends CReport {//新员工录入表
         $start_dt = date("Y/m/01",strtotime($start_dt));
         $end_dt = date("Y/m/t",strtotime($end_dt));
         $city = $this->criteria['CITY'];
-        $city_allow = $this->criteria['REGION'];
         $suffix = Yii::app()->params['envSuffix'];
+
+        if(!General::isJSON($city)){
+            $city_allow = strpos($city,"'")!==false?$city:"'{$city}'";
+        }else{
+            $city_allow = json_decode($city,true);
+            $city_allow = "'".implode("','",$city_allow)."'";
+        }
 
         $sql_date=" (
         (a.staff_status not in (0,-1) and a.table_type=1) or 
@@ -146,8 +156,8 @@ class RptStaffEnList extends CReport {//新员工录入表
     }
 
     public function getReportName() {
-        $city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria['CITY']) : '';
-        return (isset($this->criteria) ? Yii::t('report',$this->criteria['RPT_NAME']) : Yii::t('report','Nil')).$city_name;
+        //$city_name = isset($this->criteria) ? ' - '.General::getCityName($this->criteria['CITY']) : '';
+        return (isset($this->criteria) ? Yii::t('report',$this->criteria['RPT_NAME']) : Yii::t('report','Nil'));
     }
 }
 ?>

@@ -30,7 +30,7 @@ class ReportY05Form extends CReportForm
 		$this->name = Yii::t('app','Pennants ex List');
 		$this->format = 'EXCEL';
 		$this->city = Yii::app()->user->city();
-        $this->fields = 'year,month,staffs,staffs_desc';
+        $this->fields = 'city,year,month,staffs,staffs_desc';
         $this->year = date("Y");
         $this->month = date("m");
         $this->staffs = '';
