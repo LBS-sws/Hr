@@ -219,7 +219,7 @@ class SignContractForm extends CFormModel
     public function deleteValidate(){
         $row = Yii::app()->db->createCommand()->select("a.id")->from("hr_sign_contract a")
             ->leftJoin("hr_employee b","a.employee_id = b.id")
-            ->where("a.id=:id and (a.status_type = 3 or (a.status_type in (-1,0,1,4) and b.staff_status=-1))",array(":id"=>$this->id))->queryRow();
+            ->where("a.id=:id and (a.table_type != 1 or a.status_type = 3 or (a.status_type in (-1,0,1,4) and b.staff_status=-1))",array(":id"=>$this->id))->queryRow();
         if($row){
             return true;
         }
