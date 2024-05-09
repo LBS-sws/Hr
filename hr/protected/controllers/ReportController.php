@@ -16,6 +16,7 @@ class ReportController extends Controller
         'staffDuty'=>'YB12',
         'staffDeparture'=>'YB13',
         'testStaff'=>'YB13',//测试员工名册
+        'staffUpdate'=>'YB15',//变更人員報表
     );
 	
 	public function filters()
@@ -248,6 +249,29 @@ class ReportController extends Controller
             }
         }
         $this->render('form_staff',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffDuty')));
+    }
+
+    public function actionStaffUpdate() {
+		$this->function_id = self::$actions['staffUpdate'];
+		Yii::app()->session['active_func'] = $this->function_id;
+
+        $model = new ReportY05Form;
+        $model->id = "RptStaffUpdate";
+        $model->name = Yii::t('app','report for update');
+        $model->start_dt = date("Y/01/01");
+        $model->end_dt = date("Y/m/d");
+        $model->fields = 'start_dt,end_dt,city';
+        if (isset($_POST['ReportY05Form'])) {
+            $model->attributes = $_POST['ReportY05Form'];
+            if ($model->validate()) {
+                $model->addQueueItem();
+                Dialog::message(Yii::t('dialog','Information'), Yii::t('dialog','Report submitted. Please go to Report Manager to retrieve the output.'));
+            } else {
+                $message = CHtml::errorSummary($model);
+                Dialog::message(Yii::t('dialog','Validation Message'), $message);
+            }
+        }
+        $this->render('form_staff',array('model'=>$model,'submit'=>Yii::app()->createUrl('report/staffUpdate')));
     }
 
     public function actionPinReport() {

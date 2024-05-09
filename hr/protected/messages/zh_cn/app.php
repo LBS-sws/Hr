@@ -244,6 +244,7 @@ return array(
     'Import Staff'=>'员工导入',
     'Bank Abbr set'=>'银行简称设置',
     'look manage set'=>'额外查看设置',
+    'report for update'=>'变更人员报表',
     //沈超添加结束
 );
 ?>

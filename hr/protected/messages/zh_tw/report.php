@@ -62,5 +62,7 @@ return array(
 
     'Staff Entry Rpt List'=>'新員工錄入表',
     'Staff Status'=>'员工状态',
+    'update date'=>'修改日期',
+    'audit date'=>'審批日期',
 );
 ?>

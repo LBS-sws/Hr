@@ -588,6 +588,10 @@ return array(
 				'access'=>'YB12',
                 'url'=>'/report/staffDuty',
 			),
+			'report for update'=>array( //变更人員報表
+				'access'=>'YB15',
+                'url'=>'/report/staffUpdate',
+			),
 			'report for departure'=>array( //離職人員報表
 				'access'=>'YB13',
                 'url'=>'/report/staffDeparture',

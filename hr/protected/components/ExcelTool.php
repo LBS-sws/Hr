@@ -34,8 +34,8 @@ class ExcelTool {
 		if ($mod > 0) return chr($quo+64).chr($mod+64);
 	}
 
-	public function createSheet() {
-		$this->objPHPExcel->createSheet();
+	public function createSheet($sheetId=0) {
+		$this->objPHPExcel->createSheet($sheetId);
 	}
 	
 	public function setActiveSheet($index) {
