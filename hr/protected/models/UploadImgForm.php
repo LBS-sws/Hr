@@ -17,7 +17,7 @@ class UploadImgForm extends CFormModel
 	public function rules()
 	{
 		return array(
-            array('file', 'file', 'types'=>'gif,jpg,jpeg,png,bmp', 'allowEmpty'=>false, 'maxFiles'=>1),
+            array('file', 'file', 'types'=>'jpg,jpeg,png', 'allowEmpty'=>false, 'maxFiles'=>1),
 		);
 	}
 
