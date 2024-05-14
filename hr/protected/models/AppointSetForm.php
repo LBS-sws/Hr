@@ -140,9 +140,7 @@ class AppointSetForm extends CFormModel
             ->from("security{$suffix}.sec_user_access a")
             ->leftJoin("security{$suffix}.sec_user b","a.username=b.username")
             ->where("a.system_id='{$systemId}' and 
-            (a.username=:username or (
-                b.city in ({$city_allow}) and (a.a_read_write like '%ZG11%' or a.a_read_write like '%ZG12%')
-            ))
+            (a.username=:username or a.a_read_write like '%ZG11%' or a.a_read_write like '%ZG12%')
             ",array(
                 ":username"=>$username
             ))

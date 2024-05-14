@@ -289,7 +289,7 @@ class TripForm extends CFormModel
         if(Yii::app()->user->validFunction('ZR24')){//所有出差記錄
             $whereSql=" and ((b.id={$employee_id}) or {$auditSql} or(b.city in ({$city_allow}) and a.status!=0))";
         }else{
-            $whereSql=" and b.id={$employee_id} or {$auditSql}";
+            $whereSql=" and (b.id={$employee_id} or {$auditSql})";
         }
         $rows = Yii::app()->db->createCommand()
             ->select("a.*,b.wage,b.city as s_city,b.staff_type,b.code as employee_code,b.name as employee_name,docman$suffix.countdoc('TRIP',a.id) as tripdoc")

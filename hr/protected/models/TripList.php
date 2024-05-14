@@ -52,7 +52,7 @@ class TripList extends CListPageModel
         if(Yii::app()->user->validFunction('ZR24')){//所有出差記錄
             $whereSql.=" and ((b.id={$employee_id}) or {$auditSql} or (b.city in ({$city_allow}) and a.status!=0))";
         }else{
-            $whereSql=" and b.id={$employee_id} or {$auditSql}";
+            $whereSql=" and (b.id={$employee_id} or {$auditSql})";
         }
 		$sql1 = "select a.*,f.name as city_name,b.code,b.name from hr_employee_trip a
                 LEFT JOIN hr_employee b ON a.employee_id=b.id
