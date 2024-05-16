@@ -89,13 +89,34 @@ $this->pageTitle=Yii::app()->name . ' - CurlNotes';
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<script>
+    function unicode2Ch(t) {
+        if (t) {
+            for (var e = 1, n = "", i = 0; i < t.length; i += e) {
+                e = 1;
+                var o = t.charAt(i);
+                if ("\\" == o)
+                    if ("u" == t.charAt(i + 1)) {
+                        var r = t.substr(i + 2, 4);
+                        n += String.fromCharCode(parseInt(r, 16).toString(10)),
+                            e = 6
+                    } else
+                        n += o;
+                else
+                    n += o
+            }
+            return n
+        }
+    }
+</script>
 <?php
 	$js = "
 	    $('.text-break').click(function(){
-	        var text = $(this).data('text');
+	        var text = $(this).children('pre').text();
 	        if(typeof text=='object'){
 	            text = JSON.stringify(text);
 	        }
+	        text = unicode2Ch(text);
 	        $('#textInput').val(text);
 	        $('#textModal').modal('show');
 	    });

@@ -68,7 +68,7 @@ class ContractList extends CListPageModel
 					'id'=>$record['id'],
 					'name'=>$record['name'],
 					'retire'=>$record['retire']==1?Yii::t("misc","Yes"):Yii::t("misc","No"),
-					'local_type'=>$record['local_type']==1?Yii::t("contract","default"):Yii::t("contract","local"),
+					'local_type'=>self::getWordStrToType($record['local_type']),
 					'city'=>WordForm::getCityNameToCode($record['city']),
 				);
 			}
@@ -78,4 +78,21 @@ class ContractList extends CListPageModel
 		return true;
 	}
 
+    public static function getWordType(){
+        return array(
+            "0"=>Yii::t("contract","local"),
+            "1"=>Yii::t("contract","default"),
+            "2"=>Yii::t("contract","none"),
+        );
+    }
+
+    public static function getWordStrToType($type){
+        $list = self::getWordType();
+        $type = "".$type;
+        if(key_exists($type,$list)){
+            return $list[$type];
+        }else{
+            return $type;
+        }
+    }
 }

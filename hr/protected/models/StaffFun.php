@@ -393,7 +393,7 @@ class StaffFun
     public static function getContractListToCity($city,$contract_id){
         $arr = array(""=>"");
         $rows = Yii::app()->db->createCommand()->select()->from("hr_contract")
-            ->where("city=:city or local_type=1 or id=:id", array(':city'=>$city,':id'=>$contract_id))->queryAll();
+            ->where("(city=:city and local_type!=2) or local_type=1 or id=:id", array(':city'=>$city,':id'=>$contract_id))->queryAll();
         if(count($rows)>0){
             foreach ($rows as $row){
                 $arr[$row["id"]] = $row["name"];
