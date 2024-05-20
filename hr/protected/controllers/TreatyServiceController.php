@@ -28,7 +28,7 @@ class TreatyServiceController extends Controller
 				'expression'=>array('TreatyServiceController','allowReadWrite'),
 			),
 			array('allow', 
-				'actions'=>array('index','view'),
+				'actions'=>array('index','view','resetEmail'),
 				'expression'=>array('TreatyServiceController','allowReadOnly'),
 			),
 			array('deny',  // deny all users
@@ -37,7 +37,14 @@ class TreatyServiceController extends Controller
 		);
 	}
 
-	public function actionIndex($pageNum=0) 
+	public function actionResetEmail()
+	{
+		$model = new TreatyInfoForm();
+        $model->resetEmailForOld();
+		Yii::app()->end();
+	}
+
+	public function actionIndex($pageNum=0)
 	{
 		$model = new TreatyServiceList();
 		if (isset($_POST['TreatyServiceList'])) {

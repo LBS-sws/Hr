@@ -130,12 +130,14 @@ class TreatyInfoForm extends CFormModel
         }
 	}
 
-	public function retrieveData($index)
+	public function retrieveData($index,$bool=false)
 	{
         $suffix = Yii::app()->params['envSuffix'];
         $city_allow = Yii::app()->user->city_allow();
         $uid = Yii::app()->user->id;
-        if(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
+        if($bool){
+            $sqlCity="";
+        }elseif(Yii::app()->user->validFunction('ZR21')){ //允許查看管轄內的所有項目
             $sqlCity = " and b.city in ({$city_allow}) ";
         }else{
             $sqlCity = " and b.lcu='{$uid}' ";
@@ -183,6 +185,24 @@ class TreatyInfoForm extends CFormModel
 			throw new CHttpException(404,'Cannot update.');
 		}
 	}
+
+	public function resetEmailForOld(){
+        echo "update start:<br/>";
+        $suffix = Yii::app()->params['envSuffix'];
+        $rows = Yii::app()->db->createCommand()->select("id,email_id")
+            ->from("hr_treaty_info")->where("email_hint=1 and email_id>0")->queryAll();
+        if($rows){
+            foreach ($rows as $row){
+                $this->retrieveData($row["id"],true);
+                $message = $this->getEmailHtml();
+                $bool = Yii::app()->db->createCommand()->update("swoper$suffix.swo_email_queue", array(
+                    'message'=>$message,
+                ), "id=:id and status='P'", array(':id'=>$this->email_id));
+                echo "info_id:{$row["id"]}，treaty_code:{$this->treaty_code}，contract_code:{$this->contract_code}，email_id:{$this->email_id}，bool:{$bool}<br/>";
+            }
+        }
+        echo "update end!<br/>";
+    }
 
 	protected function emailSave(){
         $from_addr = Yii::app()->params['adminEmail'];
@@ -238,6 +258,7 @@ class TreatyInfoForm extends CFormModel
 	    $html.= "<p>".Yii::t("treaty","month num").":".$this->month_num."</p>";
 	    $html.= "<p>".Yii::t("treaty","end date").":".$this->end_date."</p>";
 	    $html.= "<p>".Yii::t("treaty","remark").":".$this->remark."</p>";
+	    $html.= "<p>".Yii::t("treaty","city").":".CGeneral::getCityName($this->city)."</p>";
 	    return $html;
     }
 
