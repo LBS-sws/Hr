@@ -37,6 +37,9 @@ $this->pageTitle=Yii::app()->name . ' - Company Form';
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('company/save')));
             ?>
+            <?php echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Copy'), array(
+                'submit'=>Yii::app()->createUrl('company/copy',array("index"=>$model->id))));
+            ?>
             <?php if ($model->scenario=='edit'): ?>
                 <?php echo TbHtml::button('<span class="fa fa-remove"></span> '.Yii::t('misc','Delete'), array(
                         'name'=>'btnDelete','id'=>'btnDelete','data-toggle'=>'modal','data-target'=>'#removedialog',)

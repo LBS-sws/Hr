@@ -29,7 +29,7 @@ class CompanyController extends Controller
     {
         return array(
             array('allow',
-                'actions'=>array('new','edit','save','delete','fileupload','fileRemove','test'),
+                'actions'=>array('new','edit','save','copy','delete','fileupload','fileRemove','test'),
                 'expression'=>array('CompanyController','allowReadWrite'),
             ),
             array('allow',
@@ -88,6 +88,13 @@ class CompanyController extends Controller
     public function actionNew()
     {
         $model = new CompanyForm('new');
+        $this->render('form',array('model'=>$model,));
+    }
+
+    public function actionCopy($index)
+    {
+        $model = new CompanyForm('new');
+        $model->copyData($index);
         $this->render('form',array('model'=>$model,));
     }
 

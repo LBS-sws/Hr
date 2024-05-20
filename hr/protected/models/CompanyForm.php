@@ -229,6 +229,44 @@ class CompanyForm extends CFormModel
 		return true;
 	}
 
+	public function copyData($index)
+	{
+        $sql = "select a.* 
+				from hr_company a
+				where a.id=$index";
+        $row = Yii::app()->db->createCommand($sql)->queryRow();
+		if ($row)
+		{
+            $this->id = null;
+            $this->name = $row['name'];
+            $this->head = $row['head'];
+            $this->agent = $row['agent'];
+            $this->address = $row['address'];
+            $this->phone = $row['phone'];
+            $this->phone_two = $row['phone_two'];
+            $this->city = $row['city'];
+            $this->tacitly = $row['tacitly'];
+            $this->security_code = $row['security_code'];
+            $this->organization_code = $row['organization_code'];
+            $this->organization_time = $row['organization_time'];
+            $this->license_code = $row['license_code'];
+            $this->license_time = $row['license_time'];
+            //legal, legal_email, legal_city, head_email, agent_email, postal, postal2, address2, mie
+            $this->legal = $row['legal'];
+            $this->legal_email = $row['legal_email'];
+            $this->legal_city = $row['legal_city'];
+            $this->head_email = $row['head_email'];
+            $this->agent_email = $row['agent_email'];
+            $this->postal = $row['postal'];
+            $this->postal2 = $row['postal2'];
+            $this->address2 = $row['address2'];
+            $this->mie = $row['mie'];
+            $this->taxpayer_num = $row['taxpayer_num'];
+            $this->share_bool = $row['share_bool'];
+		}
+		return true;
+	}
+
 	public function saveData()
 	{
 		$connection = Yii::app()->db;
