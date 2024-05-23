@@ -342,6 +342,7 @@ class DeptForm extends CFormModel
             1=>Yii::t("fete","Technician level"),
             2=>Yii::t("fete","Technical supervisor"),
             3=>Yii::t("fete","Other personnel"),
+            4=>Yii::t("fete","KA Technician"),//KA技术服务
         );
     }
 

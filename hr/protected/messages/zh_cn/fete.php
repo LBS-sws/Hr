@@ -233,5 +233,7 @@ return array(
     'project name'=>'项目名称',
     'audited, pending result'=>'已审核，等待出差结果',
     'company name'=>'公司名称',
+
+    'KA Technician'=>'KA技术服务',
 );
 ?>
