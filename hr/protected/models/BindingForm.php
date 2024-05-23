@@ -128,7 +128,7 @@ class BindingForm extends CFormModel
             $whereSql = " or id='{$employee_id}' ";
         }
         $rows = Yii::app()->db->createCommand()->select("id,name,table_type")->from($from)
-            ->where("(city in ($city_allow) {$whereSql} or id in (:plusSql)) and (staff_status=0 or (table_type in (2,3) and staff_status=1))",array(
+            ->where("(city in ($city_allow) {$whereSql} or id in (:plusSql)) and (staff_status=0 or (table_type!=1 and staff_status=1))",array(
                 ":plusSql"=>$plusList["plusSql"]
             ))->order("table_type asc,id desc")->queryAll();
         $bindList = Yii::app()->db->createCommand()->select("employee_id")
