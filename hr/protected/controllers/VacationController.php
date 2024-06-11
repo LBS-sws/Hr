@@ -67,9 +67,13 @@ class VacationController extends Controller
     }
 
 
-    public function actionNew()
+    public function actionNew($index=0)
     {
         $model = new VacationForm('new');
+        if(!empty($index)){
+            $model->retrieveData($index);
+            $model->id = null;
+        }
         $this->render('form',array('model'=>$model,));
     }
 

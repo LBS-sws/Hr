@@ -32,7 +32,14 @@ $this->pageTitle=Yii::app()->name . ' - Fete Form';
 		<?php echo TbHtml::button('<span class="fa fa-reply"></span> '.Yii::t('misc','Back'), array(
 				'submit'=>Yii::app()->createUrl('vacation/index')));
 		?>
-
+        <?php if ($model->scenario == "edit"): ?>
+            <?php echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Add'), array(
+                'submit'=>Yii::app()->createUrl('vacation/new')));
+            ?>
+            <?php echo TbHtml::button('<span class="fa fa-file-o"></span> '.Yii::t('misc','Copy'), array(
+                'submit'=>Yii::app()->createUrl('vacation/new',array("index"=>$model->id))));
+            ?>
+        <?php endif ?>
         <?php if ($model->scenario!='view'): ?>
             <?php echo TbHtml::button('<span class="fa fa-upload"></span> '.Yii::t('misc','Save'), array(
                 'submit'=>Yii::app()->createUrl('vacation/save')));
