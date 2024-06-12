@@ -78,7 +78,7 @@ class BindingForm extends CFormModel
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
         $rows = Yii::app()->db->createCommand()->select("disp_name")->from($from)
-            ->where("username=:username and city in ($city_allow)", array(':username'=>$this->user_id))->queryRow();
+            ->where("username=:username and (city in ($city_allow) or FIND_IN_SET('{$city}',look_city))", array(':username'=>$this->user_id))->queryRow();
         if ($rows){
             $this->user_name = $rows["disp_name"];
         }else{
@@ -92,7 +92,7 @@ class BindingForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $plusSql = PlusCityForm::getPlusEmployeeList()["plusSql"];
         $rows = Yii::app()->db->createCommand()->select("name,city")->from("hr_employee")
-            ->where("id=:id and (city in ($city_allow) or id in ($plusSql)) and (staff_status=0 or (table_type in (2,3) and staff_status=1)) ", array(':id'=>$this->employee_id))->queryRow();
+            ->where("id=:id and (city in ($city_allow) or id in ($plusSql)) and (staff_status=0 or (table_type!=1 and staff_status=1)) ", array(':id'=>$this->employee_id))->queryRow();
         if ($rows){
             $this->employee_name = $rows["name"];
             $this->city = $rows["city"];
@@ -107,7 +107,7 @@ class BindingForm extends CFormModel
         $city_allow = Yii::app()->user->city_allow();
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
-        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("(city in ($city_allow) or username='$username') and status='A'")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("(city in ($city_allow) or username='$username' or FIND_IN_SET('{$city}',look_city)) and status='A'")->queryAll();
         $bindList = Yii::app()->db->createCommand()->select("user_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $bindList = array_column($bindList,"user_id");
         $arr = array(""=>"");
