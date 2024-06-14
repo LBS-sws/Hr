@@ -73,12 +73,17 @@ class BindingForm extends CFormModel
     }
 
 	public function validateUser($attribute, $params){
-        $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        $city_allow = explode(",",$city_allow);
+        $citySql = "";
+        foreach ($city_allow as $city){
+            $citySql.=empty($citySql)?"":" or ";
+            $citySql.=" FIND_IN_SET({$city},look_city) ";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
         $rows = Yii::app()->db->createCommand()->select("disp_name")->from($from)
-            ->where("username=:username and (city in ($city_allow) or FIND_IN_SET('{$city}',look_city))", array(':username'=>$this->user_id))->queryRow();
+            ->where("username=:username and ({$citySql})", array(':username'=>$this->user_id))->queryRow();
         if ($rows){
             $this->user_name = $rows["disp_name"];
         }else{
@@ -103,11 +108,16 @@ class BindingForm extends CFormModel
     }
     //獲取用戶表的所有用戶(相同城市)
 	public function getUserList($username){
-        $city = Yii::app()->user->city();
         $city_allow = Yii::app()->user->city_allow();
+        $city_allow = explode(",",$city_allow);
+        $citySql = "";
+        foreach ($city_allow as $city){
+            $citySql.=empty($citySql)?"":" or ";
+            $citySql.=" FIND_IN_SET({$city},look_city) ";
+        }
         $suffix = Yii::app()->params['envSuffix'];
         $from = "security".$suffix.".sec_user";
-        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("(city in ($city_allow) or username='$username' or FIND_IN_SET('{$city}',look_city)) and status='A'")->queryAll();
+        $rows = Yii::app()->db->createCommand()->select("username,disp_name")->from($from)->where("(username='$username' or {$citySql}) and status='A'")->queryAll();
         $bindList = Yii::app()->db->createCommand()->select("user_id")->from("hr_binding")->where("id !=:id",array(":id"=>$this->id))->queryAll();
         $bindList = array_column($bindList,"user_id");
         $arr = array(""=>"");
