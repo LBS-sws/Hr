@@ -252,14 +252,17 @@ class RptStaffList extends CReport {
 		$suffix = Yii::app()->params['envSuffix'];
 		$sql = "select a.username, b.city from security$suffix.sec_user_access a, security$suffix.sec_user b
 				where (a.a_read_only like '%$right%' or a.a_read_write like '%$right%')
-				and a.username=b.username and b.status='A' and a.system_id='hr'
+				and a.username=b.username and b.status='A' and a.system_id='hr' and FIND_IN_SET('{$city}',b.look_city)
 			";
 		$rows = Yii::app()->db->createCommand($sql)->queryAll();
 		if (!empty($rows)) {
-			$cityo = new City;
-			$citylist = $cityo->getAncestorList($city).','.$city;
-			foreach ($rows as $row) {
-				if (strpos($citylist,$row['city'])!==false) $rtn[] = $row['username'];
+            /*$cityo = new City;
+            $citylist = $cityo->getAncestorList($city).','.$city;
+            foreach ($rows as $row) {
+                if (strpos($citylist,$row['city'])!==false) $rtn[] = $row['username'];
+            }*/
+            foreach ($rows as $row) {
+				$rtn[] = $row['username'];
 			}
 		}
 		return $rtn;
