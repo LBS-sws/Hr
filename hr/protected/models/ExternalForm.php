@@ -73,6 +73,17 @@ class ExternalForm extends StaffForm
         }
     }
 
+    //員工刪除時必須是草稿
+    public function validateDelete(){
+        $allow_city = Yii::app()->user->city_allow();
+        $row = Yii::app()->db->createCommand()->select()->from("hr_employee")
+            ->where("id=:id and table_type!=1 AND staff_status in (9,3) and city in ({$allow_city})", array(':id'=>$this->id))->queryRow();
+        if ($row){
+            return true;
+        }
+        return false;
+    }
+
     public function retrieveData($index){
         $suffix = Yii::app()->params['envSuffix'];
         $city = Yii::app()->user->city();
@@ -302,7 +313,7 @@ class ExternalForm extends StaffForm
         }
         switch ($this->scenario) {
             case 'delete':
-                $connection->createCommand()->delete("hr_employee", "id=:id and a.table_type!=1 AND staff_status=9", array(":id" => $this->id));
+                $connection->createCommand()->delete("hr_employee", "id=:id and table_type!=1 AND staff_status in (3,9)", array(":id" => $this->id));
                 break;
             case 'new':
                 $list["lcu"] = $uid;
