@@ -11,6 +11,7 @@ class RptStaffDeparture extends CReport {
             'position_name'=>array('label'=>Yii::t('contract','Position'),'width'=>15,'align'=>'L'),
             'entry_time'=>array('label'=>Yii::t('contract','Entry Time'),'width'=>20,'align'=>'L'),
             'leave_time'=>array('label'=>Yii::t('contract','Leave Date'),'width'=>20,'align'=>'L'),
+            'leave_reason'=>array('label'=>Yii::t('contract','Leave Reason'),'width'=>30,'align'=>'L'),
         );
     }
 
@@ -63,6 +64,7 @@ class RptStaffDeparture extends CReport {
                 $temp['company_name'] = $row['company_name'];
                 $temp['position_name'] = $row['position_name'];
                 $temp['department_name'] = $row['department_name'];
+                $temp['leave_reason'] = $row['leave_reason'];
 
                 $temp['entry_time'] = CGeneral::toDate($row['entry_time']);
                 $temp['leave_time'] = CGeneral::toDate($row['leave_time']);
