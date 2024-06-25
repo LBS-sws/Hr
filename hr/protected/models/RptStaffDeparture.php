@@ -43,7 +43,7 @@ class RptStaffDeparture extends CReport {
         }
 
         $suffix = Yii::app()->params['envSuffix'];
-        $sql = "select a.code,a.name,a.entry_time,a.leave_time,a.user_card,f.name as city_name,
+        $sql = "select a.code,a.name,a.entry_time,a.leave_time,a.leave_reason,a.user_card,f.name as city_name,
                 b.name as company_name,d.name as department_name,p.name as position_name
                 from hr_employee a 
                 LEFT JOIN hr_company b ON a.staff_id=b.id
