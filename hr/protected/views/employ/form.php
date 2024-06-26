@@ -65,6 +65,11 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
             ));
             ?>
         <?php endif; ?>
+        <?php if ($model->scenario!='new'){
+            //流程
+            echo TbHtml::button('<span class="fa fa-file-text-o"></span> '.Yii::t('app','History'), array(
+                'data-toggle'=>'modal','data-target'=>'#flowinfodialog'));
+        } ?>
         <?php
         $counter = ($model->no_of_attm['employ'] > 0) ? ' <span id="docemploy" class="label label-info">'.$model->no_of_attm['employ'].'</span>' : ' <span id="docemploy"></span>';
         echo TbHtml::button('<span class="fa  fa-file-text-o"></span> '.Yii::t('misc','Attachment').$counter, array(
@@ -145,6 +150,7 @@ $this->pageTitle=Yii::app()->name . ' - Employ Form';
 ?>
 <?php
 $this->renderPartial('//site/removedialog');
+$this->renderPartial('//employView/historylist',array('model'=>$model));
 ?>
 <?php
 /*if ($model->scenario!='new')
